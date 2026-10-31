@@ -14,9 +14,9 @@
 
 **Status:** ready-for-agent
 
-- [ ] 提示词按事实 1 走流式输入，参数含 `--input-format stream-json` 和空的 `-p`（有测试，假 agy 检查收到的参数和标准输入那一行 JSON）
-- [ ] 按事实 2 解析：回答取 `result.response`；`result.status` 不是 SUCCESS 时失败并带上 `result.error`；回答为空时失败（有测试）
-- [ ] 不再用启动事件的工具列表核实限定；改为：只给材料一档出现 user_input、agent_response 以外的步骤类型就判失败，并在原因里列出步骤类型（有测试）
-- [ ] 不指定模型时默认用 gemini-4-argon-medium；启动事件报告的模型不是以 gemini 开头就判失败（有测试）
-- [ ] 删掉按猜测写的 denied_actions、finished_reason 判断，以及"待登录后确认"的说法；说明的 google 一节改写为上面的事实（已用真实调用确认的日期、只读网页一档暂不可用、会话会被保存且关不掉、不用 --settings 和跳过权限确认的理由）
-- [ ] 其余三家的行为和测试不变；全部测试通过
+- [x] 提示词按事实 1 走流式输入，参数含 `--input-format stream-json` 和空的 `-p`（有测试，假 agy 检查收到的参数和标准输入那一行 JSON）
+- [x] 按事实 2 解析：回答取 `result.response`；`result.status` 不是 SUCCESS 时失败并带上 `result.error`；回答为空时失败（有测试）
+- [x] 不再用启动事件的工具列表核实限定；改为：只给材料一档出现 user_input、agent_response 以外的步骤类型就判失败，并在原因里列出步骤类型（有测试）
+- [x] 不指定模型时默认用 gemini-4-argon-medium；启动事件报告的模型不是以 gemini 开头就判失败（有测试）
+- [x] 删掉按猜测写的 denied_actions、finished_reason 判断，以及"待登录后确认"的说法；说明的 google 一节改写为上面的事实（已用真实调用确认的日期、只读网页一档暂不可用、会话会被保存且关不掉、不用 --settings 和跳过权限确认的理由）
+- [x] 其余三家的行为和测试不变；全部测试通过
