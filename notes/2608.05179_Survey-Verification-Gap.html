@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>核验缺口综述精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>核验缺口综述精读：AI 科学家能交出论文，可谁能核对它说的对不对</h1>
+  <p class="dek">一篇把"可核验性"当主线的综述。我们也用它自己的标准，反过来核验了它</p>
+  <div class="meta">
+    <b>论文</b> Autonomous Research Agents: A Survey of AI Scientists and the Verification Gap ·
+    <a href="https://arxiv.org/abs/2608.05179" target="_blank">arXiv 2608.05179</a> v1（页眉日期 2026-06-29，至今唯一版本）· 分类 cs.CY ·
+    <a href="https://arxiv.org/pdf/2608.05179" target="_blank">本地 PDF</a><br>
+    <b>作者</b> Tianyu Ding、Aditya Nannapaneni、Bingfan Liu、Ling Zhang，共 4 人，论文未署单位<br>
+    <b>数据和代码</b> 没有单独发布。26 个系统的逐项编码只印在附录表 11 里<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a>
+  </div>
+</header>
+
+<div class="aside"><strong>先说定位：</strong>这是一篇关于"AI 科学家"的综述。AI 科学家指能自己想题目、做实验、分析结果、写论文、甚至审稿的 Agent 系统。它不是专门讲深度研究评测的，深度研究只占正文一个小节（6.2）。它对我们有用的地方，是"怎么判断一个 Agent 交出来的东西能不能被核对"这套思路和清单，而不是它对深度研究的具体论述。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">核心问题：交了代码 ≠ 能核对</a></li>
+    <li><a href="#s2">它是怎么做的</a></li>
+    <li><a href="#s3">两个框架：自主等级和验证阶梯</a></li>
+    <li><a href="#s4">主要发现</a></li>
+    <li><a href="#s5">覆盖面：和我们文件夹对照</a></li>
+    <li><a href="#s6">论断与证据强度</a></li>
+    <li><a href="#s7">名词小抄</a></li>
+    <li><a href="#s8">弱在哪</a></li>
+    <li><a href="#s9">反过来核验它自己</a></li>
+    <li><a href="#s10">它做对了什么</a></li>
+    <li><a href="#s11">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s12">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它问的问题：</strong>不是"AI 科学家能不能做完一项研究"，而是"它做出来的结论，别人能不能核对"。作者把两者之间的差距叫做 <strong>verification gap（核验缺口）</strong>。</li>
+  <li><strong>它的做法：</strong>挑了 26 个系统，逐篇读全文，按 7 个维度记录"它交代了什么、没交代什么"。比如有没有公开代码、有没有公开随机种子和运行记录、跑了几次挑了哪次、新颖性是怎么查的。</li>
+  <li><strong>主要发现</strong>（24 个可运行的系统）：
+    <ul>
+      <li>公开代码的有 20 个（83%）；</li>
+      <li>公开了能重跑一次运行所需的种子或运行记录的，只有 9 个（38%）；</li>
+      <li>说明了新颖性怎么检查的，也只有 9 个（38%），而且没有一个验证过自己的检查方法靠不靠谱；</li>
+      <li>9 个号称"闭环"的系统里，LLM 时代没有一个是由外部检验来驱动下一步的。</li>
+    </ul></li>
+  <li><strong>它给的两个工具：</strong>一张 8 级的"验证阶梯"（从形式化证明到模型自评），一份 8 项的审稿报告清单。</li>
+  <li><strong>我们的核查：</strong>
+    <ul>
+      <li>499 条参考文献全部查过（全量，不是抽样）：490 个 arXiv 编号全部存在，标题和作者都对得上；另外 9 条期刊或会议论文的 DOI 也都能解析。<strong>没有发现一条编造的引用。</strong>小毛病是有 25 条把出处写成了不规范的 "In Proceedings of arXiv preprint"。</li>
+      <li>正文里的比例，都能从附录表 11 逐项重算出来，完全一致。</li>
+      <li>但编码的可靠性很弱：第二位编码人只看了摘要，只抽了 10 个系统，自主等级这一项两人只有 50% 一致。</li>
+      <li>深度研究部分很薄：我们文件夹里在它截止前发表的 18 篇，它只引用了 1 篇。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>它的清单可以直接改成"5 个 Agent 的报告必须交代的东西"：
+    <ul>
+      <li>完整的运行记录；</li>
+      <li>跑了几次、挑了哪次；</li>
+      <li>人有没有插手；</li>
+      <li>评委和被评者是不是同一家；</li>
+      <li>每条引用能不能解析。</li>
+    </ul></li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>核心问题：交了代码 ≠ 能核对</h2>
+<div class="ex">
+  <div class="h">打个比方</div>
+  <p>一个学生交来一篇实验报告，还附了代码。你能确认他"做完了"。但要确认他"做对了"，你还需要这些东西：</p>
+  <ul>
+    <li>他用的随机种子和完整运行记录，这样你才能重跑出一样的结果；</li>
+    <li>他一共试了几次，挑了哪一次写进报告；</li>
+    <li>哪些步骤是老师帮忙做的；</li>
+    <li>他说"这个想法是首创的"，是怎么查的。</li>
+  </ul>
+  <p>这篇综述的发现是：AI 科学家系统普遍交了代码，但后面这几样大多不交。"做完了"和"能核对"之间的这段距离，就是<strong>核验缺口</strong>。</p>
+</div>
+<p>作者为什么把范围限定在 AI/ML 研究？因为在这个领域，代码、实验、数据和论文原则上都能检查、能重跑，是最容易看清"能不能核对"的地方。化学、材料这类要做实体实验的系统，只放进来 5 个作对照。</p>
+<p>作者自己也说，这篇的贡献不在分类框架，而在<strong>逐篇的"可审计性编码"</strong>：把"别人能检查什么"做成数字。</p>
+
+<h2 id="s2"><span class="no">2</span>它是怎么做的</h2>
+<h3>筛选漏斗</h3>
+<div class="tbl"><table>
+  <tr><th>步骤</th><th class="num">数量</th><th>说明</th></tr>
+  <tr><td>检索</td><td class="num">144</td><td>在 arXiv、Semantic Scholar、OpenReview / ACL Anthology 上，用 12 组关键词检索 2023 年到 2026 年 6 月的论文</td></tr>
+  <tr><td>去重</td><td class="num">125</td><td></td></tr>
+  <tr><td>收录</td><td class="num">35</td><td>先看标题和摘要，再看全文，两轮筛选。排除的 90 篇主要是关键词撞车（比如"autonomous"撞上了自动驾驶）、一般的机器学习论文、非 Agent 工具</td></tr>
+  <tr><td>全文编码</td><td class="num">26</td><td>24 个能运行的系统，外加 1 篇研究、1 篇立场文章；另外 9 篇只作背景引用</td></tr>
+</table></div>
+<p>另外，全文的参考文献共 499 条，远多于这 26 篇。作者说其余文献来自"另一轮跨 38 个子领域的多轮系统性梳理"，只作定性背景，不参与统计。这一轮的方法没有披露。</p>
+
+<h3>七个审计维度</h3>
+<div class="tbl"><table>
+  <tr><th>维度</th><th>问的是</th><th>取值举例</th></tr>
+  <tr><td>阶段</td><td>它自动完成研究流程的哪几步</td><td>想题、文献、假设、实验设计、写代码、运行、分析、写作、审稿、闭环</td></tr>
+  <tr><td>自主等级</td><td>最高做到哪一级（见第 3 节）</td><td>L2、L3、L4；带"(c)"表示只是作者自称、没有外部证据</td></tr>
+  <tr><td>评估方式</td><td>产出由谁、怎么判</td><td>LLM 审稿、人类专家、任务是否完成、benchmark、投 workshop</td></tr>
+  <tr><td>公开了什么</td><td>别人能拿什么去重跑</td><td>代码、提示词、随机种子、运行记录</td></tr>
+  <tr><td>人工介入点</td><td>人在哪些地方插了手</td><td>给题目、给模板、给基线、每一步审批</td></tr>
+  <tr><td>新颖性检查</td><td>"这是新想法"是怎么确认的</td><td>自动查文献、对照文献图谱、人工判断、没查</td></tr>
+  <tr><td>结果挑选</td><td>有没有说明跑了几次、按什么规则挑结果</td><td>是 / 否 / 未披露</td></tr>
+</table></div>
+<p>表里查不到的信息一律标"n/d"（未披露），不靠猜。</p>
+
+<h3>编码的可靠性检查</h3>
+<p>编码由一个人完成。另一位编码人随机抽了 10 个系统，在 4 个最主观的维度上独立重编了一遍，两人的一致率如下：</p>
+<ul>
+  <li>公开了什么：90%</li>
+  <li>自主等级：50%</li>
+  <li>新颖性检查：60%</li>
+  <li>结果挑选：60%</li>
+  <li>四项合计：65%</li>
+</ul>
+<p>但这次重编<strong>只看了摘要</strong>，而主编码看的是全文。这一点的影响见 8.2。</p>
+
+<h2 id="s3"><span class="no">3</span>两个框架：自主等级和验证阶梯</h2>
+<h3>3.1 自主等级</h3>
+<div class="tbl"><table>
+  <tr><th>等级</th><th>含义</th><th>例子</th></tr>
+  <tr><td>L0 辅助</td><td>人做研究，模型只帮忙</td><td>—</td></tr>
+  <tr><td>L1 带工具</td><td>模型能搜能写代码，但每一步都是人在驱动</td><td>—</td></tr>
+  <tr><td>L2 单阶段</td><td>自主完成某一个有边界的阶段</td><td>SWE-agent（修代码）、自动审稿器</td></tr>
+  <tr><td>L3 流水线</td><td>串起多个阶段，从想题到出报告</td><td>ResearchAgent、Jr. AI Scientist</td></tr>
+  <tr><td>L4-m 机械闭环</td><td>结果会回流到下一步，但触发条件只是某个内部指标</td><td>AI Scientist、AI Scientist-v2、MASTER</td></tr>
+  <tr><td>L4-v 验证闭环</td><td>由外部判据（实际测量或独立检查）决定要不要修改下一个假设</td><td>CAMEO（2020 年，早于大模型 Agent）</td></tr>
+  <tr><td>L5 开放式</td><td>理想状态，表里不填</td><td>—</td></tr>
+</table></div>
+<div class="ex">
+  <div class="h">"机械闭环"和"验证闭环"的区别</div>
+  <ul>
+    <li><strong>CAMEO</strong>是材料实验平台，每一轮的实际测量结果直接决定下一个做什么实验。外部世界在把关，所以是验证闭环。</li>
+    <li><strong>MASTER</strong>也是材料方向，但它优化的是一个计算指标，跑完再请专家看一眼。实体世界从来没有决定过它的下一步，所以算机械闭环。</li>
+    <li><strong>ChatBattery</strong>做了湿实验，但只用来验证最后挑出的候选，不参与每一轮迭代。作者把它记为 L3，湿实验只算"终点检查"。</li>
+  </ul>
+</div>
+
+<h3>3.2 验证阶梯</h3>
+<p>作者把"核验手段"按两个标准从强到弱排成 8 级：一是"通过检查是否意味着结论为真"，二是"能不能钻空子通过检查"。</p>
+<div class="tbl"><table>
+  <tr><th>级</th><th>检查手段</th><th>典型领域</th><th>大白话</th></tr>
+  <tr><td>I</td><td>形式化证明器（Lean、Coq）</td><td>定理证明</td><td>证明器说通过就是对的，骗不了</td></tr>
+  <tr><td>II</td><td>可执行测试、过程奖励</td><td>编程 Agent</td><td>测试跑过了，至少这些用例是对的</td></tr>
+  <tr><td>III</td><td>物理测量、模拟器</td><td>自动化实验室</td><td>实验结果说了算</td></tr>
+  <tr><td>IV</td><td>引用和出处核对</td><td><strong>深度研究</strong></td><td>能查到出处，但出处本身未必可靠</td></tr>
+  <tr><td>V</td><td>代理指标</td><td>机械闭环</td><td>指标涨了，不代表科学上对了</td></tr>
+  <tr><td>VI</td><td>人类专家判断</td><td>人机协作</td><td>专家说好，但专家也会看走眼</td></tr>
+  <tr><td>VII</td><td>多 Agent 之间的弱信号、日志</td><td>多 Agent 框架</td><td>几个 Agent 互相点头</td></tr>
+  <tr><td>VIII</td><td>模型自己评判</td><td>LLM 当评委</td><td>自己给自己打分</td></tr>
+</table></div>
+<p>作者的核心论点是一个"倒置"：核验手段最强的领域（比如定理证明），Agent 做研究的工作反而最少；大多数"LLM Agent 做科学"的工作，都集中在核验最弱的几级。</p>
+
+<h2 id="s4"><span class="no">4</span>主要发现</h2>
+<div class="tbl"><table>
+  <tr><th>披露项（24 个可运行系统）</th><th class="num">比例</th></tr>
+  <tr><td>公开代码</td><td class="num">83%（20/24）</td></tr>
+  <tr><td>公开提示词</td><td class="num">71%（17/24）</td></tr>
+  <tr><td>公开随机种子或运行记录</td><td class="num">38%（9/24）</td></tr>
+  <tr><td>说明结果挑选规则</td><td class="num">67%（16/24）</td></tr>
+  <tr><td>至少写明一个人工介入点</td><td class="num">88%（21/24）</td></tr>
+  <tr><td>报告了新颖性检查方法</td><td class="num">38%（9/24）</td></tr>
+</table></div>
+<ul>
+  <li><strong>闭环：</strong>9 个系统达到 L4。其中 7 个是机械闭环，1 个只是作者自称（Claw AI Lab），只有 1 个是验证闭环（CAMEO），而它早于大模型时代。</li>
+  <li><strong>换个口径，结论不变：</strong>只看 LLM 时代的 22 个系统，或只看 AI/ML 方向的 19 个，比例都差不多。比如公开种子或运行记录的，分别是 41% 和 42%。</li>
+  <li><strong>新颖性检查：</strong>有 9 个系统报告了检查方法，但没有一个验证过这个检查本身可不可靠。</li>
+</ul>
+<p>作者的总结是：这个领域并不是"什么都不公开"。缺口更窄、也更尖锐：<strong>代码有了，但能用来核对结论的东西没有。</strong></p>
+
+<h2 id="s5"><span class="no">5</span>覆盖面：和我们文件夹对照</h2>
+<p>我们文件夹里的 23 篇，有 18 篇发表在它的检索截止（2026 年 6 月）之前。它只引用了其中 1 篇：Search-Time Contamination。</p>
+<div class="tbl"><table>
+  <tr><th>它引用了的深度研究相关工作</th><th>它没引用、但在截止前已发表的（我们文件夹里的）</th></tr>
+  <tr><td>
+    <ul>
+      <li>DeepResearch Bench（初代，2025-06）</li>
+      <li>BrowseComp（2025-04）</li>
+      <li>ReportBench、ResearcherBench</li>
+      <li>Search-Time Contamination（2026-06）</li>
+      <li>Onweller 等 2026，审计深度研究 Agent 的引用</li>
+      <li>CiteCheck（2026-05），检测科学文本里的伪造引用</li>
+    </ul></td>
+  <td>
+    <ul>
+      <li>BrowseComp-Plus（2025-08）</li>
+      <li>LiveDRBench（2025-08，ICLR 2026）</li>
+      <li>Why Language Models Hallucinate（2025-09）</li>
+      <li>DeepResearch Bench II（2026-01）</li>
+      <li>DRACO、DREAM（2026-02）</li>
+      <li>DeepFact、MiroEval（2026-03）</li>
+      <li>Reference Hallucinations、DR³-Eval（2026-04）</li>
+      <li>LiveBrowseComp、Expert Consulting（2026-05）</li>
+      <li>以及 IDRBench、DR-Arena、MMDeepResearch-Bench、DeepResearch-9K、DailyReport</li>
+    </ul></td></tr>
+</table></div>
+<ul>
+  <li>主要原因是范围不同：它讲的是 AI 科学家，不是深度研究评测。漏掉这些本身不算错。</li>
+  <li>问题在于，它在 6.2 节下了一个关于深度研究的判断，而这个判断的依据很薄（见 8.5）。</li>
+  <li>它的参考文献很新：490 个 arXiv 编号里，有 67 个（14%）是 2026 年 5、6 月的。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>论断与证据强度</h2>
+<div class="tbl"><table>
+  <tr><th>论断</th><th>证据</th><th>强度</th></tr>
+  <tr><td>代码公开已经普遍（83%），但能重跑的种子和运行记录少（38%）</td><td>24 个系统的逐项编码；"公开了什么"这一项两位编码人 90% 一致</td><td class="strong">较强。但"公开代码"只是看有没有仓库链接，没测能不能跑</td></tr>
+  <tr><td>新颖性检查少（38%），而且没有一个被验证过</td><td>逐项编码；这一项一致率只有 60%</td><td class="mid">中。作者自己也说只能当方向性证据</td></tr>
+  <tr><td>LLM 时代没有验证闭环</td><td>9 个 L4 系统的逐个判定，结论取决于作者自定的"外部判据"规则；自主等级一致率只有 50%</td><td class="mid">中偏弱。规则是清楚的，但判定的可重复性差</td></tr>
+  <tr><td>可信度随核验强度上升；Agent 研究恰好集中在核验弱的领域（"倒置"）</td><td>作者对 8 级阶梯的排序，加上定性描述；没有按领域统计论文数量</td><td class="weak">观点。有启发，但没有量化</td></tr>
+  <tr><td>"目前没有一个 benchmark 能端到端审计完整的证据链：断言、引用、原文段落、来源本身的可靠性"</td><td>只引用了 3 个深度研究 benchmark 和几篇引用审计工作</td><td class="weak">依据不足。严格地说可能成立，但没覆盖同期的大部分相关工作</td></tr>
+</table></div>
+
+<h2 id="s7"><span class="no">7</span>名词小抄</h2>
+<dl class="gl">
+  <dt>AI 科学家</dt><dd>能自己完成研究流程中一步或多步的 LLM Agent 系统，比如想题、做实验、写论文、审稿。</dd>
+  <dt>核验缺口</dt><dd>"系统能做完研究任务"和"别人能核对它的结论"之间的差距。</dd>
+  <dt>可审计性</dt><dd>别人拿到公开材料后，能不能检查结论是怎么来的、对不对。</dd>
+  <dt>随机种子和运行记录</dt><dd>种子决定了一次运行里的随机过程；运行记录是提示词、工具调用、模型版本、输出的完整日志。两者都有，才能原样重跑一次。</dd>
+  <dt>结果挑选</dt><dd>跑了 10 次只报告最好的一次（best-of-n）。不说明跑了几次、怎么挑的，读者就没法判断结果是常态还是运气。</dd>
+  <dt>人工介入点</dt><dd>人在哪里插了手，比如给定题目、提供模板、指定基线。英文缩写 HITL。</dd>
+  <dt>外部判据</dt><dd>不由系统自己说了算的检查，比如实际测量、独立的程序检查。英文叫 oracle。</dd>
+  <dt>机械闭环 / 验证闭环</dt><dd>前者是内部指标触发的重跑；后者是外部判据决定下一个假设。</dd>
+  <dt>编码一致率</dt><dd>两个人独立给同一批对象打标签，结果相同的比例。注意，它没有扣除"碰巧一样"的部分。</dd>
+</dl>
+
+<h2 id="s8"><span class="no">8</span>弱在哪</h2>
+<p>综述的检查和 benchmark 不一样，这里换成适合综述的四关：</p>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 收得全吗</td><td>选进来的文献有没有偏</td><td class="mid">中偏弱</td><td>检索只命中 144 条，没给具体检索式；499 条参考文献里，绝大多数来自一轮没披露方法的梳理（见 8.1）</td></tr>
+  <tr><td>② 编得准吗</td><td>每个系统的标签可不可信</td><td class="weak">弱</td><td>只有一人编码；复核只看摘要、只抽 10 个；没有扣除碰巧一致（见 8.2）</td></tr>
+  <tr><td>③ 说得过头吗</td><td>论断有没有超出证据</td><td class="mid">中</td><td>核心比例都能重算，作者也加了"方向性"的限定；但阶梯排序和深度研究那段是判断（见 8.4、8.5）</td></tr>
+  <tr><td>④ 对我们有用吗</td><td>对评测 5 个深度研究 Agent 有没有帮助</td><td class="mid">中</td><td>深度研究部分薄；但清单可以直接改造（见第 11 节）</td></tr>
+</table></div>
+
+<h3>8.1 检索很窄，大部分参考文献来路不明</h3>
+<ul>
+  <li>12 组关键词，在三个数据库里检索三年多（2023 年到 2026 年 6 月），只命中 144 条。对一个每月都有新系统冒出来的方向来说，这个数偏少。论文也没有给出具体的检索式和确切的检索日期，别人没法原样重做一遍。</li>
+  <li>参考文献共 499 条，进入统计的只有 26 篇。其余部分来自"跨 38 个子领域的多轮系统性梳理"，这一步怎么做的没有说明。也就是说，正文大部分叙述的选材是无法核查的。</li>
+</ul>
+
+<h3>8.2 编码的复核，测的不是它真正用的那套东西</h3>
+<ul>
+  <li><strong>主编码看全文，复核只看摘要。</strong>而作者自己在第 3 节就强调，摘要很少提到代码、种子、挑选规则。所以复核衡量的是"这些维度能不能被重复标注"，不是"主编码有没有读对"。作者在第 15 节也承认了这一点。</li>
+  <li><strong>只抽了 10 个系统。</strong>一个系统标错，一致率就差 10 个百分点。</li>
+  <li><strong>只报了"一致率"，没有扣除碰巧一致。</strong></li>
+</ul>
+<div class="ex">
+  <div class="h">例子：50% 的一致率有多低</div>
+  <p>表 11 里，24 个系统的自主等级只落在三档：L2 有 5 个，L3 有 10 个，L4 有 9 个。两个人如果都按这个比例随手标，碰巧一致的概率是：</p>
+  <p>(5/24)² + (10/24)² + (9/24)² ≈ 36%</p>
+  <p>实际一致率是 50%，扣掉碰巧的部分，换算成 kappa 大约是 0.2，通常算"轻微一致"。在这种情况下，"9 个 L4 里只有 1 个是验证闭环"这类结论，对个别系统的归类很敏感。</p>
+</div>
+
+<h3>8.3 "公开了代码"，没验证能不能跑</h3>
+<ul>
+  <li>表 5 的说明里写着：仓库是否能重跑，作者没有测试。所以 83% 指的是"有仓库链接"。</li>
+  <li>但第 14 节的清单把"公开代码"的最低证据定为"可运行的仓库"，还特别强调"只给仓库链接不够"。</li>
+  <li>也就是说，按它自己定的标准，83% 这个数字是达不到最低证据要求的。</li>
+</ul>
+
+<h3>8.4 验证阶梯的排序是作者的判断</h3>
+<ul>
+  <li>"能不能证明为真"和"能不能钻空子"这两个标准一起上升，是作者的假设，没有测量过。</li>
+  <li>具体排序也可以商量。比如"人类专家判断"（VI）排在"代理指标"（V）和"引用核对"（IV）之后。但对开放式研究报告来说，专家判断通常就是最终标准；而代理指标恰恰是最容易被钻空子的（奖励作弊）。</li>
+  <li>这张阶梯作为思考工具很有用，但不应当作一个经过检验的排序来用。</li>
+</ul>
+
+<h3>8.5 深度研究部分很薄，结论下得偏重</h3>
+<blockquote>No current benchmark audits the full grounding chain end to end: claim, citation, source passage, and reliability of the source itself.<span class="src">§6.2</span></blockquote>
+<p>如果严格要求四样全包括，尤其是"来源本身可不可靠"，这句话可能确实成立。但它只引用了初代 DeepResearch Bench、ReportBench、BrowseComp 三个 benchmark。同期已经有一批工作各自覆盖了这条链上的大段：</p>
+<ul>
+  <li><a href="https://arxiv.org/pdf/2603.05912" target="_blank">DeepFact</a>：专家先审计、再评分，逐条核对断言和证据；</li>
+  <li><a href="https://arxiv.org/pdf/2604.03173" target="_blank">Reference Hallucinations</a>：逐条检查引用是否真实存在，并用 Wayback 区分"伪造"和"失效"；</li>
+  <li><a href="2508.04183_LiveDRBench.html">LiveDRBench</a>：出处错了，整条断言就记 0 分；</li>
+  <li><a href="2606.12871_DailyReport.html">DailyReport</a>：把"引用本身对不对"和"断言是否忠于引用"分开统计。</li>
+</ul>
+<p>这些它都没有讨论。</p>
+
+<h3>8.6 几处小的不一致</h3>
+<ul>
+  <li>第 15 节说自主等级、新颖性、结果挑选三项的一致率是"50–65%"，实际是 50% / 60% / 60%。65% 是包括"公开了什么"在内的四项合计。</li>
+  <li>正文表 3 和附录表 11 对同一系统的"人工介入点"写法不完全一样。比如 AI Scientist-v2，表 3 写 "reduced template"，表 11 写 "topic, seed"；Jr. AI Scientist 表 3 只写 "baseline paper"，表 11 写了 4 项。不影响统计（统计只看"有没有至少一个"），但说明两张表不是同一份数据导出的。</li>
+  <li>arXiv 编号 2608 按惯例对应 2026 年 8 月，但 PDF 页眉和 arXiv 接口都显示 2026-06-29。原因不明，可能是审核延迟。</li>
+</ul>
+
+<h3>8.7 作者背景</h3>
+<ul>
+  <li>4 位作者，论文没有署任何单位，没有致谢，没有通讯邮箱。</li>
+  <li>没有经过同行评审，没有发布数据或代码。</li>
+  <li>这些不说明它的结论错，核心数字是自洽、可重算的。但读的时候应当把它当作一份认真的预印本，而不是领域共识。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>反过来核验它自己</h2>
+<p>这篇综述的表 9 把"伪造引用"列为第一个已记录的失败模式，最低证据要求是"参考文献可解析"。我们就按这个标准检查它自己的参考文献。</p>
+<h3>参考文献是否真实存在</h3>
+<p>这次没有抽样，<strong>499 条参考文献全部查了一遍</strong>：</p>
+<div class="tbl"><table>
+  <tr><th>类别</th><th class="num">条数</th><th>结果</th></tr>
+  <tr><td>带 arXiv 编号</td><td class="num">490</td><td>
+    <ul>
+      <li>全部存在。</li>
+      <li>485 条的标题和 arXiv 当前标题一致。看上去重合度不到 100% 的，都是 PDF 换行断词（比如 "Gener- ation"）造成的。</li>
+      <li>另外 5 条和 arXiv <strong>v1</strong> 的标题一字不差，是论文后来改了名。</li>
+      <li>第一作者全部对得上。</li>
+    </ul></td></tr>
+  <tr><td>期刊或会议论文（无 arXiv 编号）</td><td class="num">9</td><td>全部存在。有 DOI 的 8 条，DOI 全部能在 Crossref 解析，标题一致；Auto-sklearn（NeurIPS 2015）没有 DOI，但确有其文</td></tr>
+  <tr><td>查不到、疑似编造</td><td class="num">0</td><td>—</td></tr>
+</table></div>
+<div class="ex">
+  <div class="h">例子：看起来"不对"，其实是改了名</div>
+  <ul>
+    <li>Google 的 AI co-scientist 论文：参考文献写的是 v1 标题 "Towards an AI co-scientist"，arXiv 现在的标题是 "Accelerating scientific discovery with Co-Scientist"。</li>
+    <li>Bengio 那篇 AI 数学家的论文：参考文献写的合作者是 Nikolay Malkin，arXiv 现在的 v2 上第二作者换了人，v1 上确实是 Malkin。</li>
+  </ul>
+  <p>这类差异说明作者引用的是早期版本，不算错误。</p>
+</div>
+<p><strong>不规范的地方：</strong>25 条（5%）把出处写成了 "In Proceedings of arXiv preprint"。这不是一个真实的出版物名称，看起来是参考文献管理工具自动生成的残留。其中有些论文其实已经正式发表，比如 Self-RAG 发表在 ICLR 2024，但参考文献里看不出来。另外，大量已经正式发表的论文只标了 arXiv 编号，没有写正式出处。</p>
+<p><strong>结论：</strong>这篇综述在"引用是否真实"这一项上，经得起它自己清单的检验。</p>
+
+<h3>正文转述是否准确</h3>
+<div class="tbl"><table>
+  <tr><th>它的说法</th><th>原文</th><th>判断</th></tr>
+  <tr><td>搜索时污染：Agent 评测时从网上搜到答案，即使 benchmark 构建时是干净的，分数也会被抬高</td><td>Search-Time Contamination：定义了三级泄漏（元数据、题目上下文、显式答案），最多抬高 4%</td><td class="strong">准确（没给数字，但定性描述对）</td></tr>
+  <tr><td>DeepResearch Bench 按"自适应、参照式"标准给报告打分，并统计引用数量和引用准确率</td><td>初代 DRB 的 RACE（参照报告的自适应评分）+ FACT（引用准确率和有效引用数）</td><td class="strong">准确</td></tr>
+  <tr><td>BrowseComp：答案单一、难找、易核对的短问题</td><td>与原文和我们的 BrowseComp-Plus 精读一致</td><td class="strong">准确</td></tr>
+  <tr><td>Liu 等 2023 审计生成式搜索引擎：只有大约一半的句子被引用完全支持</td><td>原文是 51.5%</td><td class="strong">准确</td></tr>
+  <tr><td>PoisonedRAG：注入几段精心构造的文本，就能以大约 90% 的成功率改变 RAG 的回答</td><td>原文是每个目标问题注入 5 段文本，攻击成功率约 90%</td><td class="strong">准确</td></tr>
+  <tr><td>GSM1k：把 benchmark 原样重做一遍，准确率最多下降 8%</td><td>原文 arXiv v4 摘要写的是"最多下降 8%"，v1 写的是 13%</td><td class="strong">准确（与最新版一致）</td></tr>
+</table></div>
+
+<h2 id="s10"><span class="no">10</span>它做对了什么</h2>
+<ul>
+  <li><strong>主线选得好。</strong>不问"能做什么"，而问"别人能核对什么"。对评估 Agent 产出的人来说，这个角度比能力清单有用得多。</li>
+  <li><strong>可重算。</strong>每个系统的逐项编码都印在附录表 11 里。我们从表 11 重算了正文表 4 和表 5 的所有比例，以及"9 个 L4 = 7 机械 + 1 自称 + 1 验证"，全部一致。</li>
+  <li><strong>不猜。</strong>查不到的标"n/d"，不靠推断补全。</li>
+  <li><strong>"机械闭环"和"验证闭环"的区分很锋利。</strong>它把"结果会回流"和"外部世界在把关"分开了，这个区分在评测任何 Agent 时都用得上。</li>
+  <li><strong>诚实交代局限。</strong>第 15 节承认了复核只看摘要、没测仓库能不能跑、比例很快会过时。清单里也把"实际测过的"5 项和"只是建议的"3 项分开写。</li>
+  <li><strong>参考文献真实、准确。</strong>499 条全部能查到，标题和作者都对得上，没有一条编造的。在越来越多论文由 AI 参与写作的今天，这一点并不是理所当然的。</li>
+</ul>
+
+<h2 id="s11"><span class="no">11</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<p>把它的审稿清单（表 10）改成评测 5 个 Agent 时"每家必须交代、我们必须记录"的东西：</p>
+<div class="tbl"><table>
+  <tr><th>它的清单项</th><th>防的是什么</th><th>在 5 个 Agent 评测里怎么做</th></tr>
+  <tr><td>种子和运行记录</td><td>无法重跑</td><td>保留每个 Agent 的完整工具调用日志：搜索词、打开的网址、时间戳、模型版本。商业产品拿不到的，至少保存最终报告和全部被引网页的存档</td></tr>
+  <tr><td>尝试次数和挑选规则</td><td>只报最好的一次</td><td>每家跑 3 次，3 次全部评分、全部报告，事先写明不挑</td></tr>
+  <tr><td>人工介入点</td><td>隐藏的人工劳动</td><td>Agent 反问澄清问题时，统一用一句事先写好的话回复（LiveDRBench 统一回"Go ahead"），并记录每家被问了几次</td></tr>
+  <tr><td>评委独立</td><td>自己评自己</td><td>LLM 评委不和被评的 Agent 用同一家的模型，至少交叉评分</td></tr>
+  <tr><td>假设预登记</td><td>事后挑指标</td><td>评分维度、权重、必答清单在运行前写好并冻结，这本来就在我们的计划里</td></tr>
+  <tr><td>参考文献可解析</td><td>伪造引用</td><td>把第 9 节对这篇综述做的事，原样用在 5 份报告上：每个链接能不能打开、标题对不对得上、Wayback 有没有存档</td></tr>
+  <tr><td>基线来源</td><td>弱基线</td><td>如果把一份人类专家报告混进去当参照，记录它的出处、作者、用了多少时间</td></tr>
+</table></div>
+<p><strong>用验证阶梯给分数标"可信等级"。</strong>报告最终结果时，注明每个分数来自哪一级：</p>
+<ul>
+  <li>链接能否解析，是程序检查，接近 II 级，最可信；</li>
+  <li>断言是否被存档原文支持，是 IV 级；</li>
+  <li>专家盲评，是 VI 级；</li>
+  <li>LLM 评委打分，是 VIII 级，最不可信。</li>
+</ul>
+<p>这样读者一眼就能看出，哪些差距是硬的，哪些只是评委的看法。</p>
+
+<h2 id="s12"><span class="no">12</span>复核说明</h2>
+<ul>
+  <li><strong>版本：</strong>arXiv 接口显示只有 v1（published 2026-06-29）。分类 cs.CY。全文没有 GitHub、HuggingFace 或项目页链接。</li>
+  <li><strong>比例重算：</strong>从附录表 11 去掉 1 篇研究和 1 篇立场文章，剩 24 个可运行系统，逐项计数：
+    <ul>
+      <li>代码 20、提示词 17、种子或运行记录 9、结果挑选 16、人工介入 21、新颖性检查 9；</li>
+      <li>LLM 时代 22 个（去掉 CAMEO，2020 年；ReviewAdvisor，2021 年）、AI/ML 方向 19 个（去掉 5 个对照系统）两种口径；</li>
+      <li>全部与表 4、表 5 一致。</li>
+    </ul></li>
+  <li><strong>参考文献：</strong>
+    <ul>
+      <li>用 pdftotext 抽出参考文献，按"条目首行不缩进"切分。分页处的换页符要先去掉，否则跨页条目会被切成两段。共 499 条，其中 490 条带 arXiv 编号。</li>
+      <li>arXiv 编号全部用 arXiv export API 查询，比对标题和第一作者。</li>
+      <li>9 条期刊或会议论文，用 Crossref 解析 DOI；没有 DOI 的按标题查。</li>
+      <li>请求里没有带任何个人信息。</li>
+    </ul></li>
+  <li><strong>与我们文件夹对照：</strong>按标题和关键词在正文及参考文献里搜索，逐篇确认。</li>
+  <li><strong>kappa ≈ 0.2：</strong>是用全部 24 个系统的等级分布，近似估计 10 个抽样系统的碰巧一致率。没有拿到两位编码人的原始标注，算不出准确值。</li>
+  <li><strong>解析时踩过的坑：</strong>最初有 160 条因为 arXiv 接口限流没查到，有 49 条因为"两位作者用 and 连接、没有逗号"被误判为第一作者不符。重查和逐条人工比对后，两类问题都排除了。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2604.03173" target="_blank">Reference Hallucinations</a>（引用真伪的程序化核验）·
+  <a href="https://arxiv.org/pdf/2603.05912" target="_blank">DeepFact</a>（专家先审计后评分）·
+  <a href="https://arxiv.org/pdf/2606.05241" target="_blank">Search-Time Contamination</a>（它唯一引用的我们文件夹里的论文）·
+  <a href="https://arxiv.org/pdf/2509.04664" target="_blank">Why LMs Hallucinate</a>
+</footer>
+</div>
+</body>
+</html>

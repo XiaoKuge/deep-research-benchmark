@@ -1,7 +1,7 @@
 """第五阶段小规模检验：匿名化六份报告，生成扰动版本。"""
 import json, os, random, re, sys
 SRC = os.path.expanduser("~/github/mofa-research/docs/deep-research-of-deep-research")
-DST = os.path.expanduser("~/github/mofa-research/docs/deep-research-benchmarks-2026/research-plan/stage5-pilot")
+DST = os.path.dirname(os.path.abspath(__file__))
 SECRET = sys.argv[1]  # 映射表存放处（评委看不到）
 files = {
     "ChatGPT": "deep-research-report-chatgpt.md",

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepResearch-9K 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>DeepResearch-9K 精读：一座"谜题工厂"，和它没人检查的出厂质量</h1>
+  <p class="dek">9,000 道合成的多跳搜索题，主要用来训练，顺带当考题</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2603.01152" target="_blank">arXiv 2603.01152</a> v2（2026-06-20；v1 2026-03-01）· SIGIR 2026 短文（6 页）·
+    <a href="https://arxiv.org/pdf/2603.01152" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 香港城市大学 Xiangyu Zhao 组 + 百度 Dawei Yin 等 + 深圳技术大学<br>
+    <b>数据和代码</b>
+    <a href="https://huggingface.co/datasets/artillerywu/DeepResearch-9K" target="_blank">HuggingFace</a>（2026-02-06 建，最后更新 2026-04-21，未标许可）·
+    <a href="https://github.com/Applied-Machine-Learning-Lab/SIGIR2026_DeepResearch-R1" target="_blank">GitHub</a>（训练框架 Apache-2.0，2026-04-21 补上出题脚本）<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 7 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>基本信息"GitHub（训练框架 Apache-2.0）"<br><span class="note">应改为：</span>〔更正〕仓库顶层没有许可证；Apache-2.0 只在 <code>DeepResearch-R1/</code> 子目录下，继承自 verl 框架 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 4 节"训练时的奖励：也是 DeepSeek-V3 给的"；第 7.5 节把"训练时给奖励"列为 DeepSeek-V3 的六个角色之一<br><span class="note">应改为：</span>〔更正〕注明"论文如此说，代码不同"：公开代码对本数据集用的是精确匹配奖励 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 2 节"论文怎么说 / 脚本里实际是什么"对照表<br><span class="note">应改为：</span>〔补充〕漏了两级兜底路径：重试失败后改用简化提示，最后一级题目直接写成"Search for specific details about …"，答案取原数据集的答案，两级都不经过质检和去重 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.4 节只提到 BrowseComp-Plus 表 4 中的 24.94% 和 22.50%<br><span class="note">应改为：</span>〔补充〕同表下一行的准确率是 23.73%，恰为本文 L3 的教师正确率，但可由 712/3,000 算出，可能纯属巧合；另可补充：图 4 中 7 个数字不能写成"答对题数除以 1,774" <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 0 节"由 DeepSeek-V3 改写成 L1/L2/L3"<br><span class="note">应改为：</span>〔更正〕这是推断，不是原文：论文只明确说抽实体用 DeepSeek-V3；另外论文对"DeepSeek-V3"引用了两篇不同的文献（[35] 和 [36]） <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 3 节"标题叫'Benchmark Dataset'，但实际上主要是训练数据"<br><span class="note">应改为：</span>〔更正〕就设计重心而言成立，但论文第 1、3、4.2、4.3、6 节有明确的评测声称，应当按评测基准审视 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"SIGIR 2026 短文（6 页）"<br><span class="note">应改为：</span>〔更正〕"6 页"与 arXiv 备注一致，但 PDF 含参考文献共 8 页；"短文"在论文中没有找到依据；不影响结论 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>关于例题：</strong>这份数据是明文公开的，没有加密，也没有 canary 标记。本文的数字是把两个 parquet 文件（共 12,974 行）全部读出来统计的。引用的题目有两类：论文图 1 的例题，以及我从公开数据里随机抽的样本。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">打个比方：一座谜题工厂</a></li>
+    <li><a href="#s2">9,000 道题怎么来</a></li>
+    <li><a href="#s3">训练集，还是考题？</a></li>
+    <li><a href="#s4">怎么判分</a></li>
+    <li><a href="#s5">结果</a></li>
+    <li><a href="#s6">名词小抄</a></li>
+    <li><a href="#s7">弱在哪</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">和前四篇对照</a></li>
+    <li><a href="#s10">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s11">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它是什么：</strong>从 HotpotQA 等三个老牌多跳问答数据集里各抽 1,000 道题，让 DeepSeek-V3 改写成 L1 / L2 / L3 三个难度，共 9,000 道。再让通义的 Tongyi-DeepResearch-30B 全部做一遍，把它的搜索过程存下来当训练数据。</li>
+  <li><strong>主要用途是训练，</strong>顺带切出一个测试集：教师模型做错的 3,974 道里随机拿 1,774 道。</li>
+  <li><strong>论文的结论：</strong>
+    <ul>
+      <li>L3 很难，教师只答对 23.73%，"和 BrowseComp-Plus 一样难"；</li>
+      <li>用它训练的 3B 小模型在测试集上 22.50%，超过 DeepSeek-V3 的 20.18%。</li>
+    </ul></li>
+  <li><strong>我复核后发现的问题：</strong>
+    <ul>
+      <li>出题脚本里唯一的"质检"是检查长度和格式，<strong>没有人、也没有程序核对过答案对不对、是否唯一</strong>；</li>
+      <li>L3 有 69.3% 是一段没有问号的叙述，根本没说要答什么，教师在这些题上错了 87%；</li>
+      <li>"难题集"里有 45.5% 是这种题；</li>
+      <li>L1 和 L2 的教师正确率几乎一样（72.5% 对 71.3%），难度分级没分开；</li>
+      <li>"和 BrowseComp-Plus 一样难"的依据 24.94%，和 BrowseComp-Plus 官方榜上这个模型的成绩（33%–68%，视检索器和工具设置而定）对不上，却恰好等于 BrowseComp-Plus 论文里另一个模型的成绩。</li>
+    </ul></li>
+  <li><strong>适合的用法：</strong>当作"带完整搜索过程的合成训练数据"来研究，可以；当作评测基准，不建议。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>打个比方：一座谜题工厂</h2>
+<p>想象一座流水线工厂，原料是现成的简单问答题，产品是越来越难猜的谜题：</p>
+<ol>
+  <li><strong>拿原料：</strong>从 HotpotQA、2WikiMultihopQA、MuSiQue 各抽 1,000 道题。这三个数据集都是 2018–2022 年发布的经典多跳问答。</li>
+  <li><strong>挑一个起点：</strong>让 DeepSeek-V3 从每道题里抽出人名、地名、年份等"实体"，随机挑一个当起点（种子实体）。</li>
+  <li><strong>接力：</strong>从起点出发，找相关的下一个实体，再下一个……
+    <ul>
+      <li>L1 只要起点的 3 个属性；</li>
+      <li>L2 走 A → B → C 两步；</li>
+      <li>L3 走 5–6 步的"接力赛"。</li>
+    </ul></li>
+  <li><strong>蒙面：</strong>把名字、日期、地点换成描述。
+    <ul>
+      <li>L1 只换同义词，比如"北京"换成"中国的首都"；</li>
+      <li>L2 去掉 1–2 个关键实体的专名；</li>
+      <li>L3 全部换成描述，写成一大段套着从句的叙述。</li>
+    </ul></li>
+  <li><strong>试做：</strong>让教师模型 Tongyi-DeepResearch-30B 联网做每一道题，把思考和搜索过程全部记下来。</li>
+</ol>
+<div class="ex">
+  <div class="h">论文图 1 的 L3 例题（原文英文，这里意译）</div>
+  <p>传说中在出埃及时与君王对峙的立法者，其经典里描述了一座刻下诫命的山。山脚下有一座古老的修道院堡垒，保存过现存最古老的圣经抄本之一；这部抄本在 19 世纪被一位欧洲学者发现，他的取得方式饱受争议。抄本的一部分如今藏于一座冷战时曾被分割的城市里的大型学术图书馆。这座图书馆叫什么？</p>
+  <p>答案：莱比锡大学图书馆。链条是：摩西 → 西奈山 → 圣凯瑟琳修道院 → 西奈抄本 → 蒂申多夫 → 莱比锡。</p>
+  <p>注意：这道"L3"在图里只用了 <strong>2 次</strong>工具调用就解出来了，而论文说 L3 至少要 15 次搜索。此外，题面说"冷战时曾被分割的城市"，而冷战时被分割的城市是柏林。莱比锡属于东德，本身没有被分割，图里的推理却说莱比锡"符合被分割的背景"。这道展示题本身就不太严谨。</p>
+</div>
+
+<h2 id="s2"><span class="no">2</span>9,000 道题怎么来</h2>
+<p>论文第 3 节描述了四步：抽种子、建链条、蒙面、"基于规则的质量保证"。2026-04-21，作者在 GitHub 上补上了出题脚本 <code>data/create_data.py</code>。对照脚本，可以看清每一步实际做了什么：</p>
+<div class="tbl"><table>
+  <tr><th>论文怎么说</th><th>脚本里实际是什么</th></tr>
+  <tr><td>每个原始题生成三个难度</td><td>是的。每个原始题依次生成 L1、L2、L3，编号为 <code>{序号}_L1/L2/L3</code>。3,000 × 3 = 9,000</td></tr>
+  <tr><td>L3 每一步都必须需要一次独立搜索，"没有任何一个维基页面包含两个以上相邻实体"</td><td>只是写在给 DeepSeek-V3 的提示词里的一句要求，<strong>脚本没有检查</strong></td></tr>
+  <tr><td>L3 至少需要 15 次搜索</td><td>也只是提示词里的一句"难度目标"，没有检查</td></tr>
+  <tr><td>"基于规则的质量保证"</td><td>函数 <code>check_difficulty_fast</code>：题目至少 40 个字符；L3 不能有换行、不能有 "(A)""Step 1""First," 这类列表标记。另外按题目文本的 MD5 去掉完全相同的题。<strong>就这些</strong></td></tr>
+  <tr><td>"可核实的答案"</td><td>答案是 DeepSeek-V3 生成题目时一并给出的 <code>short_answer</code>，生成温度 0.8。没有任何核对答案对错或是否唯一的步骤</td></tr>
+  <tr><td>"质量标准来自 BrowseComp-Plus 的高质量样例"</td><td>脚本里看不到。论文说是"用 LLM 分析 BrowseComp-Plus 样例后总结出写作准则"</td></tr>
+</table></div>
+<p>论文说全程只花了 200 美元的搜索 API 费。但同一段也写了还用了约 8,064 个 A100 GPU 小时。按每小时 1–2 美元算，是 8,000–16,000 美元。"低成本"只算了搜索费。</p>
+
+<h3>三个难度：设计意图和实际表现</h3>
+<div class="tbl"><table>
+  <tr><th>难度</th><th>设计</th><th class="num">题目长度中位数</th><th class="num">教师正确率</th><th class="num">教师搜索次数（平均 / 中位数）</th></tr>
+  <tr><td>L1</td><td>3 个属性 + 同义词，"严格限定 1–2 次搜索"</td><td class="num">92 字符</td><td class="num">72.47%</td><td class="num">5.31 / 3</td></tr>
+  <tr><td>L2</td><td>A → B → C 两步链</td><td class="num">153 字符</td><td class="num">71.33%</td><td class="num">10.74 / 4</td></tr>
+  <tr><td>L3</td><td>5–6 步接力，"至少 15 次搜索"</td><td class="num">407 字符</td><td class="num">23.73%</td><td class="num">19.28 / 13</td></tr>
+</table></div>
+<p class="aside">正确率来自论文表 1，三个数都和 Hard 子集各难度的题数对得上。搜索次数是我数的：教师轨迹里名为 <code>search</code> 的工具调用（一次调用可以带多个查询词），不含 <code>visit</code>（打开网页）。论文图 2 给的平均数是 4.30 / 10.74 / 20.23：L2 完全一致，L1 和 L3 有出入，论文没说是怎么数的。</p>
+
+<h2 id="s3"><span class="no">3</span>训练集，还是考题？</h2>
+<p>标题叫 "Benchmark Dataset"，但实际上主要是训练数据。HuggingFace 上只有两个文件夹：</p>
+<div class="tbl"><table>
+  <tr><th>名字</th><th class="num">条数</th><th>是什么</th></tr>
+  <tr><td>DeepResearch-9K</td><td class="num">9,000</td><td>全部题目，每条带难度、教师的完整搜索过程、"最终答案"（即出题时的标准答案）</td></tr>
+  <tr><td>DeepResearch-Hard</td><td class="num">3,974</td><td>上面那 9,000 里教师做错的部分（L1 826、L2 860、L3 2,288）。我核对过：3,974 条全部包含在 9K 里，答案字段完全相同</td></tr>
+</table></div>
+<p>训练和测试是这样分的（来自 README，和论文一致）：</p>
+<ul>
+  <li><strong>训练集 7,226 条</strong> = 教师做对的 5,026 条 + 从 Hard 里随机挑的 2,200 条；</li>
+  <li><strong>测试集 1,774 条</strong> = Hard 里剩下的那些。</li>
+</ul>
+<p>两个要点：</p>
+<ul>
+  <li><strong>测试集只由"教师做错的题"组成。</strong>README 说这是有意的，用来考"能不能纠正教师的错误"。</li>
+  <li><strong>那 2,200 条是哪些，没有公开。</strong>数据里没有题目编号，仓库里也没有切分脚本或随机种子，所以别人复现不出同一个测试集。另外 README 链接的独立 "DeepResearch-Hard" 数据集并不存在，Hard 只是同一个数据集里的一个文件夹。</li>
+</ul>
+
+<h2 id="s4"><span class="no">4</span>怎么判分</h2>
+<ul>
+  <li><strong>准确率：</strong>DeepSeek-V3 当评委，判最终答案对不对。论文说评委提示词"在代码网站上"，但我在仓库里没找到。</li>
+  <li><strong>搜索次数：</strong>每条轨迹调用了几次搜索。用来说明难度分级有效。</li>
+  <li><strong>训练时的奖励：</strong>也是 DeepSeek-V3 给的。</li>
+</ul>
+
+<h2 id="s5"><span class="no">5</span>结果</h2>
+<ul>
+  <li><strong>教师模型直接做全部 9,000 道：</strong>L1 72.47%，L2 71.33%，L3 23.73%，总体 55.84%。</li>
+  <li><strong>"L3 和 BrowseComp-Plus 一样难"：</strong>论文说教师在 BrowseComp-Plus 上是 24.94%，和 L3 的 23.73% 接近（这个依据有问题，见 7.4）。</li>
+  <li><strong>训练实验</strong>（Qwen2.5-3B 和 Llama-3.2-3B，PPO 和 GRPO，直接强化学习和先模仿再强化学习两种）：
+    <ul>
+      <li>Qwen2.5-3B 直接强化学习约 12%，先模仿再强化学习超过 20%；</li>
+      <li>最好的是 Llama-3.2-3B + PPO 直接强化学习，22.50%；</li>
+      <li>DeepSeek-V3 直接做是 20.18%。</li>
+    </ul></li>
+  <li><strong>论文的结论：</strong>3B 小模型"超过了更大的 DeepSeek-V3"，达到"最先进水平"。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>名词小抄</h2>
+<dl class="gl">
+  <dt>多跳问答</dt><dd>答案要经过几步推理才能得到。比如"某电影导演的妻子是谁"：先找导演，再找妻子。</dd>
+  <dt>种子实体</dt><dd>造题的起点，比如一个人名或地名。</dd>
+  <dt>实体模糊化</dt><dd>把名字、日期、地点换成描述，让人没法直接搜。"北京"变成"中国的首都"，"维多利亚时代中期"代替具体年份。</dd>
+  <dt>教师模型</dt><dd>拿来示范的强模型，这里是 Tongyi-DeepResearch-30B。它的解题过程用来教小模型。</dd>
+  <dt>轨迹</dt><dd>模型解一道题的全过程：每一步想了什么、搜了什么、看到了什么。</dd>
+  <dt>先模仿再强化学习</dt><dd>先让小模型照着教师的轨迹学（监督微调，SFT），再用"答对给奖励"的方式继续练（强化学习，RL）。</dd>
+  <dt>直接强化学习</dt><dd>不先模仿，直接从基础模型开始用奖励练（Zero-RL）。</dd>
+  <dt>PPO / GRPO</dt><dd>两种常用的强化学习算法。</dd>
+  <dt>LLM 评委</dt><dd>让一个大模型来判答案对不对。</dd>
+</dl>
+
+<h2 id="s7"><span class="no">7</span>弱在哪</h2>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>答案判得准吗</td><td class="weak">弱</td><td>标准答案没人核对过，有 12% 的 L2 答案本身就是一段描述而不是名字；评委是出题的同一个模型（见 7.1、7.5）</td></tr>
+  <tr><td>② 比较</td><td>分差可信吗</td><td class="weak">弱</td><td>测试集复现不出来；22.50% 对 20.18% 的差距和误差差不多大；只跑一次（见 7.6、7.7）</td></tr>
+  <tr><td>③ 推广</td><td>难度分级、"和 BrowseComp-Plus 一样难"成立吗</td><td class="weak">弱</td><td>L1、L2 没分开；L3 的难主要来自没说要答什么；对照数字对不上（见 7.2–7.4）</td></tr>
+  <tr><td>④ 意义</td><td>分高 = 深度研究能力强吗</td><td class="weak">弱</td><td>训练出的模型没在任何外部 benchmark 上测过；原料是网上流传多年的老题（见 7.7、7.8）</td></tr>
+</table></div>
+
+<h3>7.1 没有人核对过题目和答案</h3>
+<p>出题脚本的"质检"只看长度和格式（见第 2 节）。为了看看实际质量，我按固定随机种子从 9,000 道里抽了 25 道（L1 8 道、L2 8 道、L3 9 道），逐条人工阅读。下面是我的判断，没有逐条上网核实，一道题可能同时有几种问题：</p>
+<div class="tbl"><table>
+  <tr><th>问题类型</th><th class="num">条数</th><th>例子</th></tr>
+  <tr><td>题目清楚、答案像是唯一的</td><td class="num">5</td><td>比如那道"一座大坝威胁世界遗产，遗址里的统治者留下一件常被称为早期人权宣言的文物，文物现藏于哪座博物馆"</td></tr>
+  <tr><td>L3 没有问句，没说要答什么</td><td class="num">7 / 9</td><td>整道题是一段以句号结尾的叙述，读完不知道该回答链条上的哪一个实体</td></tr>
+  <tr><td>答案字段是一段描述，不是名字</td><td class="num">4 / 8（L2）</td><td>问"1857 年在波士顿创办、原名 The Atlantic Monthly 的杂志叫什么"，标准答案是"发表了马丁·路德·金《伯明翰狱中书简》的那本期刊"。问题里已经写出答案，答案反倒被蒙了面</td></tr>
+  <tr><td>题目有歧义、可能有多个正确答案</td><td class="num">3</td><td>"那位前伊朗外长和某人谁出生得早"：伊朗有过很多位前外长。"《维奥莱特·诺齐埃尔》的主演哪年得了最佳女主角"：她得过不止一次</td></tr>
+  <tr><td>链条牵强或答案可疑</td><td class="num">4</td><td>"一个源自意大利探险家名字的词"，答案却是 "American" 而不是 "America"</td></tr>
+  <tr><td>标为 L2 却一搜就有</td><td class="num">2</td><td>题目把作者、年份、作品名几乎全写出来了</td></tr>
+</table></div>
+<p>25 道里，我认为"题目清楚、答案唯一、明确问了什么"的只有 5 道左右。样本小，比例只能当参考。下面两节用全量数据验证其中最突出的两个问题。</p>
+
+<h3>7.2 "难题集"里装的多半是坏题</h3>
+<ul>
+  <li><strong>L3 没有问号的比例：</strong>3,000 道 L3 里有 2,079 道（69.3%）通篇没有问号，2,077 道以句号结尾。L3 的出题提示词只要求"写成一段密集的叙述"，没要求最后提问。</li>
+  <li><strong>教师在这些题上错得更多：</strong>没问号的 L3 错了 87.0%，有问号的 L3 错了 52.1%。</li>
+  <li><strong>它们在 Hard 子集里的占比：</strong>Hard 里的 2,288 道 L3，有 1,808 道没有问号，占整个 Hard（3,974 道）的 45.5%。</li>
+  <li><strong>测试集也一样：</strong>测试集是从 Hard 里随机抽的，所以测试集里大约也有 45% 是这种"没说要答什么"的题。</li>
+</ul>
+<p>这暴露了一个常见陷阱：<strong>"强模型做错的题"不等于"难题"</strong>。没人核对时，选出来的往往是题目本身有毛病的那些。论文把 Hard 说成"深度研究智能体能力的极限"，但至少有很大一部分是出题质量的极限。</p>
+<p>另一个全量统计：L2 里有 362 道（12.1%）的标准答案本身是一段描述，比如"那位饰演芬尼克并在 LAMDA 受训的演员"。这违反了出题提示词自己的要求（"目标必须是具体、可核实的名字"）。</p>
+
+<h3>7.3 难度分级只分出了两档</h3>
+<ul>
+  <li>教师正确率：L1 72.47%，L2 71.33%，几乎一样。只有 L3 明显更难。</li>
+  <li>只看教师做对的题，搜索次数的中位数是：L1 2 次，L2 2 次，L3 10 次。L1 和 L2 在解题过程上也没有区别。</li>
+  <li>"L1 严格限定 1–2 次搜索"：实际只有 44%（1,333 / 3,000）的 L1 轨迹在 2 次以内。</li>
+  <li>"L3 至少要 15 次搜索才能解出"：教师做对的 712 道 L3 里，有 460 道（65%）不到 15 次就解出了，231 道只用了 5 次以内。</li>
+</ul>
+<p>所以"难度和搜索次数挂钩"更多是设计意图，数据并不支持。</p>
+
+<h3>7.4 "和 BrowseComp-Plus 一样难"的依据对不上</h3>
+<div class="ex">
+  <div class="h">一个数字的核对</div>
+  <ul>
+    <li>论文说：Tongyi-DeepResearch-30B-A3B 在 BrowseComp-Plus 上 24.94%，接近它在 L3 上的 23.73%。</li>
+    <li>BrowseComp-Plus 官方排行榜上，这个模型有 6 条成绩，主列在 33.98% 到 68.07% 之间。用 BM25 检索是 33.98%（GPT-4.1 判分为 33.37%），用 Qwen3-Embed-8B 检索是 44.46%（GPT-4.1 判分为 44.10%），用原生工具是 36.87% 和 51.93%。</li>
+    <li>24.94% 这个数，恰好出现在 BrowseComp-Plus 论文表 4：那是 <strong>gpt-oss-120B 低思考档 + Qwen3-Embed-8B</strong> 的准确率，不是 Tongyi 的。</li>
+    <li>巧的是，同一行的召回率是 22.50%，正好等于本文最佳模型的准确率。这可能纯属巧合，我无法判断。</li>
+  </ul>
+</div>
+<p>论文没给 Tongyi 在 BrowseComp-Plus 上用的检索器和设置，也没提供运行记录。合理的推断是，这个数字很可能抄错了行。即使没抄错，"一个模型在两套题上分数接近"也说明不了两套题一样难。何况本文的写作准则本身就是从 BrowseComp-Plus 样例里总结出来的。</p>
+
+<h3>7.5 同一个模型身兼数职</h3>
+<p>DeepSeek-V3 在这项工作里一共担任了六个角色：</p>
+<ol>
+  <li>从原始题里抽实体；</li>
+  <li>生成题目和标准答案；</li>
+  <li>把教师轨迹整理成"维基风格摘要"，作为训练时的检索语料；</li>
+  <li>训练时给奖励；</li>
+  <li>评测时当评委；</li>
+  <li>当被比较的对手（20.18%）。</li>
+</ol>
+<p>出题人、阅卷人、对手是同一个模型，"小模型超过了 DeepSeek-V3"就很难解读。比如，评委和出题者对答案的理解天然一致；而它作为对手做自己出的题，表现却只有 20%。这本身也说明题目或答案有问题。</p>
+
+<h3>7.6 训练和测试分不干净</h3>
+<ul>
+  <li>测试题和训练题来自同一批 3,000 道原始题。同一道原始题的 L1、L2、L3 可能一部分在训练集、一部分在测试集。</li>
+  <li>全量统计：有 298 个答案（不算 yes/no）同时出现在两个以上难度里；Hard 里有 307 道题，它的答案也是其他难度某道题的答案。这些题进测试集时，训练集里可能就有"同一个答案"的兄弟题。</li>
+  <li>训练用的检索语料是 DeepSeek-V3 根据教师轨迹生成的摘要。论文没说是否排除了测试题的轨迹，评测时用的是这份语料还是真实网络，也没说清楚。这一条我没能核实。</li>
+</ul>
+
+<h3>7.7 "最先进"的说法超出了实验</h3>
+<ul>
+  <li>摘要说训练出的模型"在有挑战性的深度研究 benchmark 上达到最先进水平"。但实验里训练出的模型只在自己的测试集上测过，对手只有 DeepSeek-V3 一个。没有在 BrowseComp-Plus 或其他外部 benchmark 上测。</li>
+  <li>测试集 1,774 道，准确率在 20% 左右时，误差约 ±1.9 个百分点（95% 置信区间，单个系统）。22.50% 对 20.18% 只差 2.3 个百分点，而且同时比较了 8 种训练配置、每种只跑一次。说"超过"证据不足。</li>
+</ul>
+
+<h3>7.8 原料是网上流传多年的老题</h3>
+<ul>
+  <li>L1 基本是原题换个说法。数据里第一道 L1 是"1970 年电影《Move》的导演和 1963 年电影《Méditerranée》的导演是不是同一个国家的人"。教师在思考过程里直接写出了 2WikiMultihopQA 的原题措辞（"Are director of film Move (1970 Film) and …"），说明它很可能见过原题。</li>
+  <li>433 道 L1（14.4%）的答案是 yes 或 no，瞎猜也有一半机会答对。</li>
+  <li>HotpotQA 2018 年、2WikiMultihopQA 2020 年、MuSiQue 2022 年就公开了，题目和答案早已大量进入模型的训练数据。</li>
+</ul>
+
+<h3>7.9 小问题</h3>
+<ul>
+  <li>9,000 道里有 4 对完全重复的题。</li>
+  <li>HuggingFace 数据集没有标许可证。论文本身是 CC BY-NC-ND 4.0，代码是 Apache-2.0。</li>
+  <li>README 里指向独立 "DeepResearch-Hard" 数据集的链接打不开。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>真的公开了全部数据和完整轨迹。</strong>12,974 行，每条带教师的思考和搜索过程。对研究"小模型怎么学搜索"很有用，本文的所有复核也是因此才做得了。</li>
+  <li><strong>补上了出题脚本。</strong>虽然暴露了质检的薄弱，但这种透明值得肯定。很多论文只给描述不给代码。</li>
+  <li><strong>"用搜索次数衡量难度"的思路是对的。</strong>只是需要实测，而不是只写在提示词里。</li>
+  <li><strong>训练实验给出了小规模的有用对照。</strong>同样 3B 的规模下，"先模仿"对 Qwen 很关键，对 Llama 不是必需。</li>
+  <li><strong>没有利益冲突的迹象。</strong>作者有百度的人，但被测和被训练的模型里没有百度的模型。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>和前四篇对照</h2>
+<div class="tbl"><table>
+  <tr><th></th><th>DRB II</th><th>DailyReport</th><th>BrowseComp-Plus</th><th>LiveDRBench</th><th>DeepResearch-9K</th></tr>
+  <tr><td>主要用途</td><td>评测</td><td>评测</td><td>评测</td><td>评测</td><td>训练，顺带切测试集</td></tr>
+  <tr><td>题目从哪来</td><td>从综述倒推</td><td>从热点正向写</td><td>BrowseComp 原题</td><td>把阅读题倒过来</td><td>老多跳题 + LLM 改写、蒙面</td></tr>
+  <tr><td>人工核验</td><td>专家审 400 小时</td><td>500 小时标注</td><td>14 人核验证据</td><td>作者逐题检查并补充答案</td><td><strong>没有</strong></td></tr>
+  <tr><td>答案形式</td><td>报告</td><td>报告</td><td>一个短答案</td><td>断言清单（带出处）</td><td>一个短答案</td></tr>
+  <tr><td>评委</td><td>Gemini-2.5-Pro</td><td>Gemini-3-flash</td><td>GPT-4.1 / Qwen3-32B</td><td>GPT-4o，作者人工复核</td><td>DeepSeek-V3（也是出题者）</td></tr>
+  <tr><td>难度依据</td><td>无</td><td>无</td><td>人工确认可解</td><td>定义了门槛，没实测</td><td>写在提示词里，没实测</td></tr>
+  <tr><td>能不能用</td><td>能</td><td>没有数据</td><td>能，但快考满分</td><td>能，注意时效和明文答案</td><td>训练研究可用，不建议当评测</td></tr>
+</table></div>
+
+<h2 id="s10"><span class="no">10</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<ol>
+  <li><strong>"所有 Agent 都没答对"先怀疑标准答案。</strong>汇总 5 份报告时，如果专家清单里某一条 5 家全漏了，或者 5 家都给出了和清单不一样的说法，先回头核对清单本身，再扣 Agent 的分。DeepResearch-9K 的 Hard 子集就是反面教材：把"强模型做错"直接当成"题难"。</li>
+  <li><strong>Prompt 必须明确"要交什么"。</strong>69% 的 L3 题没说要答什么，教师在这些题上就大面积失分。写那道共享 Prompt 时，每个子问题都要写清楚期望的产出：一个名字、一张表，还是一个判断加理由。</li>
+  <li><strong>出题、评委、选手不要是同一个模型。</strong>如果 5 个 Agent 里有某家的模型，评委就换成别家，或者用多家评委取多数。</li>
+  <li><strong>难度要实测，不要只靠设计。</strong>如果给子问题标了难易，先用一两个 Agent 试跑，看实际的搜索次数和正确率是否真的分出了档次。</li>
+  <li><strong>引用外部数字之前先核对原始出处。</strong>7.4 的那个 24.94% 就是例子。评测报告里引用的每一个"某模型在某榜单上多少分"，都应该链到可查的原始记录。</li>
+  <li><strong>可以借它的轨迹格式。</strong>如果 5 个 Agent 是自己搭的、能导出搜索过程，"思考 → 工具调用 → 返回结果"这种格式便于统计搜索次数、打开网页次数，以及有没有回头重想。</li>
+</ol>
+
+<h2 id="s11"><span class="no">11</span>复核说明</h2>
+<ul>
+  <li><strong>论文版本：</strong>arXiv 接口显示 v1 2026-03-01，v2 2026-06-20。本地 PDF 是 v2，SIGIR 2026 短文。</li>
+  <li><strong>数据：</strong>下载了 HuggingFace 上的两个 parquet 文件（DeepResearch-9K 9,000 行，DeepResearch-Hard 3,974 行），用 pyarrow 全量读取。以下都是全量统计：难度分布、Hard 与 9K 的包含关系、重复题、yes/no 答案、题目长度、教师搜索次数、没有问号的题、答案为描述的题、答案出现在题目里的题、跨难度共享答案。</li>
+  <li><strong>几个判别口径：</strong>
+    <ul>
+      <li>"没有问号"：题目文本里不含 "?"。</li>
+      <li>"答案是描述"：以 The / A / An 开头、超过 35 个字符、且含 that、who、whose、which 等从句词。这是启发式规则，会有少量误判。</li>
+      <li>"搜索次数"：数轨迹中 assistant 消息里 <code>name</code> 为 <code>search</code> 的 <code>&lt;tool_call&gt;</code>。</li>
+    </ul></li>
+  <li><strong>抽样：</strong>用随机种子 20261028 抽了 25 道题，判断是人工阅读得出的，没有逐条联网核实。</li>
+  <li><strong>出题脚本：</strong>读的是 GitHub 上 2026-04-21 提交的 <code>data/create_data.py</code>，其中 <code>MODEL_NAME</code> 留空，论文说用的是 DeepSeek-V3。</li>
+  <li><strong>BrowseComp-Plus 对照：</strong>
+    <ul>
+      <li>排行榜数据：<code>Tevatron/BrowseComp-Plus-results</code> 的 <code>agent_results.csv</code>（2026-10-20 版），里面 Tongyi-DeepResearch-30B-A3B 有 6 条成绩；</li>
+      <li>24.94% 的出处：BrowseComp-Plus 论文表 4。</li>
+    </ul></li>
+  <li><strong>没做的核查：</strong>
+    <ul>
+      <li>没查和 BrowseComp 原题的重叠：BrowseComp 是加密发布的，我没有解密；</li>
+      <li>没查测试题的轨迹有没有进训练检索语料：语料没有公开；</li>
+      <li>没有重跑任何模型。</li>
+    </ul></li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2508.06600" target="_blank">BrowseComp-Plus</a>（被拿来对照难度和总结写作准则）·
+  <a href="https://arxiv.org/pdf/2605.28721" target="_blank">LiveBrowseComp</a>（老题被背过的问题）·
+  <a href="https://arxiv.org/pdf/2606.05241" target="_blank">Search-Time Contamination</a> ·
+  <a href="https://arxiv.org/pdf/2508.04183" target="_blank">LiveDRBench</a>（同样用"倒置"造题，但有人工核验）
+</footer>
+</div>
+</body>
+</html>

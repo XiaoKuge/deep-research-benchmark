@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BrowseComp-Plus 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  .step{display:flex;gap:12px;margin:10px 0}
+  .step .n{flex:none;width:26px;height:26px;border-radius:50%;background:rgba(139,92,246,.2);color:#fff;
+    font-size:13px;text-align:center;line-height:26px;margin-top:2px}
+  .step .b{flex:1;min-width:0}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>BrowseComp-Plus 精读：把考场从整个互联网，搬进一间固定的图书馆</h1>
+  <p class="dek">它解决了"比得公平"，但没解决"考的是不是真本事"</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2508.06600" target="_blank">arXiv 2508.06600</a> v1（2025-08-08，至今唯一版本）· ACL 2026 ·
+    <a href="https://arxiv.org/pdf/2508.06600" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 滑铁卢大学 Jimmy Lin、Wenhu Chen 组，以及 CSIRO、CMU、昆士兰大学<br>
+    <b>数据和代码</b>
+    <a href="https://huggingface.co/datasets/Tevatron/browsecomp-plus" target="_blank">题目</a> ·
+    <a href="https://huggingface.co/datasets/Tevatron/browsecomp-plus-corpus" target="_blank">10 万份文档</a> ·
+    <a href="https://huggingface.co/datasets/Tevatron/BrowseComp-Plus-results" target="_blank">排行榜数据</a>（2026-10-20 更新）·
+    <a href="https://github.com/texttron/BrowseComp-Plus" target="_blank">GitHub</a>（MIT 许可）<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 4 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 3 节筛选表"人工核验"一行"175 道没通过……另有 42 道要用谷歌地图查距离；13 道答案不唯一或有歧义"<br><span class="note">应改为：</span>〔更正〕把"另有"改为"其中包括"。1,005 减 830 等于 175，附录 C 的这几类应包含在 175 道之内（推断） <a href="record-2508.06600_BrowseComp-Plus.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 5 节"发现 2""大多数模型每道题少搜 1–3 次"<br><span class="note">应改为：</span>〔更正〕"少搜约 1 至 2 次"：按表 1，7 个商业模型减少 0.79 至 1.96 次，其中 3 个不到 1 次 <a href="record-2508.06600_BrowseComp-Plus.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>抬头"ACL 2026"<br><span class="note">应改为：</span>〔更正〕标为"未核实" <a href="record-2508.06600_BrowseComp-Plus.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>抬头"GitHub（MIT 许可）"<br><span class="note">应改为：</span>〔补充〕补注：许可文件 2026-05-28 才加入仓库，此前没有许可文件 <a href="record-2508.06600_BrowseComp-Plus.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>关于例题：</strong>BrowseComp 系列的题目和答案都是加密发布的，还附了一句"canary"标记，意思是"这些数据不应以明文出现在网上"，目的是防止被爬进模型的训练数据。所以本文只用论文图 2 已经公开印出的那一道例题。其他题目我没有解密，也不转录。统计数字来自公开的标注文件和排行榜。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">打个比方：换了一个考场</a></li>
+    <li><a href="#s2">一道题从头到尾</a></li>
+    <li><a href="#s3">这间图书馆是怎么建的</a></li>
+    <li><a href="#s4">名词小抄</a></li>
+    <li><a href="#s5">它发现了什么</a></li>
+    <li><a href="#s6">弱在哪</a></li>
+    <li><a href="#s7">它做对了什么</a></li>
+    <li><a href="#s8">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s9">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它做了什么：</strong>把 OpenAI 的 BrowseComp（一套很难的"网上找答案"题）从"上整个互联网去搜"，改成"在一个固定的 10 万份文档的资料库里搜"。资料库里有每道题必需的证据，也故意混进了大量看着相关、其实没用的干扰文档。</li>
+  <li><strong>好处：</strong>大家用同一个资料库、同一种搜索工具，就能分清分数是"搜索工具的功劳"还是"模型的功劳"。而且可以复现，成本也低。</li>
+  <li><strong>最重要的发现：</strong>
+    <ul>
+      <li>同一个模型，只把搜索工具从老式的关键词搜索换成按意思搜索，准确率能翻一倍。</li>
+      <li>把证据直接递给模型，GPT-4.1 能答对 93.5%；让它自己用关键词搜索去找，只答对 14.6%。所以难点在"找"，不在"想"。</li>
+    </ul></li>
+  <li><strong>局限：</strong>
+    <ul>
+      <li>考的是"大海捞针找一个短答案"，不是"写研究报告"。</li>
+      <li>没测模型是不是早就背过答案。</li>
+      <li>排行榜一年多就从 70% 涨到 95%，快考满分了。</li>
+      <li>排行榜上的方案搜索设置各不相同，"同一套工具"的公平性正在流失。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>不能直接拿来评 5 个 Agent 的报告。但有三个做法可以借鉴：
+    <ul>
+      <li>给所有 Agent 同一个搜索环境；</li>
+      <li>把证据直接递给模型，看它能写成什么样（全知测试）；</li>
+      <li>记录每个 Agent 翻到了多少关键证据。</li>
+    </ul></li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>打个比方：换了一个考场</h2>
+<p>原来的 BrowseComp 像一场"开卷考试，可以上整个互联网查资料"。问题出在：</p>
+<ul>
+  <li>每个考生用的搜索引擎不一样，有人用 Google，有人用 Bing，有人用自家的；</li>
+  <li>网页每天都在变，今天能搜到的，明天可能就没了；</li>
+  <li>考生考得好，说不清是"人聪明"还是"搜索引擎好"。</li>
+</ul>
+<p>BrowseComp-Plus 把考场搬进了一间固定的图书馆：</p>
+<div class="tbl"><table>
+  <tr><th></th><th>原来的 BrowseComp</th><th>BrowseComp-Plus</th></tr>
+  <tr><td>资料从哪来</td><td>整个互联网，一直在变</td><td>固定的 100,195 份文档，不会变</td></tr>
+  <tr><td>搜索工具</td><td>各用各的，看不到内部</td><td>统一提供，可以随意替换</td></tr>
+  <tr><td>能不能分清功劳</td><td>不能，模型和搜索引擎绑在一起</td><td>能：固定模型换搜索工具，或固定搜索工具换模型</td></tr>
+  <tr><td>能不能复现</td><td>很难，网页会变</td><td>能，同样的设置跑两次，结果一样</td></tr>
+  <tr><td>标准答案之外还有什么</td><td>只有"问题 + 答案"</td><td>还标好了每道题需要哪几份证据文档</td></tr>
+  <tr><td>成本</td><td>要付商业搜索 API 的钱</td><td>本地搜索，不用付搜索费</td></tr>
+</table></div>
+
+<h2 id="s2"><span class="no">2</span>一道题从头到尾（论文图 2 的例题）</h2>
+<div class="step"><div class="n">1</div><div class="b"><strong>题目</strong>
+  <p>找出一篇 2023 年 6 月以前发表的研究论文的标题。这篇论文谈到了文化传统、科学过程和烹饪创新；它有三位作者，其中一位是西孟加拉邦的助理教授，另一位拥有博士学位。</p>
+  <p>标准答案：<em>The Fundamentals of Bread Making: The Science of Bread</em>（一篇讲面包制作科学的论文）。</p>
+  <p>这就是 BrowseComp 的典型风格：<strong>先想好一个冷门答案，再叠加一堆条件，让人很难直接搜到，但一旦找到又很容易核对。</strong></p>
+</div></div>
+<div class="step"><div class="n">2</div><div class="b"><strong>拆成线索，每条线索配一份证据文档</strong>
+  <ul>
+    <li>线索 1："2023 年 6 月前发表，谈到文化传统、科学过程、烹饪创新" → 论文在 ResearchGate 上的页面（日期 2023-05-17）。</li>
+    <li>线索 2："一位作者是西孟加拉邦的助理教授" → Haldia 理工学院某位老师的介绍页。</li>
+    <li>线索 3："另一位作者有博士学位" → 另一位作者的履历页（2009 年都柏林大学学院博士）。</li>
+  </ul>
+  <p>这三份是<strong>证据文档</strong>，其中直接写着答案的那份（论文页面）叫<strong>金文档</strong>。</p>
+</div></div>
+<div class="step"><div class="n">3</div><div class="b"><strong>准备干扰文档</strong>
+  <p>让 GPT-4o 把题目拆成几个小问题，比如"哪些研究论文提到了文化传统？""哪些研究论文提到了烹饪创新？"。每个小问题拿去 Google 搜，前 100 条结果都抓下来放进资料库。</p>
+  <p>这些文档看着很相关，其实帮不上忙，专门用来迷惑搜索。平均每道题配了 76 份干扰文档。</p>
+</div></div>
+<div class="step"><div class="n">4</div><div class="b"><strong>Agent 答题</strong>
+  <ul>
+    <li>Agent 只能用提供的搜索工具，在 10 万份文档里搜，可以搜很多次。</li>
+    <li>每次搜索返回 5 条结果，每条只给看文档开头的 512 个 token（大约三四百个英文单词）。</li>
+    <li>最后交三样东西：解释（引用文档编号）、简短答案、自报信心（0–100%）。</li>
+  </ul>
+</div></div>
+<div class="step"><div class="n">5</div><div class="b"><strong>判分</strong>
+  <ul>
+    <li>GPT-4.1 对照标准答案判对错（论文的做法；排行榜后来改用 Qwen3-32B 判，见 6.5）。</li>
+    <li>同时统计 Agent 一路上翻到了几份证据文档，以及它自报的信心准不准。</li>
+  </ul>
+</div></div>
+
+<h2 id="s3"><span class="no">3</span>这间图书馆是怎么建的</h2>
+<p>原版 BrowseComp 有 1,266 道题，最后只留下 830 道，筛掉了三分之一：</p>
+<div class="tbl"><table>
+  <tr><th>步骤</th><th class="num">剩下</th><th>被筛掉的原因</th></tr>
+  <tr><td>原版 BrowseComp</td><td class="num">1,266</td><td>只有问题和答案，没有出处</td></tr>
+  <tr><td>让 o3 联网找证据</td><td class="num">1,142</td><td>124 道 o3 没给出证据（格式出错，或没把握不答）</td></tr>
+  <tr><td>抓取 o3 给的网页</td><td class="num">1,005</td><td>137 道至少有一个网址抓不下来（有些网址是 o3 编出来的）</td></tr>
+  <tr><td>人工核验</td><td class="num">830</td><td>
+    <ul>
+      <li>175 道没通过。最常见的原因是证据不够，标注员补搜 20 分钟以上也没找齐。</li>
+      <li>另有 42 道要用谷歌地图查距离；13 道答案不唯一或有歧义。</li>
+      <li>还有一些原题本身就错了：例题里"写书的人"和"复出演戏的人"其实是同名的两个人。</li>
+    </ul></td></tr>
+</table></div>
+<p>人工核验由 14 名大学生标注员完成，用了 400 多小时。标注员要在文档里划出支撑每条线索的原文，再判断"这些证据合起来能不能把整道题答出来"。</p>
+<p>用公开的标注文件（<code>qrel_evidence.txt</code>、<code>qrel_golds.txt</code>）复核：</p>
+<ul>
+  <li>每道题的证据文档在 1–13 份之间，中位数 6 份，平均 6.1 份；</li>
+  <li>金文档在 1–9 份之间，平均 2.9 份；有 270 道题只有 1 份金文档；</li>
+  <li>每道题的金文档都包含在它的证据文档里，和论文的定义一致。</li>
+</ul>
+<p>资料库总共 100,195 份文档，平均每份约 5,200 个英文单词。</p>
+
+<h2 id="s4"><span class="no">4</span>名词小抄</h2>
+<dl class="gl">
+  <dt>BM25</dt><dd>老式关键词搜索。题目里的词在文档里出现得越多、越罕见，排得越靠前。它不懂同义词。</dd>
+  <dt>向量检索</dt><dd>比如 Qwen3-Embedding、ReasonIR。把题目和文档都变成表示"意思"的一串数字，按意思接近程度排序。它能认出"助理教授"和 "Assistant Professor" 是一回事。</dd>
+  <dt>证据文档</dt><dd>回答这道题必需的文档，每条线索至少一份。</dd>
+  <dt>金文档</dt><dd>证据文档里直接含有最终答案的那几份。</dd>
+  <dt>干扰文档</dt><dd>和题目沾边、但帮不上忙的文档，专门用来迷惑搜索（英文叫 hard negative）。</dd>
+  <dt>准确率</dt><dd>最终答案答对的比例。</dd>
+  <dt>召回率</dt><dd>Agent 整个过程中翻到的证据文档，占全部证据文档的比例。比如一道题有 6 份证据，Agent 翻到了 3 份，召回率就是 50%。</dd>
+  <dt>Recall@5</dt><dd>只看搜索工具排出的前 5 条结果，里面有多少证据文档。</dd>
+  <dt>nDCG@10</dt><dd>前 10 条结果的综合质量分：相关的排得越靠前，分越高。</dd>
+  <dt>校准误差</dt><dd>模型自报的信心和实际正确率差多少。说"90% 有把握"的题，实际也应该对九成左右；如果只对一半，就叫校准差。</dd>
+  <dt>全知测试</dt><dd>英文叫 oracle。不让模型自己搜，直接把全部证据文档递给它，看它能不能答对。用来分别量出"找"和"想"的上限。</dd>
+</dl>
+
+<h2 id="s5"><span class="no">5</span>它发现了什么</h2>
+<h3>发现 1：只换搜索工具，准确率能翻一倍</h3>
+<div class="tbl"><table>
+  <tr><th>模型</th><th class="num">用 BM25</th><th class="num">用 Qwen3-Embed-8B</th><th>变化</th></tr>
+  <tr><td>Claude Sonnet 4</td><td class="num">14.3%</td><td class="num">36.8%</td><td>翻了一倍多</td></tr>
+  <tr><td>Claude Opus 4</td><td class="num">15.5%</td><td class="num">36.1%</td><td>翻了一倍多</td></tr>
+  <tr><td>GPT-4.1</td><td class="num">14.6%</td><td class="num">35.4%</td><td>翻了一倍多</td></tr>
+  <tr><td>o3</td><td class="num">49.3%</td><td class="num">63.5%</td><td>+14 个百分点</td></tr>
+  <tr><td>GPT-5</td><td class="num">55.9%</td><td class="num">70.1%</td><td>+14 个百分点</td></tr>
+</table></div>
+<p>换句话说，过去在"上网搜"的 benchmark 上看到的模型差距，有一部分其实是搜索工具的差距。</p>
+
+<h3>发现 2：搜索工具好，还能省事、省钱</h3>
+<p>换成更好的搜索工具后，大多数模型每道题少搜 1–3 次，总花费也下降了：</p>
+<ul>
+  <li>GPT-5 跑完 830 道题：400 美元降到 361 美元；</li>
+  <li>o3：836 美元降到 741 美元；</li>
+  <li>Opus 4：2,044 美元降到 1,842 美元。</li>
+</ul>
+<p>道理很简单：前几次就搜到了有用的东西，就不用反复换词再搜。</p>
+
+<h3>发现 3：难点在"找"，不在"想"</h3>
+<div class="ex">
+  <div class="h">全知测试</div>
+  <ul>
+    <li>GPT-4.1 自己用 BM25 搜：答对 14.6%。</li>
+    <li>把全部证据文档直接给它：答对 93.5%。剩下 6.5% 的错题，人工逐题看过，都能从证据里推出答案，是模型自己推理错了。</li>
+    <li>开源的 Qwen3-32B：自己搜 10.4%，直接给证据 83.3%。</li>
+  </ul>
+</div>
+<p>这同时说明两件事：</p>
+<ul>
+  <li><strong>资料库本身是够用的</strong>，题目确实能从里面的文档答出来；</li>
+  <li><strong>开源模型和闭源模型"读懂资料"的能力差得不多</strong>，差距主要在"会不会搜"。</li>
+</ul>
+
+<h3>发现 4：开源模型的短板是"不爱搜"</h3>
+<p>提示词里明确要求使用搜索工具，Qwen3-32B 平均每道题却只搜 0.9 次，Search-R1 只搜 1.7 次。GPT-5 和 o3 每道题要搜 20 多次。搜得少，自然找不到。</p>
+
+<h3>发现 5：让模型多想一想，它就会多搜几次，也答得更好</h3>
+<p>gpt-oss-20B 有低 / 中 / 高三档"思考力度"。搭配 Qwen3-Embed-8B：</p>
+<ul>
+  <li>低档：每题搜 1.9 次，答对 13.4%；</li>
+  <li>高档：每题搜 23.9 次，答对 34.6%。</li>
+</ul>
+<p>代价是更慢、更贵。</p>
+
+<h3>发现 6：只看开头 512 个 token 不够</h3>
+<p>给 GPT-4.1 加一个"打开全文"的工具后，准确率从 35.4% 涨到 43.6%，平均每题只多打开 1.85 份全文。</p>
+<p>原因是：只有 86.5% 的题，答案出现在至少一份金文档的前 512 个 token 里。剩下的题，只看开头是看不到答案的。</p>
+
+<h3>发现 7：单独考搜索工具，最好的也很弱</h3>
+<p>直接拿整道题当搜索词：</p>
+<ul>
+  <li>Qwen3-Embed-8B 排出的前 5 条结果里，只有 14.5% 的证据文档；</li>
+  <li>BM25 只有 1.2%。</li>
+</ul>
+<p>这类叠了一堆条件的题，用一句话一次搜不到，必须拆开来多轮搜。</p>
+
+<h3>发现 8：很多模型"自信过头"</h3>
+<p>GPT-4.1 + BM25 只答对 14.6%，但校准误差高达 69%。意思是它自报的信心远高于实际正确率，常常"说很有把握，其实答错了"。</p>
+<p>GPT-5 + Qwen3-Embed-8B 的校准误差只有 9%，信心和实际表现基本对得上。</p>
+
+<h2 id="s6"><span class="no">6</span>弱在哪</h2>
+<p>从"分数高"推到"这个 Agent 研究能力强"，要过四关：</p>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>答对答错判得准吗</td><td class="strong">强</td><td>答案是短短一个标题、人名或数字，对照着判，很少有争议</td></tr>
+  <tr><td>② 比较</td><td>两个系统的分差可信吗</td><td class="mid">中</td><td>资料库和工具固定，可以复现。但 830 道题的误差约 ±3 个百分点，而论文不给误差范围（见 6.7）</td></tr>
+  <tr><td>③ 推广</td><td>换成真实互联网，排名还一样吗</td><td class="mid">中偏弱</td><td>资料库只有 10 万份，干扰文档的来源单一；"扩大资料库后结论不变"只在最弱的两个模型上验证过（见 6.3）</td></tr>
+  <tr><td>④ 意义</td><td>分数高 = 研究能力强吗</td><td class="weak">弱</td><td>考的是找一个短答案，不考写报告；也没排除"背过答案"（见 6.1、6.4）</td></tr>
+</table></div>
+
+<h3>6.1 考的是"大海捞针"，不是"写研究报告"</h3>
+<ul>
+  <li>BrowseComp 的题是倒着出的：先想好一个冷门答案，再叠条件。真实用户很少会这样提问。</li>
+  <li>最后只判一个短答案对不对。综合多方信息、处理互相矛盾的说法、判断来源可不可信、写清楚结论，这些都不在考查范围内。</li>
+  <li>所以它适合测"搜索 + 推理"这一项基本功，不能代替对研究报告的评测。</li>
+</ul>
+
+<h3>6.2 830 道题是筛过的，筛子是 o3</h3>
+<ul>
+  <li>每道题的证据链，最初都是 o3 在网上找的。o3 找不到证据的题（124 道）、给的网址抓不下来的题（137 道），直接被筛掉了。</li>
+  <li>剩下的题，偏向"o3 这类系统找得到证据"的那部分。而 o3 和同家族的 GPT-5 恰好是榜上成绩最好的。</li>
+  <li>资料库里放的主要是 o3 那条证据链上的网页。如果某个 Agent 本来会走另一条同样正确的路（从别的网页推出答案），在这间图书馆里就走不通，因为那些网页不在库里。标注员可以补搜文档，这一点缓解了一部分问题。</li>
+  <li>这是一个值得注意的偏向风险，论文没有分析。我也没法证明它确实影响了排名。</li>
+</ul>
+
+<h3>6.3 图书馆小，"扩大资料库"的检验只做了一半</h3>
+<ul>
+  <li>真实互联网有几十亿个网页，这里只有 10 万份。干扰文档全部来自"GPT-4o 拆出小问题 → Google 前 100 条"，长得都差不多。</li>
+  <li>论文把 FineWeb-edu 的文档混进来，资料库扩大到 977 万份，约为原来的 100 倍。论文自己写的是"约 10 倍"，但按它给的数字算是 100 倍左右。它的结论是"结论不变，10 万份够用"。</li>
+  <li>但在端到端准确率上，这个检验只用了 Search-R1 和 Qwen3-32B。这两个模型本来只有 3–10% 的准确率，几乎在地板上，变化本来就小。论文没有在 GPT-5、o3 这些强模型上检验。</li>
+</ul>
+
+<h3>6.4 没测"是不是早就背过答案"</h3>
+<ul>
+  <li>原版 BrowseComp 2025 年 4 月就公开了。加密只能防爬虫，解密方法本身是公开的，每个跑评测的人都要先解密。题目和答案迟早会以各种形式进入训练数据。</li>
+  <li><a href="https://arxiv.org/pdf/2605.28721" target="_blank">LiveBrowseComp</a> 测过：在原版 BrowseComp 上，Agent 不联网最多能答对 44.5%。</li>
+  <li>固定资料库只控制了"搜"这一侧，管不住模型的记忆。一个背过答案的模型，可以直接拿答案去搜，找几份文档来引用就行。</li>
+  <li>论文没有报告"不给搜索工具时能答对多少"这个基线。<strong>这是最便宜、也最该补的一项检验。</strong></li>
+</ul>
+
+<h3>6.5 排行榜上的"公平"在流失</h3>
+<p>排行榜目前有 87 条成绩，52 条是作者团队自己跑的，其余是各家把结果文件发邮件提交的。</p>
+<ul>
+  <li><strong>设置不再统一。</strong>论文的标准设置是"每次 5 条结果、每条看 512 个 token"。排行榜上的方案五花八门：一次返回 200 条、可以在代码环境里随意调用、最多 8 个 Agent 协作。这又回到了"分不清是谁的功劳"的老问题。</li>
+  <li><strong>例子：</strong>第一名 95.18% 是 AI21 的方案：GPT-5 加混合检索，最多 8 个 Agent 协作，平均每题搜 209 次。论文里 GPT-5 每题只搜 22 次左右。两个数字放在同一张榜上，比的已经不是同一件事。</li>
+  <li><strong>判分模型换了。</strong>论文用 GPT-4.1 判分，仓库现在默认用开源的 Qwen3-32B。排行榜的主列按仓库说明应该就是 Qwen3-32B 判的，另有一列"GPT-4.1 判分"。47 条两列都有的成绩里，主列平均高 0.7 个百分点。差得不多，但新旧成绩并不完全可比。</li>
+</ul>
+
+<h3>6.6 快考满分了</h3>
+<ul>
+  <li>2025 年 8 月论文发布时，最高是 GPT-5 的 70.1%。到 2026 年 4 月，已经有 95.18%。现在 80% 以上的有 10 条，90% 以上的有 4 条。</li>
+  <li>作为参照：把全部证据直接递给 GPT-4.1，也只答对 93.5%。头部方案已经超过了这个"全知"参照线。</li>
+  <li>830 道题全部公开，没有藏起来的测试集。各家可以反复在同一套题上调方案，分数越调越高，但不一定代表真实能力提高了同样多。</li>
+  <li>对最强的系统来说，这套题的区分力已经快用完了。拿它比较搜索工具（固定一个中等模型，只换检索器）还有用。</li>
+</ul>
+
+<h3>6.7 误差：差 3 个百分点以内基本分不出来</h3>
+<p>830 道题的准确率，自带约 ±3 个百分点的误差（95% 置信区间，单个系统）。论文的表格没有给误差范围，每个设置也只跑了一次。</p>
+<div class="ex">
+  <div class="h">例子</div>
+  <p>同样用 Qwen3-Embed-8B，Opus 4 是 36.1%，Sonnet 4 是 36.8%。0.7 个百分点的差距远小于误差，不能说 Sonnet 4 更强。在同一批题上做配对比较能把误差压小一些，但论文没有做。</p>
+</div>
+
+<h3>6.8 人工标注的质量只交代了一句</h3>
+<ul>
+  <li>14 名大学生标注员，交叉抽查的一致率"平均 80% 以上"。也就是说，大约每 5 个判断里可能有 1 个两人意见不同。</li>
+  <li>论文没有给出更细的一致性指标，也没说分歧是怎么处理的。</li>
+</ul>
+
+<h2 id="s7"><span class="no">7</span>它做对了什么</h2>
+<ul>
+  <li><strong>控制变量。</strong>固定资料库、统一搜索接口，第一次能干净地回答"这个提升是搜索工具带来的，还是模型带来的"。</li>
+  <li><strong>可以复现，而且便宜。</strong>不依赖会变的网页和收费的搜索 API。GPT-5 跑完全部题目约 360 美元。</li>
+  <li><strong>标好了每道题的证据文档。</strong>可以按信息检索领域的标准方法（TREC 那一套）单独考搜索工具。这对 BrowseComp 来说是第一次。</li>
+  <li><strong>全知测试设计得好。</strong>一个实验就把"找"和"想"拆开了，结论清楚。</li>
+  <li><strong>诚实地交代了筛掉了什么、为什么筛</strong>（附录 C），还举了原题出错的例子。</li>
+  <li><strong>防泄漏。</strong>题目加密发布，附 canary 标记。</li>
+  <li><strong>全部公开</strong>：数据、代码、排行榜，以及每个设置的 API 花费（附录表 8）。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<p>BrowseComp-Plus 不评研究报告，所以不能拿来当主考。但它的几个做法可以直接借：</p>
+<ol>
+  <li><strong>给 5 个 Agent 同一个搜索环境。</strong>
+    <ul>
+      <li>如果 5 个 Agent 是自己搭的、可以换搜索工具：给它们同一个搜索 API、同样的返回条数、同样的读全文规则。这样分数差距才能归到 Agent 身上。</li>
+      <li>如果是商业产品、换不了：至少把每家引用和访问过的网页全部存档，事后核验都对照存档。</li>
+    </ul></li>
+  <li><strong>做一次全知测试。</strong>汇总 5 份报告里核验为真的证据，交给同一个模型去写报告，看看"资料齐全时能写多好"。拿每个 Agent 的报告和它对比，就能看出差距是"没找到"还是"没写好"。</li>
+  <li><strong>记录证据召回。</strong>如果能拿到搜索记录，统计每个 Agent 翻到了汇总证据里的多少份关键证据。这是比最终报告更早、更客观的过程指标。</li>
+  <li><strong>让 Agent 给关键结论标信心。</strong>事后检查"说很有把握的结论"是不是真的更常对。这就是校准，能看出哪个 Agent 会"自信地说错"。</li>
+  <li><strong>把设置写死、写进预登记。</strong>工具、返回条数、能不能读全文、时间和花费上限，5 家要一样，并且记录下来。排行榜的教训是：设置一不统一，比的就是配置而不是 Agent。</li>
+  <li><strong>先测"背没背过"。</strong>每个 Agent 先在关掉搜索的情况下答一遍核心问题。答得出来的部分，后面的搜索得分就要打折扣看。</li>
+</ol>
+
+<h2 id="s9"><span class="no">9</span>复核说明</h2>
+<ul>
+  <li><strong>论文版本：</strong>arXiv 接口显示只有 v1（2025-08-08），本地 PDF 就是这一版。</li>
+  <li><strong>数据形态：</strong>HuggingFace 上的题目数据（830 题，约 2.8 GB，含文档全文）除 <code>query_id</code> 外全部混淆。本文没有下载和解密。</li>
+  <li><strong>证据和金文档的统计：</strong>来自 GitHub 上的 <code>topics-qrels/qrel_evidence.txt</code> 和 <code>qrel_golds.txt</code>，与论文报告的平均数（6.1 和 2.9）一致。</li>
+  <li><strong>排行榜：</strong>来自 <code>Tevatron/BrowseComp-Plus-results</code> 的 <code>agent_results.csv</code>（2026-10-20 版，87 条）。"Qwen3-32B 比 GPT-4.1 判分平均高 0.7 个百分点"，是在同时有两列成绩的 47 条上算的。</li>
+  <li><strong>±3 个百分点：</strong>按二项分布估算，830 道题、准确率在 35%–70% 之间时，95% 置信区间的半宽约 3.1–3.4 个百分点。</li>
+  <li><strong>6.2 的"o3 偏向"：</strong>是基于构建流程的推断，没有数据验证。</li>
+  <li><strong>"扩大约 100 倍"：</strong>论文写的是 roughly 10 times，但按它给的数字（100,195 → 9,771,311）算是约 97 倍。"10 倍"可能是和 FineWeb 样本的"10B tokens"弄混了。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2605.28721" target="_blank">LiveBrowseComp</a>（背答案问题与实时出题）·
+  <a href="https://arxiv.org/pdf/2606.05241" target="_blank">Search-Time Contamination</a>（搜到答案的泄漏）·
+  <a href="https://arxiv.org/pdf/2604.14683" target="_blank">DR³-Eval</a>（每题一个沙盒语料）·
+  <a href="https://arxiv.org/pdf/2603.01152" target="_blank">DeepResearch-9K</a>
+</footer>
+</div>
+</body>
+</html>

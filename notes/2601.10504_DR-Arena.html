@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DR-Arena 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>DR-Arena 精读：让考官现场出题、追问、判胜负的擂台</h1>
+  <p class="dek">与人类排行榜的 0.94 一致，其实是 6 个点上的一次对调</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2601.10504" target="_blank">arXiv 2601.10504</a> v3（2026-07-12）· ACL 2026 主会口头报告 ·
+    <a href="https://arxiv.org/pdf/2601.10504" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 新加坡国立大学、南洋理工、新加坡管理大学、新加坡科技设计大学，通讯作者 Wenxuan Zhang<br>
+    <b>代码和数据</b>
+    <a href="https://github.com/iNLP-Lab/DR-Arena" target="_blank">GitHub</a>（未声明许可证，最后提交 2026-07-08）·
+    <a href="https://inlp-lab.github.io/DR-Arena/" target="_blank">项目页和在线排行榜</a>（对局记录公开）<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 1 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>"复核说明"写"查询时 arXiv 接口没有返回结果，未能核对版本列表"<br><span class="note">应改为：</span>〔补充〕本次 arXiv 接口返回第 3 版（2026-07-12），备注"Accepted to ACL 2026 as an oral presentation and selected as an SAC Highlight"，与精读页一致。记录称"没有发现错误，以下只是更新"；另说明精读页依据公开对局记录得出的数字本次没有重做 <a href="record-2601.10504_DR-Arena.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>关于数字：</strong>这个仓库把论文那场锦标赛的对局记录放在了项目网站的数据文件里（<code>battle-index.json</code> 和逐场回放）。本文"重算"的数字都来自这些公开记录。题目和标准答案本来就是公开的，没有加密，也没有 canary 标记。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">核心思路：考官当场出题的擂台</a></li>
+    <li><a href="#s2">题目怎么来：信息树</a></li>
+    <li><a href="#s3">怎么比、谁来判</a></li>
+    <li><a href="#s4">排名怎么算</a></li>
+    <li><a href="#s5">结果</a></li>
+    <li><a href="#s6">名词小抄</a></li>
+    <li><a href="#s7">弱在哪</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">和已精读几篇对照</a></li>
+    <li><a href="#s10">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s11">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它做了什么：</strong>不用固定题库，而是让一个 LLM 考官（Gemini-3-Pro）先从网上爬一棵"信息树"，再照着树出题、手握标准答案判两个 Agent 谁答得好。分不出高下就追问更难的题，直到一方领先 2 分。最后用象棋那套 Elo 积分给 6 个系统排名。</li>
+  <li><strong>主要卖点：</strong>和人类众包投票的 LMSYS Search Arena 排行榜相比，Spearman 相关 0.94，号称"不用人工就能逼近人类判断"。</li>
+  <li><strong>我们复算了什么：</strong>论文的锦标赛对局记录是公开的（297 场、683 轮）。按这些记录重算，排名顺序和论文一致。</li>
+  <li><strong>这个 0.94 有多结实？</strong>
+    <ul>
+      <li>6 个系统里只要有一对相邻名次互换，就是 0.94；</li>
+      <li>人类排行榜上第 2 到第 6 名只差 17 分，本来就分不太开；</li>
+      <li>对对局做重抽样，只有 32% 的情况能复现 ρ ≥ 0.94；</li>
+      <li>作者自己的线上排行榜扩容之后，这 6 个系统的顺序和人类榜的相关降到 0.83。</li>
+    </ul></li>
+  <li><strong>还要注意：</strong>
+    <ul>
+      <li>评委提示词明确要求"模拟人类偏好"，会奖励加粗、列表、引用数量。拿人类偏好来验证这样的评委，有点像自己出题自己答。</li>
+      <li>被测的是"带搜索的聊天模型"给的短回答，中位数 200–320 个英文单词，不是深度研究报告。</li>
+      <li>号称"实时"，但题目所依据的信息树是开赛前一次性爬好的，几个月后还在用。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>两两比较、自适应追问、Bradley–Terry 排名这套思路可以借鉴。但 5 个 Agent 只有 10 对，要做全对全比较，不能抽着比；A/B 顺序要互换；评分人不能看到别人的判定。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>核心思路：考官当场出题的擂台</h2>
+<p>打个比方：普通 benchmark 像一张印好的考卷，谁来考都是这几道题。题目一旦泄露或过时就没用了。</p>
+<p>DR-Arena 更像一场<strong>口试擂台</strong>：</p>
+<ul>
+  <li>两位选手同时上台，考官手里拿着一份现查的资料（信息树），当场出一道题；</li>
+  <li>两人作答后，考官对照资料判谁好，判"好很多""好一点"或"平手"；</li>
+  <li>如果难分高下，考官就追问：一方推理链断了，就出更绕的题（加深度）；一方漏了信息，就让他汇总更多项（加广度）；</li>
+  <li>谁先领先 2 分，这一场就结束；</li>
+  <li>每两位选手之间，要在同一批 30 份资料上各打一场。</li>
+</ul>
+<p>考官同时担任三个角色：出题人、阅卷人、决定下一题怎么出的人。在论文里，这三个角色都由 Gemini-3-Pro 担任。</p>
+
+<h2 id="s2"><span class="no">2</span>题目怎么来：信息树</h2>
+<ol>
+  <li><strong>选话题：</strong>从 Google Trends 的分类里抽一个话题，比如"掌机 → 任天堂历史"。</li>
+  <li><strong>找树根：</strong>用这个话题去搜网页，挑一个链接很多的综合页（比如维基百科词条）当根节点。</li>
+  <li><strong>长成树：</strong>沿着页面里的链接往下爬。往下一层叫"加深度"（比如掌机历史 → 某款掌机 → 技术规格）；同一层多爬几个兄弟页面叫"加广度"（比如同时期的几款掌机）。</li>
+  <li><strong>出题：</strong>考官从树上挑一个节点，把目标的名字藏起来，让人顺着关系链推出来（深度）；再要求汇总同层几个对象的属性（广度）。同时写出两份评分清单：深度清单检查"找对对象没有"，广度清单检查"细节齐不齐"。</li>
+</ol>
+<div class="ex">
+  <div class="h">论文图 2 的例题</div>
+  <ul>
+    <li><strong>题目：</strong>找出"Game &amp; Watch 系列的设计者"在 1989 年设计的掌机，再把它和 Atari Lynx、Sega Game Gear 比较，重点讲屏幕技术和电池需求之间的取舍，以及这些规格如何影响便携性。</li>
+    <li><strong>深度：</strong>Game &amp; Watch 的设计者 → 横井军平 → 他 1989 年的作品 → Game Boy。</li>
+    <li><strong>广度清单：</strong>Game Boy 用 4 节 AA 电池、屏幕无背光；Lynx 和 Game Gear 用 6 节 AA 电池、彩色背光屏；由此带来的续航差距。</li>
+  </ul>
+</div>
+<ul>
+  <li><strong>防止"抄近路"：</strong>考官被要求不能在题目里提源网页的标题或文件名。不过附录 B 的示例题自己就违反了这条，比如直接点名"Marketing Eye Atlanta 的分析""Steve Pond 在 Rolling Stone 第 537 期的乐评"。</li>
+  <li><strong>题量：</strong>论文的锦标赛用了 30 棵树。按项目数据里的元信息，这批树（共 50 棵，用了其中 30 棵）是在 <strong>2025-11-21 到 11-23</strong> 一次性爬好的。8 棵的树根是维基百科，其余来自苹果支持页、克利夫兰诊所、美国劳工统计局等网站。</li>
+  <li><strong>题目长什么样：</strong>从公开回放看，题目更像"冷知识组合题"。例如：某地区的苹果零售店，对 ZEISS 光学镜片和"批量购买"的退货规定有什么不同。附录 B 的例题还有：把"冰桶挑战走红的五个原因"和"美国劳工统计局公关专员 2024 年薪资"拼成一道题。</li>
+</ul>
+
+<h2 id="s3"><span class="no">3</span>怎么比、谁来判</h2>
+<h3>五档判决</h3>
+<ul>
+  <li><strong>好很多（+2 分）：</strong>赢家找对了对象，细节也没错；输家找错了对象，或漏了一大块。</li>
+  <li><strong>好一点（+1 分）：</strong>赢家有小错，或者两人都对、但一方格式和完整度明显更好（论文管这叫"风格赢家"）。</li>
+  <li><strong>平手：</strong>分"两人都好"和"两人都差"。论文附录说，平手里 99.3% 是"两人都差"。</li>
+</ul>
+<p>判出胜负后，考官还要给输家贴一个标签：<strong>深度失败</strong>（找错对象）、<strong>广度失败</strong>（漏了细节）、两者都有，或者<strong>都没有</strong>（只是格式、引用不如对方）。下一轮怎么出题，就看这个标签。</p>
+
+<h3>评委看什么：不只是对错</h3>
+<p>评委提示词（附录 A.2，和仓库里 <code>core/examiner.py</code> 一致）的第一句话是：</p>
+<blockquote>Super-User Evaluator (Simulating Human Preference) … While accuracy is paramount, you must also heavily weigh comprehensiveness, formatting, and helpfulness<span class="src">评判提示词</span></blockquote>
+<p>评分标准里明确写着：</p>
+<ul>
+  <li>奖励加粗标题、项目符号、表格；</li>
+  <li>引用数量越多越好；</li>
+  <li>信息越密集越好。</li>
+</ul>
+<p>两份回答的引用数量，会直接标在回答上方给评委看。</p>
+
+<h3>评委会不会上网核查？</h3>
+<p><strong>不会。</strong>代码里的评判就是一次普通的模型调用，只能对照清单和自己的记忆。附录 G 有两个反例：</p>
+<ul>
+  <li><strong>G.2：</strong>清单是对的，评委却凭错误记忆把它推翻，判错了一场。</li>
+  <li><strong>G.3：</strong>清单本身错了，评委凭记忆纠正了过来。</li>
+</ul>
+<p>按论文的人工抽查，大约 11% 的清单条目和来源网页对不上。</p>
+
+<h3>三种偏差怎么处理</h3>
+<div class="tbl"><table>
+  <tr><th>偏差</th><th>论文怎么做</th><th>我们从公开数据看到的</th></tr>
+  <tr><td>位置偏差：先看到的回答更占便宜</td><td>没有处理。评判时 A、B 的顺序不交换</td><td>每一对选手在 25–28 场对局里，A、B 位置始终固定（比如 GPT-5.1 对 o3，GPT-5.1 永远是 A）。控制实力后看不出 A 位占便宜，但设计上没做控制</td></tr>
+  <tr><td>长度偏差：越长越容易赢</td><td>每道题给字数上限，评委被要求"别惩罚略超的回答"</td><td>抽样 238 个分出胜负的回合里，赢家回答更长的只占 44.5%，看不出偏好长回答。字数上限起了作用</td></tr>
+  <tr><td>同家族偏差：评委偏袒自家模型</td><td>换 GPT-5.2 和 Claude-Opus-4.6 重判了 50 场，一致率分别为 93.0% 和 88.7%</td><td>Gemini 评委、Gemini-2.5 选手排第 2，和人类榜一致，看不出偏袒。但重判用的仍是 Gemini 出的题和清单，只检验了"判"这一步</td></tr>
+</table></div>
+
+<h2 id="s4"><span class="no">4</span>排名怎么算</h2>
+<h3>赛制：瑞士制，不是全对全</h3>
+<ul>
+  <li>6 个选手两两都比要 15 对。论文改用瑞士制：每轮按当前积分配对实力相近的对手，同一对不重复，共打 4 轮。</li>
+  <li>按公开记录，实际打了 <strong>11 对</strong>。第 3 轮只配出 2 对：剩下的 Claude 和 Perplexity 第 1 轮已经交过手，不能重复，于是这一轮轮空。</li>
+  <li>没交过手的 4 对是：GPT-5.1 对 Perplexity、Gemini 对 Claude、o3 对 Perplexity、Grok 对 Claude。</li>
+  <li>每一对在 25–28 棵树上各打一场（论文说 30 棵），共 297 场。</li>
+  <li>几乎每场都以"有一方领先 2 分"结束（297 场里 296 场），平均 2.3 轮。</li>
+</ul>
+<h3>积分：Bradley–Terry</h3>
+<p>每场的胜负用 Bradley–Terry 模型折算成 Elo 式积分。这个模型就是"按胜负记录反推每人实力"：A 比 B 高 100 分，大约意味着 A 赢 B 的概率是 64%。</p>
+<p>我们用公开的 297 场胜负重算，并做了 1,000 次重抽样（每次有放回地重抽 297 场，再算一遍积分），得到 95% 区间和名次分布：</p>
+<div class="tbl"><table>
+  <tr><th>系统</th><th class="num">论文积分</th><th class="num">重算积分</th><th class="num">95% 区间</th><th>重抽样后的名次</th></tr>
+  <tr><td>GPT-5.1-Search</td><td class="num">1084</td><td class="num">1105</td><td class="num">1046–1171</td><td>第 1 名占 77%</td></tr>
+  <tr><td>Gemini-2.5-Pro-Grounding</td><td class="num">1054</td><td class="num">1064</td><td class="num">1008–1127</td><td>第 2 名占 58%</td></tr>
+  <tr><td>o3-Search</td><td class="num">1041</td><td class="num">1033</td><td class="num">972–1095</td><td>第 3 名占 69%</td></tr>
+  <tr><td>Grok-4-Search</td><td class="num">958</td><td class="num">942</td><td class="num">878–1001</td><td>第 4 / 5 / 6 名：40% / 35% / 23%</td></tr>
+  <tr><td>Perplexity-Sonar-Pro</td><td class="num">942</td><td class="num">941</td><td class="num">869–1002</td><td>第 4 / 5 / 6 名：37% / 41% / 19%</td></tr>
+  <tr><td>Claude-Opus-4.1-Search</td><td class="num">921</td><td class="num">916</td><td class="num">841–976</td><td>第 6 名占 58%</td></tr>
+</table></div>
+<p>结论：<strong>排名顺序能复现</strong>，积分差 1–21 分。论文没说积分的具体算法，可能是 Elo 的逐场更新方式不同。前 3 名大体分得开，后 3 名其实挤在一起：Grok 和 Perplexity 只差 2 分。论文没有报告任何区间。</p>
+
+<h2 id="s5"><span class="no">5</span>结果</h2>
+<h3>和人类排行榜对照（论文表 3）</h3>
+<div class="tbl"><table>
+  <tr><th>系统</th><th class="num">人类榜 Elo</th><th class="num">人类榜名次</th><th class="num">DR-Arena Elo</th><th class="num">DR-Arena 名次</th></tr>
+  <tr><td>GPT-5.1-Search</td><td class="num">1201</td><td class="num">1</td><td class="num">1084</td><td class="num">1</td></tr>
+  <tr><td>Gemini-2.5-Pro-Grounding</td><td class="num">1142</td><td class="num">2</td><td class="num">1054</td><td class="num">2</td></tr>
+  <tr><td>o3-Search</td><td class="num">1139</td><td class="num">3</td><td class="num">1041</td><td class="num">3</td></tr>
+  <tr><td>Grok-4-Search</td><td class="num">1138</td><td class="num">4</td><td class="num">958</td><td class="num">4</td></tr>
+  <tr><td>Claude-Opus-4.1-Search</td><td class="num">1130</td><td class="num">5</td><td class="num">921</td><td class="num">6</td></tr>
+  <tr><td>Perplexity-Sonar-Pro-High</td><td class="num">1125</td><td class="num">6</td><td class="num">942</td><td class="num">5</td></tr>
+</table></div>
+<p>名次只在第 5、6 名对调，Spearman 0.94，Pearson 0.74。人类榜是 LMSYS Search Arena 截至 2025-12-03 的数据。</p>
+
+<h3>和其他 benchmark 比（论文表 4）</h3>
+<p>论文还算了 6 个已有 benchmark 的排名和人类榜的相关：BrowseComp 0.76，DeepResearch Bench 0.40，LiveNewsBench 0.20，LiveSearchBench −0.11，LiveResearchBench −0.63，FutureSearch 的 Deep Research Bench −0.90。据此称 DR-Arena 达到"最先进"。7.6 节会说明这些数为什么不能直接比。</p>
+
+<h3>消融和其他分析</h3>
+<ul>
+  <li><strong>去掉评分清单</strong>，只凭评委直觉：Spearman 从 0.94 降到 0.83。</li>
+  <li><strong>只打第 1 轮</strong>：0.77；<strong>打到第 2 轮</strong>：已经 0.94。</li>
+  <li><strong>实力越接近，打的轮数越多</strong>：11 对选手上，相关系数 r = −0.61，p = 0.045。比如 GPT-5.1 对 Grok 平均不到 2 轮，Gemini 对 o3 要 2.8 轮。</li>
+  <li><strong>失败类型画像</strong>：GPT-5.1 的深度失败和广度失败差不多（27% 对 26%）；o3 很少找错对象（深度 19%），但常漏细节（广度 30%）；Perplexity 和 Grok 相反，更常找错对象。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>名词小抄</h2>
+<dl class="gl">
+  <dt>信息树</dt><dd>从一个网页出发、沿链接爬出来的一组网页。上下层之间构成推理链，同层之间可以拿来做比较汇总。</dd>
+  <dt>深度 / 广度</dt><dd>深度：要推几步才能找到对象。广度：要汇总多少个对象的信息。</dd>
+  <dt>考官</dt><dd>同时出题、判卷、决定下一题怎么出的那个 LLM，论文里是 Gemini-3-Pro。</dd>
+  <dt>自适应追问</dt><dd>按上一轮谁输、怎么输，决定下一题加深度还是加广度。论文叫 Adaptive Evolvement Loop。</dd>
+  <dt>瑞士制</dt><dd>每轮按当前积分配对实力相近、还没交过手的对手。比全对全省事，但不是每一对都会碰面。</dd>
+  <dt>Elo / Bradley–Terry</dt><dd>按胜负记录反推实力分。分差 100 分，大约对应 64% 的胜率。</dd>
+  <dt>Spearman ρ</dt><dd>两份排名的名次相关。完全一致是 1。6 个对象时，只要一对相邻名次互换，就从 1 降到 0.94。</dd>
+  <dt>重抽样（bootstrap）</dt><dd>从现有对局里有放回地重抽同样多场，反复计算。用来估计"换一批对局，结果会变多少"。</dd>
+</dl>
+
+<h2 id="s7"><span class="no">7</span>弱在哪</h2>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>每一轮谁赢判得准吗</td><td class="mid">中</td><td>有清单兜底，换两个评委一致率 89–93%。但评委不上网、约 11% 的清单条目有误，而且有约五分之一的回合只靠格式和引用数分胜负（见 7.2）</td></tr>
+  <tr><td>② 比较</td><td>名次可信吗</td><td class="mid">中偏弱</td><td>前 3 名大体可信，后 3 名在误差内；瑞士制有 4 对没交手；没有报告任何区间（见 4、7.3）</td></tr>
+  <tr><td>③ 推广</td><td>换时间、换对手，排名还一样吗</td><td class="weak">弱</td><td>作者自己的线上榜扩容后，这 6 个系统的顺序变了（见 7.1）；"实时"打了折扣（见 7.5）</td></tr>
+  <tr><td>④ 意义</td><td>赢 = 深度研究能力强吗</td><td class="weak">弱</td><td>被测的是短回答的搜索聊天模型；对照的金标准是众包偏好；评委又被要求模仿这种偏好（见 7.2、7.4）</td></tr>
+</table></div>
+
+<h3>7.1 "0.94"是 6 个点上的一次对调，而金标准本身就分不开</h3>
+<ul>
+  <li><strong>门槛很低：</strong>6 个对象时，只要有一对相邻名次互换，Spearman 就是 0.94。Pearson 0.74 在 6 个点上，p 约 0.09，不显著。</li>
+  <li><strong>人类榜本身拉不开：</strong>人类榜上第 2 到第 4 名分别是 1142、1139、1138，只差 4 分；第 2 到第 6 名也只差 17 分。论文没有给人类 Elo 的置信区间。按众包排行榜的一般情况，这么小的差距很可能落在区间之内（推断）。拿一份前后几名本来分不开的榜去比名次，"一致"和"不一致"都有很大的运气成分。</li>
+  <li><strong>重抽样：</strong>把公开的 297 场对局重抽 1,000 次，每次重算排名、再和人类榜比。结果只有 32% 的情况 ρ ≥ 0.94，95% 区间是 0.60 到 1.00。</li>
+  <li><strong>作者自己的线上榜：</strong>2026 年 4 月，作者把线上排行榜扩到 15 个模型，又打了近千场对局。按更新后的线上排行榜，原来 6 个系统的顺序变成 o3 > GPT-5.1 > Gemini-2.5 > Grok > Claude > Perplexity，和人类榜的 Spearman 是 0.83，和论文自己的排名只有 0.77。线上榜的对手和评委设置可能不同（仓库当前配置的考官已改成 GPT-5.2），所以这不是严格的复现实验，但足以说明这个排名并不稳。</li>
+</ul>
+
+<h3>7.2 评委被要求"模仿人类偏好"，再拿人类偏好来验证</h3>
+<ul>
+  <li>LMSYS Search Arena 是普通用户在两个带搜索的聊天回答之间投票选出的榜。DR-Arena 的评委提示词开宗明义要求"模拟人类偏好"，并具体规定要奖励格式和引用数量。</li>
+  <li>评委按众包用户的口味打分，再证明自己"和众包用户一致"，能说明评委学会了这种口味，说明不了评委判对了研究质量。</li>
+  <li>按公开记录，分出胜负的回合里有 <strong>21%</strong> 被标为"都没有"失败类型，也就是输家没犯任何清单上的错，只是格式或引用不如对方。论文自己的统计是 18%。</li>
+</ul>
+<div class="ex">
+  <div class="h">附录 D 的完整对局，第 1 轮</div>
+  <ul>
+    <li>Perplexity 和 Claude 找出的对象、价格、电池数完全相同。</li>
+    <li>评委判 Perplexity 好一点，理由是它用了项目符号，Claude 写成了段落。</li>
+    <li>这一分在最后的胜负里是算数的。</li>
+  </ul>
+</div>
+<p>论文解释 Claude 和 Perplexity 在两份榜上名次对调的原因时说："人类会被 Claude 漂亮的文笔打动，评委则严格惩罚编造的数字。"可评委自己就被要求奖励 Perplexity 那种列表式写法，文风偏好并不只存在于人类一方。</p>
+
+<h3>7.3 Claude 和 Perplexity 的"对调"，其实来自赛程</h3>
+<ul>
+  <li>公开记录里，这两位在第 1 轮正面交手了 28 场：<strong>Claude 赢 14 场，Perplexity 赢 13 场，平 1 场</strong>。正面对决 Claude 还略占上风。</li>
+  <li>两人积分的差别来自瑞士制安排的其他对手：
+    <ul>
+      <li>Claude 后面碰的是 o3 和 GPT-5.1，分别输了 7 胜 18 负、7 胜 21 负；</li>
+      <li>Perplexity 碰的是 Grok 和 Gemini，打成 14 胜 14 负、10 胜 16 负。</li>
+    </ul></li>
+  <li>所以论文用来解释"为什么和人类不一致"的那个名次对调，在数据上主要是赛程造成的，不是评委"更严格"造成的。</li>
+  <li>换个模型写法也会变：给积分模型加一项"A/B 位置效应"再拟合，后 3 名的顺序变成 Perplexity > Claude > Grok，三人只差 8 分。</li>
+</ul>
+
+<h3>7.4 测的是"带搜索的聊天模型"给的短回答，不是深度研究</h3>
+<ul>
+  <li>6 个被测对象都取自 LMSYS Search Arena：GPT-5.1-Search、o3-Search 这类带搜索功能的聊天模型，不是 OpenAI Deep Research、Gemini Deep Research 这类深度研究产品。</li>
+  <li>每题有字数上限，评委默认上限 300 词。抽样回放里各家回答的中位长度只有 200–320 个英文单词。</li>
+  <li><strong>有没有真的在搜？</strong>
+    <ul>
+      <li>仓库代码通过 OpenRouter 的普通对话接口调用这些模型，配置里没有开启联网搜索的设置（没有 <code>:online</code> 后缀，也没传搜索工具）。1 月份发布的版本，接口地址还是占位符 "your_url_here"。</li>
+      <li>抽样的 132 场对局、558 个回答里，几乎都附有参考文献，但带真实网址的比例很低：GPT-5.1 只有 7%，Gemini 13%，Claude 19%，Perplexity 22%，o3 24%，Grok 88%。</li>
+      <li>例如有一轮，GPT-5.1 的参考文献写的是"Apple Online Store – Consumer Sales Policies"这样的描述，没有链接。</li>
+    </ul>
+    这些不能证明模型没联网：接口可能在别处开启了搜索，只是没记在代码里。但从公开材料确认不了"被测模型真的在实时搜索"（推断，未实际运行）。</li>
+</ul>
+
+<h3>7.5 "实时"打了折扣</h3>
+<ul>
+  <li>论文的卖点是"用实时爬取的信息树，让评分标准和现实世界同步"。可锦标赛用的 30 棵树是 2025-11-21 到 11-23 一次性爬好的。</li>
+  <li>回放里有回答注明"accessed 14 Dec 2025"，比赛在三周后。2026 年 2 到 4 月的线上排行榜对局，用的还是同一批树。</li>
+  <li>比赛中确实可以临时再爬，用来加深、加宽，但树根和多数节点是事先固定的。这和论文批评的"静态题库会过时"只是时间尺度不同：苹果退货政策、价格这类信息，几个月就会变。</li>
+</ul>
+
+<h3>7.6 和其他 benchmark 的对比不可比</h3>
+<ul>
+  <li>表 4 里每个 benchmark 能和人类榜对上的模型只有 4–6 个，而且各不相同。</li>
+  <li>4 个模型时，Spearman 只能取 1、0.8、0.6……这几个值，对调一对就差 0.2–0.4。</li>
+  <li>表中 −0.11、−0.63、0.76、−0.90 这四个数，在没有并列名次的情况下按定义取不到，说明计算时有并列或用了别的口径，论文没有说明。</li>
+  <li>用不同的模型集合、不同的 N 去比相关系数高低，得不出"最先进"。</li>
+</ul>
+
+<h3>7.7 人工验证不独立，规模也小</h3>
+<ul>
+  <li>表 8 的"专家标注员"按附录 H 是 2 名计算机系本科生。</li>
+  <li>他们审核 30 场、64 轮对局时，拿到的材料包括"考官的自动日志"，也就是先看到了考官的判定，再回答"你同意考官的判定吗"。在这种条件下，和考官一致性 κ = 0.91 会被抬高。这和 MiroEval、DailyReport 是同一类问题。</li>
+  <li>出题方式的消融（表 5）：2 人在 50 个样本上三选一，对照组是故意拿掉结构的版本（"不给推理链"只得 2%），差距大是意料之中。</li>
+</ul>
+
+<h3>7.8 公开数据和论文对不上，代码不完整</h3>
+<ul>
+  <li><strong>规模：</strong>论文说每对打 30 棵树、全部 789 轮；公开记录是 11 对、每对 25–28 棵树，共 297 场、683 轮。</li>
+  <li><strong>判决分布：</strong>公开记录里"好一点"51.5%、"好很多"34.2%、平手 13.9%，论文是 49.9%、32.8%、17.2%。</li>
+  <li><strong>失败类型分布：</strong>公开记录里广度 37.4%、深度 35.7%、"都没有"21.1%、"两者都有"5.3%，论文是深度 32.3%、广度 30.0%、"两者都有"19.5%、"都没有"18.1%。"两者都有"差得最多。</li>
+  <li><strong>代码：</strong>README 说 30 棵树放在 <code>web_tree/data/dataset/trees/</code>，但仓库里没有 <code>web_tree</code> 目录，爬树代码也不在。<code>evolvement_loop.py</code> 导入这些模块失败时会静默跳过，之后实例化爬虫会报错。我没有实际运行，推断按现状不能直接复现锦标赛。网站数据里有 47 份树的展示版 JSON。</li>
+  <li><strong>许可证：</strong>仓库没有声明许可证。</li>
+  <li><strong>文字和算法不一致：</strong>正文 3.3 节说"出现'好很多'就结束"，但算法 1 和附录 D 的实际对局都是看累计分差是否达到 2。附录 D 第 4 轮判了"好很多"，比赛却继续打了第 5 轮。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>考官手里有答案。</strong>题目和评分清单出自同一棵树，评委不用凭空判断。去掉清单后，和人类榜的相关从 0.94 降到 0.83，说明清单确实有用。</li>
+  <li><strong>自适应追问。</strong>实力接近的选手打更多轮，差距大的很快结束，算力花在难分的地方。轮数和实力差的负相关（r = −0.61）支持这一点。</li>
+  <li><strong>把失败分成"找错对象"和"漏细节"。</strong>能看出各家的短板在推理还是在搜集，比一个总分有用。</li>
+  <li><strong>对局记录公开。</strong>本文能逐场重算排名、做重抽样、找出 Claude 对 Perplexity 14 比 13 这样的细节，全靠它公开了数据。这一点在读过的几篇里属于前列。</li>
+  <li><strong>没有明显的长度偏好。</strong>字数上限加上提示，赢家更长的回合不到一半。</li>
+  <li><strong>交叉评委、坦白局限。</strong>换两个不同厂商的评委重判，并在附录里主动展示评委判错的案例。</li>
+  <li><strong>没有利益冲突。</strong>作者来自四所新加坡大学，被测的全是商业模型，没有自家产品。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>和已精读几篇对照</h2>
+<div class="tbl"><table>
+  <tr><th></th><th>DR-Arena</th><th>MiroEval</th><th>DREAM</th><th>LiveDRBench</th><th>DailyReport</th></tr>
+  <tr><td>比法</td><td>两两对战，Elo 排名</td><td>逐题打分，再汇总</td><td>逐项打分</td><td>断言对照标准答案</td><td>子任务级联打分</td></tr>
+  <tr><td>题从哪来</td><td>考官从现爬的信息树当场出</td><td>自家内测用户提问改写 + 自动生成</td><td>借用别家的 231 道题</td><td>把阅读题倒过来</td><td>热点话题正向写</td></tr>
+  <tr><td>评委是否上网核查</td><td>不上网，对照清单</td><td>事实核查在自家框架里跑</td><td>上网（卖点）</td><td>不需要，对照答案</td><td>上网现场核验</td></tr>
+  <tr><td>外部验证</td><td>与众包排行榜 ρ = 0.94（6 个点）</td><td>5 题 × 5 人排序，τ 实为 0.867</td><td>小规模自出题</td><td>作者人工复判</td><td>评分人先看了算法结果</td></tr>
+  <tr><td>验证是否独立</td><td>否：评委模仿人类口味；人工审核看了考官判定</td><td>评分人看了过程记录</td><td>—</td><td>作者自评</td><td>否</td></tr>
+  <tr><td>数据能否复算</td><td>能（对局记录公开）</td><td>能（逐题分公开）</td><td>否</td><td>能（答案加密）</td><td>否</td></tr>
+</table></div>
+
+<h2 id="s10"><span class="no">10</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<p>5 个 Agent 两两比较只有 10 对，小到可以全部比。DR-Arena 的做法能借一部分，但要按小规模改：</p>
+<ol>
+  <li><strong>全对全，不要瑞士制。</strong>10 对全部比。DR-Arena 的瑞士制漏掉了 4 对，结果"谁和谁碰上"影响了名次（见 7.3）。</li>
+  <li><strong>增加独立的比较次数。</strong>DR-Arena 每对打了 25–28 场。单题场景下只有一份题，可以这样凑出足够的比较：
+    <ul>
+      <li>每个 Agent 跑 3 次，每对就有 9 组报告可比；</li>
+      <li>把 Prompt 拆成几个子问题逐个比；</li>
+      <li>请 2–3 位评分人独立比较。</li>
+    </ul></li>
+  <li><strong>A/B 顺序互换。</strong>每一对比两次，第二次交换顺序；两次结论不一致就记平手。这是 DR-Arena 没做的。</li>
+  <li><strong>用 Bradley–Terry 加重抽样出区间，按档次报告。</strong>5 个点时，Spearman 只要一对相邻对调就是 0.9，Kendall τ 要 ≥ 0.8 才勉强显著。所以不要拿"和某个排名相关多少"当主要证据。</li>
+  <li><strong>评委不要被调成模仿验证标准。</strong>如果最后要拿专家盲评来检验自动评委，自动评委的提示词就不要写"模拟专家偏好、奖励格式"。格式单独记一项，不要混进胜负。</li>
+  <li><strong>评分人之间互不知情。</strong>专家打分时看不到 LLM 评委的判定，也看不到其他专家的判定。DR-Arena 的人工审核恰恰相反。</li>
+  <li><strong>可以借"自适应追问"。</strong>两份报告难分高下时，针对较弱一方的缺口追加一个子问题：推理断了就加深度，漏信息就加广度。这会把单次报告评测变成多轮评测，要事先写进方案。</li>
+</ol>
+<p>和你心得里"人类专家盲测与 Agent 评测对比"的想法，在方法上直接相关：DR-Arena 正是拿人类偏好去检验自动评委。它的教训有三条：</p>
+<ul>
+  <li>点太少时，相关系数说明不了什么；</li>
+  <li>被检验的评委不能先被调成模仿检验标准；</li>
+  <li>人工那一侧必须独立。</li>
+</ul>
+<p>这里只说明方法上的关联，怎么推进那个想法由你决定。</p>
+
+<h2 id="s11"><span class="no">11</span>复核说明</h2>
+<h3>核对过的</h3>
+<ul>
+  <li><strong>版本：</strong>本地 PDF 页眉为 arXiv v3（2026-07-12）。查询时 arXiv 接口没有返回结果，未能核对版本列表。ACL 2026 主会、口头报告和 SAC Highlight，来自仓库 README。</li>
+  <li><strong>对局记录：</strong>来自仓库 <code>web/public/data/battle-index.json</code>。其中 <code>source_group</code> 为 round1–round4 的 297 场，是论文那场 6 模型锦标赛（模型和配对与论文图 5 的 11 对一致）。另有约 1,000 场是 2026 年 2–4 月的线上排行榜对局，只用于 7.1 的对照。</li>
+  <li><strong>重算方法：</strong>Bradley–Terry 用迭代法求最大似然，平局记各半胜，积分以均值 1000、400 分刻度表示。重抽样 1,000 次，随机种子已固定。"位置效应"那一版是在 BT 模型上加了一个 A 位参数。</li>
+  <li><strong>回答长度和网址：</strong>每个配对抽前 6 份回放，共 131 份能读取，558 个回答。只统计了回答正文里是否出现 <code>http</code>，没有核对引用内容是否属实。</li>
+  <li><strong>评委提示词、配置、接口代码：</strong>读的是仓库 HEAD 和 2026-01-19 首发版的 <code>core/examiner.py</code>、<code>config.py</code>、<code>core/api_client.py</code>。首发版的考官是 <code>google/gemini-3-pro-preview</code>，和论文一致；当前版已改为 <code>openai/gpt-5.2-chat</code>。</li>
+  <li><strong>树的爬取时间：</strong>来自 <code>metadata.json</code>（50 棵树，crawled_at 为 2025-11-21 至 11-23）和回放中的 <code>tree_crawled_at</code>。</li>
+  <li><strong>论文的相关系数：</strong>按表 3 重算 Pearson 为 0.737，与论文的 0.74 一致。去掉 GPT-5.1 后是 0.81。</li>
+</ul>
+<h3>推断或未能核实</h3>
+<ul>
+  <li>人类榜（LMSYS Search Arena，2025-12-03）的置信区间没查到，7.1 中"差距可能在区间内"是推断。</li>
+  <li>被测模型是否真的联网搜索：只能从代码和回答里有无网址间接判断，未实际运行。</li>
+  <li>公开记录和论文规模不符（297 场对 789 轮）的原因不明。可能有未公开的对局，也可能是统计口径不同。</li>
+  <li>线上排行榜的考官是哪个模型、积分是怎么算的，没有核实。</li>
+  <li>表 4 中其他 benchmark 的相关系数，没有逐个按原始排行榜复算。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2603.28407" target="_blank">MiroEval</a>（同样拿人类排序验证，同样不独立）·
+  <a href="https://arxiv.org/pdf/2602.18940" target="_blank">DREAM</a>（评委自己上网查证）·
+  <a href="https://arxiv.org/pdf/2610.18092" target="_blank">LifeSearch</a>（与人类排名的一致性）·
+  <a href="https://arxiv.org/pdf/2605.17554" target="_blank">Expert Consulting</a>（小样本下指标分不出高下）
+</footer>
+</div>
+</body>
+</html>

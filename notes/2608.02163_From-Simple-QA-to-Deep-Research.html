@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simple QA→DR 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>From Simple QA to Deep Research 精读：把一道小问答"滚雪球"滚成研究题</h1>
+  <p class="dek">全自动出题、按"研究步骤图"打分；想法新，但标准答案全是一个 AI 自己探出来的</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2608.02163" target="_blank">arXiv 2608.02163</a> v1（2026-08-03，至今唯一版本）·
+    <a href="https://arxiv.org/pdf/2608.02163" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 阿里 Token Hub（Zhaoyang Liu 通讯）+ 涂志莹（通讯，山东省数字服务计算重点实验室）等 6 人，另有中科院计算所、香港理工各一人<br>
+    <b>代码</b> <a href="https://github.com/chr6192/TaskEvolving" target="_blank">github.com/chr6192/TaskEvolving</a>（Apache-2.0，最后提交 2026-08-03）。<strong>500 道题、评分表、评测结果都没有公开</strong><br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 6 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 9 节对照表"标准答案谁定"一栏写作"GPT-5.5 一次探路的结果"<br><span class="note">应改为：</span>〔更正〕是 GPT-5.5 在一次构建中多轮探路的累积结果（平均 14.19 轮），再由整理者（也是 GPT-5.5）合并删改；"只来自一个模型"的批评仍然成立 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.6 节说论文"在结语里说'有潜力把这套流程推广到专业领域'"<br><span class="note">应改为：</span>〔更正〕这句话在"Baseline Performance"一节讨论闭卷结果的段落中（第 7 页），不在结语里；"承认现在的题还不在专业领域里"是推断 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.8 节说"图 5 的说明先说'每轮随机抽 20 道题'，紧接着又说……10 道题"<br><span class="note">应改为：</span>〔更正〕两句都在正文"Construction Analysis"一节，不在图注里；另外，图 5 只画了 8 个模型（没有 Claude Sonnet 5 和 Gemini 3.5 Flash），精读页没有提到 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.2 节"排第一的 GPT-5.6 Terra"，没有限定<br><span class="note">应改为：</span>〔更正〕它只在带提示问法（有工具和无工具）以及无工具的无提示问法中排第一；有工具的无提示问法是 GLM-5.2 和 DeepSeek-V4-Pro 并列第一，有工具的只给标题问法是 DeepSeek-V4-Pro 第一 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 11 节把仓库的训练用途列为推断<br><span class="note">应改为：</span>〔补充〕仓库简介写着"the Agentic RL Training Stack to Train on It"，属于仓库的自述；会不会造成训练和测试重叠，仍是推断 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>仓库状态<br><span class="note">应改为：</span>〔补充〕最后一次提交确是 2026-08-03；2026-10-25 有一次删除分支的操作，没有新增文件，不影响"只有代码、没有数据"的结论 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>关于例题：</strong>这个 benchmark 的题目和评分表没有公开，所以本文的例子全部来自论文附录已经印出的那道题（美国投票年龄降到 18 岁），以及论文表 8 列出的几条种子问题。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">核心思路：滚雪球</a></li>
+    <li><a href="#s2">一道题从头到尾</a></li>
+    <li><a href="#s3">500 道题怎么来</a></li>
+    <li><a href="#s4">怎么判分</a></li>
+    <li><a href="#s5">结果</a></li>
+    <li><a href="#s6">名词小抄</a></li>
+    <li><a href="#s7">弱在哪</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">和前几篇对照</a></li>
+    <li><a href="#s10">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s11">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它做了什么：</strong>从维基百科问答集里拿一道简单问题（比如"美国是哪部法律把投票年龄改了"），让 GPT-5.5 一轮轮地去网上查，每轮把"查到了但还没用上"的线索加进题目，题目就越滚越大。平均滚 14 轮，最后得到一道研究题，外加一张"研究步骤图"，图上每一步都配了可核对的检查点。一共做了 500 道。</li>
+  <li><strong>怎么打分：</strong>评委对照检查点，看回答覆盖了多少。每一步的权重按它在步骤图里的位置自动算出。同一道题有三种问法：带详细提示、只问一句家常话、只给一个标题，用来分别测"照着做""自己拆题""自己立论"的能力。</li>
+  <li><strong>结果：</strong>10 个模型里 GPT-5.6 Terra 最好（带提示时 0.86 分）。去掉提示，所有模型平均掉 0.16 分。</li>
+  <li><strong>主要问题：</strong>
+    <ul>
+      <li>论文说数据、代码、结果都公开了，实际只有代码，500 道题一道也拿不到；</li>
+      <li>标准答案全部是 GPT-5.5 自己探路时看到的东西，500 道里只有 100 道经过人工审核，而且审得很快；</li>
+      <li>完全不用搜索，模型也能拿到带搜索时约 79% 的分数，"必须靠深度搜索"的说法打了折扣；</li>
+      <li>权重只看步骤图的形状：在例题里，答对"是第二十六修正案"这个核心答案只占 1% 的分，记住某位参议员哪天提的案却占 14%。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>"证据步骤 / 分析步骤"分开打分、同一道题换三种问法测"对提示的依赖"、报告"不用工具时能拿几分"，这三个做法值得借。标准答案不要只靠一个 Agent 的探路结果来定。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>核心思路：滚雪球</h2>
+<p>打个比方：老师想出一道研究题，但不想自己写。于是让一个学生从一道小问题出发去查资料。查完之后，老师做两件事：</p>
+<ul>
+  <li>把学生的查找过程整理成一张"研究步骤图"，并给每一步写出可核对的要点；</li>
+  <li>从学生查到、但这道题还没用上的线索里挑几条，加进题目，让题目更难。</li>
+</ul>
+<p>然后让学生按新题再查一遍。如此反复，直到连续两轮步骤图都不再变化，就停下来。题目和评分表是一起"长大"的。</p>
+<p>论文把这三个角色叫作：</p>
+<div class="tbl"><table>
+  <tr><th>角色</th><th>做什么</th><th>比喻</th></tr>
+  <tr><td>Explorer（探路者）</td><td>拿着当前题目上网搜索、抓网页，留下完整的查找记录</td><td>去查资料的学生</td></tr>
+  <tr><td>Formalizer（整理者）</td><td>把查找记录整理成步骤图：删掉无关的、合并重复的、补上漏掉的；再给每个步骤写检查点</td><td>批改作业、写参考答案的助教</td></tr>
+  <tr><td>Challenger（出题者）</td><td>从"查到了但没用上"的线索里挑方向，把题目改得更宽或更深；改写时会隐藏检查点，不把答案写进题里</td><td>出下一道题的老师</td></tr>
+</table></div>
+<p>三个角色都由 GPT-5.5 担任。搜索工具是 Google 搜索（经 Serper 接口）加网页抓取（Jina）。</p>
+<p>论文强调和其他 benchmark 的区别：</p>
+<ul>
+  <li>不需要专家出题，也不需要现成的专家文章（DRB II 就依赖现成的综述）；</li>
+  <li>题目和评分表不是一次性让 LLM 想出来的，而是一边真的去查、一边逐轮积累出来的，所以每个检查点都"有网上的出处"。</li>
+</ul>
+
+<h2 id="s2"><span class="no">2</span>一道题从头到尾（论文附录的例子）</h2>
+<div class="ex">
+  <div class="h">起点：一道 NQ-Open 里的简单问题</div>
+  <p><em>which legislation was responsible for changing the voting age in the united states brainly</em></p>
+  <p>（哪部立法改变了美国的投票年龄。末尾的"brainly"是原始搜索记录里带的网站名，这个数据集收的就是真实的 Google 搜索词。）</p>
+</div>
+<p><strong>滚了 10 轮：</strong>第 1 轮的步骤图只有 4 个节点。第 3 轮加入了 1970 年的法律尝试和 Oregon v. Mitchell 案。第 4 轮补上参众两院的流程。第 8 轮长到 16 个节点、深 9 层。第 9、10 轮没有再变，于是停止。</p>
+<p><strong>最终得到同一道题的三种问法，共用一张评分表：</strong></p>
+<div class="tbl"><table>
+  <tr><th>问法</th><th>内容（中文意译）</th><th>想测什么</th></tr>
+  <tr><td>带提示（q<sub>h</sub>）</td><td>研究把美国投票年龄降到 18 岁的宪法修改，重建它的官方法律路径：找出是哪条修正案、改了什么、国会提案如何通过两院和各州、何时依法生效以及与正式认证日期的区别；再用之前的立法尝试、最高法院的判决等，分析为什么普通联邦法律不够用</td><td>有了详细指引，能不能把资料找齐、整合好</td></tr>
+  <tr><td>无提示（q<sub>o</sub>）</td><td>美国是怎样通过修宪把投票年龄降到 18 岁的？它何时依法生效，和正式认证的日期有什么不同？为什么一部普通的联邦投票权法律不够用？</td><td>只给一句家常问题，能不能自己拆出该查的方面</td></tr>
+  <tr><td>只给标题（q<sub>a</sub>）</td><td>《S.J. Res. 7 与第二十六修正案：路径、生效日期与投票年龄效果》</td><td>只给一个题目，能不能自己组织出一篇有论证的回答</td></tr>
+</table></div>
+<p><strong>评分表节选</strong>（论文表 10，共 16 条，权重加起来是 1）：</p>
+<div class="tbl"><table>
+  <tr><th>节点</th><th>检查什么</th><th class="num">权重</th></tr>
+  <tr><td>A</td><td>指出是第二十六修正案把投票年龄降到 18 岁；不与 1970 年《投票权法修正案》混淆；给出 1971 年 3 月 23 日国会通过、7 月 1 日批准完成两个日期</td><td class="num">0.01</td></tr>
+  <tr><td>B</td><td>指出 S.J. Res. 7 是参议院的提案；由 Jennings Randolph 于 1971 年 1 月 25 日在第 92 届国会提出；给出正式标题或实质内容，以及需要四分之三的州批准</td><td class="num">0.14</td></tr>
+  <tr><td>P</td><td>说明国会通过后的转送程序；指出总务管理局局长 Robert L. Kunzig 于 1971 年 3 月 24 日把核证副本寄给各州州长</td><td class="num">0.09</td></tr>
+  <tr><td>J</td><td>按顺序重建从两份提案到委员会、国会通过、转送、各州批准、认证的完整时间线；要包含 1 月 25 日、1 月 29 日、3 月 10 日、3 月 23 日、7 月 1 日、7 月 5 日这几个日期；并解释修正案原文、生效日与认证日的区别等</td><td class="num">0.22</td></tr>
+</table></div>
+<p>注意第一行：原题问的核心答案"是第二十六修正案"，在最终评分里只占 1%。第 7.4 节会解释原因。</p>
+
+<h2 id="s3"><span class="no">3</span>500 道题怎么来</h2>
+<ol>
+  <li>从 NQ-Open（2019 年基于维基百科的开放域问答集）里按随机种子 42 抽 1,000 道简单问题。</li>
+  <li>每道问题都滚雪球。963 道正常收敛，37 道失败。失败的原因有四种：步骤图解析不出来；单条分析链超过 5 步；接口或网络出错；100 轮内没有收敛。</li>
+  <li>从 963 道里挑出步骤图节点最多的 500 道，作为最终的 benchmark。</li>
+</ol>
+<div class="tbl"><table>
+  <tr><th>指标</th><th class="num">最少</th><th class="num">最多</th><th class="num">平均</th></tr>
+  <tr><td>滚了几轮</td><td class="num">4</td><td class="num">58</td><td class="num">14.19</td></tr>
+  <tr><td>总共调用工具几次</td><td class="num">32</td><td class="num">1,854</td><td class="num">264.96</td></tr>
+  <tr><td>步骤图节点数</td><td class="num">12</td><td class="num">40</td><td class="num">20.85</td></tr>
+  <tr><td>步骤图深度</td><td class="num">2</td><td class="num">28</td><td class="num">6.21</td></tr>
+  <tr><td>检查点数</td><td class="num">52</td><td class="num">183</td><td class="num">104.85</td></tr>
+</table></div>
+<ul>
+  <li><strong>成本：</strong>整个构建跑了约 168 小时，花了约 1 万美元，几乎全是 API 费用。</li>
+  <li><strong>主题：</strong>500 道题分属 10 个大类、31 个小主题。从论文图 3 能辨认出最多的几类：文化 71 道、科学 69 道、历史 66 道、娱乐 64 道、体育 58 道（字很小，数字可能有一两个的误差）。论文自己也说，这些是"常见的开放域检索主题，而非某个狭窄领域"。</li>
+</ul>
+
+<h2 id="s4"><span class="no">4</span>怎么判分</h2>
+<p>步骤图里的每个节点分两种：</p>
+<ul>
+  <li><strong>证据节点（E）：</strong>去外部查一个可追溯的事实，比如某项政策的发布日期、某公司的收入；</li>
+  <li><strong>分析节点（A）：</strong>在已查到的证据上做分析，比如因果推断、跨来源比较。</li>
+</ul>
+<p>每个节点对应一条评分项，下面挂 2–3 个检查点。评委（Qwen3.7-Max）只看最终回答和评分表，对每个检查点判"满足 / 不满足"。</p>
+<pre>某个节点的得分 = 满足的检查点数 ÷ 该节点的检查点数
+整道题的得分   = Σ 节点权重 × 节点得分     （满分 1）</pre>
+<p><strong>权重怎么来：</strong></p>
+<ol>
+  <li>步骤图最末端的节点（叶子，即没有后续步骤的节点）先平分 1 分；</li>
+  <li>从末端往前推，每个节点把自己手里的分数平均分给它的所有前置步骤（前置步骤累加，自己保留原有分数）；</li>
+  <li>最后整体归一化，使总和为 1。</li>
+</ol>
+<p>结果是：<strong>被越多后续步骤依赖、而且是"独家依赖"的前置步骤，分越高。</strong>代码仓库里的实现和论文描述一致。我按论文图 6 读出这道例题的箭头，用这个算法重算了一遍，16 个节点的权重和论文表 10 最多差 0.02，说明表 10 确实是这么算出来的。</p>
+<p><strong>评分表的写法有约束：</strong>不要求特定的搜索路径、工具、网站或措辞，只判结果对不对。比如"从维基百科查到刘德华主演《无间道》"要改写成"刘德华主演《无间道》"。证据节点和分析节点的平均满分分别约是 0.52 和 0.48。</p>
+<p><strong>两种测试模式：</strong></p>
+<ul>
+  <li><strong>Agent 模式：</strong>给模型和出题时一样的搜索工具；</li>
+  <li><strong>模型模式：</strong>不给任何工具，只靠模型自己记住的知识作答。</li>
+</ul>
+
+<h2 id="s5"><span class="no">5</span>结果</h2>
+<div class="tbl"><table>
+  <tr><th>模型</th><th class="num">带提示<br>（有工具）</th><th class="num">无提示<br>（有工具）</th><th class="num">只给标题<br>（有工具）</th><th class="num">带提示<br>（无工具）</th><th class="num">无工具 ÷ 有工具</th></tr>
+  <tr><td>GPT-5.6 Terra</td><td class="num">0.86</td><td class="num">0.67</td><td class="num">0.70</td><td class="num">0.68</td><td class="num">79%</td></tr>
+  <tr><td>DeepSeek-V4-Pro</td><td class="num">0.83</td><td class="num">0.68</td><td class="num">0.73</td><td class="num">0.62</td><td class="num">75%</td></tr>
+  <tr><td>Qwen3.7-Max（也是评委）</td><td class="num">0.83</td><td class="num">0.67</td><td class="num">0.71</td><td class="num">0.60</td><td class="num">72%</td></tr>
+  <tr><td>GLM-5.2</td><td class="num">0.80</td><td class="num">0.68</td><td class="num">0.69</td><td class="num">0.65</td><td class="num">81%</td></tr>
+  <tr><td>Claude Sonnet 5</td><td class="num">0.80</td><td class="num">0.67</td><td class="num">0.71</td><td class="num">0.62</td><td class="num">77%</td></tr>
+  <tr><td>Gemini 3.5 Flash</td><td class="num">0.74</td><td class="num">0.57</td><td class="num">0.63</td><td class="num">0.67</td><td class="num">91%</td></tr>
+  <tr><td>MiniMax-M2.5</td><td class="num">0.67</td><td class="num">0.42</td><td class="num">0.55</td><td class="num">0.46</td><td class="num">69%</td></tr>
+  <tr><td>Qwen3.6-Flash</td><td class="num">0.53</td><td class="num">0.40</td><td class="num">0.43</td><td class="num">0.44</td><td class="num">83%</td></tr>
+  <tr><td>Qwen3-32B</td><td class="num">0.36</td><td class="num">0.23</td><td class="num">0.23</td><td class="num">0.30</td><td class="num">83%</td></tr>
+  <tr><td>Qwen3-14B</td><td class="num">0.35</td><td class="num">0.21</td><td class="num">0.21</td><td class="num">0.27</td><td class="num">77%</td></tr>
+</table></div>
+<p class="aside">数字摘自论文表 4。"无工具 ÷ 有工具"一列是我用带提示那两列算的。表 4 每格还拆成了证据分加分析分，我逐格核对过，都加得上。</p>
+<ul>
+  <li><strong>提示很重要。</strong>去掉提示（无提示问法），10 个模型平均掉 0.16 分；只给标题，平均掉 0.12 分。MiniMax-M2.5 掉得最狠：0.67 → 0.42。</li>
+  <li><strong>去掉工具，平均掉 0.14 分。</strong>论文据此说"这些题包含模型没背过的长尾知识"。但换个角度看：不用任何搜索，模型平均还能拿到带搜索时 79% 的分数。见第 7.6 节。</li>
+  <li><strong>分差主要在分析上。</strong>前五名的证据分很接近；GPT-5.6 Terra 主要领先在分析检查点。</li>
+  <li><strong>前五名几乎分不开。</strong>带提示时，前五名在 0.80–0.86 之间；无提示时，前五名全在 0.67–0.68 之间。论文没给误差范围，每个模型也只跑了一次。</li>
+  <li><strong>题目确实越滚越难。</strong>每轮抽 20 道题测试，无提示问法的平均分从第一轮约 0.93 降到约 0.29，只给标题的从约 0.95 降到约 0.40。模型之间的相对排名在大多数轮次保持稳定。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>名词小抄</h2>
+<dl class="gl">
+  <dt>NQ-Open</dt><dd>Google 2019 年发布的开放域问答集，题目是真实的 Google 搜索词，答案取自维基百科。</dd>
+  <dt>DAG（步骤图）</dt><dd>有向无环图。节点是一个研究步骤，箭头表示"后一步要用到前一步的结果"，不会绕回去。</dd>
+  <dt>证据节点 / 分析节点</dt><dd>前者是"去查一个事实"，后者是"拿查到的事实做分析"。</dd>
+  <dt>检查点</dt><dd>每个节点下面挂的、能单独判对错的要点，比如"指出参议院 1971 年 3 月 10 日以 94 比 0 通过"。</dd>
+  <dt>叶子节点</dt><dd>步骤图最末端、没有后续步骤的节点，通常是最后的综合结论。</dd>
+  <dt>三种问法</dt><dd>带提示（q<sub>h</sub>）、无提示（q<sub>o</sub>）、只给标题（q<sub>a</sub>），三者共用同一张评分表。</dd>
+  <dt>Agent 模式 / 模型模式</dt><dd>有搜索工具 / 没有任何工具。后者相当于"闭卷"。</dd>
+  <dt>Fleiss' κ</dt><dd>衡量多个评审意见是否一致的系数，扣除了"碰巧一致"的部分。1 表示完全一致。</dd>
+</dl>
+
+<h2 id="s7"><span class="no">7</span>弱在哪</h2>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>评委对每个检查点判得准吗</td><td class="mid">中</td><td>论文报告评委与人工的相关系数约 0.9，换评委、重跑都稳定；但人工评分是谁打的、评了哪些回答、一共多少条，论文没写（见 7.8）</td></tr>
+  <tr><td>② 比较</td><td>模型之间的分差可信吗</td><td class="mid">中偏弱</td><td>前五名差距在 0.06 以内，无提示时只差 0.01；没有误差范围；每个模型只跑一次；评委本身是被测模型之一</td></tr>
+  <tr><td>③ 推广</td><td>评分表本身对不对、全不全</td><td class="weak">弱</td><td>评分表 = GPT-5.5 一个模型的探路结果；500 道里只有 100 道人工看过，且审得很快；数据不公开，外人无法核查（见 7.1–7.3）</td></tr>
+  <tr><td>④ 意义</td><td>分数高 = 深度研究能力强吗</td><td class="mid">中偏弱</td><td>不用搜索也能拿约八成分数；权重按图形状分配；只算覆盖、不罚说错（见 7.4–7.7）</td></tr>
+</table></div>
+
+<h3>7.1 说好公开数据，实际只有代码</h3>
+<ul>
+  <li>摘要原话是"我们的数据、实现和结果都已公开"（Our data, implementation, and results are publicly available）。</li>
+  <li>实际的 GitHub 仓库共 83 个文件，全是构建流程和强化学习训练的代码。<strong>没有 500 道题，没有评分表，没有任何模型的评测结果。</strong></li>
+  <li>README 里提到的 <code>experiment/</code> 目录和种子数据路径，在仓库里都不存在。HuggingFace 上也搜不到这个数据集。</li>
+  <li>后果：第 7.2–7.7 节里所有关于"题目本身"的担心，外人都无法核查；也没有人能拿这个 benchmark 去测自己的模型。</li>
+</ul>
+
+<h3>7.2 标准答案是一个 AI 自己探路时看到的东西</h3>
+<ul>
+  <li>出题、写评分表、定权重，全部由 GPT-5.5 完成。检查点就是 GPT-5.5 在那次探路里查到、并且认为有用的事实。</li>
+  <li><strong>例子：</strong>如果另一个 Agent 走了另一条同样合理的路，比如引用了法院判决原文而不是国会记录，它查到的那些事实不在评分表里，不加分。论文要求评分表"不限定路径"，但被检查的内容本身仍然来自 GPT-5.5 走过的那条路。</li>
+  <li>排第一的 GPT-5.6 Terra 和出题的 GPT-5.5 是同一家族。同家族的模型搜索习惯、知识范围更接近，可能占一点便宜。和 BrowseComp-Plus 由 o3 找证据一样，这是一个值得注意的风险，论文没有检验，我也无法证明。</li>
+  <li>和 LiveDRBench 对比：LiveDRBench 至少把所有被测系统的答案汇总起来人工裁决，补进标准答案。这篇没有这一步。</li>
+</ul>
+
+<h3>7.3 人工审核太快、太顺</h3>
+<ul>
+  <li>三位资深研究者一共花了 182 小时，审了随机抽取的 100 道题，每道题回答 11 个质量问题。论文还说"全部 10,695 个检查点都人工核实为可靠"。</li>
+  <li><strong>算一笔账：</strong>182 小时 ÷ 10,695 个检查点 ≈ 每个检查点 1 分钟，这还没扣掉回答那 1,100 个质量问题的时间。如果三人都看了全部题目（算一致性系数需要这样做），每人每个检查点只有约 20 秒。一个检查点往往是"某年某月某日以多少票通过"这种具体事实，20 秒很难真的去翻原始出处核对。</li>
+  <li><strong>结果几乎全是好评：</strong>1,100 个评分里，0 个"差"、6 个"中"，其余全是"好"。几乎所有评分都落在同一档时，一致性系数（κ = 0.81）说明不了评审是否认真。</li>
+  <li>另外 400 道题、约 4.2 万个检查点，没有经过任何人工检查。</li>
+</ul>
+
+<h3>7.4 权重按"图的形状"分，不按"重要性"分</h3>
+<div class="ex">
+  <div class="h">例子：投票年龄那道题</div>
+  <ul>
+    <li>"指出是第二十六修正案"（节点 A），就是原始问题的答案，却只占 <strong>1%</strong>。原因是它在图上只连着一个分析节点，而那个分析节点有 4 个前置步骤，分下来就很少。</li>
+    <li>"Jennings Randolph 于 1971 年 1 月 25 日提出 S.J. Res. 7"（节点 B）占 <strong>14%</strong>，因为后面一长串步骤都从它出发。</li>
+    <li>"总务管理局局长 Kunzig 3 月 24 日寄出副本"（节点 P）占 <strong>9%</strong>，是 A 的 9 倍。</li>
+  </ul>
+</div>
+<ul>
+  <li>步骤图的形状是 GPT-5.5 画出来的，换一种画法，同一个事实的权重就会变。所以分数在相当程度上取决于"出题 AI 怎么画图"。</li>
+  <li><strong>同一事实被重复计分：</strong>最后的综合节点 J（占 22%）要求列出六个关键日期，而这六个日期在 B、N、C、D、E、F 六个节点里已经各查过一次。一个回答漏掉某个日期，会在两个地方同时丢分。</li>
+</ul>
+
+<h3>7.5 只查"覆盖"，不罚"说错"（推断）</h3>
+<ul>
+  <li>得分只看满足了多少检查点。说错和没说，都是"不满足"，没有额外扣分；评分表以外的内容也不检查对错。</li>
+  <li>论文没有给出评委的判分提示词。仓库里判分交给一个外部框架（OpenJudge），所以这一条是我根据论文的计分公式推断的。</li>
+  <li>后果和 DRB II 一样：写得越多、列的事实越全越占便宜，编造的内容不受惩罚。</li>
+</ul>
+
+<h3>7.6 底子是维基百科常识，不用搜也能拿大半分</h3>
+<ul>
+  <li>种子题来自 NQ-Open，是维基百科上的常识问题：珍珠港沉了哪些美国军舰、生长板是干什么的、2007 年电影《Fred Claus》里谁演 Fred。滚雪球之后更深了，但话题本身仍然是维基百科覆盖得很好的领域。</li>
+  <li><strong>例子：</strong>带提示时，GPT-5.6 Terra 用搜索得 0.86，不用任何搜索也有 0.68，约 79%。Gemini 3.5 Flash 不用搜索 0.67，用搜索 0.74，约 91%。10 个模型平均下来，闭卷能拿到开卷分数的 79%。</li>
+  <li>只看"证据检查点"，也就是本该靠搜索才能拿的那部分，闭卷平均仍有开卷的 75%。</li>
+  <li>论文一边称这些是"专业级深度研究题"，一边在结语里说"有潜力把这套流程推广到专业领域"，也就是承认现在的题还不在专业领域里。</li>
+  <li><strong>值得肯定的是：</strong>论文报告了闭卷分数。BrowseComp-Plus、DRB II 都没做这一步。只是它对这个数字的解读偏乐观。</li>
+</ul>
+
+<h3>7.7 "无提示"问法，其实也在考"猜评分表"</h3>
+<ul>
+  <li>三种问法共用同一张、平均 105 个检查点的评分表。</li>
+  <li><strong>例子：</strong>无提示问法只问了三件事：怎么修宪、何时生效、为什么普通法律不够。一个认真、准确、但没写"总务管理局局长哪天寄出副本"的回答，照样要丢 P 节点那 9% 的分。</li>
+  <li>所以无提示问法测的，一部分是"自己拆题的能力"，一部分是"拆得和出题 AI 一样细的能力"。论文把这两者都算作前者。</li>
+</ul>
+
+<h3>7.8 评委、人工对照和统计</h3>
+<ul>
+  <li><strong>自家评委：</strong>评委 Qwen3.7-Max 是阿里的模型，本身也是被测模型之一；10 个被测模型里有 4 个是 Qwen 系列。Qwen3.7-Max 在主设置下并列第二、不是第一，看不出明显的偏袒。但论文只报告了换评委后"和人工的相关系数"，没有报告换评委后"模型排名变不变"。仓库代码里判分也默认用阿里云的接口密钥。</li>
+  <li><strong>人工对照说不清楚：</strong>表 6 里三个评委与"人工评分"的皮尔逊相关系数在 0.88–0.92 之间，表 5 给出的准确率是 0.862。但人工评分是谁打的、评的是哪些模型的哪些回答、一共多少条，论文正文和附录都没有写。</li>
+  <li><strong>跨 benchmark 比较不对等，结论也不成立：</strong>论文表 5 把自己和 DRB II、DEER 等放在一起，说自己"往往更强"。但这些数字是在不同题目上、用不同指标测的，不能直接比。即使只看两边共有的两个指标，DRB II 的准确率 0.9175、F1 0.8957（我们在 DRB II 精读里核实过），也都高于本文的 0.862 和 0.834。</li>
+  <li><strong>小的不一致：</strong>图 5 的说明先说"每轮随机抽 20 道题"，紧接着又说"每条线是一个模型在 10 道题上的平均分"。</li>
+  <li><strong>时效没交代：</strong>论文表 8 列的种子里有"谁在 Twitter 上粉丝最多"这类答案会变的问题，但没说评分表按哪个日期为准。数据不公开，无法统计有多少题受影响。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>"边查边出题"的思路新颖。</strong>题目和评分表一起逐轮长大，每个检查点都来自真实的网上查找，而不是 LLM 凭空写出来的。</li>
+  <li><strong>证据和分析分开记分。</strong>能看出模型输在"没查到"还是"没想清楚"。</li>
+  <li><strong>一道题三种问法、共用一张评分表。</strong>这是一个干净的对照实验，能直接量出模型有多依赖提示。</li>
+  <li><strong>报告了闭卷分数。</strong>虽然解读偏乐观，但这个数字本身很有用，而且是很多 benchmark 缺的。</li>
+  <li><strong>评分表的写法有讲究。</strong>不限定路径、工具和措辞，只判结果，避免了"必须用某个网站""必须出现某个词"之类的僵硬条款。</li>
+  <li><strong>把代价交代清楚：</strong>花了多少钱、跑了多久、失败了多少、为什么失败。</li>
+  <li><strong>所有模型用同一套工具测，</strong>控制了搜索引擎的差别（思路和 BrowseComp-Plus 一致）。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>和前几篇对照</h2>
+<div class="tbl"><table>
+  <tr><th></th><th>DRB II</th><th>LiveDRBench</th><th>DailyReport</th><th>MiroEval</th><th>本篇</th></tr>
+  <tr><td>题目从哪来</td><td>从综述倒推</td><td>把阅读题倒过来</td><td>从热点正向写</td><td>改写自家内测用户问题 + 按热点自动生成</td><td>从维基百科小问答滚雪球</td></tr>
+  <tr><td>标准答案谁定</td><td>综述原文</td><td>原数据集 + 汇总被测系统的输出、人工裁决</td><td>没有，评委现场搜</td><td>评测 Agent 现场搜</td><td>GPT-5.5 一次探路的结果</td></tr>
+  <tr><td>查得准吗</td><td>不查</td><td>查</td><td>查</td><td>查</td><td>不查（推断）</td></tr>
+  <tr><td>查得全吗</td><td>查（对照原文）</td><td>查</td><td>不查</td><td>只有一个由 LLM 打分的"覆盖"维度</td><td>查（对照检查点）</td></tr>
+  <tr><td>权重</td><td>按条数</td><td>可加权（实验没用）</td><td>人定 P0/P1/P2</td><td>—</td><td>按步骤图形状自动算</td></tr>
+  <tr><td>闭卷基线</td><td>无</td><td>无（靠"出处必须对"防背答案）</td><td>无</td><td>—</td><td><strong>有</strong>，约 79%</td></tr>
+  <tr><td>能不能复核</td><td>能</td><td>能</td><td>没有数据</td><td>逐题分数能复核</td><td>没有数据</td></tr>
+  <tr><td>利益关联</td><td>无明显关联</td><td>OpenAI DR 已集成进微软 Copilot</td><td>无明显关联</td><td>出题、评测工具、参赛都是同一家</td><td>评委是自家 Qwen；出题用 GPT-5.5</td></tr>
+</table></div>
+<p class="aside">MiroEval 一列直接沿用该篇精读里核实过的说法；"—"表示那篇精读没有涉及。</p>
+
+<h2 id="s10"><span class="no">10</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<ol>
+  <li><strong>证据检查点和分析检查点分开记分、分开报告。</strong>这一点可以直接套进 LiveDRBench 的"断言层"：断言是证据，再单独加一层分析检查点。</li>
+  <li><strong>同一道题准备两种问法，</strong>一份详细任务说明，一份一句话的家常问法，让 5 个 Agent 各跑一遍。两次分数之差，就是每个 Agent "对提示的依赖程度"。如果你的场景只能用一个 Prompt，这一条可以作为附加实验。</li>
+  <li><strong>报告闭卷基线。</strong>每个 Agent 背后的模型先在不给工具的情况下答一遍，再看开卷多拿了多少分。多出来的那部分，才是搜索的贡献。</li>
+  <li><strong>标准答案不要只靠一个 Agent 探路。</strong>这篇用 GPT-5.5 一个模型的探路结果当标准答案。更稳妥的做法是：专家先写必答清单，再汇总 5 个 Agent 的结果、人工裁决后补进去。</li>
+  <li><strong>权重用人定的重要性，不用图的形状。</strong>如果要用步骤图自动算权重，至少检查一遍：原始问题的核心答案有没有被压到很低（这篇的例题里只占 1%），同一事实有没有被重复计分。</li>
+  <li><strong>人工审核要给足时间、写清做法。</strong>每个检查点要追到原始出处，记录用时和不一致的地方。一个检查点 1 分钟，不够。</li>
+  <li><strong>要罚说错。</strong>加一档"提到但说错"，并抽查评分表以外的断言是否属实，补上本篇和 DRB II 共同缺的"精确率"这一半。</li>
+</ol>
+
+<h2 id="s11"><span class="no">11</span>复核说明</h2>
+<ul>
+  <li><strong>论文版本：</strong>arXiv 接口显示只有 v1（2026-08-03）。</li>
+  <li><strong>代码和数据：</strong>2026-10-28 查看 GitHub 仓库，共 83 个文件，最后提交 2026-08-03，只有一个分支，没有发布版本。README 提到的 <code>experiment/</code> 目录和 <code>synthesis_v2/data/</code> 下的种子数据都不存在。HuggingFace 上按仓库名和作者名都搜不到数据集。</li>
+  <li><strong>权重算法：</strong>读了仓库里的 <code>mermaid_reviser.py</code>，与论文公式一致。按图 6 箭头（我人工读出的 28 条边）重算 16 个节点的权重，与表 10 最大偏差 0.02，可能有一两条箭头读错。</li>
+  <li><strong>表 4：</strong>逐格核对"总分 = 证据分 + 分析分"，60 格全部对得上。复算了"去掉工具平均掉 0.14""无提示平均掉 0.16""只给标题平均掉 0.12"，与论文一致。"闭卷 / 开卷 79%"是我按带提示的两列算的，10 个模型取平均。</li>
+  <li><strong>人工审核时间的估算：</strong>按论文给的总时长和检查点数直接相除，没有扣掉回答质量问题的时间，所以每个检查点实际能用的时间只会更少。</li>
+  <li><strong>主题数字：</strong>从图 3 的小字读出，可能有误差。</li>
+  <li><strong>推断而非核实的：</strong>"只算覆盖、不罚说错"（论文没给判分提示词）；"GPT-5.6 Terra 可能因与出题模型同家族而占便宜"（没有检验）；仓库里的强化学习奖励函数用的是同一套评分表，将来如果有模型用这套流程造的数据训练，再在这个 benchmark 上测，就可能有训练和测试重叠的问题（论文没有提到训练用途）。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2508.04183" target="_blank">LiveDRBench</a>（汇总裁决补全标准答案）·
+  <a href="https://arxiv.org/pdf/2508.06600" target="_blank">BrowseComp-Plus</a>（同样由一个模型找证据）·
+  <a href="https://arxiv.org/pdf/2601.08536" target="_blank">DeepResearch Bench II</a>（只算召回的同类问题）·
+  <a href="https://arxiv.org/pdf/2601.10504" target="_blank">DR-Arena</a>（论文对比的全自动基准之一）
+</footer>
+</div>
+</body>
+</html>

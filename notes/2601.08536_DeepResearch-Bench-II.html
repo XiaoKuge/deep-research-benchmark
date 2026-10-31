@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DRB II 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .note{font-size:13px;color:var(--muted)}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul{font-size:13.5px;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  details.tasks{margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+  details.tasks>summary{cursor:pointer;padding:9px 16px;color:var(--accent2);font-size:14px}
+  .dom{padding:2px 16px 10px}
+  .dom h4{margin:12px 0 4px;font-size:13.5px;color:#fff;font-weight:600}
+  .dom h4 span{color:var(--muted);font-weight:400;margin-left:4px}
+  .dom ul{list-style:none;padding:0;margin:0;font-size:13px;columns:2;column-gap:20px}
+  .dom li{break-inside:avoid;margin:2px 0;color:#cfd5df}
+  .ix{display:inline-block;min-width:28px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .lg{display:inline-block;font-size:11px;padding:0 5px;border-radius:4px;margin-right:6px;background:var(--panel2);color:var(--dim)}
+  .rc{color:var(--muted);font-size:11.5px;margin-left:4px;font-variant-numeric:tabular-nums}
+  .mis{color:var(--warn)}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol,.dom ul{columns:1} header h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>DeepResearch Bench II 精读：从一篇综述"反编译"出标准答案</h1>
+  <p class="dek">这套机制测到了什么，没测到什么</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2601.08536" target="_blank">arXiv 2601.08536</a> v3（2026-09-10）·
+    <a href="https://arxiv.org/pdf/2601.08536" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 中国科大毛震东组 + Metastone，初代 DeepResearch Bench 原班人马<br>
+    <b>数据</b> <a href="https://github.com/imlrz/DeepResearch-Bench-II" target="_blank">github.com/imlrz/DeepResearch-Bench-II</a> 的 <code>tasks_and_rubrics.jsonl</code>，本文统计基于 2026-10-28 拉取的版本<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 7 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>"22 个领域里 15 个只有 2–6 题"<br><span class="note">应改为：</span>〔更正〕17 个领域只有 2 至 6 道题 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.6 节"每个领域只有 2–6 题（科技 23 题除外）"<br><span class="note">应改为：</span>〔更正〕有 5 个领域在 10 道以上（科学与技术 23、金融与商业 15、软件开发 13、健康 12、教育与就业 10）；"检验效力很低"的理由改为"17 个小领域各只有 2 至 6 道" <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.6 节"排名相邻的系统差距在 0.02–2.6 分之间"<br><span class="note">应改为：</span>〔更正〕"前七名相邻差距 0.02 至 2.62 分"；第七名与第八名之间是 8.69 分 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 8 节"数据、评分脚本和提示词全部公开。本文的每个数字都能复核"<br><span class="note">应改为：</span>〔更正〕说过头了：评委逐条输出、人工标注、通义的报告都没有公开，表 4、表 5、表 10 和方差分析不能复核 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"引用了原文的句子记 −1，不计入得分"；"泄漏率 0.24% 到 13.2%，平均 3.64%"<br><span class="note">应改为：</span>〔更正〕−1 留在分母中，等于按未通过计；泄漏率是按评分项计的比例，不是按报告计；3.64% 是 7 个系统的平均，不含 Gemini-3 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"评委是 Gemini-2.5-Pro"<br><span class="note">应改为：</span>〔补充〕对论文而言正确，但已过时：仓库自 2026 年 8 月起官方评委换成 GPT-5.5，2026 年 10 月起第 112、114 题从排行榜计分中剔除 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7 节"2026-02-24：加了 license 字段；2026-05-14：重写了文件，没有实质改动"<br><span class="note">应改为：</span>〔存疑〕哪一次提交加了 license 字段不确定，可能写反了；不影响"题目和评分项自 2025 年 11 月以来没有改动"的结论 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">结论先行</a></li>
+    <li><a href="#s1">它做了什么</a></li>
+    <li><a href="#s2">132 道任务长什么样</a></li>
+    <li><a href="#s3">底层逻辑：信任的三次转移</a></li>
+    <li><a href="#s4">种子文章怎么选</a></li>
+    <li><a href="#s5">"反编译"的规则</a></li>
+    <li><a href="#s6">弱在哪：拆开论证链</a></li>
+    <li><a href="#s7">时效性</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">怎么改，对我们有什么用</a></li>
+    <li><a href="#s10">复核说明与未完成的核查</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>结论先行</h2>
+<div class="lead"><ul>
+  <li>DRB II 把"评一份开放式研究报告"变成了"对照一篇专家综述对答案"。每道题都是从一篇综述倒推出来的，评分要点是从这篇综述里拆出来的原子事实和观点。</li>
+  <li><strong>打分本身很可靠</strong>：要点自带答案，评委只需比对，和人工标注的一致率 91.75%。</li>
+  <li><strong>"分数能说明什么"这一侧很弱</strong>：
+    <ul>
+      <li>题目基本是原文提纲；</li>
+      <li>评分只算和原文的重合，说错不扣分；</li>
+      <li>原文本身的正确性和完整性没有被检验；</li>
+      <li>"Agent 远逊于人类专家"这一结论有一部分是筛选规则造出来的。</li>
+    </ul></li>
+  <li><strong>适合的用法</strong>：当作"对照专家综述的事实召回率"这一诊断指标。不适合当深度研究能力的总排名。</li>
+  <li><strong>时效性</strong>：评分要点自 2025-11 发布以来从未改动。题目的截止年份集中在 2020–2024，随着时间推移，测记忆的成分会越来越大。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>它做了什么</h2>
+<ol>
+  <li><strong>选文。</strong>以初代 DeepResearch Bench 的题目为种子，找回答相似问题的开放获取综述（CC-4.0 许可），按四条适配性人工筛选，留下 132 篇。</li>
+  <li><strong>出题和拆要点。</strong>一个 LLM 读原文，倒推出一道题，再把原文内容拆成"信息召回 / 分析 / 呈现"三个维度的二元要点。论文称这个 LLM 为 task-generator，没有披露具体是哪个模型。</li>
+  <li><strong>自检。</strong>用原文给这些要点打分，信息召回或分析的通过率低于 90% 就重新生成。</li>
+  <li><strong>人工清理和专家审核。</strong>论文说专家审核超过 400 小时，但没写专家人数、资质和专家间一致性。</li>
+  <li><strong>评测。</strong>
+    <ul>
+      <li>评委是 Gemini-2.5-Pro，每批判 50 条要点，每条打 1 / 0 / −1。</li>
+      <li>一道题的得分 = 该题所有要点的通过率，总分 = 132 道题的平均。</li>
+      <li>题目里附一段"禁止查看原文"的规则。引用了原文的句子记 −1，不计入得分。</li>
+    </ul></li>
+</ol>
+<div class="tbl"><table>
+  <tr><th>项目</th><th>数字</th></tr>
+  <tr><td>任务</td><td>132 道，中英文各 66 道</td></tr>
+  <tr><td>来源文章</td><td>131 篇。第 124 题（物联网应用）没有来源，论文附录表 9 的第 124 行也是空的</td></tr>
+  <tr><td>种子题</td><td>96 道。其中 36 道各派生出两道题，所以 132 道题并不是 132 个互相独立的话题</td></tr>
+  <tr><td>评分要点</td><td>9,415 条：信息召回 6,983（74%）、分析 1,686（18%）、呈现 746（8%）。论文正文写 9,430，按附录 A.2 的均值乘回去是 9,415，与仓库一致</td></tr>
+  <tr><td>每题要点数</td><td>信息召回平均 52.9 条（中位数 46.5，范围 13–186），分析 12.8 条，呈现 5.7 条</td></tr>
+  <tr><td>带数字的要点</td><td>信息召回类里有 3,082 条含具体数字，占 44%</td></tr>
+  <tr><td>评测结果（总分）</td><td>
+    <ul>
+      <li>OpenAI o3 DR 45.40、Gemini-3-Pro DR 44.60、Gemini-2.5-Pro DR 41.98、豆包 40.99</li>
+      <li>Qwen3-Max 39.25、Grok 39.23、Perplexity 38.58、通义 DeepResearch 29.89</li>
+    </ul></td></tr>
+</table></div>
+
+<h2 id="s2"><span class="no">2</span>132 道任务长什么样</h2>
+<div class="tbl"><table>
+  <tr><th>项目</th><th>情况</th></tr>
+  <tr><td>出版方</td><td>按屏蔽清单里的 URL 判断：MDPI 约 67 篇，占一半；arXiv 11、PLOS 8、Springer 8、Frontiers 7、ScienceDirect 4、OECD 2、Nature 2，其余零星</td></tr>
+  <tr><td>文章类型</td><td>标题里明确写了系统综述、范围综述或 meta 分析的只有 21 篇。46 篇标题是一般综述或调研，其余标题看不出类型（按标题判断，偏保守）</td></tr>
+  <tr><td>时间范围</td><td>116 道题的正文带年份，16 道不带</td></tr>
+  <tr><td>题目长度</td><td>不含屏蔽规则时，中位数约 900 字符（282–2,978）。屏蔽规则本身还会写出原文标题、作者和 URL</td></tr>
+  <tr><td>领域</td><td>22 个领域，但其中 15 个只有 2–6 道题。实际内容偏理工和医学综述</td></tr>
+</table></div>
+
+<div class="ex">
+  <div class="h">一道典型的题：第 9 题（中文，金融与商业）</div>
+  <p>研究疫情初期的避险情绪，时间限定在 2010-03-12 至 2021-02-26。</p>
+  <ol>
+    <li>解释 VIX、GVZ、OVX 三个波动率指数的全称、衡量对象、所基于的产品和发布机构；</li>
+    <li>用表格列出三个指数日收盘价的均值、标准差、最小值、最大值、偏度和峰度；</li>
+    <li>给出相关性矩阵，说明三者之间的因果方向，并分析疫情期间（2020-02-14 至 08-06）VIX 的影响如何变化、怎样体现 flight-to-safety。</li>
+  </ol>
+  <p>末尾附加：<em>最高优先级规则：不得查看以下文章</em>《Is this time really different? Flight-to-safety and the COVID-19 crisis》，后面还列了 3 个 URL。</p>
+  <p>对应的评分要点举例：</p>
+  <ul>
+    <li>指出 VIX 全称是 CBOE Volatility Index（信息召回）</li>
+    <li>解释 VIX 对 GVZ 的单向因果体现了 flight-to-safety（分析）</li>
+    <li>第二部分用表格呈现（呈现）</li>
+  </ul>
+</div>
+
+<p><strong>领域标签不太可靠。</strong>下面标 <span class="mis">⚠</span> 的题，标签和内容对不上：</p>
+<ul>
+  <li>自动叉车 → 金融与商业</li>
+  <li>波兰移动支付 BLIK → 硬件</li>
+  <li>视频动作识别 → 运动健身</li>
+  <li>美国正畸人群统计 → 时尚美妆</li>
+  <li>中国开放科研数据政策 → 文学</li>
+</ul>
+<p>题目编号 <code>task8</code> / <code>task8+</code> 是成对出现的，所以标签看起来是从初代的种子题继承来的，而不是按文章内容打的。这是推断，我没有核对初代的数据。</p>
+
+<details class="tasks"><summary>展开全部 132 道任务（按领域；数字为该题要点数，<span class="mis">⚠</span> = 标签与内容不符）</summary>
+<div class="dom"><h4>科学与技术<span>23</span></h4><ul>
+<li><span class="ix">16</span><span class="lg">英</span>材料逆向设计技术与数据库<span class="rc">52</span></li>
+<li><span class="ix">17</span><span class="lg">中</span>基于原子结构的深度学习模型与数据库<span class="rc">90</span></li>
+<li><span class="ix">18</span><span class="lg">英</span>植物水平基因转移<span class="rc">65</span></li>
+<li><span class="ix">19</span><span class="lg">中</span>外电场对互变异构分子的影响<span class="rc">47</span></li>
+<li><span class="ix">20</span><span class="lg">英</span>鸟类导航中的隐花色素<span class="rc">44</span></li>
+<li><span class="ix">21</span><span class="lg">中</span>动物如何利用环境因素定向<span class="rc">53</span></li>
+<li><span class="ix">22</span><span class="lg">英</span>电动车全生命周期成本与政策<span class="rc">65</span></li>
+<li><span class="ix">23</span><span class="lg">中</span>固态电池市场格局与预测<span class="rc">75</span></li>
+<li><span class="ix">24</span><span class="lg">英</span>地月空间探索热潮<span class="rc">96</span></li>
+<li><span class="ix">25</span><span class="lg">中</span>碳钢有机缓蚀剂性能<span class="rc">102</span></li>
+<li><span class="ix">26</span><span class="lg">英</span>无机缓蚀剂原理与应用<span class="rc">66</span></li>
+<li><span class="ix">27</span><span class="lg">中</span>西北太平洋鲐鱼资源评估模型<span class="rc">78</span></li>
+<li><span class="ix">28</span><span class="lg">英</span>泵作水轮机与其他水轮机对比<span class="rc">80</span></li>
+<li><span class="ix">29</span><span class="lg">中</span>量子技术集成光子平台<span class="rc">67</span></li>
+<li><span class="ix">30</span><span class="lg">英</span>AI 在 PET 成像中的应用<span class="rc">76</span></li>
+<li><span class="ix">31</span><span class="lg">中</span>移动辐射监测平台对比<span class="rc">103</span></li>
+<li><span class="ix">32</span><span class="lg">英</span>铌酸锂单晶及相关材料<span class="rc">106</span></li>
+<li><span class="ix">33</span><span class="lg">中</span>量子模拟器技术<span class="rc">73</span></li>
+<li><span class="ix">34</span><span class="lg">英</span>无人机飞控产品<span class="rc">88</span></li>
+<li><span class="ix">35</span><span class="lg">中</span>四旋翼无人机控制方法<span class="rc">176</span></li>
+<li><span class="ix">36</span><span class="lg">英</span>量子技术标准化现状<span class="rc">59</span></li>
+<li><span class="ix">37</span><span class="lg">中</span>多体量子态自测试方法<span class="rc">46</span></li>
+<li><span class="ix">38</span><span class="lg">英</span>现代温室环境控制算法<span class="rc">92</span></li>
+</ul></div>
+<div class="dom"><h4>金融与商业<span>15</span></h4><ul>
+<li><span class="ix">1</span><span class="lg">中</span>中国地方土地财政转型<span class="rc">58</span></li>
+<li><span class="ix">2</span><span class="lg">英</span>南亚社会保障<span class="rc">109</span></li>
+<li><span class="ix">3</span><span class="lg">中</span>亚洲数字化与人口老龄化<span class="rc">83</span></li>
+<li><span class="ix">4</span><span class="lg">英</span>亚洲养老储蓄缺口<span class="rc">72</span></li>
+<li><span class="ix">5</span><span class="lg">中</span>分散投资需要几只股票<span class="rc">48</span></li>
+<li><span class="ix">6</span><span class="lg">英</span>绿色债券政策与市场<span class="rc">86</span></li>
+<li><span class="ix">7</span><span class="lg">中</span>主权财富基金案例<span class="rc">75</span></li>
+<li><span class="ix">8</span><span class="lg">英</span>金银作为避险资产<span class="rc">72</span></li>
+<li><span class="ix">9</span><span class="lg">中</span>美股、黄金、原油波动关系<span class="rc">63</span></li>
+<li><span class="ix">10</span><span class="lg">英</span>深度学习预测资产价格<span class="rc">67</span></li>
+<li><span class="ix">11</span><span class="lg">中</span>系统性金融风险综述<span class="rc">60</span></li>
+<li><span class="ix">12</span><span class="lg">英</span>AI 增强的投资组合管理<span class="rc">56</span></li>
+<li><span class="ix">13</span><span class="lg">中</span>自动叉车技术与产品 <span class="mis">⚠</span><span class="rc">127</span></li>
+<li><span class="ix">14</span><span class="lg">英</span>公司案例：MindBridge<span class="rc">53</span></li>
+<li><span class="ix">15</span><span class="lg">中</span>AI 用于政府决策<span class="rc">55</span></li>
+</ul></div>
+<div class="dom"><h4>软件开发<span>13</span></h4><ul>
+<li><span class="ix">39</span><span class="lg">中</span>视觉非接触生命体征监测 <span class="mis">⚠</span><span class="rc">112</span></li>
+<li><span class="ix">40</span><span class="lg">英</span>Wi-Fi 感知的攻防<span class="rc">137</span></li>
+<li><span class="ix">41</span><span class="lg">中</span>低代码市场与技术（2021 前）<span class="rc">57</span></li>
+<li><span class="ix">42</span><span class="lg">英</span>低代码平台的影响（2025）<span class="rc">75</span></li>
+<li><span class="ix">43</span><span class="lg">中</span>基于种群的深度强化学习<span class="rc">92</span></li>
+<li><span class="ix">44</span><span class="lg">英</span>自主飞行器中的凸优化<span class="rc">50</span></li>
+<li><span class="ix">45</span><span class="lg">中</span>面向 AI 的 Kubernetes 调度<span class="rc">47</span></li>
+<li><span class="ix">46</span><span class="lg">英</span>云计算自动扩缩容<span class="rc">54</span></li>
+<li><span class="ix">47</span><span class="lg">中</span>分布式系统可观测性<span class="rc">130</span></li>
+<li><span class="ix">48</span><span class="lg">英</span>AI 研究中的大循环与原子化<span class="rc">70</span></li>
+<li><span class="ix">49</span><span class="lg">中</span>HTTP 自适应流媒体<span class="rc">79</span></li>
+<li><span class="ix">50</span><span class="lg">英</span>边缘计算辅助视频的缓存策略<span class="rc">56</span></li>
+<li><span class="ix">51</span><span class="lg">中</span>主流 Web 框架对比<span class="rc">126</span></li>
+</ul></div>
+<div class="dom"><h4>健康<span>12</span></h4><ul>
+<li><span class="ix">62</span><span class="lg">英</span>代盐与心血管风险<span class="rc">39</span></li>
+<li><span class="ix">63</span><span class="lg">中</span>线粒体代谢与逆转 T 细胞耗竭<span class="rc">64</span></li>
+<li><span class="ix">64</span><span class="lg">英</span>耗竭 T 细胞的制备路线<span class="rc">71</span></li>
+<li><span class="ix">65</span><span class="lg">中</span>锌稳态与心血管病<span class="rc">55</span></li>
+<li><span class="ix">66</span><span class="lg">英</span>肠道菌群与结直肠癌疗法<span class="rc">68</span></li>
+<li><span class="ix">67</span><span class="lg">中</span>m6A 对免疫系统的影响<span class="rc">65</span></li>
+<li><span class="ix">68</span><span class="lg">英</span>AI 辅助医患共同决策<span class="rc">60</span></li>
+<li><span class="ix">69</span><span class="lg">中</span>AI 与心理健康<span class="rc">66</span></li>
+<li><span class="ix">70</span><span class="lg">英</span>医疗数字孪生<span class="rc">88</span></li>
+<li><span class="ix">71</span><span class="lg">中</span>阴谋论心理学<span class="rc">53</span></li>
+<li><span class="ix">72</span><span class="lg">英</span>帕金森诊断标准的演变<span class="rc">62</span></li>
+<li><span class="ix">73</span><span class="lg">中</span>药物重定位知识图谱<span class="rc">91</span></li>
+</ul></div>
+<div class="dom"><h4>教育与就业<span>10</span></h4><ul>
+<li><span class="ix">52</span><span class="lg">英</span>生成式 AI 在教育中的机遇与挑战<span class="rc">55</span></li>
+<li><span class="ix">53</span><span class="lg">中</span>高等教育中的学习分析<span class="rc">74</span></li>
+<li><span class="ix">54</span><span class="lg">英</span>K-12 英语写作支架 AI 工具<span class="rc">68</span></li>
+<li><span class="ix">55</span><span class="lg">中</span>非典型雇佣下文创从业者社保<span class="rc">49</span></li>
+<li><span class="ix">56</span><span class="lg">英</span>生成式 AI 对劳动力市场的影响<span class="rc">70</span></li>
+<li><span class="ix">57</span><span class="lg">中</span>工业 4.0 与南亚劳动力市场<span class="rc">55</span></li>
+<li><span class="ix">58</span><span class="lg">英</span>疫情期间高校在线教学效果<span class="rc">126</span></li>
+<li><span class="ix">59</span><span class="lg">中</span>ChatGPT 教育应用现状（2023）<span class="rc">66</span></li>
+<li><span class="ix">60</span><span class="lg">英</span>自闭症学生焦虑的成因与对策<span class="rc">59</span></li>
+<li><span class="ix">61</span><span class="lg">中</span>K-12 智能辅导系统<span class="rc">51</span></li>
+</ul></div>
+<div class="dom"><h4>硬件<span>6</span></h4><ul>
+<li><span class="ix">86</span><span class="lg">英</span>半导体互连替代金属<span class="rc">63</span></li>
+<li><span class="ix">87</span><span class="lg">中</span>芯片互连技术新进展<span class="rc">59</span></li>
+<li><span class="ix">88</span><span class="lg">英</span>降低二维 FET 接触电阻<span class="rc">90</span></li>
+<li><span class="ix">89</span><span class="lg">中</span>波兰移动支付 BLIK <span class="mis">⚠</span><span class="rc">74</span></li>
+<li><span class="ix">90</span><span class="lg">英</span>低电压 SRAM 的挑战与对策<span class="rc">101</span></li>
+<li><span class="ix">91</span><span class="lg">中</span>降低失调的 SRAM 灵敏放大电路<span class="rc">91</span></li>
+</ul></div>
+<div class="dom"><h4>历史<span>6</span></h4><ul>
+<li><span class="ix">80</span><span class="lg">英</span>东欧记忆政治与创伤理论<span class="rc">37</span></li>
+<li><span class="ix">81</span><span class="lg">中</span>AR 用于历史教育与遗产可视化<span class="rc">42</span></li>
+<li><span class="ix">82</span><span class="lg">英</span>抗战时期资源委员会后方建厂<span class="rc">58</span></li>
+<li><span class="ix">83</span><span class="lg">中</span>集体记忆与社会记忆概念<span class="rc">46</span></li>
+<li><span class="ix">84</span><span class="lg">英</span>石油依赖国如何避免资源诅咒 <span class="mis">⚠</span><span class="rc">62</span></li>
+<li><span class="ix">85</span><span class="lg">中</span>东亚战后审判题材电影<span class="rc">56</span></li>
+</ul></div>
+<div class="dom"><h4>文学<span>6</span></h4><ul>
+<li><span class="ix">74</span><span class="lg">英</span>中国开放科研数据政策与实践 <span class="mis">⚠</span><span class="rc">74</span></li>
+<li><span class="ix">75</span><span class="lg">中</span>《剑桥中国文学史》的理论创新<span class="rc">48</span></li>
+<li><span class="ix">76</span><span class="lg">英</span>20 世纪国际组织与去殖民化<span class="rc">65</span></li>
+<li><span class="ix">77</span><span class="lg">中</span>埃及跨性别者的权利与法律地位 <span class="mis">⚠</span><span class="rc">60</span></li>
+<li><span class="ix">78</span><span class="lg">英</span>日本动漫的学术研究<span class="rc">60</span></li>
+<li><span class="ix">79</span><span class="lg">中</span>日本教材中的 LGBTQ+ 包容<span class="rc">48</span></li>
+</ul></div>
+<div class="dom"><h4>工业<span>5</span></h4><ul>
+<li><span class="ix">92</span><span class="lg">英</span>城市综合水管理模型<span class="rc">84</span></li>
+<li><span class="ix">93</span><span class="lg">中</span>重型机械振动状态监测<span class="rc">76</span></li>
+<li><span class="ix">94</span><span class="lg">英</span>赞比亚管道饮用水与不平等<span class="rc">93</span></li>
+<li><span class="ix">95</span><span class="lg">中</span>液压成形技术<span class="rc">74</span></li>
+<li><span class="ix">96</span><span class="lg">英</span>多品种小批量排产算法<span class="rc">69</span></li>
+</ul></div>
+<div class="dom"><h4>艺术与设计<span>4</span></h4><ul>
+<li><span class="ix">97</span><span class="lg">中</span>沉浸式梵高展<span class="rc">62</span></li>
+<li><span class="ix">98</span><span class="lg">英</span>爵士钢琴家 Mary Lou Williams 晚年的教学<span class="rc">57</span></li>
+<li><span class="ix">99</span><span class="lg">中</span>Netflix 全球内容策略<span class="rc">65</span></li>
+<li><span class="ix">100</span><span class="lg">英</span>生成式 AI 版权问题<span class="rc">67</span></li>
+</ul></div>
+<div class="dom"><h4>宗教<span>4</span></h4><ul>
+<li><span class="ix">115</span><span class="lg">中</span>道教长生成仙思想（河上公注）<span class="rc">46</span></li>
+<li><span class="ix">116</span><span class="lg">英</span>用西方艺术哲学读《古兰经》<span class="rc">56</span></li>
+<li><span class="ix">117</span><span class="lg">中</span>吉藏的佛性论<span class="rc">62</span></li>
+<li><span class="ix">118</span><span class="lg">英</span>希伯来圣经中的母性叙事<span class="rc">57</span></li>
+</ul></div>
+<div class="dom"><h4>饮食<span>3</span></h4><ul>
+<li><span class="ix">128</span><span class="lg">英</span>蛋白质摄入与老年人肌骨健康<span class="rc">65</span></li>
+<li><span class="ix">129</span><span class="lg">中</span>葡萄酒降醇技术<span class="rc">59</span></li>
+<li><span class="ix">130</span><span class="lg">英</span>常见代糖对比<span class="rc">75</span></li>
+</ul></div>
+<div class="dom"><h4>家居爱好<span>3</span></h4><ul>
+<li><span class="ix">122</span><span class="lg">英</span>气候适应型住宅<span class="rc">87</span></li>
+<li><span class="ix">123</span><span class="lg">中</span>非正规住房<span class="rc">57</span></li>
+<li><span class="ix">124</span><span class="lg">英</span>物联网应用 <span class="mis">⚠</span><span class="rc">79</span><span class="rc">无来源</span></li>
+</ul></div>
+<div class="dom"><h4>社会生活<span>3</span></h4><ul>
+<li><span class="ix">125</span><span class="lg">中</span>课间休息与小学生学业<span class="rc">67</span></li>
+<li><span class="ix">126</span><span class="lg">英</span>24 小时活动指南的效果<span class="rc">73</span></li>
+<li><span class="ix">127</span><span class="lg">中</span>人机交互中的伪亲密关系<span class="rc">62</span></li>
+</ul></div>
+<div class="dom"><h4>运动健身<span>3</span></h4><ul>
+<li><span class="ix">110</span><span class="lg">英</span>体育锻炼与中国 6–17 岁青少年健康<span class="rc">62</span></li>
+<li><span class="ix">111</span><span class="lg">中</span>中低收入国家青少年身体活动<span class="rc">67</span></li>
+<li><span class="ix">112</span><span class="lg">英</span>视频动作识别技术 <span class="mis">⚠</span><span class="rc">73</span></li>
+</ul></div>
+<div class="dom"><h4>交通<span>3</span></h4><ul>
+<li><span class="ix">107</span><span class="lg">中</span>中国城轨发展 2015–2023<span class="rc">124</span></li>
+<li><span class="ix">108</span><span class="lg">英</span>高铁弓网系统材料<span class="rc">76</span></li>
+<li><span class="ix">109</span><span class="lg">中</span>智能铁路通信系统<span class="rc">67</span></li>
+</ul></div>
+<div class="dom"><h4>旅行<span>3</span></h4><ul>
+<li><span class="ix">119</span><span class="lg">中</span>气候对美国户外休闲的影响<span class="rc">59</span></li>
+<li><span class="ix">120</span><span class="lg">英</span>北地中海旅游分布 2010–2020<span class="rc">195</span></li>
+<li><span class="ix">121</span><span class="lg">中</span>机场建设与区域经济<span class="rc">38</span></li>
+</ul></div>
+<div class="dom"><h4>法律<span>2</span></h4><ul>
+<li><span class="ix">103</span><span class="lg">中</span>德国自动驾驶事故责任<span class="rc">45</span></li>
+<li><span class="ix">104</span><span class="lg">英</span>中国器官移植与死刑犯器官<span class="rc">40</span></li>
+</ul></div>
+<div class="dom"><h4>娱乐<span>2</span></h4><ul>
+<li><span class="ix">105</span><span class="lg">中</span>日本异世界漫画情节<span class="rc">56</span></li>
+<li><span class="ix">106</span><span class="lg">英</span>电影《哪吒》的商业与文化分析<span class="rc">102</span></li>
+</ul></div>
+<div class="dom"><h4>时尚美妆<span>2</span></h4><ul>
+<li><span class="ix">131</span><span class="lg">中</span>美国正畸人群统计 <span class="mis">⚠</span><span class="rc">85</span></li>
+<li><span class="ix">132</span><span class="lg">英</span>黄褐斑治疗方法<span class="rc">71</span></li>
+</ul></div>
+<div class="dom"><h4>游戏<span>2</span></h4><ul>
+<li><span class="ix">101</span><span class="lg">中</span>游戏设计方法论<span class="rc">39</span></li>
+<li><span class="ix">102</span><span class="lg">英</span>电竞与网游对健康的影响<span class="rc">56</span></li>
+</ul></div>
+<div class="dom"><h4>软件<span>2</span></h4><ul>
+<li><span class="ix">113</span><span class="lg">中</span>AI 在软件工程中的实际应用<span class="rc">61</span></li>
+<li><span class="ix">114</span><span class="lg">英</span>公有云市场竞争格局<span class="rc">50</span></li>
+</ul></div>
+</details>
+
+<h2 id="s3"><span class="no">3</span>底层逻辑：信任的三次转移</h2>
+<p>论文第 1、2 节的推理是这样的：</p>
+<ol>
+  <li><strong>它要解决的问题：开放式报告评测里，评委不知道正确答案。</strong>
+    <ul>
+      <li>像"说明了婴儿肌无力的常见原因"这种粗粒度要点，只能查"写没写到这个话题"，查不了"写得对不对"。</li>
+      <li>引用核验只能查"引文支不支持这句话"，查不了"引文本身对不对"。</li>
+    </ul></li>
+  <li><strong>解法：让每条要点自带答案。</strong>比如写成"指出小城市人才外流的原因是职业结构错配"。这样评委只需要比对，不需要懂这个领域。</li>
+  <li><strong>答案从哪来：借一篇已经回答过这个问题的专家综述。</strong>开放题的标准答案要事先写对、写全，成本极高，所以直接拿现成的。</li>
+  <li><strong>信任从哪来：借发表过程。</strong></li>
+</ol>
+<blockquote>These reports are typically written by domain experts over the course of weeks or months and undergo multiple layers of validation—from peer reviewers, editors, practitioners, and the general public—thus reflecting a high degree of credibility and expert consensus.<span class="src">§3.1.1</span></blockquote>
+<p>所以信任是一路转移过来的：<strong>评委 → 标准答案 → 发表过程</strong>。整套方法立在一个假设上：这篇文章 ≈ 这道题的正确且完整的答案。论文对这个假设只给了上面这段声明，没有给证据。</p>
+
+<h2 id="s4"><span class="no">4</span>种子文章怎么选（§3.1.1）</h2>
+<div class="tbl"><table>
+  <tr><th>环节</th><th>规则</th><th>说明了什么</th></tr>
+  <tr><td>起点</td><td>用初代 DeepResearch Bench 的题当种子，去找回答相似问题的开放获取综述</td><td>话题分布继承自初代对真实用户查询的统计</td></tr>
+  <tr><td>来源门槛</td><td>"知名期刊、顶会、可信的机构出版物"</td><td>只是一句声明，没有可检验的标准</td></tr>
+  <tr><td>许可</td><td>只要 CC-4.0 或 CC-4.0-NC</td><td>这一条实际决定了候选池，结果一半是 MDPI</td></tr>
+  <tr><td>四条适配性</td><td>
+    <ul>
+      <li>需要大量公开检索</li>
+      <li>结论需要实质综合</li>
+      <li>不依赖实验</li>
+      <li>不依赖复杂数据挖掘或随机 ML</li>
+    </ul></td><td>四条都在问"能不能出成题"，没有一条在问"文章对不对"</td></tr>
+</table></div>
+<p>论文没有做的事：</p>
+<ul>
+  <li>没有设被引门槛；</li>
+  <li>没有查撤稿和更正；</li>
+  <li>没有看文章是不是系统综述（系统综述有检索协议，完整性可以审计）；</li>
+  <li>没有说明为什么偏偏选了这一篇，而不是同一问题下的其他综述。</li>
+</ul>
+
+<h2 id="s5"><span class="no">5</span>"反编译"的规则（§3.1.2 + 附录 E.1 的 13 条注意事项）</h2>
+<h3>从文章切出题目</h3>
+<ul>
+  <li>可以只取一节或一张表，优先取"数据召回和整理"的部分（第 2 条）。</li>
+  <li>可以避开太主观的部分，原文给的理由是：</li>
+</ul>
+<blockquote>since a model is unlikely to reproduce the exact same analysis.<span class="src">附录 E.1 第 2 条</span></blockquote>
+<ul>
+  <li>关键数据要规定好组织方式，比如表格有哪几列；含糊的概念要给出严格定义（第 3 条）。</li>
+  <li>必须既有收集，也有轻度分析，不能要求重计算（第 4 条）。</li>
+  <li>模仿非专家用户的口吻，假定用户叫不出领域内的方法和细节（第 5 条）。</li>
+  <li>变化快的话题要写明截止日期，和原文的时间范围对齐（第 6 条）。</li>
+  <li>要点控制在 50–200 条。太多时缩小题目范围，而不是删要点（第 9 条）。</li>
+</ul>
+<h3>从文章拆出要点</h3>
+<ul>
+  <li>尽量全，覆盖整道题（第 7 条）。</li>
+  <li>每个数值单独一条，需要计算得出的数值允许误差（第 8 条）。</li>
+  <li>写出具体内容，而不是只写话题（第 10 条）。</li>
+  <li>拆到不可再分（第 11 条）。</li>
+  <li>引用别的研究时写出完整标题（第 12 条）。</li>
+  <li>各条互相独立（第 13 条）。</li>
+</ul>
+<h3>三个维度</h3>
+<ul>
+  <li><strong>信息召回</strong>：对应事实。</li>
+  <li><strong>分析</strong>：对应观点，提示词要求"结论与人类文章相似"。</li>
+  <li><strong>呈现</strong>：对应格式。</li>
+</ul>
+<p><strong>规则之间有冲突，实际执行的是"按答案裁题"。</strong>第 5 条要求像非专家用户那样提问，但附录给的示例 2 在题目里直接列出了 13 个灵敏放大器的缩写，还规定了表格列名和行数。</p>
+
+<h2 id="s6"><span class="no">6</span>弱在哪：拆开论证链</h2>
+<p>一个分数要能支撑结论，中间每一环都得成立。按 Kane 的论证式效度框架，可以拆成四环：</p>
+<div class="tbl"><table>
+  <tr><th>环节</th><th>要成立的命题</th><th>表现</th><th>依据</th></tr>
+  <tr><td>① 打分</td><td>评委判"这条要点过没过"判得准</td><td class="strong">强</td><td>要点自带答案，评委只需比对。Gemini-2.5-Pro 和人工标注的一致率 91.75%，F1 89.57</td></tr>
+  <tr><td>② 泛化</td><td>132 道题能代表"深度研究任务"这个总体</td><td class="mid">中偏弱</td><td>
+    <ul>
+      <li>一半来源是 MDPI；</li>
+      <li>22 个领域里 15 个只有 2–6 题；</li>
+      <li>每个 Agent 只跑一次；</li>
+      <li>排名不给置信区间，第 5、6 名只差 0.02 分。</li>
+    </ul></td></tr>
+  <tr><td>③ 外推</td><td>得分高 = 深度研究能力强</td><td class="weak">弱</td><td>题目基本是原文提纲；评分只看和原文重合多少；说错不扣分</td></tr>
+  <tr><td>④ 结论</td><td>"最强 Agent 不到 50%，远逊于人类专家"</td><td class="weak">最弱</td><td>原文在自己的要点上必然拿 90% 以上，这是筛选规则保证的；论文也没有拿专家盲评排序来验证 DRB II 的分数</td></tr>
+</table></div>
+<p>一句话：<strong>它很客观，但客观地测量了一个偏掉的东西。</strong>客观性（评分可靠）和效度（测的是想测的东西）是两回事，DRB II 是典型例子。</p>
+
+<h3>6.1 完整性：靠"按答案裁题"得来，不需要证明</h3>
+<ul>
+  <li>第 2、3、9 条合起来，就是把题目裁成原文的形状：题目只问原文答了的部分，所以在这个范围里，原文按定义就是完整的。</li>
+  <li>这样做的代价是题目读起来像原文提纲，测的是"按提纲把内容找回来"，测不到 Agent 自己界定问题的能力。</li>
+</ul>
+
+<h3>6.2 权威性：借来的，从没核验过</h3>
+<ul>
+  <li>90% 自检只检验"要点忠于原文"，不检验原文本身对不对。</li>
+  <li>专家被要求保证要点"与原文完全一致"（remain fully consistent with the source article）。他们核对的是抽取有没有出错，不是文章有没有出错。</li>
+  <li>400 小时审 9,415 条，平均每条约 2.5 分钟。</li>
+</ul>
+
+<h3>6.3 评分只算召回，不算对错</h3>
+<p>评分提示词（附录 E.2）只有三档：</p>
+<ul>
+  <li><strong>1</strong>：满足这条要点；</li>
+  <li><strong>0</strong>：完全没提到（does NOT mention this rubric item at all）；</li>
+  <li><strong>−1</strong>：引用了被屏蔽的原文。</li>
+</ul>
+<p>问题有两个：</p>
+<ul>
+  <li>没有"提到了但说错"这一档，说错不比不说更吃亏。</li>
+  <li>要点之外的内容完全不查，写得多不吃亏。</li>
+</ul>
+<p>论文的出发点是"验证所召回信息的正确性"，但这个评分实际测的是"和原文重合了多少"。这和 <a href="https://arxiv.org/pdf/2509.04664" target="_blank">Why LMs Hallucinate</a> 的结论相反：只奖励命中、不惩罚说错的评分，会鼓励猜。</p>
+
+<h3>6.4 按范例对答案，而不是按标准判对错</h3>
+<div class="ex">
+  <div class="h">第 5 题：分散投资需要几只股票</div>
+  <ul>
+    <li>题目要求整理 1968–2021 年的"代表性研究"。</li>
+    <li>评分要点却逐条规定了是哪几篇：Evans &amp; Archer 1968、Fielitz 1974、Solnik 1974、Statman 1987……每篇的市场、时段、方法、结论都要对上。</li>
+    <li>如果 Agent 选了同样有代表性的其他研究（比如 Elton &amp; Gruber 1977、Campbell 等 2001），每篇都得 0 分。</li>
+    <li>"哪些研究算代表性"是这篇综述作者自己的取舍，结果被当成了唯一答案。</li>
+  </ul>
+</div>
+<div class="ex">
+  <div class="h">第 117 题：吉藏的佛性论</div>
+  <ul>
+    <li>分析维度的要点里有"把'第一义空'重新诠释为一种智慧境界，而非客观真理命题"这类表述。</li>
+    <li>这是一位学者的解读。别的学者换一种诠释框架，只要言之成理，照样得 0 分。</li>
+  </ul>
+</div>
+<div class="ex">
+  <div class="h">第 120 题：北地中海旅游分布 2010–2020</div>
+  <ul>
+    <li>186 条信息召回要点：13 条国土面积，140 条逐年入境人数，33 条指数值。</li>
+    <li>Agent 换一个同样合理的数据源（统计数据常被回头修订），这些要点就大面积丢分。</li>
+    <li>题目限定 2010–2020 年，分析要点里却要求提到 2006 年的波动，而这只有原文（覆盖 2004–2020 年）写到。</li>
+  </ul>
+</div>
+<p>三个例子是同一个毛病：<strong>和范例一样才得分，不一样就算缺失。</strong></p>
+
+<h3>6.5 "与人类专家的差距"有一部分是循环论证</h3>
+<ul>
+  <li>原文按构造必然在自己的要点上拿 90% 以上。用这个上限去对比 Agent 的不到 50%，差距里有一部分来自"要点就是从原文拆出来的"。</li>
+  <li>要支撑"Agent 不如专家"，至少需要另一位专家在同样条件下重做这道题，再用同一套要点去评。论文没有做。</li>
+</ul>
+
+<h3>6.6 统计与验证</h3>
+<ul>
+  <li>每个系统只跑一次，没有重复运行，也没有置信区间。排名相邻的系统差距在 0.02–2.6 分之间。</li>
+  <li>"各领域之间表现无显著差异（p&gt;0.05）"：每个领域只有 2–6 题（科技 23 题除外），这个检验本来就没有能力测出差异，说明不了什么。</li>
+  <li>评委只在 10 份报告上验证过，测的是"单条要点判得对不对"。论文没有检验"DRB II 分高的报告，专家是否也认为更好"。</li>
+  <li>评委 Gemini-2.5-Pro 和其中两个被测系统同属 Gemini 家族。对比对类判断，这个影响可能不大，但论文没有讨论。</li>
+</ul>
+
+<h3>6.7 泄漏</h3>
+<ul>
+  <li>屏蔽规则写在题目里，本意是禁止查看，但等于把原文标题告诉了 Agent。</li>
+  <li>论文报告的泄漏率在 0.24%（Grok）到 13.2%（Qwen）之间，平均 3.64%。</li>
+  <li>屏蔽清单只列了原文的几个 URL，没有屏蔽 GitHub 仓库和 HuggingFace 数据集页面，而带答案的评分要点就在那里（见第 7 节）。</li>
+</ul>
+
+<h2 id="s7"><span class="no">7</span>时效性</h2>
+<p>三个版本的 <code>tasks_and_rubrics.jsonl</code>，我逐字段比对过，题目、评分要点和屏蔽清单完全一致：</p>
+<ul>
+  <li>2025-11-17：首发；</li>
+  <li>2026-02-24：加了 license 字段；</li>
+  <li>2026-05-14：重写了文件，没有实质改动。</li>
+</ul>
+<p>论文 2026-09 出了 v3，数据也没有跟着更新。</p>
+<div class="tbl"><table>
+  <tr><th>截止年份</th><th class="num">≤2019</th><th class="num">2020</th><th class="num">2021</th><th class="num">2022</th><th class="num">2023</th><th class="num">2024</th><th class="num">2025</th><th class="num">无年份</th></tr>
+  <tr><td>题数</td><td class="num">17</td><td class="num">11</td><td class="num">15</td><td class="num">20</td><td class="num">22</td><td class="num">24</td><td class="num">7</td><td class="num">16</td></tr>
+</table></div>
+<p>作者给题目加截止年份，就是为了让答案固定下来。"截至 2021 年的土地出让收入"这种事实不会变，所以要点本身不会过期。真正随时间失效的是下面四件事：</p>
+<ol>
+  <li><strong>越来越能靠记忆答出来。</strong>
+    <ul>
+      <li>来源文章大多发表于 2020–2025 年，早已进了训练数据。</li>
+      <li>数据集 2026-02 上了 HuggingFace，评分要点全文公开，之后的模型可能直接学到。</li>
+      <li><a href="https://arxiv.org/pdf/2605.28721" target="_blank">LiveBrowseComp</a> 测过：在 BrowseComp 上，Agent 不联网就能答对 44.5%。</li>
+      <li>DRB II 从没报告过不联网的基线分，所以分不清得分是查出来的，还是本来就记得的。</li>
+    </ul></li>
+  <li><strong>评分要点本身就在网上，可能被搜到。</strong><a href="https://arxiv.org/pdf/2606.05241" target="_blank">Search-Time Contamination</a> 测出，这类泄漏最多能把成绩抬高 4%。原文的镜像和引用页也会越来越多，而屏蔽清单是固定的那几个链接。</li>
+  <li><strong>网页和数据在变，评分要点没跟着变。</strong>统计数据会被修订，网页会失效。同一个 Agent、同一套要点，隔一年再测，分数可能就变了，而 Agent 本身并没有变。</li>
+  <li><strong>全是历史题，测不到"找最新信息"。</strong>真实用户问的多半是"现在怎么样"。这要求 Agent 能识别信息过时、处理新旧说法打架。</li>
+</ol>
+<p>文件夹里的论文有三种补救思路：</p>
+<div class="tbl"><table>
+  <tr><th>思路</th><th>做法</th><th>能解决</th><th>解决不了</th></tr>
+  <tr><td>实时出题（LiveBrowseComp）</td><td>答案只依赖出题前 90 天内的新事实，不联网的准确率低于 2%</td><td>记忆污染</td><td>题目过期很快，要持续出新题</td></tr>
+  <tr><td>冻结语料（<a href="https://arxiv.org/pdf/2508.06600" target="_blank">BrowseComp-Plus</a>、<a href="https://arxiv.org/pdf/2604.14683" target="_blank">DR³-Eval</a>）</td><td>把可搜索的网页固定成一个快照</td><td>网页漂移</td><td>记忆污染</td></tr>
+  <tr><td>题目明确要求时效性（<a href="https://arxiv.org/pdf/2606.12871" target="_blank">DailyReport</a>，同一组人做的）</td><td>150 道时效性强的日常任务</td><td>能测"找最新信息"</td><td>摘要里没说会定期换题</td></tr>
+</table></div>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>评委不懂领域就判不准，这个问题是真实的。</strong>"要点自带答案"确实解决了它，这个思路值得借鉴。</li>
+  <li><strong>用真实专家文章做锚点，比让 LLM 自己想象评分标准好。</strong>初代 DeepResearch Bench 的标准就是 LLM 生成的。</li>
+  <li><strong>要点细到单条事实，诊断信息丰富。</strong>能看出哪类事实召回不到，也能看出差距主要在召回（23–40 分），不在呈现（75–92 分）。</li>
+  <li><strong>数据、评分脚本和提示词全部公开。</strong>本文的每个数字都能复核，这本身就值得肯定。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>怎么改，对我们有什么用</h2>
+<h3>把"按范例对答案"改成"按标准判对错"</h3>
+<div class="tbl"><table>
+  <tr><th>要证明的</th><th>方法</th></tr>
+  <tr><td>文章本身可信</td><td>每篇建一份来源档案：
+    <ul>
+      <li>期刊和审稿方式；</li>
+      <li>按领域归一化的被引百分位；</li>
+      <li>撤稿和更正记录（Crossref / Retraction Watch）；</li>
+      <li>PubPeer 上的质疑；</li>
+      <li>作者在该领域的发表记录；</li>
+      <li>利益冲突。</li>
+    </ul>
+    设门槛入选。</td></tr>
+  <tr><td>要点正确</td><td>
+    <ul>
+      <li>每条要点追溯到原文引用的一手来源。</li>
+      <li>分层抽样审计，比如抽 100 条估计错误率，误差约 ±10%。</li>
+      <li>按出处分成"有一手来源的数据 / 作者的推论 / 无引用的断言"三类，只有第一类当硬事实。</li>
+    </ul></td></tr>
+  <tr><td>要点必要</td><td>请专家组用 Lawshe 内容效度比（CVR），对每条判"必需 / 有用 / 不必要"，过阈值才保留，并报告专家间一致性</td></tr>
+  <tr><td>答案完整</td><td>
+    <ol>
+      <li>优先选系统综述。它有 PRISMA 检索协议，完整性可以相对于检索范围来审计。</li>
+      <li>专家在看原文之前先独立列出要点，避免被原文锚定，再和原文比对。</li>
+      <li>用捕获–再捕获估计漏了多少：拿原文的要点集和一个独立来源比对，比如专家清单或 Agent 报告里核验为真的断言，用 Lincoln–Petersen 公式估计总数。</li>
+      <li>同一问题找两篇以上独立综述，共识部分作核心要点，只有一篇提到的降权。</li>
+    </ol></td></tr>
+  <tr><td>列举类可替换</td><td>改成按条件判，比如"列出至少 k 项符合条件 X 的研究，每项经核验属实"，而不是固定一份名单</td></tr>
+  <tr><td>观点可接受</td><td>不按"与原文相似"判，按"有证据支撑、推理成立"判，人文题尤其如此</td></tr>
+  <tr><td>评分有效</td><td>
+    <ul>
+      <li>增加"提到但错误"一档并扣分；</li>
+      <li>对要点之外的断言抽查精确率；</li>
+      <li>用专家盲评排序做外部检验；</li>
+      <li>多跑几次并给置信区间。</li>
+    </ul></td></tr>
+</table></div>
+
+<h3>对"同一 Prompt、20 个 Agent"场景的启示</h3>
+<ul>
+  <li><strong>可以直接借鉴的：</strong>
+    <ul>
+      <li>题目写法：时间范围 + 编号子问题 + 格式要求；</li>
+      <li>"要点自带答案、拆到不可再分"的写法。</li>
+    </ul></li>
+  <li><strong>可以直接拿一道 DRB II 的题当共享 Prompt。</strong>这样现成就有约 70 条要点，还有一篇人类专家文章可以匿名混进 20 份报告里一起评。代价有三个：
+    <ul>
+      <li>先要做不联网的基线测试，确认 Agent 没背过；</li>
+      <li>要在搜索层面屏蔽原文和数据集页面，光靠提示词不够；</li>
+      <li>仍然要把 20 份报告的断言汇总起来，补进原文没写、但核验为真的内容。</li>
+    </ul></li>
+  <li><strong>更稳妥的是自己出新题。</strong>
+    <ul>
+      <li>截止日期定在运行当天；</li>
+      <li>专家在运行前先写好必答清单，运行后把 20 份报告的断言汇总补充进去；</li>
+      <li>运行时立刻把被引网页存档。</li>
+    </ul>
+    这就是上表"答案完整"一行里的第 2、3 条。这样得到的评分标准只对这一次运行有效，对一次性评测来说正合适。如果要每年重复用，就给评分标准加版本号和截止日期，每一轮预留专家重新裁决的时间。</li>
+</ul>
+
+<h2 id="s10"><span class="no">10</span>复核说明与未完成的核查</h2>
+<h3>数字是怎么来的</h3>
+<ul>
+  <li>任务数、语言、领域、要点数、许可，都直接从 <code>tasks_and_rubrics.jsonl</code> 统计。</li>
+  <li>出版方：按每题 <code>blocked.urls</code> 里的域名判断。15 篇只有 ResearchGate、PubMed 之类的镜像链接，没有计入出版方。</li>
+  <li>文章类型：只按标题关键词判断，偏保守。标题没写 review 的文章也可能是综述。</li>
+  <li>截止年份：在题目正文里找年份，不含屏蔽规则，取最大值。</li>
+  <li>领域标签是否贴切：是我的判断。"标签继承自种子题"是推断。</li>
+  <li>版本比对：三个提交版本逐题比较了 <code>prompt</code>、<code>rubric</code>、<code>blocked</code>、<code>task</code> 字段。</li>
+</ul>
+<h3>对之前对话中说法的更正</h3>
+<ul>
+  <li>对话里一度说"130 道题写明了时间范围"。那次统计把屏蔽规则里的年份也算进去了，只看题目正文是 116 道。</li>
+</ul>
+<h3>还没做的核查</h3>
+<ul>
+  <li><strong>131 篇来源文章的被引百分位和撤稿情况。</strong>2026-10-28 试过 OpenAlex，它现在要求 API key，当天的免费额度已用完。可以改用 Crossref（撤稿信息已并入）重查。</li>
+  <li><strong>抽样追溯要点到一手来源，估计要点本身的错误率。</strong>这是"权威性"问题里最关键、也最缺的一环。</li>
+  <li><strong>用一个评委重跑论文的部分结果，检验可复现性。</strong></li>
+  <li><strong>拿专家盲评排序和 DRB II 分数算相关性。</strong>这需要真人专家，与心得笔记里"人类专家盲测与 Agent 评测对比"的想法相关。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2603.05912" target="_blank">DeepFact</a>（专家先审计后评分）·
+  <a href="https://arxiv.org/pdf/2607.12252" target="_blank">FinResearchBench II</a>（只从模型报告提炼要点的盲区）·
+  <a href="https://arxiv.org/pdf/2610.18092" target="_blank">LifeSearch</a>（与人类排名的一致性）·
+  <a href="https://arxiv.org/pdf/2605.17554" target="_blank">Expert Consulting</a>（阈值型指标分不出高下）
+</footer>
+</div>
+</body>
+</html>

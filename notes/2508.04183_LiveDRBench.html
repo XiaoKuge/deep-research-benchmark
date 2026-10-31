@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveDRBench 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>LiveDRBench 精读：深度研究的关键是把"断言"找全、找对，而不是写长报告</h1>
+  <p class="dek">一个把"证据清单"写成公式的 benchmark，以及它没兑现的"Live"</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2508.04183" target="_blank">arXiv 2508.04183</a> v1（2025-08-06，至今唯一版本）· ICLR 2026 ·
+    <a href="https://arxiv.org/pdf/2508.04183" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 微软研究院印度（班加罗尔）Amit Sharma、Navin Goyal、Nagarajan Natarajan 等 9 人<br>
+    <b>数据和代码</b>
+    <a href="https://huggingface.co/datasets/microsoft/LiveDRBench" target="_blank">HuggingFace</a>（CDLA-Permissive-2.0，最后更新 2025-08-08）·
+    <a href="https://github.com/microsoft/LiveDRBench" target="_blank">GitHub</a>（MIT，最后提交 2025-10-16）<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 4 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 7 节"弱在哪"把"① 判分"评为"强"，理由是"GPT-4o 判的和作者人工判的几乎一致"<br><span class="note">应改为：</span>〔更正〕改为"中"，并注明一致性证据只到总体平均：表 11 与表 2 有三类完全相同、一类名次翻转，人工判分者是作者本人 <a href="record-2508.04183_LiveDRBench.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 4 节"权重：公式允许给重要的断言加权，论文的实验里没有用"<br><span class="note">应改为：</span>〔更正〕"论文没有说明是否使用" <a href="record-2508.04183_LiveDRBench.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>抬头"ICLR 2026"<br><span class="note">应改为：</span>〔更正〕标为"未核实"：PDF、arXiv 元数据和 GitHub 说明文件中都没有找到录用信息 <a href="record-2508.04183_LiveDRBench.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 9 节对照表时效一栏"声称会更新，实际没有"<br><span class="note">应改为：</span>〔更正〕"提供了更新办法，没有执行"：原文是"enables easy addition"和"provide a mechanism to refresh"，没有承诺定期更新 <a href="record-2508.04183_LiveDRBench.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>关于例题：</strong>这个 benchmark 的标准答案是加密发布的，附有 canary 标记，意思是"不应以明文出现在网上"。本文只引用论文正文和附录里已经印出的题目片段，不写任何标准答案。统计数字来自 HuggingFace 上的公开数据：题目本身是明文的。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">核心主张：研究 = 找断言</a></li>
+    <li><a href="#s2">怎么出题：把阅读题倒过来</a></li>
+    <li><a href="#s3">100 道题、8 类</a></li>
+    <li><a href="#s4">怎么判分：断言 × 出处</a></li>
+    <li><a href="#s5">结果</a></li>
+    <li><a href="#s6">名词小抄</a></li>
+    <li><a href="#s7">弱在哪</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">和另外三篇对照</a></li>
+    <li><a href="#s10">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s11">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>核心主张：</strong>深度研究的关键不是"写出一份长报告"，而是"在大量资料里把该找的断言找全、找对，并给出出处"。写报告只是最后一步的成文，可以另外评。</li>
+  <li><strong>怎么评：</strong>
+    <ul>
+      <li>把 Agent 的输出变成一张断言清单，每条断言带着支撑它的子断言（比如出处论文）；</li>
+      <li>对照标准答案算精确率（说出来的有多少是对的）和召回率（该说的说全了多少）；</li>
+      <li>主断言错了记 0 分；主断言对了但出处全错，也记 0 分，这样防止"靠记忆蒙对答案"。</li>
+    </ul></li>
+  <li><strong>怎么出题：</strong>把"给你一篇文章，找出里面的信息"倒过来，变成"给你这些信息，找出是哪篇文章、哪个东西"。共 100 道题、8 类，覆盖科研和公共事件。</li>
+  <li><strong>结果（2025 年中）：</strong>OpenAI DR 平均 F1 0.55，Perplexity DR 0.36，Gemini DR 0.26。</li>
+  <li><strong>问题：</strong>
+    <ul>
+      <li>名字叫"Live"，但 14 个月没有加过一道新题；</li>
+      <li>有 10 道题的标准答案以明文公开；</li>
+      <li>有 10 道列举题没写截止时间，答案会随时间变；</li>
+      <li>标准答案只按当时那几个系统的输出做过补充，对后来的新系统不公平；</li>
+      <li>每类只有 3–20 道题，按类比较噪声很大。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>在读过的四篇里，<strong>这篇的评分方法最能直接拿来用</strong>。"断言 × 出处"的打分公式，加上"汇总所有 Agent 的输出、人工裁决后补进标准答案"，正好就是我们一开始讨论的"证据清单"方案。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>核心主张：研究 = 找断言</h2>
+<p>打个比方：写一篇综述，真正花时间的不是排版和成文，而是之前那张"发现清单"：查到了哪些事实，每条出自哪里。清单找全了、找对了，成文是相对容易的一步。清单错了漏了，文章写得再漂亮也没用。</p>
+<p>论文把深度研究拆成两步：</p>
+<ol>
+  <li><strong>发现断言：</strong>在资料里找出能回答问题的一条条信息，以及支撑它们的证据。这是本文要评的。</li>
+  <li><strong>写成报告：</strong>把断言组织成文字。论文认为这是一个独立的"长文本生成"问题，可以单独评，本文不管。</li>
+</ol>
+<p>什么样的问题算"深度研究"？论文给了两个条件，同时满足才算：</p>
+<ul>
+  <li><strong>搜索量大：</strong>要处理很多信息单元（大致是一个段落）。论文给的参考线是 20 个以上，至少搜 10 次。</li>
+  <li><strong>要动脑子：</strong>找、读、合并信息这三步里，至少有一步需要不简单的推理。参考线是"一个理想的专家用网络搜索也要花 10 分钟以上"。</li>
+</ul>
+<div class="ex">
+  <div class="h">论文给的例子</div>
+  <ul>
+    <li><strong>是深度研究：</strong>"由女性作者的小说改编、片长 80–95 分钟的奥斯卡获奖电影"。要翻很多片子，逐部核对条件。</li>
+    <li><strong>搜索量不够：</strong>"这篇论文里用的材料有什么性质"。答案就在一篇文章里。</li>
+    <li><strong>推理量不够：</strong>"NeurIPS 2024 录用论文列表"。列表一抓就有，不用推理。</li>
+    <li><strong>是不是深度研究还取决于资料库：</strong>如果某天网上出现一个页面，正好列出了全部答案，这道题就不再是深度研究了。</li>
+  </ul>
+</div>
+
+<h2 id="s2"><span class="no">2</span>怎么出题：把阅读题倒过来</h2>
+<p>论文管这叫"问题倒置"（problem inversion）：</p>
+<div class="tbl"><table>
+  <tr><th></th><th>原来的阅读题</th><th>倒过来的深度研究题</th></tr>
+  <tr><td>给你什么</td><td>一篇材料学论文</td><td>一组测量数据：带隙 3.35 eV、结合能 60 meV、晶格常数 a = 0.325 nm、c = 0.521 nm……</td></tr>
+  <tr><td>要你做什么</td><td>列出论文里这种材料的各项性质</td><td>找出是哪种材料、出自哪篇论文，并摘出原文的表格和段落</td></tr>
+  <tr><td>难在哪</td><td>读懂一篇长文</td><td>不知道去哪找，要拿数据反复搜、反复比对</td></tr>
+</table></div>
+<p>这个例子来自论文附录 A。原题出自 Google 的 CURIE 阅读理解数据集。倒过来之后，作者还会人工检查答案是否唯一。如果不唯一，就加条件，或者把其他同样正确的答案补进标准答案。</p>
+<p>这套做法的好处：只要有新的论文、新的赛事，就能照同样的流程出新题。这就是名字里"Live"的由来（不过后面会说到，并没有真的更新过）。</p>
+
+<h2 id="s3"><span class="no">3</span>100 道题、8 类</h2>
+<div class="tbl"><table>
+  <tr><th>类别</th><th class="num">题数</th><th>要做什么</th><th>素材来源</th></tr>
+  <tr><td>科研事实 · 地理</td><td class="num">19</td><td>找出同时用到了指定几个地理数据集的论文</td><td>CURIE 数据集</td></tr>
+  <tr><td>科研事实 · 材料</td><td class="num">17</td><td>按一组测量性质找出材料和出处论文</td><td>CURIE 数据集</td></tr>
+  <tr><td>新数据集 · 识别</td><td class="num">6</td><td>按描述找出某个数据集，给出年份、会议、链接</td><td>ICLR 2025 的数据集论文</td></tr>
+  <tr><td>新数据集 · 识别 + 提取</td><td class="num">11</td><td>找出数据集，再从论文的表格或图里提取具体结论</td><td>同上</td></tr>
+  <tr><td>新数据集 · 同类检索</td><td class="num">3</td><td>按一段高层描述找出同一方向的几个数据集，并比较它们</td><td>数据集论文里的对比表</td></tr>
+  <tr><td>先前工作检索</td><td class="num">17</td><td>给一段作者合写的"假摘要"，找出其中每个想法已经出现在哪些论文里</td><td>ICLR、ICML 2025 在 OpenReview 上的审稿讨论</td></tr>
+  <tr><td>实体列举</td><td class="num">20</td><td>列出所有满足条件的人、电影、书、国家</td><td>IMO、奥运会、烂番茄、纽约时报畅销榜</td></tr>
+  <tr><td>航空事件</td><td class="num">7</td><td>按描述找出是哪次航空事件，并给出时间线或原因</td><td>NTSB、AAIB、BEA 的官方调查报告</td></tr>
+</table></div>
+<ul>
+  <li>题数是用 HuggingFace 上的正式数据集（v1-full，100 道）逐类数出来的，和论文表 1 一致。</li>
+  <li>论文正文 4.2.1 节写"科研事实共 31 道"，但 19 + 17 = 36，正文这个数字有误。</li>
+  <li><strong>先前工作检索</strong>出得最有心思：作者先从审稿意见里提炼一篇论文的贡献，再把审稿人指出的相关工作也揉进去，写成一段假摘要。这样 Agent 就没法顺着某一篇论文的参考文献找全答案。</li>
+  <li><strong>实体列举</strong>的每道题大约要翻 80–140 个候选，最后符合条件的有 8–30 个。</li>
+</ul>
+
+<h2 id="s4"><span class="no">4</span>怎么判分：断言 × 出处</h2>
+<p>每道题都要求 Agent 输出一份 JSON 清单。清单里每一项是一条<strong>主断言</strong>（比如材料名），下面挂着<strong>子断言</strong>（比如出处论文的标题）。</p>
+<pre>一条断言的得分 = 主断言对不对（0 或 1）× 子断言里对的比例
+
+精确率 = Agent 说出的各条断言得分之和 ÷ Agent 说了几条
+召回率 = Agent 说出的各条断言得分之和 ÷ 标准答案有几条</pre>
+<div class="ex">
+  <div class="h">例子：材料题为什么分数这么低</div>
+  <ul>
+    <li>主断言是"材料名"，子断言是"出处论文"。两样都对才得分。</li>
+    <li>OpenAI DR 单看论文标题，F1 有 0.735；单看材料名，F1 有 0.504；两样都要对，就只剩 0.314。</li>
+    <li>设计用意：答对材料但编了一篇不存在的论文，也是 0 分。这样可以防止"靠记忆蒙对答案、却说不出出处"。</li>
+  </ul>
+</div>
+<ul>
+  <li><strong>标准模式：</strong>各条断言的得分取平均。</li>
+  <li><strong>严格模式：</strong>取最小值。只要有一条错或漏，整题就是 0 分。适合"必须一个不落地列全"的题。</li>
+  <li><strong>权重：</strong>公式允许给重要的断言加权，论文的实验里没有用。</li>
+</ul>
+<p><strong>谁来判对错：</strong>GPT-4o 逐项比对 Agent 的答案和标准答案。Gemini DR 不按要求输出 JSON，只给报告，作者就手工把它的断言抄出来。作者自己也人工判了一遍（附录表 11），三家的平均 F1 和 GPT-4o 判的几乎一样：0.556 / 0.361 / 0.261，对比 0.555 / 0.355 / 0.263。</p>
+<p><strong>标准答案的补充：</strong>出题时的标准答案可能不全。所以作者把所有被测系统给出的断言都人工判了一遍，判为正确的就补进标准答案，再用补充后的版本自动打分。这就是信息检索评测里的"汇总裁决"做法。</p>
+
+<h2 id="s5"><span class="no">5</span>结果</h2>
+<div class="tbl"><table>
+  <tr><th>系统</th><th class="num">精确率</th><th class="num">召回率</th><th class="num">F1</th></tr>
+  <tr><td>OpenAI Deep Research</td><td class="num">0.633</td><td class="num">0.523</td><td class="num">0.555</td></tr>
+  <tr><td>Perplexity Deep Research</td><td class="num">0.466</td><td class="num">0.317</td><td class="num">0.355</td></tr>
+  <tr><td>Gemini Deep Research（2.5 Pro）</td><td class="num">0.335</td><td class="num">0.240</td><td class="num">0.263</td></tr>
+</table></div>
+<p class="aside">表中是 8 类各自 F1 的简单平均。按题数加权的平均是 0.550 / 0.331 / 0.236。</p>
+<ul>
+  <li><strong>三家都是"说得准、说不全"。</strong>精确率普遍高于召回率：说出来的大多是对的，但该找的没找全。</li>
+  <li><strong>按类差别很大。</strong>F1 从 0.02（Gemini DR 做材料题）到 0.72（OpenAI DR 做地理题）。最难的是材料题、识别 + 提取题和航空题，这几类不光要找到对象，还要从长文档的多个部分里提取细节。</li>
+  <li><strong>不带深度研究模式的模型很吃力。</strong>o4-mini、Gemini 2.5 Pro 等开着搜索、只给约 30 秒思考时间，材料题全部是 0 分。不过 o4-mini 在不少类别上和 Perplexity DR、Gemini DR 不相上下。</li>
+  <li><strong>搜索记录分析</strong>（只看新数据集这一类的 19 道题）：
+    <ul>
+      <li>OpenAI DR 分岔和回头重想的次数最多，分数也最高；</li>
+      <li>Perplexity DR 平均翻 40 多个来源，但很少回头，"广而浅"；</li>
+      <li>Gemini DR 收手太早，来源少、思考少。</li>
+    </ul>
+    翻的来源多，不等于答得好。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>名词小抄</h2>
+<dl class="gl">
+  <dt>断言</dt><dd>能回答问题的一条信息，比如"这种材料是 X"。</dd>
+  <dt>子断言</dt><dd>支撑断言的信息，比如"出自论文 Y""论文发表在 Z 会议"。</dd>
+  <dt>精确率</dt><dd>Agent 说出来的断言里，有多少是对的。说 10 条、对 7 条，就是 70%。</dd>
+  <dt>召回率</dt><dd>标准答案里的断言，Agent 说中了多少。标准答案有 20 条、说中 7 条，就是 35%。</dd>
+  <dt>F1</dt><dd>精确率和召回率的调和平均。两者都高，F1 才高；只顾一头，F1 会被拉低。</dd>
+  <dt>问题倒置</dt><dd>把"读文章找信息"倒过来，变成"给信息找文章"。</dd>
+  <dt>汇总裁决</dt><dd>把所有被测系统的答案合在一起人工判，正确的补进标准答案。英文叫 pooling。</dd>
+  <dt>严格模式</dt><dd>有一条错或漏，整题就是 0 分。</dd>
+</dl>
+
+<h2 id="s7"><span class="no">7</span>弱在哪</h2>
+<p>还是那四关：</p>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>每条断言判得准吗</td><td class="strong">强</td><td>标准答案是具体的名字、标题、数字，GPT-4o 判的和作者人工判的几乎一致</td></tr>
+  <tr><td>② 比较</td><td>系统之间的分差可信吗</td><td class="mid">中偏弱</td><td>总共 100 道题，按类只有 3–20 道；每个系统只跑了一次；没有误差范围（见 7.1）</td></tr>
+  <tr><td>③ 推广</td><td>换个时间、换个系统，标准答案还成立吗</td><td class="weak">弱</td><td>标准答案只按当时那几个系统的输出补充过；一半列举题没写截止时间；10% 的答案是明文（见 7.2–7.4）</td></tr>
+  <tr><td>④ 意义</td><td>分数高 = 深度研究能力强吗</td><td class="mid">中</td><td>"找断言"确实是研究的核心，但"10 分钟""20 个信息单元"这两条定义从没实测过；而且按设计就不评报告（见 7.5、7.7）</td></tr>
+</table></div>
+
+<h3>7.1 题太少，按类比几乎就是看运气</h3>
+<div class="ex">
+  <div class="h">例子</div>
+  <ul>
+    <li>"新数据集 · 识别"只有 6 道题。OpenAI DR 的 F1 是 0.667，就是 6 道里对了 4 道。多对或少对一道，分数就要变 16.7 分。</li>
+    <li>"新数据集 · 同类检索"只有 3 道题，任何结论都靠不住。</li>
+  </ul>
+</div>
+<p>论文没有给误差范围。每个系统只跑了一次，而且是在网页聊天界面里手工提交的。</p>
+
+<h3>7.2 名字叫"Live"，但没有 live 起来</h3>
+<ul>
+  <li>HuggingFace 数据最后更新于 2025-08-08，只有 v1。GitHub 后来只修了几次代码，最后一次提交在 2025-10-16。14 个月里没有加过一道新题。</li>
+  <li>更麻烦的是，有些题的答案本身会随时间变。20 道列举题里有 10 道没写截止时间：
+    <ul>
+      <li>5 道问"某国 IMO 拿过至少几块奖牌的选手"。每年 7 月都有新一届 IMO，符合条件的人会变多。</li>
+      <li>5 道问"烂番茄评分达到多少、片长在某个范围的电影"。新片会上线，评分也会变。</li>
+    </ul>
+  </li>
+  <li>标准答案停在 2025 年中。一个今天去查、正确列出了新选手或新电影的 Agent，反而会被判成"说错了"，精确率下降。</li>
+  <li>另外 10 道写了时间范围（"截至 2025 年"的奥运题、限定月份的畅销书题），不受影响。</li>
+</ul>
+
+<h3>7.3 10% 的标准答案是明文</h3>
+<ul>
+  <li>HuggingFace 上除了正式的 100 道题，还有一个 10 道题的"预览"子集。预览子集的标准答案没有加密，是明文。</li>
+  <li>我逐题比对过：这 10 道题全部在正式的 100 道里。也就是说，从 2025-08-08 起，这个 benchmark 有 10% 的答案就以明文挂在网上，正式数据集的加密对它们不起作用。</li>
+  <li>其余 90 道的答案是加密的，但解密方法和 BrowseComp 一样是公开的，只能防爬虫。题目本身也是明文的。</li>
+</ul>
+
+<h3>7.4 补充过的标准答案，只对当时那几个系统公平</h3>
+<p>"汇总裁决"本身是好做法，但补进标准答案的，只来自论文当时测过的那批系统。</p>
+<div class="ex">
+  <div class="h">例子</div>
+  <ul>
+    <li>假设一道地理题，确实还有第三篇论文也用到了全部指定数据集，但当时三家都没找到，它就不在标准答案里。</li>
+    <li>后来的新系统找到了这第三篇，评分脚本只会拿它和标准答案比，结果判成"说错了"。</li>
+    <li>反过来，当时三家找到的那些额外答案都已经被补了进去，它们自然占便宜。</li>
+  </ul>
+</div>
+<p>这在信息检索评测里叫"汇总偏差"（pool bias）。论文和代码都没有给新系统提供"新答案送人工裁决"的通道。</p>
+
+<h3>7.5 定义里的两条门槛从没实测过</h3>
+<p>"理想专家要花 10 分钟以上""至少 20 个信息单元、10 次搜索"，这两条是论文对深度研究的定义，但都是"我们认为"（we posit）。论文没有请人实际做题计时，也没有统计每道题实际需要多少信息单元。所以不知道这 100 道题里，有多少真的跨过了自己定的门槛。</p>
+
+<h3>7.6 比较条件不统一</h3>
+<ul>
+  <li>三个 DR 产品当时没有 API，都是在网页聊天界面里手工提交的。遇到它们反问澄清问题时，统一回复"Go ahead"。</li>
+  <li>作为对照的普通模型走 API，思考时间只给了约 30 秒（o4-mini 开"低"档，Gemini 2.5 Pro 只给 128 个思考 token）。"普通模型很吃力"有一部分是这个设置造成的。</li>
+  <li>Gemini DR 的断言是作者手工抄出来的，人工评测也是作者自己做的，没有外部标注员。</li>
+  <li><strong>利益关联：</strong>作者来自微软，论文提到 OpenAI DR 已集成进微软 Copilot，而 OpenAI DR 在这里排第一。当时其他 benchmark 上 OpenAI DR 也大多领先，所以不能据此说结果有偏，但这层关系值得知道。</li>
+</ul>
+
+<h3>7.7 按设计就不评报告</h3>
+<p>这是作者有意的取舍，不算缺陷，但要清楚它的边界：</p>
+<ul>
+  <li>LiveDRBench 只评"断言找得全不全、对不对"；</li>
+  <li>报告写得清不清楚、分析得深不深、结论有没有用，都不在评测范围内。</li>
+</ul>
+<p>README 里也写明了：不适合评估长报告的写作质量。</p>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>把"找断言"和"写报告"分开。</strong>客观的部分（断言对不对、全不全）客观地评；主观的部分（写得好不好）留给别的方法。这比把两者混在一起打一个总分清楚得多。</li>
+  <li><strong>精确率和召回率都算。</strong>DRB II 只算召回，DailyReport 只算精确率，这篇两样都有。</li>
+  <li><strong>出处必须对。</strong>主断言对、出处全错也记 0 分，直接卡住"背答案"和"编出处"。</li>
+  <li><strong>严格模式和权重。</strong>可以按题目性质选择"列全才算"，也可以给重要断言加权。</li>
+  <li><strong>汇总裁决。</strong>承认标准答案可能不全，并用人工判过的被测系统输出来补。</li>
+  <li><strong>问题倒置是一个可复制的出题配方。</strong>有新论文、新赛事，就能照做。</li>
+  <li><strong>题型多样。</strong>从"找一根针"到"列出几十个"都有，不同题型对搜索和推理的要求不同。</li>
+  <li><strong>数据、代码、评测提示词全部公开</strong>，正式答案也加了密。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>和另外三篇对照</h2>
+<div class="tbl"><table>
+  <tr><th></th><th>DRB II</th><th>DailyReport</th><th>BrowseComp-Plus</th><th>LiveDRBench</th></tr>
+  <tr><td>题目从哪来</td><td>从综述倒推</td><td>从热点正向写</td><td>BrowseComp 原题</td><td>把阅读题倒过来</td></tr>
+  <tr><td>答案形式</td><td>报告</td><td>报告</td><td>一个短答案</td><td>断言清单（带出处）</td></tr>
+  <tr><td>查得准吗（精确率）</td><td>不查</td><td>查（评委现场搜）</td><td>只看最终答案对不对</td><td>查</td></tr>
+  <tr><td>查得全吗（召回率）</td><td>查（对照原文）</td><td>不查</td><td>查证据文档的召回</td><td>查</td></tr>
+  <tr><td>出处</td><td>不要求</td><td>单独统计引用质量</td><td>统计引用的证据文档</td><td>出处错就记 0 分</td></tr>
+  <tr><td>标准答案补充</td><td>无</td><td>无标准答案</td><td>人工核验证据</td><td>汇总被测系统的输出、人工裁决</td></tr>
+  <tr><td>时效</td><td>锁死截止年份</td><td>声称会更新</td><td>固定资料库</td><td>声称会更新，实际没有；一半列举题会漂移</td></tr>
+  <tr><td>能不能用</td><td>能</td><td>没有数据</td><td>能，但快考满分</td><td>能，但要注意 7.2–7.4</td></tr>
+</table></div>
+
+<h2 id="s10"><span class="no">10</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<p>这篇最值得借的是<strong>评分方法</strong>，不是题目。照它的思路，可以把 5 份报告的评测分成两层：</p>
+<h3>第一层：断言层，客观打分</h3>
+<ol>
+  <li>把每份报告拆成断言清单：每条关键结论是一个主断言，它引用的来源和数据是子断言。</li>
+  <li>得分用"主断言对不对 × 子断言对的比例"。结论对、来源全错也是 0 分。</li>
+  <li>权重 w 用 DailyReport 的 P0 / P1 / P2：必须有的断言权重高，有更好的权重低。</li>
+  <li><strong>标准答案 = 专家事先写的必答清单 + 5 个 Agent（各跑 3 次）全部断言的汇总裁决。</strong>人工判为正确的补进去，之后统一打分。</li>
+  <li>精确率和召回率都报。题目里要求"列全"的子问题，用严格模式。</li>
+  <li>吸取 7.4 的教训：如果以后要加第 6 个 Agent，它的新断言必须先送人工裁决，再打分。</li>
+  <li>吸取 7.2 的教训：Prompt 里写明截止日期，标准答案也按这个日期定。</li>
+</ol>
+<h3>第二层：报告层，主观比较</h3>
+<p>写得清不清楚、分析深不深、结论有没有用，按我们之前说的办法评：专家盲评，5 份两两比较或直接排序，评分人看不到第一层的分数。</p>
+<p>两层分数分开报告，不要合成一个总分。</p>
+
+<h2 id="s11"><span class="no">11</span>复核说明</h2>
+<ul>
+  <li><strong>论文版本：</strong>arXiv 接口显示只有 v1（2025-08-06）。ICLR 2026 收录信息来自索引里已有的作者分析。</li>
+  <li><strong>题数和题型：</strong>用 HuggingFace 行数据接口取了 v1-full（100 道）和 preview（10 道）两个子集，逐类计数。没有解密任何答案。</li>
+  <li><strong>预览答案是明文：</strong>preview 子集的 <code>ground_truths</code> 字段是明文 JSON，v1-full 的是加密字符串。两个子集的题目逐字比对，10 道全部重合。本文不转录这些答案。</li>
+  <li><strong>截止时间：</strong>逐题阅读了 20 道列举题的条件部分。没写截止时间的 10 道是 IMO 类 5 道、烂番茄类 5 道。</li>
+  <li><strong>更新情况：</strong>GitHub 共 4 次提交（2025-08-08 首发，2025-10-14 和 10-16 修代码和 README）。HuggingFace 数据最后修改于 2025-08-08。</li>
+  <li><strong>"科研事实 31 道"与 19 + 17 = 36 的出入：</strong>以数据集为准，论文正文有误。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2605.28721" target="_blank">LiveBrowseComp</a>（真正持续出新题的做法）·
+  <a href="https://arxiv.org/pdf/2603.05912" target="_blank">DeepFact</a>（专家先审计后评分）·
+  <a href="https://arxiv.org/pdf/2604.03173" target="_blank">Reference Hallucinations</a>（出处真伪的程序化核验）·
+  <a href="https://arxiv.org/pdf/2509.04664" target="_blank">Why LMs Hallucinate</a>
+</footer>
+</div>
+</body>
+</html>

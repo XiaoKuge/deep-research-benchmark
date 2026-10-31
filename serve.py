@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""文献索引页的本地服务：在 localhost:8766 提供 index.html、本目录的 PDF 和 notes/ 下的精读页，并接收「阅读状态 / 笔记」的写回。
+"""文献索引页的本地服务：在 localhost:8766 提供 literature.local.html（只留本机的文献索引）、本目录的 PDF 和 notes/ 下的精读页，并接收「阅读状态 / 笔记」的写回。
 
 - 只监听 127.0.0.1，只服务 index.html、本目录下的 PDF 和 notes/ 下的 .html。
 - 写回只改被点的那一篇论文的 status / note / doneAt，以及顶层 updated；写之前先备份到 .backups/。
@@ -20,7 +20,7 @@ from urllib.parse import unquote
 
 PORT = 8766
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INDEX = os.path.join(ROOT, "index.html")
+INDEX = os.path.join(ROOT, "literature.local.html")
 BACKUPS = os.path.join(ROOT, ".backups")
 KEEP_BACKUPS = 30
 HOSTS = {f"localhost:{PORT}", f"127.0.0.1:{PORT}"}
@@ -191,7 +191,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/comments":
             with LOCK:
                 return self._send(200, json.dumps(load_comments(), ensure_ascii=False))
-        if path in ("/", "/index.html"):
+        if path in ("/", "/index.html", "/papers.html"):
             with open(INDEX, "rb") as f:
                 return self._send(200, f.read(), "text/html; charset=utf-8")
         name = path.lstrip("/")

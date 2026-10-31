@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DREAM 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  .step{display:flex;gap:12px;margin:10px 0}
+  .step .n{flex:none;width:26px;height:26px;border-radius:50%;background:rgba(139,92,246,.2);color:#fff;
+    font-size:13px;text-align:center;line-height:26px;margin-top:2px}
+  .step .b{flex:1;min-width:0}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>DREAM 精读：让阅卷老师也能上网查资料</h1>
+  <p class="dek">一个"评委也是研究 Agent"的评测框架：思路对，验证薄，代码没放</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2602.18940" target="_blank">arXiv 2602.18940</a> v1（2026-02-21，至今唯一版本）·
+    <a href="https://arxiv.org/pdf/2602.18940" target="_blank">本地 PDF</a><br>
+    <b>团队</b> AWS Agentic AI 的 10 人，加 1 名佐治亚理工的实习生<br>
+    <b>数据和代码</b> 论文没有给出代码或数据链接。HuggingFace 论文页没有关联仓库，GitHub 上也搜不到官方实现（截至 2026-10-28）<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 3 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 4 节"验证 2"把对照指标写成"DeepResearch Bench 洞察分"<br><span class="note">应改为：</span>〔更正〕"RACE 分（论文未说明是哪一项）"：原文第 4.3 节和图 5 只写"DRB–RACE"或"RACE" <a href="record-2602.18940_DREAM.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.7 节"图和表对不上"所举的例子（依据附录 F 的文字描述），以及"可能是图上的范围估读不准"的保留说法<br><span class="note">应改为：</span>〔更正〕例子选错了：Smolagents 在 DeepResearch Bench 和 ResearchRubrics 上的数值在读数误差之内；真正对不上的是 LangChain 的三个数据集、Smolagents 和通义在 LiveResearchBench 上的数值；偏差是系统性的，保留说法应删去 <a href="record-2602.18940_DREAM.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.3 节"2024 年 1 月一档 RACE 全面性降了 5 分、洞察降了 9 分"<br><span class="note">应改为：</span>〔补充〕数字没错，但第 5 题三项都是 0.00，去掉这一题，降幅约为 3 分和 7 分；记录注明"补充说明，不算错误" <a href="record-2602.18940_DREAM.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>先说清它是什么：</strong>DREAM 不出新题，也不发布数据集。它是一套<strong>评分方法</strong>，拿现成的三个 benchmark 的题（DeepResearch Bench 英文 50 题、LiveResearchBench 80 题、ResearchRubrics 101 题，共 231 题）来演示。本文的例子都来自论文正文和附录里已经印出的内容。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">打个比方：阅卷老师不会查资料</a></li>
+    <li><a href="#s2">一份报告怎么被评</a></li>
+    <li><a href="#s3">六个指标怎么算</a></li>
+    <li><a href="#s4">它怎么证明自己有用</a></li>
+    <li><a href="#s5">拿它评了谁、结果如何</a></li>
+    <li><a href="#s6">名词小抄</a></li>
+    <li><a href="#s7">弱在哪</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">和前四篇对照</a></li>
+    <li><a href="#s10">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s11">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它的诊断：</strong>现有的报告评测，评委大多是一个"不能上网"的大模型。它只看得出报告写得顺不顺、引用对不对得上原文，看不出内容过时了没有、事实错没错、推理站不站得住。论文管这叫"综合的海市蜃楼"：报告看着流畅、引用齐全，底下却有事实和推理的毛病。</li>
+  <li><strong>它的药方：</strong>"能力对等"。研究 Agent 会搜索、会核实、会推理，评委也应该会。所以 DREAM 让评委本身也变成一个能上网、能查 arXiv 和 GitHub 的 Agent。</li>
+  <li><strong>具体做法：</strong>六个指标。
+    <ul>
+      <li>四个通用：写作质量、事实性、引用完整性、来源权威性；</li>
+      <li>两个按题定制：关键信息覆盖、推理质量。定制的那两个，由评委 Agent 先自己把题研究一遍，再生成检查清单。</li>
+    </ul></li>
+  <li><strong>它的证据：</strong>三个"故意弄坏报告"的小实验。
+    <ul>
+      <li>报告信息过时 1–2 年：DREAM 的覆盖分从 79 跌到 45、再到 22，而 DeepResearch Bench 的同类指标几乎不动；</li>
+      <li>故意注入推理漏洞：DREAM 的推理分平均降约 40%，对比的指标只降约 9%；</li>
+      <li>引用对得上、但内容是错的：DREAM 能发现，对比的指标完全看不出来。</li>
+    </ul></li>
+  <li><strong>问题：</strong>
+    <ul>
+      <li>没有放出代码；</li>
+      <li>"评委自己研究出的清单"会继承评委的盲区，换个时间重评分数也会变；</li>
+      <li>三个验证实验都很小，题也是作者自己出的；</li>
+      <li>没有拿专家对真实报告的判断来检验总分；</li>
+      <li>表里有几处数字对不上。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>思路和几个具体技巧可以直接用，比如"中性搜索词"、"同时找支持和反对证据"、"引用对得上 ≠ 内容是对的"。但要配上专家清单和汇总池，补上评委的盲区；核验要对照存档网页，保证可复现。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>打个比方：阅卷老师不会查资料</h2>
+<p>想象一位阅卷老师批改研究报告，他手边只有自己脑子里的知识，不能上网。他能看出：</p>
+<ul>
+  <li>文章通不通顺、结构清不清楚；</li>
+  <li>引用的那句话在被引文章里是不是真的有。</li>
+</ul>
+<p>但他看不出：</p>
+<ul>
+  <li>引用的文章本身是不是过时了、错了；</li>
+  <li>报告漏掉了上个月刚发生的关键变化；</li>
+  <li>某条推理在现实中根本行不通。</li>
+</ul>
+<div class="ex">
+  <div class="h">论文里的三个例子</div>
+  <ul>
+    <li><strong>引用对得上，内容却是错的：</strong>引用一篇 2019 年的研究，说"46% 的比特币交易是非法的"。这句话确实出自那篇研究，但现在的数据是不到 1%。只核对"引文和原文是否一致"的评委，会判它没问题。论文称之为"引用对齐谬误"。</li>
+    <li><strong>内容过时：</strong>问 TikTok 在美国的法律状态。一份停留在 2025 年初的报告，可能完全不知道 2025 年 12 月中旬签了合资协议、最新截止日期是 2026 年 1 月 23 日。不能上网的评委没法知道这些。</li>
+    <li><strong>推理行不通：</strong>一份"不坐飞机环游世界"的路线报告，规划了一段横跨塔斯曼海的客轮。实际上那里没有客运渡轮。评委要自己去查，才能发现这条路线走不通。</li>
+  </ul>
+</div>
+<p>DREAM 的回答是：让阅卷老师也能上网。评委要有和考生一样的工具，论文称之为"能力对等"（capability parity）。</p>
+
+<h2 id="s2"><span class="no">2</span>一份报告怎么被评</h2>
+<div class="step"><div class="n">1</div><div class="b"><strong>先给这道题定"评分方案"（与具体报告无关）</strong>
+  <ul>
+    <li>四个通用指标，每道题都一样：写作质量、事实性、引用完整性、来源权威性。</li>
+    <li>两个定制指标，由"出方案的 Agent"现场研究这道题后生成。这个 Agent 能用网页搜索、arXiv、GitHub。
+      <ul>
+        <li><strong>关键信息覆盖</strong>：一串"是 / 否"问题。比如 TikTok 那道题，它生成了"报告是否写明当前截止日期是 2026 年 1 月 23 日？""是否提到字节跳动保留 19.9%、美方投资者控股？"。</li>
+        <li><strong>推理质量</strong>：几道"难题"，每道配一份核验计划：从报告里摘什么、去外面查什么、怎么比对、怎么扣分。</li>
+      </ul></li>
+  </ul>
+</div></div>
+<div class="step"><div class="n">2</div><div class="b"><strong>再按方案去评报告，每个指标交给"刚好够用"的评委</strong>
+  <ul>
+    <li><strong>普通大模型</strong>：评写作质量、核对关键信息清单。这两样不需要上网。</li>
+    <li><strong>能上网的 Agent</strong>：执行推理质量的核验计划，边查边判。</li>
+    <li><strong>固定流程</strong>：事实性、引用完整性、来源权威性，按固定步骤走。</li>
+  </ul>
+</div></div>
+<p>默认的评委底座是 Claude Sonnet 4.5。</p>
+<p>和 DeepResearch Bench 对比，同一道 TikTok 题的评分标准是这样的（论文图 4）：</p>
+<div class="tbl"><table>
+  <tr><th>DeepResearch Bench 的标准（不能上网的大模型写的）</th><th>DREAM 的关键信息清单（上网研究后写的）</th></tr>
+  <tr><td>报告是否指出了相关的美国法律？</td><td>报告是否写明当前截止日期是 2026 年 1 月 23 日？</td></tr>
+  <tr><td>是否给出剥离截止日期，并说明延期条件？</td><td>是否提到 2025 年 12 月中旬字节跳动签署了美国合资协议？</td></tr>
+  <tr><td>是否讨论了针对该法律的诉讼？</td><td>是否说明字节跳动保留 19.9%、美方投资者控股？</td></tr>
+</table></div>
+<p>左边的标准，用过时的信息也能满足；右边的必须是最新的事实才能答对。</p>
+
+<h2 id="s3"><span class="no">3</span>六个指标怎么算</h2>
+<div class="tbl"><table>
+  <tr><th>指标</th><th>算法（附录 C）</th><th>大白话</th></tr>
+  <tr><td>写作质量</td><td>"内容与观点、组织结构、语句流畅"三项各占 1/3，每项下面有 3–4 个加权子项，大模型按固定提示词打 0–100 分</td><td>写得好不好读</td></tr>
+  <tr><td>事实性</td><td>
+    <ol>
+      <li>抽出报告里最重要的 30 条事实断言；</li>
+      <li>每条生成"中性搜索词"去搜；</li>
+      <li>同时找支持和反对的证据；</li>
+      <li>判为支持 / 部分支持 / 反驳 / 无法核实。</li>
+    </ol>
+    得分 =（支持 + 0.5 × 部分支持）÷（支持 + 部分支持 + 反驳）</td><td>说的事在现实中对不对，不管有没有引用</td></tr>
+  <tr><td>引用完整性</td><td>"标注率"（标了出处的断言占比）和"忠实度"（出处是否真的支持断言）的调和平均</td><td>有没有标出处、标的对不对</td></tr>
+  <tr><td>来源权威性</td><td>把引用的网址归到域名，大模型给每个域名打 1–10 分（政府和顶尖学术机构 9–10，社交媒体和未经核实的博客 1–3），取平均</td><td>引的是不是靠谱的地方</td></tr>
+  <tr><td>关键信息覆盖</td><td>出方案 Agent 生成 K 个"是 / 否"问题，报告命中几个算几个</td><td>该说的最新关键信息说了多少</td></tr>
+  <tr><td>推理质量</td><td>评委 Agent 执行核验计划，从 10 分起扣（逻辑断裂、没有依据的推论、忽略反面证据），再除以 10</td><td>推理站不站得住</td></tr>
+</table></div>
+<div class="ex">
+  <div class="h">"中性搜索词"是什么意思</div>
+  <p>要核实"通胀降到了 2%"，不要搜"通胀降到 2%"。那样只会搜到支持这句话的网页。应该搜"当前通胀率"，让支持和反对的证据都有机会出现。这是一个很实用的防"确认偏误"的技巧。</p>
+</div>
+
+<h2 id="s4"><span class="no">4</span>它怎么证明自己有用</h2>
+<p>论文做了四项验证。前三项都是"故意把报告弄坏，看分数会不会跟着掉"。</p>
+<h3>验证 1：信息过时，分数会不会掉（20 道题）</h3>
+<p>挑了 20 道时效性很强的题，比如"现任教皇""TikTok 剥离截止日期""英伟达市值排名""最新奥斯卡最佳影片"。每道题生成三份报告：</p>
+<ul>
+  <li>一份用 2025 年 12 月的最新信息；</li>
+  <li>两份通过限制搜索结果的日期，假装知识停在 2025 年 1 月和 2024 年 1 月。</li>
+</ul>
+<div class="tbl"><table>
+  <tr><th>指标</th><th class="num">最新</th><th class="num">停在 2025-01</th><th class="num">停在 2024-01</th></tr>
+  <tr><td>DREAM 关键信息覆盖</td><td class="num">79.35</td><td class="num">44.80</td><td class="num">22.34</td></tr>
+  <tr><td>DeepResearch Bench 全面性</td><td class="num">50.02</td><td class="num">50.04</td><td class="num">44.81</td></tr>
+  <tr><td>DeepResearch Bench 洞察</td><td class="num">50.54</td><td class="num">48.78</td><td class="num">41.68</td></tr>
+</table></div>
+<p>DREAM 的分数随信息变旧明显下降。DeepResearch Bench 的"全面性"在过时一年时几乎不变（50.02 → 50.04）。</p>
+
+<h3>验证 2：推理有漏洞，分数会不会掉（10 对报告）</h3>
+<p>10 道需要推理的题，每道生成一份正常报告和一份"坏报告"。坏报告文字依然流畅，但被注入了循环论证、错误类比、挑着用证据、无依据的因果。</p>
+<ul>
+  <li>DREAM 推理分：坏报告比正常报告平均低约 35%，中位数约 40%；</li>
+  <li>DeepResearch Bench 洞察分：平均只低约 11%，中位数约 9%，还有几份坏报告的分数反而更高。</li>
+</ul>
+
+<h3>验证 3：引用对得上但内容错了，分数会不会掉（15 对断言）</h3>
+<ul>
+  <li>作者手工准备了 15 对断言，每对一真一假，假的那条也配了"看起来能支撑它"的网页。</li>
+  <li>按 0% 到 100% 的比例把真断言换成假断言。DeepResearch Bench 的引用指标完全不变，因为它只核对"引文和原文一致"。DREAM 的事实性随造假比例同步下降。</li>
+</ul>
+
+<h3>验证 4：评分方案本身写得好不好（人工打分）</h3>
+<p>请标注员给"出方案 Agent"生成的清单条目打分，按相关性、可核实性、清晰度（推理质量还多一项"核验计划是否成立"）三档打分，再换算到 0–1。并和两种更简单的做法对比：</p>
+<div class="tbl"><table>
+  <tr><th>生成方式</th><th class="num">关键信息清单</th><th class="num">推理核验计划</th></tr>
+  <tr><td>大模型直接写</td><td class="num">0.79</td><td class="num">0.70</td></tr>
+  <tr><td>Agent 多步思考，但不上网</td><td class="num">0.83</td><td class="num">0.84</td></tr>
+  <tr><td>Agent 多步思考 + 上网（DREAM）</td><td class="num">0.92</td><td class="num">0.93</td></tr>
+</table></div>
+<p>上网带来的提升主要在"可核实性"：关键信息清单从 0.75 升到 0.91，推理计划从 0.67 升到 0.80。</p>
+<p>另外，写作质量分和 DeepResearch Bench 的可读性排名（300 份报告）的 Kendall τ 是 0.6。</p>
+
+<h2 id="s5"><span class="no">5</span>拿它评了谁、结果如何</h2>
+<p>只评了三个开源 Deep Research 系统，没有评任何商业产品，也没有评 AWS 自家的东西：</p>
+<div class="tbl"><table>
+  <tr><th>系统（底座模型）</th><th class="num">写作</th><th class="num">事实性</th><th class="num">引用完整性</th><th class="num">来源权威性</th><th class="num">关键信息</th><th class="num">推理</th></tr>
+  <tr><td>LangChain Open DR（GPT-5）</td><td class="num">62.17</td><td class="num">44.64</td><td class="num">15.92</td><td class="num">85.08</td><td class="num">65.96</td><td class="num">57.28</td></tr>
+  <tr><td>Smolagents Open DR（Claude Opus 4.6）</td><td class="num">63.97</td><td class="num">58.15</td><td class="num">4.78</td><td class="num">17.96</td><td class="num">75.95</td><td class="num">69.16</td></tr>
+  <tr><td>Tongyi Deep Research</td><td class="num">61.72</td><td class="num">55.09</td><td class="num">1.03</td><td class="num">3.38</td><td class="num">57.95</td><td class="num">45.48</td></tr>
+</table></div>
+<p class="aside">三个数据集的汇总值（论文表 10 的 Aggregate 行）。除"来源权威性"外，各列都等于按题数加权的平均（见 7.7）。</p>
+<ul>
+  <li><strong>三家都不太会标出处。</strong>引用完整性最高的 LangChain 也只有 15.92。</li>
+  <li><strong>两种失败方式不同：</strong>
+    <ul>
+      <li>LangChain 标得多（约 75–80% 的断言有出处），但标得不对（出处真正支持断言的只有约 10–20%）；</li>
+      <li>Smolagents 和通义几乎不标（约 5–15%）。通义在两个数据集上一条引用都没有。</li>
+    </ul></li>
+  <li><strong>Smolagents 内容最好：</strong>事实性、关键信息、推理三项领先，但它的报告也最长（见 7.5）。</li>
+  <li><strong>换评委底座：</strong>把执行方案的评委换成 DeepSeek-V3.2 或 Kimi-K2.5，三家在各指标上的排序基本不变。例外是写作质量：Claude 给三家的分数几乎一样。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>名词小抄</h2>
+<dl class="gl">
+  <dt>综合的海市蜃楼</dt><dd>报告写得流畅、引用齐全，看着质量很高，底下却有过时信息、事实错误或推理漏洞。英文是 Mirage of Synthesis。</dd>
+  <dt>能力对等</dt><dd>评委应当拥有和被评的研究 Agent 一样的能力：能搜索、能核实、能推理。</dd>
+  <dt>引用对齐谬误</dt><dd>以为"引文和原文对得上"就等于"内容是对的"。被引的文章本身可能过时或错误。</dd>
+  <dt>标注率</dt><dd>报告里可核实的断言中，标了出处的占多少。</dd>
+  <dt>忠实度</dt><dd>标了出处的断言里，出处网页真正支持它的占多少。</dd>
+  <dt>中性搜索词</dt><dd>核实一条断言时，不用断言本身的说法去搜，而是问一个中性的问题，让正反证据都能出现。</dd>
+  <dt>双路取证</dt><dd>对同一批搜索结果，分别找"支持"的段落和"反驳"的段落，再一起判断。</dd>
+  <dt>扰动实验</dt><dd>故意把好报告弄坏（过时、加漏洞、换成假断言），看评分会不会跟着变差。用来检验评分方法灵不灵。</dd>
+</dl>
+
+<h2 id="s7"><span class="no">7</span>弱在哪</h2>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>每个指标在每份报告上判得准吗</td><td class="mid">中</td><td>人工只评了"清单条目写得好不好"，没评"拿清单去打分打得对不对"；事实性评委在真实报告上的准确率没有报告（见 7.8）</td></tr>
+  <tr><td>② 比较</td><td>系统之间的分差可信吗</td><td class="mid">中偏弱</td><td>只有 3 个系统，底座模型各不相同；报告长度差一倍没有控制；没有误差范围；表里有数字对不上（见 7.5–7.7）</td></tr>
+  <tr><td>③ 复现</td><td>别人能得到同样的分数吗</td><td class="weak">弱</td><td>没有代码；定制清单是评委现场研究出来的，换个时间就不一样（见 7.1、7.2）</td></tr>
+  <tr><td>④ 意义</td><td>DREAM 分高 = 研究做得好吗</td><td class="mid">中偏弱</td><td>扰动实验证明了它"对坏报告敏感"，但题小、是作者自己出的；没有拿专家对真实报告的排序来对照（见 7.3、7.8）</td></tr>
+</table></div>
+
+<h3>7.1 没有代码</h3>
+<ul>
+  <li>论文全文没有代码或数据链接。HuggingFace 论文页没有关联仓库，GitHub 上也没搜到官方实现（2026-10-28 核查）。</li>
+  <li>附录只完整给出了写作质量的提示词（表 3）。其他指标只描述了流程，没给提示词。</li>
+  <li>对一个"评分方法"来说，没有代码就等于别人没法照做，也没法核对论文里的分数。</li>
+</ul>
+
+<h3>7.2 评委自己研究出的清单，会带着评委的盲区，而且随时间变</h3>
+<div class="ex">
+  <div class="h">例子</div>
+  <ul>
+    <li>TikTok 那道题的清单，是评委 Agent 在 2025 年 12 月上网研究后写的。如果它当时漏看了某个关键进展，清单里就没有这一条。被评的报告就算写对了，也不会得分；漏了，也不会被扣分。</li>
+    <li>同一份报告，2026 年 2 月再评一次，评委会研究出一份新清单（截止日期可能又变了），分数也就变了。</li>
+  </ul>
+</div>
+<ul>
+  <li>"能力对等"的另一面是"盲区对等"：评委和考生是同一类 Agent，容易漏掉同样的东西。这和 FinResearchBench II 只从模型报告里提炼要点的毛病是一回事。</li>
+  <li>论文说"不需要参考答案"，但这也意味着没有一个固定的、可以反复核对的标准。</li>
+  <li>如果把清单存下来复用，可以保证复现，但"跟得上最新信息"的优势就停在了存档那一刻。论文没讨论这个取舍。</li>
+</ul>
+
+<h3>7.3 三个扰动实验：题小，而且是自己出题自己考</h3>
+<ul>
+  <li><strong>规模很小：</strong>20 道时效题、10 对推理报告、15 对断言。</li>
+  <li><strong>造假断言挑的都是"著名谣言"。</strong>比如"阿波罗登月是摆拍""顺势疗法有确切疗效""人类和恐龙同时生活在 6000 年前""15 分钟城市是封锁居民的计划"。这类说法网上有大量辟谣，用搜索很容易驳倒。真实研究报告里的错误，往往是冷门数字或细节，网上证据很少，那正是事实性评委最容易判成"无法核实"的情况。</li>
+  <li><strong>对比对象有点"稻草人"。</strong>DeepResearch Bench 的 FACT 指标本来就只核对"引文和原文是否一致"。证明它查不出"引用对得上的假话"，其实是在证明它的定义。论文指出这一点本身有价值，但这个实验不能说明 DREAM 在真实报告上查得有多准。</li>
+  <li><strong>正文只挑了对自己有利的那一档。</strong>正文说 DeepResearch Bench 对过时报告"几乎不敏感"，只引了停在 2025 年那一档。表 4 里停在 2024 年那一档，它的全面性也降了 5 分（50.02 → 44.81），洞察降了 9 分（50.54 → 41.68）。它不是完全看不出来。</li>
+  <li><strong>论文没说清楚 RACE 的参照报告是怎么来的。</strong>RACE 的打分是"和一份参照报告比"。这 20 道题不是 DeepResearch Bench 原题，附录只说"用 Smolagents 生成了 RACE 的参照报告"，没说清楚用的是哪一份。</li>
+</ul>
+
+<h3>7.4 事实性：核实不了的断言直接不算</h3>
+<p>事实性的分母是"支持 + 部分支持 + 反驳"，"无法核实"不在里面。</p>
+<div class="ex">
+  <div class="h">例子</div>
+  <p>一份报告抽出 30 条断言：6 条被证实，24 条评委搜不到证据。按公式，事实性 = 6 ÷ 6 = 100%。</p>
+  <p>写满冷门、难以核实内容的报告，在这一项上不吃亏，甚至占便宜。而且每份报告只抽 30 条最重要的断言，其余内容不查。</p>
+</div>
+
+<h3>7.5 报告越长，越占便宜</h3>
+<ul>
+  <li>关键信息覆盖是召回率："清单里的事，你说了几件"。说得越多，命中的机会越大。</li>
+  <li>Smolagents 的报告平均 3,000–3,700 词，最长的超过 14,500 词。LangChain 和通义只有 1,400–1,800 词。</li>
+  <li>Smolagents 恰好在关键信息覆盖（75.95，对比 65.96 和 57.95）和推理上领先。</li>
+  <li>论文统计了报告长度，但没有控制它。所以说不清 Smolagents 领先多少是因为写得好，多少是因为写得长。</li>
+</ul>
+
+<h3>7.6 比的是"框架"还是"底座模型"，分不开</h3>
+<ul>
+  <li>三个系统各用各的底座：LangChain 用 GPT-5，Smolagents 用 Claude Opus 4.6，通义用自家模型。"Smolagents 内容最好"，可能主要是 Claude Opus 4.6 的功劳，而不是 Smolagents 这个框架的功劳。</li>
+  <li><strong>同家族问题：</strong>默认评委是 Claude Sonnet 4.5，排第一的系统用的是 Claude Opus 4.6。论文做了换评委的检验（DeepSeek-V3.2、Kimi-K2.5），排序基本不变，这是好做法。但按正文的描述，换掉的只是"执行方案"的评委。生成定制清单的仍是原来的 Claude，这一环没有检验。这是我根据原文措辞做的推断。</li>
+  <li><strong>利益关联：</strong>作者来自 AWS，没有评 AWS 自家产品，看不出自夸。Claude 模型通过 AWS Bedrock 提供，亚马逊也是 Anthropic 的主要投资方。这层关系不能说明结果有偏，但值得知道。</li>
+</ul>
+
+<h3>7.7 表里有几处数字对不上</h3>
+<ul>
+  <li><strong>来源权威性的汇总值算不出来。</strong>表 10 里其他各列的汇总值，都等于三个数据集按题数（50 / 80 / 101）加权的平均，误差在 0.02 以内。唯独来源权威性对不上：
+    <ul>
+      <li>Smolagents 三个数据集分别是 9.44 / 24.41 / 0.00，按题数加权应是 10.5，简单平均是 11.3，表里写的却是 17.96；</li>
+      <li>LangChain 按题数加权应是 87.1，表里是 85.08。</li>
+    </ul></li>
+  <li><strong>两个指标互相矛盾。</strong>在 ResearchRubrics 上，Smolagents 的引用完整性是 2.03，说明它有引用；来源权威性却是 0.00，说明没有可评分的引用域名。</li>
+  <li><strong>来源权威性把"没引用"算成了"引得差"。</strong>按定义，权威性只看被引域名，最低也有 0.1 分。Smolagents 只有 9.44、通义是 0，看起来是把"没有引用的报告"按 0 分计入了平均。它测的就变成了"有没有引用"，而不是"引得靠不靠谱"。另外，换成 DeepSeek-V3.2 当评委，Smolagents 的这一项从 9.44 变成了 60.72。</li>
+  <li><strong>说了有、实际没有的综合分。</strong>附录 F 说表 10 附有"各指标平均的综合分"，但表里没有这一列。如果把六项汇总值直接平均，结果是 LangChain 55.2、Smolagents 48.3、通义 37.4，和正文"Smolagents 全面领先"的说法正好相反。这说明怎么把六项合成一个结论，会直接改变谁排第一，而论文没有定义这一步。</li>
+  <li><strong>图和表对不上。</strong>图 9 的文字描述里，Smolagents 的标注率约 5–15%、忠实度约 35–55%，按调和平均算引用完整性至少约 8.8。但表 10 在两个数据集上只有 2.45 和 2.03。可能是图上的范围估读不准，但对不上。</li>
+</ul>
+
+<h3>7.8 人工验证只验了"清单写得好不好"</h3>
+<ul>
+  <li>人工评的是清单条目的相关性、清晰度、可核实性。没有验证"用清单给真实报告打的分，和专家的判断一致不一致"。</li>
+  <li>标注员的人数和背景没有交代，只说有专家和非专家。标注员之间的一致性（Kendall's W）在 0.58–0.86 之间。</li>
+  <li>写作质量是和 DeepResearch Bench 的 RACE 分数比（τ = 0.6），也就是拿一个大模型指标去对照另一个大模型指标，不是对照人。论文拿它和"人与人之间的一致性一般在 0.5–0.7"相比，两者不是一回事。</li>
+  <li>三个系统各跑一次，没有误差范围。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>诊断准确。</strong>评委不能上网，就既查不了事实，也查不了时效。"能力对等"这个说法简单、好记，而且确实是很多 benchmark 的通病。</li>
+  <li><strong>把"引用对不对"和"内容对不对"分开。</strong>引用完整性看的是"出处和断言对得上吗"，事实性看的是"这件事在现实中对吗"。比特币那个例子把两者的区别讲得很清楚。</li>
+  <li><strong>中性搜索词 + 双路取证。</strong>核实时既找支持也找反驳，防确认偏误。这是可以直接照抄的技巧。</li>
+  <li><strong>标注率 × 忠实度的调和平均。</strong>"一条都不标"和"标了但标错"都会被罚。图 9 由此看出两种不同的失败方式，诊断价值很高。</li>
+  <li><strong>用扰动实验检验评分方法。</strong>故意把报告弄坏，看分数会不会跟着变。规模虽小，但检验思路是对的，也就是我们之前说的"对评分器做变异测试"。</li>
+  <li><strong>做了换评委的检验，也统计了报告长度。</strong>不少论文连这两步都不做。</li>
+  <li><strong>"四大类"分类法（呈现、任务完成、分析深度、来源质量）。</strong>把各家 benchmark 的指标放到同一张表里比，一目了然（论文表 1）。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>和前四篇对照</h2>
+<div class="tbl"><table>
+  <tr><th></th><th>DRB II</th><th>DailyReport</th><th>BrowseComp-Plus</th><th>LiveDRBench</th><th>DREAM</th></tr>
+  <tr><td>是什么</td><td>题库 + 评分</td><td>题库 + 评分</td><td>题库 + 固定资料库</td><td>题库 + 评分</td><td>只有评分方法，借用别人的题</td></tr>
+  <tr><td>标准答案</td><td>一篇综述</td><td>无，评委现场搜</td><td>短答案 + 证据文档</td><td>断言清单（汇总裁决补充）</td><td>无，评委 Agent 现场研究出清单</td></tr>
+  <tr><td>查得准吗</td><td>不查</td><td>查</td><td>只看最终答案</td><td>查</td><td>查（核实不了的不算）</td></tr>
+  <tr><td>查得全吗</td><td>查（对照原文）</td><td>不查</td><td>查证据召回</td><td>查</td><td>查（对照评委清单）</td></tr>
+  <tr><td>出处</td><td>不要求</td><td>单独统计</td><td>统计引用的证据文档</td><td>出处错记 0 分</td><td>标注率 × 忠实度，另加来源权威性</td></tr>
+  <tr><td>推理</td><td>对照原文观点</td><td>0 / 0.5 / 1 打分</td><td>不评</td><td>不评</td><td>评委 Agent 按核验计划上网查证</td></tr>
+  <tr><td>时效</td><td>截止年份锁死</td><td>声称会更新</td><td>固定资料库</td><td>声称会更新，实际没有</td><td>清单现场生成，能罚过时内容，但分数随评测时间变</td></tr>
+  <tr><td>能不能用</td><td>能</td><td>没有数据</td><td>能，快考满分</td><td>能，注意漂移</td><td>没有代码，只能按描述自己实现</td></tr>
+</table></div>
+
+<h2 id="s10"><span class="no">10</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<ol>
+  <li><strong>核验用的评委必须能查资料。</strong>但要对照运行时存档的网页去查，不要现搜。这样既有"能力对等"，又能复现，还避开了"换个时间分数就变"的问题。</li>
+  <li><strong>照抄两个技巧：中性搜索词、同时找支持和反对证据。</strong>核验每条断言时都用。</li>
+  <li><strong>"引用对得上"和"内容是对的"分开计分。</strong>前者看出处是否支持断言，后者看断言本身在现实中对不对。一条引用了过时研究的断言，前者可以满分，后者应该扣分。</li>
+  <li><strong>"无法核实"必须单独报告，不能从分母里消失。</strong>它本身就是一个信号：这个 Agent 写了多少说不清来历的东西。</li>
+  <li><strong>关键信息清单不能只靠评委 Agent 生成。</strong>要和专家事先写的必答清单、5 个 Agent 各跑 3 次的汇总断言合在一起，补上"评委和考生一起漏掉"的盲区。</li>
+  <li><strong>控制篇幅。</strong>覆盖类指标要么按篇幅归一，要么同时报告"每千字命中几条关键信息"，不然长报告天然占便宜。</li>
+  <li><strong>评委不要和任何一个被测 Agent 用同一家底座。</strong>或者轮换两三家评委，看结论是否一致。生成清单和执行打分两步都要这样做。</li>
+  <li><strong>先定好怎么合成结论，写进预登记。</strong>DREAM 的六项分数换个合成方式，第一名就变了。各维度分开报告，综合分的权重事先定死。</li>
+  <li><strong>最终要和专家盲评对照。</strong>DREAM 缺的正是这一步，也就是你心得里提到的人类专家盲测。</li>
+</ol>
+
+<h2 id="s11"><span class="no">11</span>复核说明</h2>
+<h3>核对过的</h3>
+<ul>
+  <li><strong>论文版本：</strong>arXiv 接口显示只有 v1（2026-02-21）。</li>
+  <li><strong>代码和数据：</strong>论文全文没有仓库链接；HuggingFace 论文页的 <code>githubRepo</code> 为空；GitHub 按标题和关键词搜索没有官方仓库（2026-10-28）。</li>
+  <li><strong>表 10 的汇总值：</strong>按三个数据集的题数（50 / 80 / 101）加权重算。事实性、引用完整性、关键信息、推理四列与论文一致（误差 ≤ 0.02），写作质量的 Smolagents 差 0.2，来源权威性三家都对不上。</li>
+  <li><strong>六项简单平均的综合分：</strong>用表 10 汇总行算得，论文没有给出这个数。</li>
+  <li><strong>表 4 平均值、表 2 人工评分、表 11 报告长度、表 12 换评委结果：</strong>与正文逐项对照过。</li>
+  <li><strong>15 对造假断言的话题：</strong>来自附录表 7。</li>
+</ul>
+<h3>推断</h3>
+<ul>
+  <li>"来源权威性把没引用的报告按 0 分计入"：根据数值和定义推断，论文没有说明。</li>
+  <li>"生成清单的评委没换"：根据正文"backbone for protocol execution"的措辞推断。</li>
+  <li>"图 9 和表 10 对不上"：图上的范围是作者文字描述的估读值，可能不精确。</li>
+</ul>
+<h3>做不了的</h3>
+<ul>
+  <li>没有代码，无法复现任何分数，也无法检查清单生成和事实核验的提示词。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2603.05912" target="_blank">DeepFact</a>（专家先审计后评分）·
+  <a href="https://arxiv.org/pdf/2604.03173" target="_blank">Reference Hallucinations</a>（出处真伪的程序化核验）·
+  <a href="https://arxiv.org/pdf/2607.12252" target="_blank">FinResearchBench II</a>（只从模型输出提炼要点的盲区）·
+  <a href="https://arxiv.org/pdf/2610.18092" target="_blank">LifeSearch</a>（与人类排名的一致性）·
+  <a href="https://arxiv.org/pdf/2608.27505" target="_blank">Rubric-Guided RL 综述</a>（篇幅投机）
+</footer>
+</div>
+</body>
+</html>

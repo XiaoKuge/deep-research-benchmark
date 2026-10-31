@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IDRBench 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>IDRBench 精读：让 Agent 中途问一句"你要的是哪种？"，报告能好多少</h1>
+  <p class="dek">一个测"会不会问、问了有没有用"的 benchmark，以及它没分清的"问到了答案"和"多想了一轮"</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2601.06676" target="_blank">arXiv 2601.06676</a> v3（2026-09-23；v1 2026-01-10，v2 2026-06-20）·
+    <a href="https://arxiv.org/pdf/2601.06676" target="_blank">本地 PDF</a>（v3）<br>
+    <b>团队</b> 新加坡国立大学 Anthony K. H. Tung、哈工大（深圳）Qiang Huang（通讯作者）、浙大 / 浙大 CAD&amp;CG 国家重点实验室，共 7 人<br>
+    <b>数据和代码</b> 论文没有给任何链接，GitHub 和 HuggingFace 上也没找到。HuggingFace 上叫 IDRBench 的数据集是另一个同名 benchmark，讲的是跨学科研究，与本文无关<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 5 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 7.2 节第三组重跑对照：表 4 的"All"对表 9，Gemini-2.5-Pro 78.39 对 79.29<br><span class="note">应改为：</span>〔更正〕这一组不一定成立，表 4 的"All"绕过了评估者，不一定是默认配置；确定是同一配置的只有 GPT-5.1（差 0.98）和 Grok-4.1-Fast（差 1.79）两组 <a href="record-2601.06676_IDRBench.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 0、7.2 节"前三名落在重跑波动范围内"<br><span class="note">应改为：</span>〔更正〕"与重跑波动同一量级，证据不足以排序"：重跑差值来自 30 题子集，100 题时约为 0.55 倍；第四名 DeepSeek-V3.2 与第三名只差 0.33 分，应一并看作同档 <a href="record-2601.06676_IDRBench.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 0、4 节"五项指标全是和目标报告比相似度"<br><span class="note">应改为：</span>〔更正〕五项中四项量与配对报告的文本相似，一项（LLM-ACS）量对原题要点的相对覆盖 <a href="record-2601.06676_IDRBench.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 3 节对字面泄露检查的描述<br><span class="note">应改为：</span>〔补充〕写明只统计了英文题 <a href="record-2601.06676_IDRBench.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 3 节对模拟用户提示词的转述："只给贴着问题、高层次的回答，不提报告本身，也不添加原本没有的要求"<br><span class="note">应改为：</span>〔补充〕补入图 8 原文"guide them toward producing a final report as similar as possible to the expected report"和"ALWAYS steer toward the major focus of the expected report" <a href="record-2601.06676_IDRBench.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>关于数据：</strong>IDRBench 的 100 道题来自初代 DeepResearch Bench 公开的题目。IDRBench 自己没有公开压缩后的题目、模拟用户的回答和各模型的报告，所以本文的复核都只能基于论文里的表格：逐行重算、在表与表之间互相对照。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">打个比方：装修师傅该不该问</a></li>
+    <li><a href="#s2">题目从哪来</a></li>
+    <li><a href="#s3">交互怎么实现："用户"是谁</a></li>
+    <li><a href="#s4">怎么判分</a></li>
+    <li><a href="#s5">结果</a></li>
+    <li><a href="#s6">名词小抄</a></li>
+    <li><a href="#s7">弱在哪</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">和已精读几篇对照</a></li>
+    <li><a href="#s10">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s11">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它问的问题：</strong>深度研究一跑就是几十分钟，开头理解偏了，后面全白费。如果 Agent 能在规划、研究、写作三个阶段停下来问用户一句，最后的报告会不会更贴合用户想要的？代价有多大？</li>
+  <li><strong>怎么测：</strong>
+    <ul>
+      <li>同一个模型、同一套流程，各跑两遍：一遍从头到尾自己做，一遍允许中途最多问 5 次。</li>
+      <li>"用户"由 GPT-5.1 扮演。它手里有一份目标报告，按报告的意思回答问题，但被要求不直接透露内容。</li>
+      <li>比较两遍的报告分别和目标报告有多像。</li>
+    </ul></li>
+  <li><strong>结论：</strong>7 个模型全都变好了，平均提升 6.39 分。但 700 个"模型 × 题"组合里，有 19.9% 反而变差。</li>
+  <li><strong>需要打折扣的地方：</strong>
+    <ul>
+      <li>提升里有多少来自"问到了目标报告里的信息"，有多少来自"多停下来想了一轮"，论文没有分开测。缺一个"用户只回答'按你的判断来'"的对照组。</li>
+      <li>同一配置在论文的三张表里出现了三次，分数相差 0.9–1.8 分（我对照出来的）。而交互模式下前三名之间只差 0.6–1.5 分。</li>
+      <li>交互模式的排名和自主模式几乎一样（相关系数 0.89），"交互能力是一个独立维度"的说法证据不足。</li>
+      <li>评分只量"像不像目标报告"，不管内容对不对。目标报告很可能是 Gemini-2.5-Pro Deep Research 写的，而 Gemini-2.5-Pro 本身也是被测模型。</li>
+      <li>没有公开代码和数据。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>5 个 Agent 是单轮、同一个 Prompt，不需要测交互能力。但这篇提醒了一个公平性问题：有的 Agent 开跑前会反问澄清，有的不会。能得到回答，平均要多出 6 分以上的"贴合度"，所以必须事先定好统一的处理规则。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>打个比方：装修师傅该不该问</h2>
+<p>你跟设计师说"帮我把客厅改得现代一点"，接下来有两种设计师：</p>
+<ul>
+  <li><strong>闷头型：</strong>三周后直接交方案。风格可能完全不是你想的那种"现代"。</li>
+  <li><strong>会问型：</strong>出草图时问一句"偏极简还是偏工业风？"，选材时问一句"预算上限多少？"，收尾时问一句"要不要留书架？"。更可能做出你要的样子，但问太多你也会烦。</li>
+</ul>
+<p>IDRBench 想测的就是这种"会问"的能力，拆成四件事：</p>
+<ol>
+  <li><strong>要不要问</strong>：这时候停下来问值不值得；</li>
+  <li><strong>什么时候问</strong>：规划阶段、研究中途，还是写之前；</li>
+  <li><strong>问什么</strong>：范围、重点、受众，还是细节；</li>
+  <li><strong>问完怎么用</strong>：回答有没有真的改变后面的研究和写作。</li>
+</ol>
+<p>同时还要记下"打扰成本"：问了几次、每次多少字。</p>
+
+<h2 id="s2"><span class="no">2</span>题目从哪来</h2>
+<ul>
+  <li><strong>100 道题</strong>来自初代 DeepResearch Bench，覆盖 22 个领域，中英文各 50 道。每道题原本配有一份报告。</li>
+  <li><strong>先把题目变模糊：</strong>原题写得太详细（最长约 800 个 token），几乎没什么可问的。作者用一个 LLM 把每道题删掉 10%–90% 的内容，只保留主题和核心目标。删完的题目仍然以原来那份报告为"目标"。论文没说用的是哪个 LLM。</li>
+  <li>压缩后的题目经过人工检查：和原题一致、读着自然、内容安全。</li>
+</ul>
+<div class="ex">
+  <div class="h">例子：论文附录表 6，第 54 题</div>
+  <ul>
+    <li><strong>原题：</strong>机器学习在资产配置中应用很广。均值-方差、Black-Litterman 这类经典模型，以及新兴的深度学习模型，各有长处也各有局限：均值-方差假设收益服从正态分布，Black-Litterman 依赖主观观点，深度学习可解释性差。这些模型在风险度量、收益预测、资产配置上的核心差异是什么？能否结合各自优点，建立更通用的框架？</li>
+    <li><strong>压缩后：</strong>传统模型和机器学习模型在资产配置的风险度量和收益预测上，主要有什么区别？能否把各自优点结合成更有效的框架？</li>
+    <li><strong>删掉了什么：</strong>具体的模型名字，以及每个模型的局限。</li>
+  </ul>
+</div>
+<p><strong>"目标报告"从哪来：</strong>论文只说用的是"DeepResearch Bench 的问题-报告对"。初代 DeepResearch Bench 论文写明，它的参考报告选自 2025 年 4 月由 Gemini-2.5-Pro Deep Research 生成的文章（我查了原文）。所以 IDRBench 的目标报告<strong>很可能</strong>就是这批 Gemini 写的报告。这一点是推断，论文没有说明。</p>
+<p>论文也没有报告两件事：压缩比例是怎么分布的，以及不同压缩程度下交互各带来多少提升。</p>
+
+<h2 id="s3"><span class="no">3</span>交互怎么实现："用户"是谁</h2>
+<h3>统一的研究流程</h3>
+<p>所有模型都放进同一套开源流程（LangChain 的 Open Deep Research），里面有 6 个角色：</p>
+<ul>
+  <li>原有 4 个：规划者（把问题写成研究简报）、主管（拆分子任务）、研究员（去搜索）、写作者（写报告）；</li>
+  <li>新加 2 个：评估者（判断现在值不值得停下来问）、提问者（写出一两个具体问题）。</li>
+</ul>
+<p>被测模型一个人包揽全部 6 个角色，零碎的杂活由 GPT-4.1-nano 做。搜索用 Tavily，主管最多 6 轮，每个研究员最多调用 5 次工具。</p>
+
+<h3>提问预算</h3>
+<div class="tbl"><table>
+  <tr><th>阶段</th><th class="num">最多问几次</th><th>典型问题</th></tr>
+  <tr><td>规划</td><td class="num">1</td><td>你要的范围、重点、受众是什么</td></tr>
+  <tr><td>研究循环</td><td class="num">3</td><td>查到这些了，要往哪个方向深挖</td></tr>
+  <tr><td>写作</td><td class="num">1</td><td>报告侧重哪部分、用什么结构</td></tr>
+</table></div>
+<p>每次问一到两个问题。所有模型的预算都一样。</p>
+
+<h3>"用户"不是真人</h3>
+<ul>
+  <li>主实验里，"用户"由 <strong>GPT-5.1</strong> 扮演。论文称之为"受控反馈"，提示词里叫"用户模拟器"。</li>
+  <li>它手里拿着目标报告，作为别人看不到的背景。提示词要求它只给贴着问题、高层次的回答，不提报告本身，也不添加原本没有的要求。</li>
+  <li>所有被测模型面对的是同一个"用户"（同一个模型、同一套提示词）。但每个模型问的问题不同，得到的回答也就不同。</li>
+</ul>
+
+<h3>会不会泄露答案</h3>
+<ul>
+  <li><strong>字面检查：</strong>回答和目标报告的 ROUGE-L F1 平均只有 0.0211，最长的相同片段平均 4.62 个词，几乎没有照抄。</li>
+  <li><strong>语义检查：</strong>用 GPT-5.5 把全部 1,816 条回答分成两类。1,778 条（97.91%）是"偏好澄清"，比如范围、重点、受众、格式；38 条（2.09%）含"具体内容"，比如结论、排名、数字。这个分类没有人工复核。</li>
+  <li><strong>我的保留意见：</strong>"偏好澄清"恰恰就是评分指标在量的东西，见 7.1。</li>
+</ul>
+
+<h3>真人对照（只有一个小实验）</h3>
+<p>2 位真人在 10 道题上回答了 Gemini-2.5-Pro 提出的问题，回答前没看过 GPT-5.1 的回答。结果：</p>
+<ul>
+  <li>不让问（自主）：71.25 分；</li>
+  <li>真人回答：76.76 分；</li>
+  <li>GPT-5.1 扮演的用户回答：78.42 分。</li>
+</ul>
+<p>两位真人是谁、手里有没有目标报告，论文都没说。</p>
+
+<h2 id="s4"><span class="no">4</span>怎么判分</h2>
+<h3>报告对齐：五项指标，全是"和目标报告有多像"</h3>
+<div class="tbl"><table>
+  <tr><th>指标</th><th>怎么算</th></tr>
+  <tr><td>报告相似度</td><td>用 Qwen3-Embedding-0.6B 把两篇整报告各变成一串数字（向量），算夹角余弦，再换算到 0–100。换算方式是 (1 + cos) / 2，所以两篇毫不相干的报告也有 50 分左右，实际分数都挤在 76–89 之间</td></tr>
+  <tr><td>句子 F1</td><td rowspan="3">把两篇报告切成句子、段落或 300 token 的片段，两个单元的向量相似度 ≥ 0.8 就算"对上"。召回 = 目标报告的单元里，有多少在生成报告里找得到对应；精确 = 反过来算。F1 是两者的调和平均</td></tr>
+  <tr><td>段落 F1</td></tr>
+  <tr><td>片段 F1</td></tr>
+  <tr><td>要点覆盖分（LLM-ACS）</td><td>从<strong>原始的详细题目</strong>里抽出 8–20 个要点。GPT-4.1 给目标报告和生成报告分别打 0–5 分的覆盖度，取"生成 ÷ 目标"的比值，封顶为 1，再对所有要点求平均</td></tr>
+</table></div>
+<p>"平均对齐分"是这五项的简单平均。论文自己也承认，这只是一个描述性的均值，不代表用户真正的效用。</p>
+
+<h3>交互成本</h3>
+<p>记录每个阶段问了几次，以及每次问题和回答各多少 token（只统计英文题，避免中英文分词差异）。另外报告每份报告的 API 费用。</p>
+<p><strong>不评什么：</strong>论文附录 C 写明，不评事实对不对、引用可不可靠、来源质量如何。</p>
+
+<h2 id="s5"><span class="no">5</span>结果</h2>
+<div class="tbl"><table>
+  <tr><th>模型</th><th class="num">自主</th><th class="num">交互</th><th class="num">提升</th><th class="num">平均问几次（满 5）</th><th class="num">每份报告多花</th></tr>
+  <tr><td>GPT-5.1</td><td class="num">75.59</td><td class="num">78.97</td><td class="num">+3.37</td><td class="num">1.32</td><td class="num">+$0.113</td></tr>
+  <tr><td>Gemini-2.5-Pro</td><td class="num">73.45</td><td class="num">79.89</td><td class="num">+6.43</td><td class="num">3.41</td><td class="num">+$0.359</td></tr>
+  <tr><td>Claude-Sonnet-4.5</td><td class="num">75.51</td><td class="num">80.47</td><td class="num">+4.96</td><td class="num">1.93</td><td class="num">+$1.233</td></tr>
+  <tr><td>Grok-4.1-Fast</td><td class="num">67.55</td><td class="num">75.52</td><td class="num">+7.97</td><td class="num">1.08</td><td class="num">+$0.083</td></tr>
+  <tr><td>Llama-4-Maverick</td><td class="num">54.81</td><td class="num">65.78</td><td class="num">+10.96</td><td class="num">4.62</td><td class="num">+$0.005</td></tr>
+  <tr><td>Qwen3-235B</td><td class="num">63.96</td><td class="num">69.67</td><td class="num">+5.71</td><td class="num">3.10</td><td class="num">−$0.006</td></tr>
+  <tr><td>DeepSeek-V3.2</td><td class="num">73.35</td><td class="num">78.64</td><td class="num">+5.29</td><td class="num">2.70</td><td class="num">+$0.039</td></tr>
+</table></div>
+<ul>
+  <li><strong>表中数字已逐行复算：</strong>用五项分数重算了自主和交互的平均分及提升，7 个模型全部和论文一致（最多差 0.01，属于四舍五入）。</li>
+  <li><strong>整体提升：</strong>7 个模型平均 +6.39。按题目抽样做 bootstrap，95% 区间是 [5.09, 7.82]。中文题提升 7.32，英文题提升 5.45。</li>
+  <li><strong>按题看：</strong>700 个"模型 × 题"组合里，变好 521 个（74.4%），差不多 40 个（5.7%，差距在 ±0.5 分以内），变差 139 个（19.9%）。Llama 变好的题最多（100 题里 93 道），Qwen 变差的题最多（31 道）。</li>
+  <li><strong>在哪个阶段问：</strong>规划阶段大家都问（0.72–1.00 次）。差别主要在研究阶段：Llama 问 2.84 次，Qwen 1.88 次，DeepSeek 1.78 次，Gemini 1.59 次；GPT 只问 0.43 次，Claude 0.75 次，Grok 0.29 次。</li>
+  <li><strong>例子：</strong>Grok 平均只问 1.08 次，提升 7.97 分；Llama 几乎用满了预算（4.62 次），提升 10.96 分。问得多不等于提升多。</li>
+  <li><strong>什么时候问最有用（30 题子集）：</strong>
+    <ul>
+      <li>Gemini：不问 73.71 → 只在规划时问 75.78 → 三个阶段都问 78.39；</li>
+      <li>Llama：53.49 → 62.31 → 63.23。</li>
+    </ul>
+    单独一个阶段里，规划阶段问最有用。</li>
+  <li><strong>换一个模型扮演用户</strong>（GPT-5.1、Gemini-2.5-Pro、Claude-Sonnet-4.5）：三个研究模型的平均分最多差 0.2–1.1 分。</li>
+  <li><strong>用户手里的背景只留 10%–20%：</strong>平均分只差 0.1–1.2 分。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>名词小抄</h2>
+<dl class="gl">
+  <dt>自主模式</dt><dd>不许问，从头到尾自己做完。</dd>
+  <dt>交互模式</dt><dd>允许在规划、研究、写作三个阶段问用户，总共最多 5 次。</dd>
+  <dt>受控反馈 / 模拟用户</dt><dd>用一个 LLM（主实验里是 GPT-5.1）扮演用户，按统一规则回答问题。</dd>
+  <dt>目标报告</dt><dd>每道题配的一份报告，代表"用户心里想要的样子"，评分时拿它当参照。</dd>
+  <dt>题目压缩</dt><dd>用 LLM 把详细的原题删短、变模糊，让 Agent 有东西可问。</dd>
+  <dt>余弦相似度</dt><dd>把两段文字各变成一串数字，看它们"方向"有多接近。越接近，意思越像。</dd>
+  <dt>F1</dt><dd>精确和召回的调和平均。两头都高，F1 才高。</dd>
+  <dt>偏好澄清 / 具体内容泄露</dt><dd>回答是在说"你要什么"（范围、重点），还是直接说了"答案是什么"（结论、数字）。</dd>
+  <dt>bootstrap</dt><dd>从 100 道题里有放回地反复抽样、重算，看结果会在多大范围内晃动。</dd>
+  <dt>A/A 对照</dt><dd>同一个配置原样跑两遍，看分数自己会变多少，以此估计"噪声"有多大。</dd>
+  <dt>空回答对照</dt><dd>让用户对每个问题都只回"按你的判断来"。用来分清提升是来自"拿到了信息"，还是来自"多停下来想了一轮"。</dd>
+</dl>
+
+<h2 id="s7"><span class="no">7</span>弱在哪</h2>
+<p>还是那四关：</p>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>"像不像目标报告"量得准吗</td><td class="mid">中</td><td>向量相似度和 0.8 阈值是机械规则，可以复现。但分数挤在一起（相似度在 76–89 之间）。要点覆盖分靠 GPT-4.1 打，没有人工核对</td></tr>
+  <tr><td>② 比较</td><td>交互前后、模型之间的分差可信吗</td><td class="mid">中偏弱</td><td>每个配置只跑一次。论文三张表里，同一配置的分数相差 0.9–1.8 分（7.2）。bootstrap 只算了题目抽样的误差</td></tr>
+  <tr><td>③ 归因</td><td>提升真是因为"问得好"吗</td><td class="weak">弱</td><td>没有空回答对照组。"用户"手里有目标报告，它回答的"偏好"正是指标在量的东西（7.1）</td></tr>
+  <tr><td>④ 意义</td><td>分数高 = 真实用户更满意吗</td><td class="weak">弱</td><td>只量和一份报告像不像，不管对不对；真人对照只有 2 人、10 道题；目标报告很可能是 Gemini 写的（7.4、7.5）</td></tr>
+</table></div>
+
+<h3>7.1 是"问到了答案"，还是"问得好"？</h3>
+<p>"用户"手里拿着目标报告。它按要求只回答"偏好"，但这些偏好，恰好能把题目压缩时删掉的内容补回来。</p>
+<div class="ex">
+  <div class="h">设想的例子（基于附录第 54 题，不是论文里的真实对话）</div>
+  <ul>
+    <li>压缩后的题目已经没有 Black-Litterman 这个词了。</li>
+    <li>Agent 在规划阶段问："您最关心哪些模型的对比？"</li>
+    <li>"用户"看着目标报告回答："传统的均值-方差和 Black-Litterman，还有深度学习，重点讲各自的局限。"</li>
+    <li>按论文的分类，这是"偏好澄清"，不算泄露。但要点覆盖分的那些要点，正是从原始详细题目里抽出来的。这一句话，把被删掉的几个要点全补了回来。</li>
+  </ul>
+</div>
+<ul>
+  <li>所以"交互提升"测的，很大程度上是<strong>能不能把题目里被删掉的信息问回来</strong>。这本身是一种有用的能力，但提升多少和压缩比例绑在一起：删了 90% 的题，能补回来的多；删了 10% 的题，能补的少。论文没有按压缩比例拆开来报告。</li>
+  <li>我算了提升和自主得分的 Spearman 相关：<strong>−0.82</strong>。离目标越远，补回来的越多。论文把这解释为"余地更大"，和上面的理解一致。</li>
+  <li>缺一个<strong>空回答对照</strong>：问的次数和流程都不变，只是"用户"每次都回"按你的判断来"。只有这样，才能分清提升来自"拿到了信息"，还是来自"多停下来想了一轮、多跑了几步"。</li>
+  <li>后一种可能是真实存在的：交互模式下 Claude 每份报告要多花 1.23 美元，说明多了不少调用。</li>
+</ul>
+
+<h3>7.2 同一配置，换一张表就差 1–2 分</h3>
+<p>论文在同一个 30 题子集上做了三个附加实验：换用户模型、压缩用户背景、换提问时机。三个实验里都有一组"默认配置"：GPT-5.1 当用户，给完整背景，三个阶段都能问。同一个配置，三张表给出的分数却不一样：</p>
+<div class="tbl"><table>
+  <tr><th>研究模型</th><th class="num">表 8（GPT-5.1 当用户）</th><th class="num">表 9（完整背景）</th><th class="num">表 4（全阶段都问）</th><th class="num">相差</th></tr>
+  <tr><td>GPT-5.1</td><td class="num">76.96</td><td class="num">75.98</td><td class="num">—</td><td class="num">0.98</td></tr>
+  <tr><td>Grok-4.1-Fast</td><td class="num">72.89</td><td class="num">74.68</td><td class="num">—</td><td class="num">1.79</td></tr>
+  <tr><td>Gemini-2.5-Pro</td><td class="num">—</td><td class="num">79.29</td><td class="num">78.39</td><td class="num">0.90</td></tr>
+</table></div>
+<p>最合理的解释是这几组是分别跑的，差异来自重跑本身的波动。论文没有说明，这是我的推断。由此带来三个后果：</p>
+<ul>
+  <li><strong>前三名分不出高下。</strong>交互模式下 Claude 80.47、Gemini 79.89、GPT 78.97，彼此只差 0.6–1.5 分，落在重跑波动的范围内。"Claude 交互得分最高"这个结论靠不住。</li>
+  <li><strong>"差不多"的结论成立，但检测力有限。</strong>换用户模型差 0.2–1.1 分、压缩背景差 0.1–1.2 分，都在噪声以内，所以"没有影响"的结论成立。但同样的噪声也意味着，1–2 分以内的真实影响根本检测不出来。</li>
+  <li><strong>"变差 19.9%"分不清真假。</strong>单道题重跑的波动，只会比 30 题平均更大。所以 139 个"变差"里有多少是真变差、多少只是噪声，无法判断。需要做一次 A/A 对照：同一个模型在自主模式下原样跑两遍，看单题分数自己会变多少。</li>
+</ul>
+
+<h3>7.3 "交互能力是独立的一维"，证据不足</h3>
+<ul>
+  <li>论文结论说，交互能力"不能从自主表现推断出来"。</li>
+  <li>但我算了交互模式排名和自主模式排名的 Spearman 相关，是 <strong>0.89</strong>。后四名（DeepSeek、Grok、Qwen、Llama）的顺序完全没变；变的只有前三名的内部次序，而前三名的差距在重跑噪声以内。</li>
+  <li>"Llama 提升最大"，主要是因为它起点最低（54.81）。交互之后它仍然是最后一名（65.78）。</li>
+</ul>
+
+<h3>7.4 只量"像不像"，而目标报告很可能是 Gemini 写的</h3>
+<ul>
+  <li>五项指标全是"和一份目标报告比相似度"。论文自己也承认，这份报告只是"多种合理结果中的一种"。一份写得更好、但和目标不一样的报告，反而会被扣分。</li>
+  <li><strong>目标报告的来源（推断）：</strong>初代 DeepResearch Bench 的参考报告是 Gemini-2.5-Pro Deep Research 生成的，而 Gemini-2.5-Pro 正是 IDRBench 的被测模型之一。
+    <ul>
+      <li>可能的迹象：自主模式下，Gemini 的段落 F1 是 76.62，明显高于其他模型（61.03–73.65）。</li>
+      <li>但它的句子 F1（38.36）并不突出，所以不能断定确实有偏向。只能说存在风险，论文没有讨论。</li>
+    </ul></li>
+  <li><strong>评分环节里 OpenAI 模型身兼数职：</strong>GPT-4.1 打要点覆盖分，GPT-5.1 扮演用户，GPT-5.5 做泄露分类，而 GPT-5.1 本身也是被测模型。
+    <ul>
+      <li>换用户模型的实验（表 8）显示，GPT-5.1 由自家模型扮演用户时并没有占便宜：76.96，对比 77.15 和 77.11。这一点论文做得好。</li>
+      <li>但 GPT-4.1 当覆盖分评委这件事，没有做同样的检验。</li>
+    </ul></li>
+</ul>
+
+<h3>7.5 模拟用户比真人"更好说话"</h3>
+<ul>
+  <li>真人对照只有 2 个人、10 道题、1 个模型（Gemini），两人的身份不明。</li>
+  <li>GPT-5.1 扮演用户带来的提升是 +7.17（71.25 → 78.42），真人带来的是 +5.51（→ 76.76）。模拟用户的效果比真人<strong>高出约 30%</strong>，可能是因为它答得更全、更贴近目标报告。</li>
+  <li>所以主表里的交互提升，大概率高估了真实用户场景下的效果。</li>
+</ul>
+
+<h3>7.6 测的是模型，不是 Deep Research 产品</h3>
+<ul>
+  <li>7 个模型都放在同一套 LangChain 流程里跑，搜索轮数有上限。OpenAI DR、Gemini DR 这类成品不在测试范围内。</li>
+  <li>被测模型偏旧：2026 年 9 月的 v3 用的仍是 GPT-5.1、Claude-Sonnet-4.5、Gemini-2.5-Pro。论文的解释是 Gemini 3 系列和这套流程配合不稳定。</li>
+</ul>
+
+<h3>7.7 没有代码和数据</h3>
+<ul>
+  <li>论文没给任何链接，HuggingFace 的论文页上也没有关联代码或项目页。</li>
+  <li>GitHub 上搜 IDRBench，只有一个无关项目。HuggingFace 上的 <code>IDRBench/IDRBench</code> 是另一个同名 benchmark（识别跨学科研究论文，2025-05 建立）。</li>
+  <li>压缩后的 100 道题、模拟用户的回答、各模型的报告，都拿不到。题目压缩用的是哪个 LLM、压缩比例怎么分布，论文也没写。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>问了一个真问题。</strong>长流程里，开头的理解偏差会一路放大。"会不会停下来问"是现有 benchmark 都没测的。</li>
+  <li><strong>对照设计干净。</strong>同一个模型、同一套流程、同样的预算，只改"能不能问"这一个变量。唯一的缺口是没有空回答组。</li>
+  <li><strong>把"问"拆得很细。</strong>分成要不要问、何时问、问什么、怎么用，并报告每个阶段的次数、token 和每份报告的 API 费用，成本很透明。</li>
+  <li><strong>不只报平均。</strong>把"变差"的比例（19.9%）也报了出来，提醒大家"能问"不等于"会问"。</li>
+  <li><strong>做了一圈自查：</strong>换用户模型、压缩用户背景、字面和语义两种泄露检查、真人对照、按题 bootstrap、逐项去掉指标看稳不稳。每项规模都小，但方向是对的。</li>
+  <li><strong>诚实写明了边界：</strong>不评事实和引用；平均分只是描述性的；bootstrap 不包含重跑误差。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>和已精读几篇对照</h2>
+<div class="tbl"><table>
+  <tr><th></th><th>IDRBench</th><th>DRB II</th><th>DailyReport</th><th>LiveDRBench</th><th>MiroEval</th></tr>
+  <tr><td>测什么</td><td>能问之后，报告离目标近了多少</td><td>和原综述重合多少</td><td>要求做没做到 + 断言对不对</td><td>断言找得全不全、对不对</td><td>报告、事实、过程</td></tr>
+  <tr><td>参照物</td><td>一份目标报告（很可能是 Gemini DR 写的）</td><td>一篇专家综述</td><td>无，评委现场搜</td><td>断言清单 + 汇总裁决</td><td>无单一答案，评委打分 + 事实核验</td></tr>
+  <tr><td>"用户"</td><td>GPT-5.1 模拟，最多问 5 次</td><td>无，单轮</td><td>无，单轮</td><td>DR 产品反问时统一回"Go ahead"</td><td>无，单轮</td></tr>
+  <tr><td>看过程吗</td><td>看问几次、何时问</td><td>不看</td><td>不看</td><td>只分析过一类题的搜索记录</td><td>看</td></tr>
+  <tr><td>评对错吗</td><td>不评</td><td>只看提没提到，说错不扣分</td><td>评（精确率）</td><td>评</td><td>评</td></tr>
+  <tr><td>重跑和稳定性</td><td>没有重跑；三张表互相对照，同一配置差 0.9–1.8 分</td><td>没有</td><td>3 个模型各跑 3 次</td><td>没有</td><td>有，总分标准差 &lt; 0.6</td></tr>
+  <tr><td>代码和数据</td><td>无</td><td>公开</td><td>无</td><td>公开（10% 答案明文）</td><td>逐题数据公开</td></tr>
+</table></div>
+<p>巧合的是，LiveDRBench 处理"DR 产品开跑前反问"的办法（统一回"Go ahead"），正是 IDRBench 缺的那个"空回答"条件。</p>
+
+<h2 id="s10"><span class="no">10</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<p>你的场景是单轮评测，不需要把"交互能力"当成一个评分维度。但这篇提醒了四件事：</p>
+<ol>
+  <li><strong>反问澄清要统一处理，写进预登记。</strong>不少 DR 产品开跑前会先反问。IDRBench 显示，能得到回答，平均要多出 6 分以上的"贴合度"。如果有的 Agent 反问了、你也答了，有的 Agent 没反问，比较就不公平。两种做法二选一：
+    <ul>
+      <li><strong>统一不给信息：</strong>任何反问都回同一句"请按你的判断进行"（LiveDRBench 的做法）。</li>
+      <li><strong>统一给信息：</strong>事先写好一份"用户意图说明"（对象、范围、重点、受众），任何反问都只从这份说明里取答案，并记录每家问了什么、得到了什么。</li>
+    </ul>
+    推荐第一种，同时把 Prompt 写完整（总问题 + 子问题 + 截止日期 + 交付格式），让反问本身没有必要。</li>
+  <li><strong>要做 A/A 估噪声。</strong>IDRBench 自己的表格显示，同一配置重跑会差 1–2 分。我们之前建议每个 Agent 跑 3 次，就是为了量出这个噪声。两家的差距如果小于它，就判为同档。</li>
+  <li><strong>不要把"和参考报告像不像"当主指标。</strong>IDRBench 的五项指标全是相似度。对我们来说，参考报告（如果有）只适合当辅助参照；主指标仍然是断言层的精确率和召回率（LiveDRBench 那套），再加上专家盲评。</li>
+  <li><strong>如果以后真想测交互</strong>（比如比赛加一个"会不会问"的环节）：可以借用它的分阶段预算和成本记录，但要补上三样东西：空回答对照组、A/A 重跑、按题目模糊程度分层报告。"用户"最好是真人，至少要用真人校准过的模拟用户，而且模拟用户不要和被测模型同一家族。</li>
+</ol>
+
+<h2 id="s11"><span class="no">11</span>复核说明</h2>
+<ul>
+  <li><strong>版本：</strong>arXiv 摘要页显示 v1 2026-01-10、v2 2026-06-20、v3 2026-09-23，本地 PDF 是 v3。当天 export API 没有返回结果，版本信息取自摘要页。</li>
+  <li><strong>表 1：</strong>用五项分数逐行复算了自主和交互的平均分及提升，7 个模型全部一致（差 ±0.01）。平均提升算出 6.384，对应论文的 6.39。</li>
+  <li><strong>表 2：</strong>每行合计 100，三列合计 521 / 40 / 139，对应 74.4% / 5.7% / 19.9%，一致。</li>
+  <li><strong>表 3：</strong>三个阶段的次数之和等于总次数，一致。</li>
+  <li><strong>相关系数</strong>（Spearman，7 个模型，论文没给，是我算的）：提升与自主分 −0.82；提升与交互次数 0.46；自主排名与交互排名 0.89。</li>
+  <li><strong>"同一配置差 0.9–1.8 分"：</strong>来自表 4、表 8、表 9 中默认配置的三组对照。"它们是分别跑的"属于推断。</li>
+  <li><strong>目标报告的来源：</strong>初代 DeepResearch Bench 论文（arXiv 2506.11763）写明，参考报告选自 2025 年 4 月 Gemini-2.5-Pro Deep Research 生成的文章。IDRBench 没说它的配对报告具体是哪份，推断是同一批。</li>
+  <li><strong>代码和数据：</strong>论文全文没有代码或数据链接；HuggingFace 论文页的代码和项目页字段为空；GitHub 搜 IDRBench 只有一个无关项目；<code>IDRBench/IDRBench</code> 数据集是跨学科研究的 benchmark（2025-05-14 建立，2026-06-10 更新）。</li>
+  <li><strong>未能核实：</strong>两位真人用户的身份，以及他们是否看过目标报告；题目压缩用的模型和压缩比例分布；GPT-5.5 泄露分类的准确率（没有人工复核）；目标报告是否确实由 Gemini 生成。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2508.04183" target="_blank">LiveDRBench</a>（反问统一回"Go ahead"）·
+  <a href="https://arxiv.org/pdf/2606.12871" target="_blank">DailyReport</a>（重复运行看稳定性）·
+  <a href="https://arxiv.org/pdf/2603.28407" target="_blank">MiroEval</a>（过程 + 结果）·
+  <a href="https://arxiv.org/pdf/2601.10504" target="_blank">DR-Arena</a> ·
+  <a href="https://arxiv.org/pdf/2601.08536" target="_blank">DeepResearch Bench II</a>
+</footer>
+</div>
+</body>
+</html>

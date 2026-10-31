@@ -86,7 +86,7 @@ TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="../index.html">← 文献索引</a>
+<a class="back" href="../papers.html">← 文献索引</a>
 <div class="meta">{dek}。本页由 <code>{src}</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
 <nav class="toc">{toc}</nav>
 {body}

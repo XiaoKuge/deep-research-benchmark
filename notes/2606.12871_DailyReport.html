@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DailyReport 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>DailyReport 精读：不存答案，评测时现场核验</h1>
+  <p class="dek">一个还拿不到数据的 benchmark，方法上有哪些可以借鉴</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2606.12871" target="_blank">arXiv 2606.12871</a> v1（2026-06-11，截至 2026-10-28 仍是唯一版本）·
+    <a href="https://arxiv.org/pdf/2606.12871" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 中国科大毛震东组（通讯作者）+ 美团（项目负责人 Lin Qiu）。和 DeepResearch Bench II 是同一位通讯作者<br>
+    <b>数据</b> <a href="https://github.com/AGI-Eval-Official/DailyReport" target="_blank">github.com/AGI-Eval-Official/DailyReport</a>，截至 2026-10-28 <strong>没有数据，也没有代码</strong><br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 5 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 6.8 节"重复运行的均值和主表对不上"（以 Gemini 3.1 Pro 加搜索的事实性为例）<br><span class="note">应改为：</span>〔更正〕说得过重：0.730 距表 4 均值 1.15 个标准差，其余数字也都在约 1.15 个标准差以内；应改为"论文没有说主表是三次中的哪一次还是均值" <a href="record-2606.12871_DailyReport.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7 节"'引用本身对不对'是 0.55–0.77，'断言是否忠于引用'是 0.74–0.86"<br><span class="note">应改为：</span>〔更正〕引用准确度为 0.550 至 0.814，引用与断言一致性为 0.739 至 0.906；原生智能体只有 o3 和 o4-mini 两家有数 <a href="record-2606.12871_DailyReport.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.6 节"评委怎么知道 QS 前 100 里漏了两所大学？只能评测时现查。论文没说清楚"<br><span class="note">应改为：</span>〔更正〕原文其实有答案：指令遵循提示词写明"judge based on what the Document claims ... You do not need to verify its accuracy"，事实性只核验抽出的断言；按论文的流程，漏列很可能根本不会被查出，而不是"现查" <a href="record-2606.12871_DailyReport.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.7 节的组间混杂论点<br><span class="note">应改为：</span>〔补充〕补一句：断言与引用的匹配提示词能识别"[15†L10]""[citation:N]"等多种引用格式，格式不一致的影响比精读页说的小一些 <a href="record-2606.12871_DailyReport.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>基本信息<br><span class="note">应改为：</span>〔补充〕补记仓库的 MIT 许可证，以及 arXiv 页面确认只有第 1 版；不影响结论 <a href="record-2606.12871_DailyReport.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">结论先行</a></li>
+    <li><a href="#s1">它做了什么</a></li>
+    <li><a href="#s2">150 道任务长什么样</a></li>
+    <li><a href="#s3">底层逻辑：真值从"答案"换成"现场核验"</a></li>
+    <li><a href="#s4">3,546 条评分条目怎么来</a></li>
+    <li><a href="#s5">分数怎么算</a></li>
+    <li><a href="#s6">弱在哪：拆开论证链</a></li>
+    <li><a href="#s7">它做对了什么</a></li>
+    <li><a href="#s8">和 DRB II 对照</a></li>
+    <li><a href="#s9">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s10">复核说明与未完成的核查</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>结论先行</h2>
+<div class="lead"><ul>
+  <li><strong>它是一个还拿不到手的 benchmark。</strong>仓库从 2026-06-10 建立起就只有一个 README，写着 "coming soon"，至今已经四个多月。不能拿它来跑，也无法核对论文里任何逐题层面的说法。</li>
+  <li><strong>思路和 DRB II 相反。</strong>题目从社交平台的热点需求正向写出；评分条目只写"检查什么"，不存答案；事实对不对，由评委在评测时上网去查。</li>
+  <li><strong>方法上有几处值得借鉴：</strong>
+    <ul>
+      <li>按约束类型把题目拆成可以逐项检查的子任务；</li>
+      <li>级联计分：没写到的内容，不给它打事实分；</li>
+      <li>"必须有 / 有更好"的重要性分档；</li>
+      <li>逐条核验断言，算精确率；</li>
+      <li>把"引用本身对不对"和"引用是否支持断言"分开统计。</li>
+    </ul></li>
+  <li><strong>它的验证环节站不住：</strong>
+    <ul>
+      <li>请用户打分时，看起来先给他们看了算法的子任务结果；</li>
+      <li>拿来考评委的"标准答案"，是专家看过评委的判定后才定下的；</li>
+      <li>事实的真值，取决于一个比部分被测系统还弱的评委能不能搜到。</li>
+    </ul>
+    所以论文里的高一致性（κ 0.859、准确率 96.5%）不能直接当证据。</li>
+  <li><strong>适合的用法：</strong>当成一份评测设计参考来读，不要引用它的排名和一致性数字。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>它做了什么</h2>
+<ol>
+  <li><strong>收集热点。</strong>从微博、小红书、知乎和 Facebook、Reddit、Twitter 收集热门话题帖和用户评论。</li>
+  <li><strong>专家写题。</strong>受雇人员根据话题和评论写出 150 道搜索任务：100 道检索型，50 道分析型。再把每道题归入 35 个细分类、10 个大领域。</li>
+  <li><strong>拆子任务、生成条目。</strong>按 9 种约束类型把每道题拆成子任务。每个子任务配最多三条"级联"条目：指令遵循、事实性、合理性。条目由 LLM 生成，专家协助修改。</li>
+  <li><strong>定重要性。</strong>出题人给每个子任务标出重要性档位，分 P0 / P1 / P2 / P2(a) 四档。</li>
+  <li><strong>评测。</strong>
+    <ul>
+      <li>评委是 Gemini-3-flash，配 Serper 搜索和 Jina 网页抓取。</li>
+      <li>算出指令遵循、事实性、合理性三个维度的分数，再用一套规则折算成 1–4 分的"用户偏好分"。</li>
+      <li>一共评了 17 个系统：5 个原生 DR 智能体、6 个"LLM + 搜索工具"、6 个"LLM + Claude Code"。</li>
+    </ul></li>
+</ol>
+<div class="tbl"><table>
+  <tr><th>项目</th><th>数字</th></tr>
+  <tr><td>任务</td><td>150 道：100 道检索型（找齐指定实体的客观信息，只做轻量分析）、50 道分析型（话题更开放，需要自己判断该找什么）</td></tr>
+  <tr><td>评分条目</td><td>3,546 条，平均每题 23.6 条。数的是"子任务 × 维度"的条数，不是事实的条数</td></tr>
+  <tr><td>子任务数</td><td>论文没给。按每个子任务 1–3 条推算，在 1,182 到 3,546 之间</td></tr>
+  <tr><td>人工投入</td><td>500 小时以上，报酬约每天 56–70 美元</td></tr>
+  <tr><td>评测结果</td><td>
+    <ul>
+      <li>用户偏好分最高的是 GPT-5.4 + 搜索工具，2.89；原生 DR 智能体在 2.17–2.48 之间；17 个系统都没到 3 分"可接受"。</li>
+      <li>指令遵循 0.92–0.99，事实性 0.61–0.84，合理性 0.66–0.93。</li>
+      <li>子任务全部条目都通过的比例只有 0.12–0.48。</li>
+    </ul></td></tr>
+</table></div>
+
+<h2 id="s2"><span class="no">2</span>150 道任务长什么样</h2>
+<p>数据没有公开，只能从论文图 2 看构成，再加上两道例题。</p>
+<div class="tbl"><table>
+  <tr><th>领域</th><th class="num">占比</th><th>图上能辨认的细分类</th></tr>
+  <tr><td>产业经济</td><td class="num">17%</td><td>新兴产业、服务业、工业、农业</td></tr>
+  <tr><td>社会民生</td><td class="num">15%</td><td>教育、环境、公用事业、医疗</td></tr>
+  <tr><td>体育娱乐</td><td class="num">13%</td><td>影视综艺、游戏动漫、竞技体育</td></tr>
+  <tr><td>消费</td><td class="num">12%</td><td>数码产品、服务、汽车、住房</td></tr>
+  <tr><td>商业运营</td><td class="num">11%</td><td>效率、营销</td></tr>
+  <tr><td>科技</td><td class="num">10%</td><td>航天、医疗、数字技术、农业科技</td></tr>
+  <tr><td>政治法律</td><td class="num">10%</td><td>政策、时事、法律</td></tr>
+  <tr><td>文化艺术</td><td class="num">约 5%</td><td>文学、艺术、人文（图上没标占比，按差额推算）</td></tr>
+  <tr><td>金融</td><td class="num">5%</td><td>证券投资等</td></tr>
+  <tr><td>宏观经济</td><td class="num">2%</td><td>就业、区域经济</td></tr>
+</table></div>
+<div class="ex">
+  <div class="h">例题 1：社会民生 · 教育</div>
+  <ul>
+    <li>2026 年 QS 世界大学排名前 100 里有几所中国大陆高校？</li>
+    <li>列出名单、当前排名和同比变化。</li>
+    <li>前三名给出总分和各项指标得分，并分析各自的优劣。</li>
+  </ul>
+</div>
+<div class="ex">
+  <div class="h">例题 2：娱乐 · 动画</div>
+  <ul>
+    <li>介绍首届上海暑期国际动漫月最受欢迎的三场活动，包括日期、地点、规模和亮点。</li>
+    <li>分析其中文旅、商业、体育、会展联动的模式。</li>
+  </ul>
+</div>
+<p>和 DRB II 的题目相比：</p>
+<ul>
+  <li>这些题像普通用户会问的问题：短，问的是现状，带一点分析；</li>
+  <li>DRB II 的题像一篇综述的提纲：长，问的是截止某年的历史状态，一层层规定好结构。</li>
+</ul>
+
+<h2 id="s3"><span class="no">3</span>底层逻辑：真值从"答案"换成"现场核验"</h2>
+<p>论文第 1 节批评了两类已有做法：</p>
+<ul>
+  <li><strong>题目：</strong>由领域专家出的专业题，"不太会出现在真实场景里"；而且是静态的，有污染风险。</li>
+  <li><strong>评分：</strong>按粗粒度维度打分、再线性相加，可解释性差，也量化不了用户的感受。</li>
+</ul>
+<p>它的应对可以归纳成四步：</p>
+<ol>
+  <li><strong>题目真实：</strong>从热点和评论里提炼需求，由人写题。</li>
+  <li><strong>要求可查：</strong>把题目拆成子任务，每个子任务先问"做到了没有"。这一步只看报告本身，不需要知道答案。</li>
+  <li><strong>事实现场查：</strong>从报告里抽出断言，评委上网核验，算出"说对的比例"。</li>
+  <li><strong>贴近用户：</strong>按子任务对用户的重要程度做非线性汇总，得出 1–4 分。</li>
+</ol>
+<p>整套方法里没有一份"标准答案"。和 DRB II 对照：</p>
+<ul>
+  <li><strong>DRB II</strong>：信任来自<strong>一篇已发表的文章</strong>，所以它的问题是"文章对不对、全不全"。</li>
+  <li><strong>DailyReport</strong>：信任来自<strong>评委在评测那一刻的搜索结果</strong>，所以它的问题变成"评委搜得到吗、搜到的对吗、换个时间还一样吗"。</li>
+</ul>
+
+<h2 id="s4"><span class="no">4</span>3,546 条评分条目怎么来</h2>
+<h3>写题的要求（§3.2、附录 A.1）</h3>
+<ul>
+  <li><strong>三条原则：</strong>真实（反映特定人群的真实需求）、清晰（避免含糊表述）、安全（不触发安全拒答）。</li>
+  <li><strong>附录还列了几条：</strong>依赖工具（必须搜索才能答）、只用文本、各维度互不重叠。</li>
+  <li><strong>流程：</strong>标注员先读热帖和评论，找出常见需求，过滤掉不安全、太窄、含糊或不适合写成日报的话题。写题人把选中的话题写成任务。另有审核人检查是否清晰、真实、安全、依赖搜索、分类一致。</li>
+</ul>
+<h3>拆子任务（§3.3、附录 A.2）</h3>
+<p>9 种约束类型：</p>
+<ul>
+  <li><strong>内容</strong>：必须输出哪些核心信息；</li>
+  <li><strong>范围</strong>：时间、地域、领域、来源等边界；</li>
+  <li><strong>完整性</strong>：数量和覆盖的标准；</li>
+  <li><strong>数量</strong>：字数、条目数；</li>
+  <li><strong>格式</strong>：结构和排版；</li>
+  <li><strong>设定</strong>：给定的背景、角色、前提或数据；</li>
+  <li><strong>属性</strong>：风格和视角；</li>
+  <li><strong>行为规则</strong>：必须遵循的方法和步骤；</li>
+  <li><strong>功能</strong>：输出要达到的实际用途。</li>
+</ul>
+<p>拆分有三条原则：</p>
+<ul>
+  <li><strong>原子性</strong>：一个子任务通常只对应一种约束。范围和完整性约束例外，它们不能单独成为子任务。</li>
+  <li><strong>覆盖</strong>：所有子任务合起来要覆盖原题的全部要求。</li>
+  <li><strong>可追溯</strong>：子任务必须出自原题，不能凭空添加。</li>
+</ul>
+<h3>三个维度</h3>
+<div class="tbl"><table>
+  <tr><th>维度</th><th>条目的样子（图 1）</th><th>判法</th><th>是否需要答案</th></tr>
+  <tr><td>指令遵循</td><td>"是否分析了 n？"</td><td>0 / 0.5 / 1</td><td>不需要。只看报告有没有做到</td></tr>
+  <tr><td>事实性</td><td>"所给事实是否准确？"</td><td>抽出的断言中核验为真的比例</td><td>不预存。评委用 Serper 和 Jina 现场核验</td></tr>
+  <tr><td>合理性</td><td>"推理是否合理？"</td><td>0 / 0.5 / 1</td><td>不需要。只根据上下文判断推理是否成立</td></tr>
+</table></div>
+<p>并不是每个子任务都有事实性和合理性条目，所以平均每题只有 23.6 条。真正被核验的断言要到评测时才从报告里抽出来，每份报告可能有几十到上百条。</p>
+
+<h2 id="s5"><span class="no">5</span>分数怎么算</h2>
+<pre>指令遵循  Ins = 各子任务 ins 的平均
+事实性    Fac = Σ ins·fac ÷ Σ ins     （只统计带事实性条目的子任务）
+合理性    Rat = Σ ins·rat ÷ Σ ins     （只统计带合理性条目的子任务）
+子任务综合 o = ins × (fac + rat) ÷ 2</pre>
+<p><strong>级联的含义：</strong>指令没做到（ins = 0），事实和推理都不计分。所以事实性分数衡量的是"写出来的那部分有多对"。</p>
+<p><strong>重要性分档：</strong>由出题人做一个思想实验："只有这一项没做到时，用户会给几分？"</p>
+<ul>
+  <li><strong>P0</strong>：缺了就完全没用（1 分）；</li>
+  <li><strong>P1</strong>：缺了就有明显缺陷（2 分）；</li>
+  <li><strong>P2</strong>：单独缺一项还能接受（3 分）；</li>
+  <li><strong>P2(a)</strong>：单独缺一项能接受，缺几项就降到 2 分。</li>
+</ul>
+<p><strong>用户偏好分（算法 1）：</strong>按档位的完成情况查规则给分。</p>
+<ul>
+  <li>全部做到：4 分；</li>
+  <li>P0 全挂，或 P1 均值低于 0.3，或 P0 和 P1 均值都低于 0.5：1 分；</li>
+  <li>P0 均值 ≥ 0.5、P1 全部大于 0、P2(a) 至少有一项大于 0、P1 均值 ≥ 0.7：3 分；</li>
+  <li>其余情况：2 分。</li>
+</ul>
+<p>这里的"P1 均值"是把 P1 各项和 P2(a) 组的均值放在一起算的。</p>
+<p>两点值得注意：</p>
+<ul>
+  <li>阈值 0.3 / 0.5 / 0.7 是手定的，论文没说依据。</li>
+  <li>普通 P2 子任务只在"全部做到才给 4 分"那一条里出现。它们做得好不好，对 1–3 分没有任何影响。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>弱在哪：拆开论证链</h2>
+<p>和 DRB II 精读用同一个框架（Kane 论证式效度）：</p>
+<div class="tbl"><table>
+  <tr><th>环节</th><th>要成立的命题</th><th>表现</th><th>依据</th></tr>
+  <tr><td>① 打分</td><td>评委在每个子任务上判得准</td><td class="mid">中</td><td>
+    <ul>
+      <li>指令遵循的准确率 96.5%，但"标准答案"是专家看过评委的判定后才定的（见 6.3）；</li>
+      <li>事实性和合理性只做了"人工抽查"，没给样本量。</li>
+    </ul></td></tr>
+  <tr><td>② 泛化</td><td>150 道题能代表日常搜索需求</td><td class="mid">无法核验</td><td>数据没公开，题目分布、难度、时间跨度都只能信论文</td></tr>
+  <tr><td>③ 外推</td><td>用户偏好分 ≈ 真实用户的感受</td><td class="mid">中偏弱</td><td>和用户评分的 κ 很高，但评分人先看了算法的子任务结果（见 6.4）；重要性档位是出题人想象出来的</td></tr>
+  <tr><td>④ 结论</td><td>"现有系统达不到用户预期""原生 DR 智能体不如 LLM + 搜索"</td><td class="weak">弱</td><td>"3 分 = 可接受"是手写规则定义出来的；组间比较受提示词和引用格式的影响（见 6.7）</td></tr>
+</table></div>
+
+<h3>6.1 没有数据，也没有代码</h3>
+<ul>
+  <li>论文摘要写着数据和代码"已公开"，但仓库里只有一个 README："The benchmark and evaluation scripts are coming soon..."。三次提交都在 2026-06-10。</li>
+  <li>HuggingFace 上，AGI-Eval 组织下有 5 个数据集，没有 DailyReport。</li>
+  <li>后果一：算法 1 的阈值、条目的写法、断言抽取和核验的提示词，全都无法复现。</li>
+  <li>后果二："支持持续更新"无法验证。论文没写更新机制和版本管理，而题目基于 2026 年上半年的热点，到现在已经不"新"了。</li>
+</ul>
+
+<h3>6.2 事实的真值取决于评委能不能搜到</h3>
+<ul>
+  <li>核验断言的是 Gemini-3-flash 加 Serper 和 Jina。被测系统里有 GPT-5.4、Claude Opus 4.6、Gemini 3.1 Pro，评委的搜索和判断能力不一定比它们强。</li>
+  <li>评委搜不到，正确的断言就会被判错；评委搜到了错误来源，错误的断言就会被判对。</li>
+  <li>热点信息变化快，网页会被修改或删除，隔一段时间重评，事实性分数就可能变了。论文没有存档被引网页，也没有规定以哪个时间点为准。</li>
+</ul>
+
+<h3>6.3 选评委、验证评委，用的是同一批数据，而且"标准答案"不独立</h3>
+<ul>
+  <li><strong>两个实验数字相同。</strong>表 5"评委选择"里 Gemini-3-flash 的准确率（96.5 / 94.2 / 95.3）和 §5.5"指标验证"报告的数字完全相同。看起来是同一个实验报告了两次：在哪批数据上选出了评委，就在哪批数据上验证它。</li>
+  <li><strong>标准答案看过评委的判定。</strong>指令遵循的标准答案是这样定的：人工标注员和评委各判一遍，再由专家"看过两边的结果"后裁决。评委 96.5% 高于人工标注员的 88.4%，有一部分是因为裁决本身参考了评委的判定。</li>
+  <li><strong>落选的评委不一定更差。</strong>Claude-4.5-Sonnet 在事实性（94.5）和合理性（95.7）上都高于 Gemini-3-flash，最终选后者主要是因为便宜（平均成本 0.45 美元对 2.53 美元，论文没写计价单位）。</li>
+</ul>
+
+<h3>6.4 用户偏好的验证不独立</h3>
+<blockquote>users are given the generated reports and subtask results, and assign an overall score from 1 to 4<span class="src">§5.5</span></blockquote>
+<ul>
+  <li>评分人拿到的除了报告，还有"子任务结果"（subtask results）。最自然的理解是算法给出的子任务判定。如果是这样，算法分和人的评分一致，有一部分是因为人看了算法分。论文没说清楚这一点，本身也是个问题。</li>
+  <li>正文说"加权 Cohen's kappa 0.859"。用图 6 的混淆矩阵重算：0.859 其实是不加权的 kappa，线性加权是 0.876，二次加权是 0.901（图上标的就是 0.901）。一致性本身确实高，只是标注有误。</li>
+  <li>300 个样本里，用户评 3 分的有 179 个（60%），评 4 分的只有 6 个，分布很集中。</li>
+  <li>抽样单位有歧义：正文说"随机抽 300 个子任务"，但用户打的是"整份任务"的分，两者不是同一个层级。</li>
+</ul>
+
+<h3>6.5 "用户视角"其实是出题人视角</h3>
+<ul>
+  <li>重要性档位是出题人想象"缺了这一项用户会给几分"得出的，没有让真实用户来定。</li>
+  <li>阈值是手写的。所以"最高 2.89 分、达不到 3 分可接受"，部分是这套规则的定义带来的结果。</li>
+</ul>
+
+<h3>6.6 事实性只算精确率</h3>
+<ul>
+  <li>事实性 = 核验为真的断言 ÷ 抽出的断言。少写、只写有把握的内容，这一项反而分高。</li>
+  <li>"列全了没有"归在指令遵循的完整性约束里。但条目里不存答案，评委怎么知道 QS 前 100 里漏了两所大学？只能评测时现查。论文没说清楚，数据不公开也无从核对。</li>
+</ul>
+
+<h3>6.7 组间比较可能有混杂因素</h3>
+<ul>
+  <li>"LLM + 搜索工具"和"LLM + Claude Code"两组用了统一的系统提示词（附录 C）：不许用自身知识、至少 2000 字、统一的 [n] 引用格式和参考文献列表。这正好是后面核验流程需要的格式。</li>
+  <li>原生 DR 智能体的配置（附录 B.4.1）只写了把超时放宽到 1,800 秒，没说有没有做引用格式统一。</li>
+  <li>所以"原生 DR 智能体更差"的结论，有一部分可能来自输出格式和核验流程的匹配程度。</li>
+</ul>
+
+<h3>6.8 稳定性检验说得不清楚</h3>
+<ul>
+  <li>表 4 只挑了 3 个模型，各重复 3 次，标准差很小。但论文没说重复的是"重新生成报告"还是"同一份报告重新评分"。如果是后者，就只反映了评委的稳定性，没有反映 Agent 自身的波动。</li>
+  <li>重复运行的均值和主表对不上。比如 Gemini 3.1 Pro + 搜索的事实性，表 3 是 0.730，表 4 是 69.9 ± 2.7，主表数字落在一个标准差之外。</li>
+</ul>
+
+<h2 id="s7"><span class="no">7</span>它做对了什么</h2>
+<ul>
+  <li><strong>题目从真实需求正向写出。</strong>不从现成答案倒推，题目自然、简短，问的是现状，避开了 DRB II"题目就是提纲"的问题。</li>
+  <li><strong>按约束类型拆子任务。</strong>把一个笼统的 Prompt 变成可以逐项检查的清单。9 种约束类型本身就是一份好用的检查表。</li>
+  <li><strong>级联计分。</strong>先看做没做到，再看对不对、推理好不好，避免给没写出来的内容打事实分。</li>
+  <li><strong>显式的重要性分档。</strong>把"必须有"和"有更好"区分开来并写进计分规则，比各项一律平均更接近人的判断。</li>
+  <li><strong>逐条核验断言、算精确率。</strong>补上了 DRB II 只算召回的盲区。</li>
+  <li><strong>把引用的两个问题分开统计（附录表 6）。</strong>"引用本身对不对"是 0.55–0.77，"断言是否忠于引用"是 0.74–0.86，两者分开看更清楚。</li>
+  <li><strong>给出了重复评测的标准差。</strong>虽然只做了 3 个模型，但大多数开放式 benchmark 连这一步都没做。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>和 DRB II 对照</h2>
+<div class="tbl"><table>
+  <tr><th></th><th>DRB II</th><th>DailyReport</th></tr>
+  <tr><td>题目来源</td><td>从一篇综述倒推</td><td>从热点话题和用户评论正向写题</td></tr>
+  <tr><td>题目样子</td><td>长，像综述提纲，问的是截止某年的历史状态</td><td>短，像用户提问，问的是现状</td></tr>
+  <tr><td>真值</td><td>那篇综述</td><td>评委评测时的搜索结果</td></tr>
+  <tr><td>条目</td><td>带答案的原子事实，每题 71 条</td><td>检查标准，每题 23.6 条</td></tr>
+  <tr><td>测的是</td><td>和原文重合多少（召回）</td><td>要求做没做到 + 说出的断言对不对（精确率）</td></tr>
+  <tr><td>主要弱点</td><td>按范例对答案；说错不扣分；原文的对错和完整性没有被检验</td><td>真值依赖评委搜索；只算精确率；验证不独立</td></tr>
+  <tr><td>时效</td><td>评分要点不变，会越来越偏向测记忆</td><td>声称持续更新，但无法核验</td></tr>
+  <tr><td>能不能用</td><td>数据和脚本都公开</td><td>没有数据，没有代码</td></tr>
+</table></div>
+<p>两者各管一半：DRB II 对照答案查"找全了没有"，DailyReport 现场核验查"说对了没有"。一套完整的评测两样都需要。</p>
+
+<h2 id="s9"><span class="no">9</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<ol>
+  <li><strong>按 9 种约束类型拆出要求清单，并给每一项标 P0 / P1 / P2。</strong>这一步在运行之前做，写进预登记。</li>
+  <li><strong>级联计分</strong>：先判每个子任务做没做到，再对做到的部分评事实和推理。</li>
+  <li><strong>逐条核验断言，但对照运行时存档的网页，不要现搜。</strong>这样避开网页漂移和评委搜索能力的问题。5 份报告的断言可以全部核验，矛盾的交专家裁决。</li>
+  <li><strong>召回不能少</strong>：专家必答清单，加上 5 个 Agent 各跑 3 次的汇总池。这是 DailyReport 缺的那一半。</li>
+  <li><strong>验证必须独立</strong>：
+    <ul>
+      <li>请专家或用户打分时，不给他们看算法的结果；</li>
+      <li>用来考评委的标准答案，在评委判定之前就定好；</li>
+      <li>选评委和验证评委用两批不同的样本。</li>
+    </ul>
+    这是这篇论文最值得吸取的教训。</li>
+  <li><strong>统一输出格式要对所有 Agent 一视同仁</strong>，或者在核验之前统一做格式归一。不然比的是谁的格式更合核验流程，而不是谁研究得好。</li>
+</ol>
+
+<h2 id="s10"><span class="no">10</span>复核说明与未完成的核查</h2>
+<h3>核对过的</h3>
+<ul>
+  <li><strong>数据可得性</strong>（2026-10-28）：
+    <ul>
+      <li>GitHub 仓库只有 LICENSE 和 README，三次提交都在 2026-06-10；</li>
+      <li>HuggingFace 上 AGI-Eval-Official 名下没有数据集，AGI-Eval 名下 5 个数据集里没有 DailyReport；</li>
+      <li>arXiv 接口显示只有 v1。</li>
+    </ul></li>
+  <li><strong>kappa</strong>：用图 6 的 4×4 混淆矩阵（共 300 个样本）重算了不加权、线性加权、二次加权三种 kappa。</li>
+  <li><strong>领域占比</strong>：从图 2 读出。"文化艺术约 5%"是按差额推算的。</li>
+  <li><strong>表 4 和表 5 的数字</strong>：与正文逐项对照过。</li>
+</ul>
+<h3>做不了的</h3>
+<ul>
+  <li>题目分布、条目写法、断言抽取和核验的效果，都要等数据和代码公开。可以 watch 这个仓库。</li>
+  <li>子任务总数论文没给，只能推一个范围。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2601.08536" target="_blank">DeepResearch Bench II</a>（同一位通讯作者，思路相反）·
+  <a href="https://arxiv.org/pdf/2604.03173" target="_blank">Reference Hallucinations</a>（引用真伪的程序化核验）·
+  <a href="https://arxiv.org/pdf/2603.05912" target="_blank">DeepFact</a>（专家先审计后评分）·
+  <a href="https://arxiv.org/pdf/2610.18092" target="_blank">LifeSearch</a>（与人类排名的一致性）
+</footer>
+</div>
+</body>
+</html>

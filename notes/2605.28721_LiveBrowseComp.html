@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiveBrowseComp 精读</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  .meta b{color:var(--dim);font-weight:500}
+  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
+  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
+  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
+  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
+    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
+  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
+  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
+  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
+  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
+  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+  dl.gl dt{color:var(--accent2);font-weight:600}
+  dl.gl dd{margin:0;color:#cfd5df}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../papers.html">← 文献索引</a>
+<header>
+  <h1>LiveBrowseComp 精读：Agent 是在搜索，还是在拿网页核对自己早就记得的答案？</h1>
+  <p class="dek">用"最近 90 天的冷门事实"出题，把背答案这条捷径堵上</p>
+  <div class="meta">
+    <b>论文</b> <a href="https://arxiv.org/abs/2605.28721" target="_blank">arXiv 2605.28721</a> v1（2026-05-27，至今唯一版本）·
+    <a href="https://arxiv.org/pdf/2605.28721" target="_blank">本地 PDF</a><br>
+    <b>团队</b> 哈工大 SCIR（秦兵、刘铭）+ 小红书，共 8 人<br>
+    <b>数据</b>
+    <a href="https://huggingface.co/datasets/Forival/LiveBrowseComp" target="_blank">HuggingFace</a>（MIT，335 题，题目和答案都加密并附 canary 标记，2026-05-27 上传后没有新批次）·
+    <a href="https://github.com/LiveBrowsecomp/LiveBrowsecomp.github.io" target="_blank">项目页</a>（排行榜即论文快照，2026-06-02 后未更新）<br>
+    <b>写于</b> 2026-10-28 · 其他精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a> · <a href="2601.06676_IDRBench.html">IDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2601.12346_MMDeepResearch-Bench.html">MMDeepResearch-Bench</a> · <a href="2602.18940_DREAM.html">DREAM</a> · <a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2606.12871_DailyReport.html">DailyReport</a> · <a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA to Deep Research</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>
+  </div>
+</header>
+<!-- errata-start -->
+<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 5 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 8 节"用 32 个模型候选答案反查唯一性"<br><span class="note">应改为：</span>〔更正〕是 4 个开源模型各带搜索作答 8 遍，共 32 次作答的候选答案；第 3 节的写法是对的 <a href="record-2605.28721_LiveBrowseComp.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.4 节说表 5 中 GLM 5.0 一行"就算把权重往最不利的方向调，也不会低于约 31.8"<br><span class="note">应改为：</span>〔更正〕31.8 无法复现：只让"社会与文化"这 20% 的权重取最不利的情形，下界约为 33.7；各类权重完全不受约束时，下界是 22.2；"这一行与总分对不上"的结论不变 <a href="record-2605.28721_LiveBrowseComp.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 4 节"系统提示词用各模型官方推荐的版本"<br><span class="note">应改为：</span>〔补充〕这只照录了正文第 4.1 节；附录 C.1 说默认的统一模板用于 DeepSeek、GLM、MiniMax、Seed，与正文矛盾，应补注 <a href="record-2605.28721_LiveBrowseComp.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>抬头"哈工大 SCIR"<br><span class="note">应改为：</span>〔更正〕论文只写"Harbin Institute of Technology"，实验室名称无法从论文核实 <a href="record-2605.28721_LiveBrowseComp.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>精读页没有发现 Seed 2.0 的 pass@4 低于 avg@4；没有指出旧题之间的相关系数能由表 3 完全复现<br><span class="note">应改为：</span>〔补充〕补充这两点；后一点加强了精读页"图 8 与表 3 用的新题分数不同"的推测（记录注明"不是错误"） <a href="record-2605.28721_LiveBrowseComp.html" target="_blank">依据</a></li></ol></section>
+<!-- errata-end -->
+
+<div class="aside"><strong>关于例题：</strong>数据集的题目和答案都加了密，附有 canary 标记，意思是"不应以明文出现在网上"。本文只引用论文正文和附录里已经印出的例题，没有解密数据集，也不转录其中的题目或答案。</div>
+
+<nav class="toc">目录
+  <ol>
+    <li><a href="#s0">一分钟读懂</a></li>
+    <li><a href="#s1">核心思路：开卷考试里的"背题"</a></li>
+    <li><a href="#s2">三项诊断</a></li>
+    <li><a href="#s3">新题怎么出</a></li>
+    <li><a href="#s4">怎么判分</a></li>
+    <li><a href="#s5">结果</a></li>
+    <li><a href="#s6">名词小抄</a></li>
+    <li><a href="#s7">弱在哪</a></li>
+    <li><a href="#s8">它做对了什么</a></li>
+    <li><a href="#s9">和已精读几篇对照</a></li>
+    <li><a href="#s10">对"同一 Prompt、5 个 Agent"的启示</a></li>
+    <li><a href="#s11">复核说明</a></li>
+  </ol>
+</nav>
+
+<h2 id="s0"><span class="no">0</span>一分钟读懂</h2>
+<div class="lead"><ul>
+  <li><strong>它发现的问题：</strong>在 BrowseComp 这类"上网找答案"的题上，Agent 很多时候不是在搜，而是先凭记忆猜出答案，再上网找证据确认。论文把这叫作"内在知识依赖"。
+    <ul>
+      <li>不给搜索工具，最多能答对 44.5%（MiniMax M2.5，4 次里中 1 次就算）；</li>
+      <li>一半以上的搜索词来自模型自己的猜测，不是从搜到的网页里得来的；</li>
+      <li>把能支撑答案的网页全部拿掉后，带工具的成绩比不带工具还差。</li>
+    </ul></li>
+  <li><strong>它的对策：</strong>出 335 道新题，每道都依赖出题前 90 天内发生的冷门事实。模型训练时没见过这些事实，只能真的去搜。结果所有模型的闭卷分数都只有 0–2%。</li>
+  <li><strong>它的结论：</strong>换到新题上，带搜索的成绩比 BrowseComp 掉了一大截，排名也有变化。真人做两套题的难度差不多，所以论文认为掉分是因为"记忆捷径"被堵上了。</li>
+  <li><strong>可信程度：</strong>思路对，诊断设计有启发；但数字上有不少问题：
+    <ul>
+      <li>同一组闭卷分数，在三处图表里对应的模型和指标对不上；</li>
+      <li>"掉 25–40 分"实际是 13.8–35.8 分；</li>
+      <li>"背得越多、掉得越多"这条核心论断，用论文自己的数字算，相关性只有 0.30–0.66；</li>
+      <li>335 道题自带约 ±5 分误差，前 6 名分不开；</li>
+      <li>名为"Live"，但发布 5 个月没有更新过，题里的"新事实"如今已有 6–9 个月了。</li>
+    </ul></li>
+  <li><strong>对你的场景：</strong>最值得借的是"闭卷基线"：先关掉搜索问一遍，看哪些结论是 Agent 本来就记得的。其次是把 Prompt 的关键子问题锚定在最近发生的事实上。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>核心思路：开卷考试里的"背题"</h2>
+<p>打个比方：一场开卷考试，允许翻书。可题目都是往年考过的原题，有的学生早就背熟了答案，翻书只是装装样子，找到那一页确认一下。这种考试考不出谁会查资料，只能看出谁背得多。</p>
+<p>论文认为，BrowseComp 这类 benchmark 正在变成这样：</p>
+<ul>
+  <li>题目是固定的，涉及的事实大多早已写进网页，也就进了模型的训练数据；</li>
+  <li>模型越大、读的东西越多，就越能先猜出答案，再用搜索去"核对"；</li>
+  <li>分数于是混合了两种能力："本来就知道"和"会去找"。</li>
+</ul>
+<p>论文把这种现象叫作<strong>内在知识依赖</strong>（Intrinsic Knowledge Dependence，简称 IKD）。它特意强调，这和通常说的"数据污染"不一样：</p>
+<ul>
+  <li>数据污染是题目本身被模型见过；</li>
+  <li>IKD 是题目没见过，但题目涉及的知识模型早就有了。所以去重、查重这类常规的防污染检查查不出来。</li>
+</ul>
+
+<h2 id="s2"><span class="no">2</span>三项诊断</h2>
+<p>在 BrowseComp、BrowseComp-ZH、HLE、GAIA 四个 benchmark 上测了 6–7 个前沿模型，都用作者团队自己的统一框架 REDSearcher。</p>
+<h3>诊断一：不给工具，能答对多少？</h3>
+<ul>
+  <li>做法：拿掉所有搜索工具，只凭模型自己的知识答题。每题采样 4 次，有一次答对就算对（pass@4）。</li>
+  <li>结果：24 组"模型 × benchmark"的闭卷分数在 20.4–62.0 之间，平均 38.9。比如 MiniMax M2.5 在 BrowseComp 上是 44.5，Kimi K2.6 在 BrowseComp-ZH 上是 62.0。</li>
+  <li>另一个现象：闭卷分高的模型，用了搜索后提升不一定多。比如 DeepSeek-V4-Pro 闭卷只有 20.4，用了搜索却提升 49.4 分；MiniMax M2.5 闭卷 44.5，搜索只提升 28.5 分。</li>
+</ul>
+<h3>诊断二：把能支撑答案的网页拿掉，会怎样？</h3>
+<ul>
+  <li>做法：用 BrowseComp-Plus 的固定资料库，把每道题的证据文档和金文档全部删掉，只留下无关文档和专门挑出来"看着相关、其实没用"的干扰文档。Agent 仍然可以照常搜索。</li>
+  <li>结果：6 个模型全都比闭卷还差。平均从 26.1 掉到 6.2；MiniMax M2.5 从 44.5 掉到 8.0，Kimi-K2.6 从 25.5 掉到 2.3。</li>
+  <li>论文的解读：搜不到支撑证据时，Agent 没有守住自己原本猜对的答案，反而被干扰文档带偏了。</li>
+</ul>
+<h3>诊断三：搜索词是从哪来的？</h3>
+<ul>
+  <li>做法：追溯每个搜索词里的关键信息最早出现在哪里。最早出现在模型自己的推理里，算"模型源"；最早出现在搜到的网页里，算"检索源"。</li>
+  <li>结果：
+    <ul>
+      <li>每个模型都有一半以上的搜索词是"模型源"，越到后面比例越高，后期超过 60%。</li>
+      <li>即使搜到了能支撑答案的网页，三轮内真正用上的不到三分之一：DeepSeek v3.2 32.2%、GLM-5.1 24.7%、MiniMax M2.5 30.8%、Kimi-K2.5 31.5%。</li>
+    </ul></li>
+</ul>
+
+<h2 id="s3"><span class="no">3</span>新题怎么出</h2>
+<p>目标是让题目落在模型"不可能记得"的范围里。做法分四步：</p>
+<ol>
+  <li><strong>从 6 个持续更新的数据源取种子事件：</strong>新闻（GDELT）、影视（TMDB）、游戏（RAWG）、网络安全漏洞（CVE/NVD）、体育赛事（SportsDB）、地震记录（USGS）。这些数据源都带时间戳，方便卡时间。</li>
+  <li><strong>三道过滤：</strong>
+    <ul>
+      <li><strong>时间：</strong>核心事实必须是 90 天内才出现的，用更早的信息推不出来；</li>
+      <li><strong>冷门：</strong>按热度、票数、报道量打分，只留冷门的。比如电影要低热度、少评分、没有票房；全球头条新闻剔除，因为太容易猜；</li>
+      <li><strong>答案稳定：</strong>剔除答案还会变的，比如累计票房、实时排名。</li>
+    </ul></li>
+  <li><strong>人工写题：</strong>标注员先要过考核：10 道 BrowseComp 题，每道至少钻研 2 小时，至少做对 2 道。之后从种子事件出发上网查，写出多步推理题，要求：
+    <ul>
+      <li>直接拿题目去搜，前三页结果里找不到答案；</li>
+      <li>答案唯一、是一个短词；</li>
+      <li>至少一条线索落在 90 天内。</li>
+    </ul>
+    同时记下完整的证据链。</li>
+  <li><strong>另一组人复核</strong>，每项检查都由 3 人独立完成，再由第 4 人交叉核对：
+    <ul>
+      <li><strong>对不对、唯一不唯一：</strong>逐页核对证据链；再让 4 个开源模型带搜索各答 8 遍，把所有候选答案拿来人工核对，有第二个答案也满足全部条件的题就删掉；</li>
+      <li><strong>够不够难：</strong>3 个没参与出题的人各做一遍，只要有人 30 分钟内做出来，就删掉；</li>
+      <li><strong>是不是真的依赖新事实：</strong>对证据链里每个"新"网页，去找 90 天窗口之前就存在的替代证据；如果全都找得到，说明这题不依赖新事实，删掉。</li>
+    </ul></li>
+</ol>
+<div class="ex">
+  <div class="h">论文附录里的例子（种子事件 → 题目）</div>
+  <ul>
+    <li><strong>种子：</strong>TMDB 上一部 2026-03-02 在英国上映的 8 分钟短片，类型是纪录片 / 剧情。</li>
+    <li><strong>题目：</strong>一部由两家公司合作的电影。一家公司以 1970 年代一种"每个预算周期都从零开始"的财务方法命名，另一家公司的名字是 5 个字母、代表独立创作。影片讲离散与寻找"家"，编导和主演都是同一位艺术家。片名是什么？</li>
+    <li><strong>标准答案：</strong><em>Where do I go from Here?</em></li>
+    <li><strong>时效性检查：</strong>影片信息页和制作信息页都是 2026 年的，找不到 2026 年以前的替代来源，所以保留。</li>
+  </ul>
+</div>
+<p>最终 335 道题。按图 5 的划分：电影 26%、娱乐 26%、科技 15%、体育 13%、其他 7%、地理 7%、政治 5%、艺术与音乐 1%。</p>
+
+<h2 id="s4"><span class="no">4</span>怎么判分</h2>
+<ul>
+  <li>答案是一个短词，由 GPT-OSS 当评委对照标准答案判对错，允许缩写、别名这类写法差异。</li>
+  <li>每题跑 4 次，报告平均正确率（avg@4）。</li>
+  <li>11 个模型用同一套框架：
+    <ul>
+      <li>工具：网页搜索（serper.dev，一次最多 10 条）、打开网页（Jina），部分模型另有代码沙盒；</li>
+      <li>上限：上下文 256k、最多 250 步；</li>
+      <li>不做上下文压缩。</li>
+    </ul></li>
+  <li>系统提示词用各模型官方推荐的版本。</li>
+</ul>
+
+<h2 id="s5"><span class="no">5</span>结果</h2>
+<div class="tbl"><table>
+  <tr><th>模型</th><th class="num">BrowseComp</th><th class="num">LiveBrowseComp</th><th class="num">掉了</th></tr>
+  <tr><td>GPT 5.4</td><td class="num">72.1</td><td class="num">43.2</td><td class="num">28.9</td></tr>
+  <tr><td>Seed 2.0</td><td class="num">77.3</td><td class="num">41.5</td><td class="num">35.8</td></tr>
+  <tr><td>Claude Sonnet 4.6</td><td class="num">69.3</td><td class="num">41.4</td><td class="num">27.9</td></tr>
+  <tr><td>Gemini 3.1 Pro</td><td class="num">67.0</td><td class="num">40.0</td><td class="num">27.0</td></tr>
+  <tr><td>DeepSeek V4 Pro</td><td class="num">61.4</td><td class="num">38.3</td><td class="num">23.1</td></tr>
+  <tr><td>DeepSeek v3.2</td><td class="num">51.4</td><td class="num">37.6</td><td class="num">13.8</td></tr>
+  <tr><td>GLM 5.1</td><td class="num">68.0</td><td class="num">33.9</td><td class="num">34.1</td></tr>
+  <tr><td>Kimi-K2.6</td><td class="num">62.4</td><td class="num">31.7</td><td class="num">30.7</td></tr>
+  <tr><td>Kimi-K2.5</td><td class="num">60.6</td><td class="num">30.5</td><td class="num">30.1</td></tr>
+  <tr><td>GLM 5.0</td><td class="num">59.0</td><td class="num">28.5</td><td class="num">30.5</td></tr>
+  <tr><td>MiniMax M2.5</td><td class="num">60.4</td><td class="num">28.0</td><td class="num">32.4</td></tr>
+</table></div>
+<p class="aside">数字取自论文表 3（avg@4），"掉了"一列是我算的。</p>
+<ul>
+  <li><strong>闭卷几乎为零：</strong>图 7 里 9 个模型在新题上的闭卷分都不超过 2%（论文写"低于 2%"，其中两个正好是 2.0），同一批模型在旧题上闭卷是 11–44.5%。这说明"背答案"这条路确实被堵上了。</li>
+  <li><strong>排名有变化：</strong>GLM 5.1 在 BrowseComp 上排开源第一（68.0），在新题上降到 33.9；DeepSeek v3.2 在 BrowseComp 上垫底（51.4），在新题上反而升到 37.6。BrowseComp 和 BrowseComp-ZH 两套旧题的排名相关（Spearman）是 0.87，BrowseComp 和新题之间只有 0.74。</li>
+  <li><strong>差距缩小：</strong>开源模型之间的最大差距从 16.6 分缩小到 10.3 分。</li>
+  <li><strong>人类对照：</strong>另请一组人，两套题各做 200 道，每题至少钻研 2 小时。做对率是 30% 对 31%，用时分布也接近。论文据此认为两套题对人来说一样难，模型掉分不是因为题更难。</li>
+  <li><strong>搜索轮数：</strong>在 BrowseComp 上，有一批题几轮搜索就"确认"完了；在新题上，这批短轮次的题基本消失，搜索轮数整体变多。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>名词小抄</h2>
+<dl class="gl">
+  <dt>内在知识依赖</dt><dd>英文 IKD。Agent 先凭记忆猜答案，再用搜索去确认，而不是顺着搜到的线索去发现答案。</dd>
+  <dt>闭卷</dt><dd>不给任何搜索工具，只凭模型自己的知识答题。</dd>
+  <dt>pass@4</dt><dd>同一题答 4 次，只要有 1 次对就算对。比只答 1 次宽松得多。</dd>
+  <dt>avg@4</dt><dd>同一题答 4 次，取平均正确率。</dd>
+  <dt>证据封锁</dt><dd>从资料库里删掉所有能支撑答案的文档，只留无关文档和干扰文档。</dd>
+  <dt>模型源搜索词</dt><dd>关键信息最早出现在模型自己推理里的搜索词；反之叫检索源搜索词。</dd>
+  <dt>长尾</dt><dd>冷门、很少被报道的事实，模型不太可能记得。</dd>
+  <dt>时效性验证</dt><dd>对题目依赖的每个新网页，去找 90 天以前就有的替代来源。找得到，就说明这题不是真的需要新信息。</dd>
+  <dt>canary 标记</dt><dd>附在数据集里的一串固定文字，告诉爬虫"不要收进训练数据"。解密方法是公开的，所以只能防爬虫，防不了人。</dd>
+</dl>
+
+<h2 id="s7"><span class="no">7</span>弱在哪</h2>
+<p>还是那四关：</p>
+<div class="tbl"><table>
+  <tr><th>关</th><th>问的是</th><th>表现</th><th>为什么</th></tr>
+  <tr><td>① 判分</td><td>答对答错判得准吗</td><td class="strong">中偏强</td><td>答案是一个短词，好判；但没有报告评委和人工的一致率，判分说明前后矛盾（见 7.6）</td></tr>
+  <tr><td>② 比较</td><td>模型之间的分差可信吗</td><td class="mid">中</td><td>335 道题自带约 ±5 分误差，前 6 名在 5.6 分以内；没有公开逐题结果，没法做配对检验（见 7.4）</td></tr>
+  <tr><td>③ 推广</td><td>过几个月还管用吗</td><td class="weak">弱</td><td>只有一个快照，5 个月没更新，"新事实"已经变旧；只用了一个搜索后端（见 7.1）</td></tr>
+  <tr><td>④ 意义</td><td>掉分 = 记忆捷径被堵上了吗</td><td class="mid">中偏弱</td><td>"背不出来"这一点证明了；但"掉分是因为背不出来"还混着别的原因，论文自己的数字支持得也不强（见 7.2、7.3）</td></tr>
+</table></div>
+
+<h3>7.1 名字叫"Live"，但只有一个快照</h3>
+<ul>
+  <li>HuggingFace 上只有 2026-05-27 上传的一个文件，之后只改过 README。项目页的排行榜写明"来自论文快照"，2026-06-02 以后没有更新。论文也没给更新计划，只说"保留历史快照以便复现"。</li>
+  <li>附录的例子显示，出题时间大约在 2026 年 3–4 月，题目依赖的事实大多发生在 2026 年初。到今天（2026-10-28），这些"新事实"已经过去 6–9 个月，2026 年下半年发布的模型完全可能在训练时见过。</li>
+  <li><strong>例子：</strong>那部 2026-03 上映的短片，现在的网页、影评、数据库条目只会越来越多，"模型不可能记得"这个前提正在失效。论文里"闭卷不到 2%"是对当时那批模型测的，换成新模型必须重测。</li>
+  <li>题目和答案虽然加了密，但 README 里以明文示范了一道题的开头和答案，335 道里有 1 道已经公开。</li>
+</ul>
+
+<h3>7.2 闭卷数字前后对不上</h3>
+<p>同一组闭卷分数在三处出现，彼此对不上：</p>
+<div class="tbl"><table>
+  <tr><th>模型</th><th class="num">图 2（标 BrowseComp、pass@4）</th><th class="num">表 1（证据封锁对照、pass@4）</th><th class="num">图 7（标题写 BrowseComp、图注写 BrowseComp-Plus、纵轴 avg@4）</th></tr>
+  <tr><td>MiniMax M2.5</td><td class="num">44.5</td><td class="num">44.5</td><td class="num">44.5</td></tr>
+  <tr><td>GLM-5.1</td><td class="num">23.3</td><td class="num">23.3</td><td class="num">23.3</td></tr>
+  <tr><td>Kimi K2.6</td><td class="num">25.5</td><td class="num">25.5</td><td class="num">25.5</td></tr>
+  <tr><td>DeepSeek-V4-Pro</td><td class="num">20.4</td><td class="num">22.5</td><td class="num">22.5</td></tr>
+  <tr><td>DeepSeek-V3.2</td><td class="num">22.5</td><td class="num">—</td><td class="num">11.0</td></tr>
+  <tr><td>Seed 2.0</td><td class="num">38.2</td><td class="num">—</td><td class="num">20.4</td></tr>
+</table></div>
+<ul>
+  <li><strong>指标标签不一致：</strong>同一个数，一处标 pass@4（4 次中 1 次），一处标 avg@4（4 次平均）。按定义 avg@4 不可能高于 pass@4，三个模型的两个值却完全相同，最可能是标签写错了。</li>
+  <li><strong>模型标签可能错位：</strong>图 7 里 Seed 2.0 的 20.4 正是图 2 里 DeepSeek-V4-Pro 的数；图 7 里 DeepSeek-V4-Pro 的 22.5 正是图 2 里 DeepSeek-V3.2 的数。看起来是模型标签错位了。</li>
+  <li><strong>题集不明：</strong>闭卷是在 BrowseComp 全集（1,266 题）上测的，还是在 BrowseComp-Plus 子集（830 题）上测的，三处说法不一。如果表 1 拿全集的闭卷分去比子集的封锁分，比较对象本身就不一致。</li>
+  <li><strong>其他小矛盾：</strong>4.3 节说旧题闭卷是"20–44%"，但图 7 里 DeepSeek-V3.2 是 11.0。正文说"所有模型"都测了闭卷，但图 7 只有 9 个，缺 Gemini 3.1 Pro 和 Claude Sonnet 4.6。</li>
+</ul>
+<p>这些不影响"新题闭卷不到 2%"的结论，因为那一列都很低。但"哪个模型背得多"的具体数字不能直接引用。</p>
+
+<h3>7.3 "掉分是因为背不出来"还没被单独证明</h3>
+<ul>
+  <li><strong>"掉 25–40 分"不准确：</strong>按论文表 3 算，11 个模型掉了 13.8–35.8 分，9 个落在 25–40 之间。DeepSeek v3.2 只掉了 13.8 分，DeepSeek V4 Pro 掉了 23.1 分，最多的 Seed 2.0 也只掉了 35.8 分。</li>
+  <li><strong>核心论断用自己的数字支持不强：</strong>论文说"静态分数里靠记忆撑起来的越多，掉得越多"，但没有直接检验。我用它给的闭卷分和降幅算了相关：
+    <ul>
+      <li>用图 7 的 9 个模型，Spearman 只有 0.30；</li>
+      <li>用图 2 的 6 个模型，是 0.66。</li>
+      <li><strong>例子：</strong>MiniMax M2.5 闭卷最高（44.5），降幅却排中间（32.4）；按图 7，Seed 2.0 闭卷只有 20.4，降幅却最大（35.8）。</li>
+      <li>支持论断的例子也有：DeepSeek v3.2 闭卷最低（图 7 是 11.0），降幅也最小（13.8）。</li>
+    </ul></li>
+  <li><strong>掉分还混着其他原因：</strong>
+    <ul>
+      <li><strong>题换了一批人写：</strong>出题人和 BrowseComp 原作者不是同一批人，出题风格不同。人类做对率 30% 对 31% 说明对人来说难度接近，但两组各 200 题，差值的 95% 区间约 ±9 个百分点，只能说"没看出差别"。</li>
+      <li><strong>新网页难搜：</strong>最近几个月的冷门网页，搜索引擎收录得少、排得靠后。论文自己在局限里承认只用了 serper.dev 一个搜索后端，"搜索能力"里有一部分其实是搜索引擎的收录情况。</li>
+      <li><strong>旧题答案网上可搜：</strong>BrowseComp 公开一年多，答案和题解可能已经能直接搜到（见 <a href="https://arxiv.org/pdf/2606.05241" target="_blank">Search-Time Contamination</a>），这会抬高旧题分数，让"掉分"看起来更多。</li>
+    </ul></li>
+</ul>
+
+<h3>7.4 335 道题的误差：前 6 名分不开</h3>
+<ul>
+  <li>正确率在 30%–45% 时，335 道题的 95% 误差约 ±5 分。两个模型之间的差，95% 区间约 ±7 分（不配对时）。</li>
+  <li><strong>例子：</strong>
+    <ul>
+      <li>新题上前 6 名是 43.2、41.5、41.4、40.0、38.3、37.6，全在 5.6 分以内，分不出先后。</li>
+      <li>"DeepSeek v3.2 超过 GLM 5.1"差 3.7 分，在误差内。</li>
+      <li>不过 DeepSeek v3.2 比 GLM 5.0（差 9.1 分）、MiniMax（差 9.6 分）高，超出了误差，"它在新题上明显更靠前"这一点站得住。</li>
+    </ul></li>
+  <li><strong>相关系数的比较也在误差内：</strong>"Spearman 从 0.87 降到 0.74"只基于 11 个模型。0.74 的 95% 区间大约是 0.3–0.9，两者没有显著差别。我按论文表 3 复算，得到 Spearman 0.77、Pearson 0.58，论文写的是 0.74、0.53，也略有出入。</li>
+  <li><strong>分领域更不可靠：</strong>比如"Kimi K2.5 体育题 66.7%"，体育题只有约 44 道，误差约 ±14 分。</li>
+  <li><strong>表 5 有一行算不对：</strong>按图 5 的类别比例给各领域分加权，GLM 5.0 应该是 38.0，表里的平均却是 28.5。就算把权重往最不利的方向调，也不会低于约 31.8。MiniMax 和 Kimi K2.5 也各差 3 分多，其余 8 个模型都对得上（差 2 分以内）。</li>
+</ul>
+
+<h3>7.5 三项诊断各有混杂因素</h3>
+<ul>
+  <li><strong>闭卷的条件各模型不一样（附录 E）：</strong>DeepSeek 关掉了思考；MiniMax 不控制；GLM 和 Kimi 开思考，超长时截断再强行补答；Seed 开高推理档。
+    <ul>
+      <li>所以各模型的闭卷分不能直接比。</li>
+      <li><strong>例子：</strong>"DeepSeek-V4-Pro 闭卷低、搜索提升大"恰好可能是因为它闭卷时没开思考。</li>
+      <li>闭卷提示词还明确要求"拿不准也要给出最佳猜测"，再加上 4 次里中 1 次就算，"能背出多少"会被放大。</li>
+    </ul></li>
+  <li><strong>证据封锁和闭卷换了提示词：</strong>闭卷时要求"大胆猜"；带工具时，默认系统提示词（附录 C.1）要求"核对可靠来源、避免没有依据的推测"。搜不到证据时不愿意凭记忆作答，正是带工具提示词要求的行为，却被算成"搜索有害"。另外，封锁后剩下的是专门挑出来、看着相关的干扰文档，比真实网络里"搜不到"更容易误导人。</li>
+  <li><strong>缺了"正常不封锁"这一组：</strong>同一套资料库、同一套设置下，不封锁时能答对多少，论文没报告，所以看不出搜索在正常情况下帮了多少。</li>
+  <li><strong>搜索词溯源的方法没写：</strong>"关键信息最早出现在哪"是人判、模型判还是字符串匹配，论文没说明。"用上了证据"的标准是三轮内出现在推理或答案里，比较粗。</li>
+</ul>
+
+<h3>7.6 其他</h3>
+<ul>
+  <li><strong>判分说明自相矛盾：</strong>附录 B 的提示词让评委输出 correct: yes/no，下面的解析规则却写"以 A 开头算对、以 B 开头算错"。论文也没报告评委和人工的一致率。</li>
+  <li><strong>"答案唯一"只查了开源模型的候选：</strong>候选答案来自 4 个开源模型（DeepSeek-V4-Pro、GLM-5.1、Kimi-K2.6、MiniMax-M2.5），各带搜索答 8 遍。闭源模型可能给出另一个同样满足条件的答案，但没被检查过，会被判错。</li>
+  <li><strong>工具并不完全统一：</strong>正文说所有模型用同一套框架，所以比较公平；但附录 C.1 写的是，Python、Google Scholar、Google Maps 这几个工具"视模型而定"。各模型手里的工具并不完全一样。</li>
+  <li><strong>残留和分类数不一致：</strong>闭卷实现里列了 MiroThinker，但结果里没有它。类别数正文说 8 类，附录 G 按 5 类统计（"社会与文化"大概合并了其余 4 类）。</li>
+  <li><strong>利益关联不明显：</strong>11 个被测模型里没有小红书或哈工大的模型。评测框架 REDSearcher 是作者团队自己的，各模型在这个框架里的适配程度可能不同，论文没讨论。</li>
+</ul>
+
+<h2 id="s8"><span class="no">8</span>它做对了什么</h2>
+<ul>
+  <li><strong>把"记得"和"会找"分开量。</strong>闭卷基线、证据封锁、搜索词溯源三管齐下，把一个大家隐约感觉到的问题变成了可以测的东西。闭卷基线正是 BrowseComp-Plus 缺的那一项。</li>
+  <li><strong>"时效性验证"非常实用：</strong>对每个新网页去找窗口之前的替代来源，找得到就删题。这直接检验了"这题是不是真的需要新信息"，比只看事件日期严格得多。</li>
+  <li><strong>出题质量控制扎实：</strong>
+    <ul>
+      <li>每项检查 3 人独立做 + 第 4 人复核；</li>
+      <li>用 32 个模型候选答案反查唯一性；</li>
+      <li>"30 分钟内有人做出来就删"保证了难度。</li>
+    </ul></li>
+  <li><strong>有人类难度对照：</strong>两套题用同样的规则让真人做，用来排除"新题本来就更难"的解释。样本不算大，但这一步很多 benchmark 根本没做。</li>
+  <li><strong>防泄漏做到了位：</strong>题目和答案都加密，附 canary 标记。和 LiveDRBench 那种"预览集答案明文"相比好得多。</li>
+  <li><strong>诚实地写了局限：</strong>90 天边界不清、只用一个搜索后端、出题成本高。</li>
+</ul>
+
+<h2 id="s9"><span class="no">9</span>和已精读几篇对照：各自怎么对付"背答案"</h2>
+<div class="tbl"><table>
+  <tr><th>benchmark</th><th>怎么防记忆</th><th>测没测闭卷</th><th>实际有没有更新</th></tr>
+  <tr><td>DeepResearch Bench II</td><td>锁死截止年份、题里写明"不许看原文"。截止年份反而让答案越来越容易背到</td><td>没测</td><td>2025-11 后题目和评分要点都没改</td></tr>
+  <tr><td>BrowseComp-Plus</td><td>固定资料库，控制了"搜"这一侧，管不住记忆</td><td>没测（LiveBrowseComp 在它的资料库上补测了）</td><td>资料库不变；排行榜头部已到 95%</td></tr>
+  <tr><td>LiveDRBench</td><td>评分时要求出处也对，靠记忆蒙对答案但说不出出处记 0 分；承诺按"问题倒置"持续出新题</td><td>没测</td><td>没有，14 个月只有 v1；预览集 10 题答案是明文</td></tr>
+  <tr><td>DailyReport</td><td>从热点话题出题，声称持续更新</td><td>没测</td><td>无法核实，数据没公开</td></tr>
+  <tr><td>From Simple QA to Deep Research</td><td>自动出长尾题</td><td>测了：闭卷能拿到约 79% 的开卷分</td><td>数据没公开</td></tr>
+  <tr><td><strong>LiveBrowseComp</strong></td><td>90 天内的冷门新事实 + 人工时效性验证</td><td><strong>测了：所有模型不到 2%</strong></td><td>没有，只有 2026-05 一个快照</td></tr>
+</table></div>
+<p>结论：几篇里只有这篇把"背答案"当成核心问题来设计，也只有它拿出了"闭卷不到 2%"这样直接的证据。但它和 LiveDRBench、DailyReport 一样，"Live"停在了论文发布那一刻。这类 benchmark 的价值取决于有没有人持续出新题，而这件事目前没有一家做到。</p>
+
+<h2 id="s10"><span class="no">10</span>对"同一 Prompt、5 个 Agent"的启示</h2>
+<ol>
+  <li><strong>先做闭卷基线。</strong>
+    <ul>
+      <li>把 Prompt 的核心子问题和关键结论，改写成几道短问答，让 5 个 Agent 的底座模型（或关掉联网的同款产品）先答一遍。</li>
+      <li>答得出来的部分说明是"本来就知道"的，后面评报告时，这部分的搜索得分要打折扣看。</li>
+      <li>注意吸取 7.5 的教训：5 家用同样的提示词、同样的思考设置；也不要一边让它"大胆猜"、一边让它"只说有出处的话"，然后拿两者直接比。</li>
+    </ul></li>
+  <li><strong>把关键子问题锚在最近发生的事实上。</strong>
+    <ul>
+      <li>如果研究主题允许，让至少一两个必答子问题依赖最近几个月才出现的信息，比如最新发布的政策、数据、版本。这样 Agent 就必须真的去搜。</li>
+      <li>截止日期写进 Prompt，标准答案按这个日期定。</li>
+      <li>可以借用"时效性验证"：对这些子问题，检查用截止日之前的资料能不能答出来；答得出来，就说明没锚住。</li>
+    </ul></li>
+  <li><strong>"证据封锁"测试有条件地借用。</strong>
+    <ul>
+      <li>如果 5 个 Agent 是自己搭的、能换搜索后端：可以在存档的资料里删掉某个关键证据页，看 Agent 是老实说"找不到"，还是硬编一个结论。</li>
+      <li>评分时，"缺证据时说找不到"应该得分，不该扣分（和 Why LMs Hallucinate 的结论一致）。论文把"守住记忆里的答案"当成理想行为，对研究报告来说并不合适。</li>
+      <li>商业产品换不了后端，这一项做不了。</li>
+    </ul></li>
+  <li><strong>别指望排出名次。</strong>335 道题尚且有 ±5 分的误差、前 6 名分不开；你只有一道题、5 个 Agent，结论只能分档。</li>
+  <li><strong>人类难度对照可以借鉴：</strong>请一位专家在同样的时间上限内做同一个 Prompt，作为参照。这和心得笔记里"人类专家盲测与 Agent 评测对比"的想法在方法上相通，这里只提一下。</li>
+</ol>
+
+<h2 id="s11"><span class="no">11</span>复核说明</h2>
+<h3>核对过的</h3>
+<ul>
+  <li><strong>论文版本：</strong>arXiv 接口显示只有 v1（2026-05-27）。</li>
+  <li><strong>数据：</strong>下载了 HuggingFace 上唯一的 <code>LiveBrowseComp.jsonl</code>（335 行，编号 0–334 连续，没有重复）。<code>problem</code> 和 <code>answer</code> 两个字段 335 行全部是 base64 密文，我没有解密。提交记录只有 2026-05-27、05-28 两天。</li>
+  <li><strong>项目页：</strong>仓库只有一次提交（2026-06-02），排行榜和论文表 3 一致，写明"来自论文快照"。</li>
+  <li><strong>"降幅""相关系数""误差""表 5 加权"：</strong>都用论文表 3、表 5 和图 5 的数字自己算的。误差按二项分布估算。表 5 的类别权重为：电影、娱乐各 26%，科技 15%，体育 13%，其余 20% 合为"社会与文化"。</li>
+  <li><strong>图 7 的数字：</strong>是渲染 PDF 第 10 页后读图得到的，图上标了数值，可信。</li>
+  <li><strong>REDSearcher：</strong>论文参考文献 [6]，作者与本文有 6 人重叠（Zheng Chu、Xiao Wang、HuiMing Fan、Ming Liu、Bing Qin、Xing Yu）。</li>
+  <li><strong>"不联网答对多达 44.5%"：</strong>原文指 MiniMax M2.5 在 BrowseComp 上的闭卷 pass@4，不是平均值。6 个模型在 BrowseComp 上的闭卷平均约 29（图 2 数字）。</li>
+</ul>
+<h3>推断或未能核实的</h3>
+<ul>
+  <li>图 2 和图 7 的模型标签"错位"是推断。也可能两图本来就来自不同的实验，只是恰好三个模型的值相同。</li>
+  <li>图 8 里 DeepSeek v3.2 的点看起来高于表 3 的 37.6（读图估计约 39），这可能是相关系数对不上的原因，但没法确认。</li>
+  <li>出题时间"约 2026 年 3–4 月"，是根据附录例子里的日期推断的，论文没有写具体的出题日期。</li>
+  <li>评委 GPT-OSS 用的是哪个规模、和人工一致率多少，论文都没写。</li>
+</ul>
+
+<footer>相关论文：
+  <a href="https://arxiv.org/pdf/2508.06600" target="_blank">BrowseComp-Plus</a>（诊断二用的固定资料库）·
+  <a href="https://arxiv.org/pdf/2606.05241" target="_blank">Search-Time Contamination</a>（搜到答案的泄漏）·
+  <a href="https://arxiv.org/pdf/2509.04664" target="_blank">Why LMs Hallucinate</a>（弃答不该被罚）·
+  <a href="https://arxiv.org/pdf/2508.04183" target="_blank">LiveDRBench</a>（另一个没兑现的"Live"）
+</footer>
+</div>
+</body>
+</html>

@@ -4,5 +4,17 @@ __pycache__/
 *.tmp
 .DS_Store
 .backups/
+.serve.log
 # 在新手包里本机试跑示例时生成的运行结果
 site/starter-kit/运行结果/
+
+# 只留在本机、不公开的材料，原因见 README 的"公开与本机"一节
+# 第三方全文
+/20*_*.pdf
+/outside-field/*
+!/outside-field/index.html
+# 私人阅读笔记：作者分级、阅读状态、留言
+/literature.local.html
+/comments.json
+# 研究过程的原始记录：会话记录、临时目录、改写前的完整历史
+/local-only/
