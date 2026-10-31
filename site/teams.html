@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>参赛队伍技术文档 · 深度研究评测基准</title>
+<meta name="description" content="智能体怎样申报、主办方怎样调用它、运行环境、时长上限和统一答复，以及新手包。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：命名文字样式，字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, p { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, td, dd { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-3); }
+
+  /* 页首：回到资料站，说明页面之间跳转 */
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 16px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .pages a { padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); text-decoration: none; transition: background-color 300ms var(--ease), color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); color: var(--ink); }
+  .pages a[aria-current="page"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
+  .notice { max-width: 680px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+  .notice strong { color: var(--ink); font-weight: 600; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; max-width: 760px; }
+  .toc a { padding: 4px 12px; border-radius: 9999px; background: var(--surface); color: var(--ink); text-decoration: none; transition: background-color 300ms var(--ease); }
+  .toc a:hover { background: var(--line); }
+
+  /* 正文的每一节 */
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-bottom: 1px solid var(--line); max-width: 760px; }
+  .block:last-of-type { border-bottom: 0; }
+  .block .sum { margin-top: 12px; color: var(--ink-2); }
+  .block h3 { margin-top: 32px; }
+  .prose { margin-top: 16px; }
+  .prose p + p, .prose p + ul, .prose ul + p, .prose p + ol, .prose ol + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
+  .prose strong { font-weight: 600; }
+  .refs { margin-top: 16px; color: var(--ink-3); }
+  .refs a { color: var(--ink-2); }
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  footer a { color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 本页：代码、原文引用、一次运行的步骤 */
+  code { font-family: var(--mono); font-size: 14px; overflow-wrap: anywhere; }
+  .prose code, td code, .sum code, .refs code { padding: 2px 4px; border-radius: 4px; background: var(--surface); }
+  pre.code { margin: 12px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); overflow-x: auto; font-family: var(--mono); font-size: 14px; line-height: 20px; white-space: pre; }
+  pre.code code { padding: 0; background: none; overflow-wrap: normal; }
+  .code-note { margin-top: 8px; color: var(--ink-3); }
+  .quote { margin: 16px 0 0; padding: 16px 24px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .quote p + p { margin-top: 8px; }
+  .quote .gap { margin-top: 16px; }
+  .steps { margin-top: 16px; padding-left: 24px; }
+  .steps li + li { margin-top: 12px; }
+  .steps li strong { font-weight: 600; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 9999px; background: var(--surface); color: var(--warn); font-weight: 600; white-space: nowrap; }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="index.html">← 回到资料站</a>
+    <nav class="pages body-5" aria-label="说明页面">
+      <a href="brief.html">赛事说明</a>
+      <a href="start.html">上手</a>
+      <a href="news.html">公告</a>
+      <a href="faq.html">常见问题</a>
+      <a href="teams.html" aria-current="page">技术文档</a>
+    </nav>
+    <p class="eyebrow caption-1">深度研究赛项 · 写给参赛队伍</p>
+    <h1 class="heading-3">参赛队伍技术文档</h1>
+    <p class="body-3 lede">智能体怎样申报、主办方怎样调用它、运行环境、时长上限和统一答复。这里的约定就是主办方统一运行程序的约定，程序是 <a href="../tools/run_agents.py"><code>tools/run_agents.py</code></a>，完整的使用说明见<a href="../tools/run_agents.md">统一运行程序使用说明</a>。<a href="#starter-kit">新手包</a>里有申报表模板、练习题和一个示例智能体，在本机几秒钟就能跑通一次。</p>
+    <p class="body-6 notice"><strong>依据：</strong><a href="../notes/rules.html">规则手册</a>草案第 3 版。标“〔默认〕，以主办方确认为准”的，是主办方尚未最终确认的默认做法；标“〔待定〕”的，还没有定。本页与规则手册不一致的，以规则手册为准。</p>
+    <nav class="toc caption-1" aria-label="本页目录">
+      <a href="#flow">一次运行的经过</a>
+      <a href="#declare">申报</a>
+      <a href="#call">调用方式</a>
+      <a href="#ask">反问和统一答复</a>
+      <a href="#environment">运行环境</a>
+      <a href="#time-limit">时长上限</a>
+      <a href="#delivery">交付要求</a>
+      <a href="#groups">封闭组和开放组</a>
+      <a href="#spot-check">随机抽查</a>
+      <a href="#starter-kit">新手包</a>
+      <a href="#self-check">用练习题自查</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+<section class="block" id="flow" aria-labelledby="flow-title">
+  <h2 class="heading-5" id="flow-title">一次运行的经过</h2>
+  <p class="body-3 sum">你交出冻结的智能体，主办方在运行日按同一套办法调用每一个智能体。每个智能体跑 2 道题 × 2 个版本，共 4 次。</p>
+  <ol class="steps body-3">
+    <li><strong>冻结并申报。</strong>题目公布前，提交冻结申报表，以及供主办方调用的程序或接口地址。此后到比赛结束不得修改。见<a href="#declare">申报智能体</a>。</li>
+    <li><strong>主办方统一运行。</strong>运行日当天，主办方按运行计划逐个调用。每次运行都是全新的进程或请求，不带其他运行的记忆。见<a href="#call">调用方式</a>。</li>
+    <li><strong>题目原文原样交出。</strong>提问版或裸题版的文字，连同附录一的交付要求和说明，一个字节不改地交给智能体，并用校验值核对。</li>
+    <li><strong>反问给统一答复。</strong>智能体问什么，都回同一句话，并记下它问了什么。见<a href="#ask">反问和统一答复</a>。</li>
+    <li><strong>到时长上限就停。</strong>以届时已交付的内容为准。见<a href="#time-limit">时长上限</a>。</li>
+    <li><strong>留存。</strong>保存报告、实际交出的输入、标准错误和运行日志，每次运行在运行记录表（附录四）里加一行，赛后随复核包公开。</li>
+  </ol>
+  <p class="body-3 prose">主办方运行日用的命令是：</p>
+  <pre class="code"><code>python3 tools/run_agents.py 运行计划.json</code></pre>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_7">规则手册第五节 运行</a> · <a href="../notes/rules.html#_17">附录四 运行记录表</a></p>
+</section>
+
+<section class="block" id="declare" aria-labelledby="declare-title">
+  <h2 class="heading-5" id="declare-title">申报智能体</h2>
+  <p class="body-3 sum">冻结截止是运行日前 7 天〔默认〕，以主办方确认为准；具体日期〔待定〕。截止前提交冻结申报表（附录三），此后到比赛结束不得修改智能体。</p>
+  <div class="prose body-3">
+    <p>申报交两样东西：一份申报文件，和系统提示词全文的文件。申报文件是 JSON 文件（一种纯文本的数据格式），每一项对应附录三的一项，另加“调用方式”一项供统一运行程序调用。主办方保存申报材料，算出申报文件和系统提示词文件的 <code>SHA-256</code> 校验值，写进每次运行的日志，赛后随复核包公开。涉及商业秘密的部分，可以申请只向复核人公开。</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>附录三的项目</th><th>申报文件里的字段</th><th>怎样填</th></tr></thead>
+      <tbody>
+        <tr><td>队伍名称</td><td>队伍名称</td><td>运行记录的“队伍”一列和目录名用它；各队不能重名。</td></tr>
+        <tr><td>版本号或代码提交号</td><td>版本号或代码提交号</td><td>冻结时的版本。随机抽查时，主办方用这个版本重跑。</td></tr>
+        <tr><td>系统提示词全文（另附文件）</td><td>系统提示词文件</td><td>文件路径，相对于申报文件所在的目录；文件必须存在。</td></tr>
+        <tr><td>所用模型及其版本</td><td>所用模型及其版本</td><td>写到具体版本。</td></tr>
+        <tr><td>工具和外部服务清单</td><td>工具和外部服务清单</td><td>一段文字，或文字的列表。</td></tr>
+        <tr><td>格式转换方式：题目文本怎样放进输入</td><td>格式转换方式</td><td>给人看的说明。对所有题目都相同，不增删内容。程序实际怎样交题目，由“调用方式”决定。</td></tr>
+        <tr><td>调用接口或程序包，运行环境说明</td><td>调用方式、运行环境说明</td><td>调用方式见<a href="#call">下一节</a>；运行环境说明写清语言和版本、要装的依赖、要用的环境变量。</td></tr>
+        <tr><td>申报日期、申报人</td><td>申报日期、申报人</td><td></td></tr>
+        <tr><td>主办方计算的校验值</td><td>不用填</td><td>统一运行程序算出，写进每次运行的日志。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose body-3">
+    <p>以上字段都必须填写，不能空着。有缺项、找不到文件、调用方式写错、队伍重名，统一运行程序会把问题全部列出来并停止，一次也不运行。所以申报之前，先用<a href="#starter-kit">新手包</a>在本机跑通一次。</p>
+  </div>
+  <pre class="code" id="declaration-example"><code>{
+  "队伍名称": "示例队",
+  "版本号或代码提交号": "0.1.0（新手包示例）",
+  "系统提示词文件": "系统提示词.md",
+  "所用模型及其版本": "不调用任何模型（新手包示例智能体）",
+  "工具和外部服务清单": ["无：示例智能体不检索，也不调用任何外部服务"],
+  "格式转换方式": "题目原文从标准输入原样交给程序，不增删任何内容",
+  "调用方式": {
+    "方式": "命令行",
+    "命令": ["python3", "agent.py"],
+    "工作目录": "."
+  },
+  "运行环境说明": "Python 3.8 以上，只用标准库；不需要联网，不需要环境变量",
+  "申报日期": "2026-10-30",
+  "申报人": "张三"
+}</code></pre>
+  <p class="code-note caption-2">新手包里的<a href="starter-kit/申报表模板.json">申报表模板</a>，填的是示例智能体的情况。</p>
+  <h3 class="heading-6">冻结之后，什么能做、什么不能做</h3>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>允许：</strong>冻结前设计系统提示词、检索策略和工作流程；让智能体专门利用题面中提问者的身份和用途；机械的格式转换，例如把题目文本放进接口的某个字段，须在冻结前申报，对所有题目相同。</li>
+      <li><strong>不允许：</strong>看到题目后改写、补充或删减题目文本；看到题目后修改配置、提示词或工具；针对某一道题或某一个版本单独配置；运行中人工干预，包括回答智能体的提问。想按题调整的，参加<a href="#groups">开放组</a>。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_4">规则手册第二节 冻结与申报</a> · <a href="../notes/rules.html#_16">附录三 冻结申报表</a> · <a href="../tools/run_agents.md">使用说明“申报文件”一节</a></p>
+</section>
+
+<section class="block" id="call" aria-labelledby="call-title">
+  <h2 class="heading-5" id="call-title">主办方怎样调用你的智能体</h2>
+  <p class="body-3 sum">两种方式选一种，写在申报文件的“调用方式”里。每次运行都是全新的进程或请求，不带其他运行的记忆，特别是同一道题的另一个版本。</p>
+
+  <h3 class="heading-6" id="call-command">命令行方式</h3>
+  <pre class="code"><code>{"方式": "命令行", "命令": ["python3", "agent.py"], "工作目录": "."}</code></pre>
+  <ol class="steps body-3">
+    <li>每次运行，程序在工作目录里启动一次申报的命令，是一个全新的进程。命令推荐写成列表，一项一个词；也可以写成一行文字。不经过命令解释器，所以不能用管道符号和重定向，需要的话自己写一个脚本。工作目录可以不写，默认是申报文件所在的目录。</li>
+    <li>题目全文写进它的标准输入（<code>UTF-8</code> 编码），写完就关闭标准输入。读到输入结束，就得到题目原文。</li>
+    <li>写到标准输出的全部内容就是报告，反问行除外。写完退出即可。</li>
+    <li>标准错误单独存成日志，可以写进度、检索记录、工具调用这些中间过程。</li>
+    <li>环境变量沿用主办方运行环境的全部环境变量，另加一个 <code>REPLY_PIPE</code>，用来反问，见<a href="#ask">下一节</a>。</li>
+    <li>退出状态记进日志。退出状态不是 0，已经写出的报告照样算交付。</li>
+  </ol>
+
+  <h3 class="heading-6" id="call-network">网络接口方式</h3>
+  <pre class="code"><code>{"方式": "网络接口", "地址": "http://127.0.0.1:8000/run"}</code></pre>
+  <ol class="steps body-3">
+    <li>每次运行，程序向申报的地址发一个请求，方法是 POST，类型是 <code>application/json</code>，字符编码 <code>UTF-8</code>，内容是：
+      <pre class="code"><code>{"题目": "题目原文", "往来": []}</code></pre>
+    </li>
+    <li>智能体回应其中一种：报告，类型 <code>application/json</code>，内容 <code>{"报告": "报告全文"}</code>，报告是 Markdown 或网页的文字；报告文件本身，类型不是 <code>application/json</code>，例如 PDF 报告回 <code>application/pdf</code>，内容原样存下；反问，内容 <code>{"反问": "问题"}</code>，见<a href="#ask">下一节</a>。</li>
+    <li>回应状态不是 200，或者连不上地址，这次运行算出错、未交付，状态和回应内容记进日志。</li>
+    <li>请求里没有会话编号。一次运行里因为反问可能有几个请求，都属于同一次运行；不同运行之间不要共享记忆。</li>
+  </ol>
+
+  <h3 class="heading-6" id="report-type">报告存成哪种文件</h3>
+  <div class="prose body-3">
+    <p>按报告内容的开头判断，不看你怎样称呼它：以 <code>%PDF</code> 开头的存为 <code>报告.pdf</code>；以 <code>&lt;!doctype html</code> 或 <code>&lt;html</code> 开头的存为 <code>报告.html</code>；其余存为 <code>报告.md</code>。所以网页报告要以这两种写法之一开头，PDF 报告交文件本身。</p>
+  </div>
+
+  <h3 class="heading-6" id="input">题目原样交出，逐字核对</h3>
+  <div class="prose body-3">
+    <ul>
+      <li>交给智能体的是题目文件的全文：提问版或裸题版的文字，后面接附录一的交付要求和说明。程序一个字节不加、不减、不改，换行也照原样。</li>
+      <li>程序算出实际交出去的文字的 <code>SHA-256</code> 校验值，与题目冻结时算好的校验值比对，运行记录的“输入校验值是否一致”一列写“一致”或“不一致”。</li>
+      <li>命令行方式下，智能体提前关闭标准输入的，只算已经写进去的部分，校验值就会不一致。所以一定要读到输入结束。</li>
+      <li>不一致的，按规则手册第十节处理：原因在队伍申报的格式转换的，该次运行作废，记为未交付；原因在主办方的，重跑一次。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../tools/run_agents.md">使用说明“两种调用方式”和“输入校验值”两节</a> · <a href="../notes/rules.html#_12">规则手册第十节 违规与处理</a></p>
+</section>
+
+<section class="block" id="ask" aria-labelledby="ask-title">
+  <h2 class="heading-5" id="ask-title">反问和统一答复</h2>
+  <p class="body-3 sum">运行中不交互。智能体提问或要求确认研究计划时，一律回复附录二的统一答复，并记下它问了什么：</p>
+  <blockquote class="quote body-3" id="unified-reply"><p>题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。</p></blockquote>
+
+  <h3 class="heading-6">命令行方式怎样反问</h3>
+  <ol class="steps body-3">
+    <li>在标准输出单独写一行：以 <code>[[反问]]</code> 开头，后面接问题，问题写在同一行；行尾要换行，写完立即刷新输出。</li>
+    <li>然后打开环境变量 <code>REPLY_PIPE</code> 给出的文件，读到结束，就得到统一答复（一行文字）。这个文件是一个命名管道，答复送到之前读会一直等着。</li>
+    <li>接着调研，继续往标准输出写报告。反问行不算报告内容。</li>
+  </ol>
+  <pre class="code" id="ask-example"><code>import os
+import sys
+
+question = sys.stdin.read()  # 题目原文
+
+print("[[反问]] 你说的最大，是按面积算还是按蓄水量算？", flush=True)
+with open(os.environ["REPLY_PIPE"], encoding="utf-8") as pipe:
+    reply = pipe.read().strip()  # 统一答复
+
+print("# 主要结论")
+print("按面积理解：……")</code></pre>
+  <p class="code-note caption-2">完整的例子见新手包里的 <a href="starter-kit/agent.py"><code>agent.py</code></a>。不经过统一运行程序直接启动时，没有 <code>REPLY_PIPE</code>，它就不反问。</p>
+
+  <h3 class="heading-6">网络接口方式怎样反问</h3>
+  <ol class="steps body-3">
+    <li>回应 <code>{"反问": "问题"}</code>，类型 <code>application/json</code>。</li>
+    <li>程序向同一个地址再发一个请求，内容带上前面的全部往来：
+      <pre class="code"><code>{"题目": "题目原文", "往来": [{"反问": "你的问题", "答复": "题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。"}]}</code></pre>
+    </li>
+    <li>照常回应报告；也可以再反问，“往来”会一项一项加长。智能体看“往来”就知道自己问过什么、得到了什么答复。</li>
+  </ol>
+
+  <h3 class="heading-6">两种方式共同的规矩</h3>
+  <div class="prose body-3">
+    <ul>
+      <li>每次反问回复一次统一答复，每次都是同一句话。问题全部记进运行记录“智能体是否提问，问了什么”一列和运行日志。</li>
+      <li>一次运行最多记 20 次反问。问到第 20 次，程序不再答复，停止这次运行，以届时已交付的内容为准。这是程序防止无休止一问一答的保护，不是规则手册的条款。</li>
+      <li>等答复的时间算在时长上限之内；答复是立即给的。</li>
+      <li>只能选择“批准计划”的智能体，在自己的程序里直接批准，不必反问。</li>
+      <li>不反问也可以。附在题目后面的说明已经写明：本题已包含全部信息，请直接开始，不需要向我确认。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_7">规则手册第五节“不交互”</a> · <a href="../notes/rules.html#_15">附录二 统一答复</a> · <a href="../tools/run_agents.md">使用说明“反问约定”一节</a></p>
+</section>
+
+<section class="block" id="environment" aria-labelledby="environment-title">
+  <h2 class="heading-5" id="environment-title">运行环境</h2>
+  <p class="body-3 sum">全部运行由主办方统一进行〔默认〕，以主办方确认为准。参赛队伍在运行前看不到题目，运行中也不接触智能体。</p>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>同一天。</strong>全部运行在同一天完成，截止时间就是运行当日。几支队伍同时运行时，同一道题的同一个版本，各队差不多同时开始。运行日〔待定〕。</li>
+      <li><strong>操作系统。</strong>统一运行程序在 macOS 和 Linux 上运行；命令行方式用到命名管道，Windows 不支持。主办方运行机器的具体配置〔待定〕。</li>
+      <li><strong>你的程序需要什么，写进“运行环境说明”。</strong>语言和版本、要装的依赖、要用的环境变量。命令行方式下，你的程序沿用主办方运行环境的全部环境变量。模型和检索服务的密钥怎样交给主办方〔待定〕，定下后在<a href="news.html">公告页</a>公布。</li>
+      <li><strong>工具不统一。</strong>搜索次数、用时（在时长上限之内）和所用工具不统一，也不计分，属于智能体自身的能力；用到的工具和外部服务列进“工具和外部服务清单”。</li>
+      <li><strong>日志和存档。</strong>主办方保存每次运行的输入、报告、标准错误、起止时间和运行日志。检索记录、工具调用这些中间过程，写到标准错误就能一并留存。报告引用的网页在运行后 24 小时内存档，附存档时间和校验值。</li>
+      <li><strong>故障重跑〔默认〕，以主办方确认为准。</strong>因主办方运行环境的故障中断的，允许重跑一次；智能体自身出错不重跑。由主办方判定，判定理由公开。重跑的结果另存，原来的结果保留，运行记录写明原因。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_7">规则手册第五节 运行</a> · <a href="../notes/rules.html#_3">第一节 比什么</a></p>
+</section>
+
+<section class="block" id="time-limit" aria-labelledby="time-limit-title">
+  <h2 class="heading-5" id="time-limit-title">时长上限</h2>
+  <p class="body-3 sum">每次运行最长 120 分钟〔默认〕，以主办方确认为准。</p>
+  <div class="prose body-3">
+    <ul>
+      <li>从启动命令，或者发出第一个请求开始计时。等反问答复的时间也算在内。</li>
+      <li>到时立即停止：命令行方式强行结束整个进程组，包括它启动的子进程；网络接口方式不再等待回应。</li>
+      <li>以届时已交付的内容为准：命令行方式，到那时已经写到标准输出的内容就是报告；网络接口方式，到那时还没收到完整的回应，就是没有交付。</li>
+      <li>没有交付，或者交付的内容全是空白，记为未交付，运行记录“文件名”一列写“未交付”。</li>
+      <li>所以命令行方式最好边写边输出、及时刷新，先写主要结论；网络接口方式给自己留出余量，在上限之前回应。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_7">规则手册第五节“时长上限”</a> · <a href="../tools/run_agents.md">使用说明“时长上限”一节</a></p>
+</section>
+
+<section class="block" id="delivery" aria-labelledby="delivery-title">
+  <h2 class="heading-5" id="delivery-title">交付要求</h2>
+  <p class="body-3 sum">每次运行交付一份书面报告，必须包含五个部分。下面是原文，附在每道题的提问版和裸题版之后，一字不改。</p>
+  <div class="quote body-3" id="delivery-text">
+    <p>交付要求：请交付一份书面报告。版式不限，但必须包含以下五个部分：</p>
+    <p>1. 主要结论：放在报告开头。</p>
+    <p>2. 论证与解释。</p>
+    <p>3. 出处：每个关键结论都标明来源，给出可以点开的网址和取用日期，尽量使用原始出处。</p>
+    <p>4. 把握程度：主要判断各有多大把握，为什么。</p>
+    <p>5. 查找与来源说明：你查了哪些方面，用了哪些来源，其中哪些可靠、哪些不可靠，还有哪些信息缺口。</p>
+    <p class="gap">说明：本题已包含全部信息，请直接开始，不需要向我确认。如果有不清楚的地方，请按你的理解进行，并在报告中写明你的理解和假设。</p>
+  </div>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>格式。</strong>网页、Markdown 或 PDF 中的一种，链接必须保留〔默认〕，以主办方确认为准。篇幅和版式不限。</li>
+      <li><strong>出处。</strong>每个关键结论给出可以点开的网址和取用日期，尽量使用原始出处。</li>
+      <li><strong>缺少某个部分。</strong>不算硬伤，在相应环节的评级中体现。例如没有把握说明，“结论与把握”一环最多 1 档；没有交代查找过程，“查找过程的交代”一环为 0 档。</li>
+      <li><strong>裸题版的报告。</strong>要写明自己对提问者和用途的理解与假设；附在题目后面的说明里已经这样要求。</li>
+      <li><strong>不进入名次的。</strong>篇幅、格式、引用条数、文笔。</li>
+      <li><strong>交付前自查。</strong>新手包里的 <a href="starter-kit/check_report.py"><code>check_report.py</code></a> 检查五个部分齐不齐、主要结论在不在开头。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_8">规则手册第六节 交付要求</a> · <a href="../notes/rules.html#_14">附录一 统一交付要求和说明</a> · <a href="starter-kit/交付要求.txt">纯文字版</a></p>
+</section>
+
+<section class="block" id="groups" aria-labelledby="groups-title">
+  <h2 class="heading-5" id="groups-title">封闭组和开放组 <span class="tag caption-3">〔默认〕</span></h2>
+  <p class="body-3 sum">参赛分两组〔默认〕，以主办方确认为准。每支队伍在冻结截止前选定参加哪一组，也可以两组都参加，两组分别申报、分别运行。</p>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>封闭组。</strong>本页说的全部做法：题目原文原样作为唯一输入，看到题目后不做任何针对题目的调整。主名次只在封闭组内排。</li>
+      <li><strong>开放组。</strong>封闭组全部运行结束后才拿到题目，在主办方规定的期限内调整，再由主办方另定一天统一运行。允许改写题目文本、修改配置或提示词、针对某道题单独配置；运行中人工干预仍不允许。名次按同样的规则排出，单独公布，不与封闭组比较。</li>
+      <li><strong>开放组同样申报。</strong>冻结截止前照常提交冻结申报表。看到题目后做的每一处调整，在运行前交给主办方，写明改了什么、针对哪道题的哪个版本，随复核包公开；运行日志中的输入，与申报的调整后的输入逐字核对。</li>
+      <li><strong>调用方式两组相同。</strong>除了拿到题目的时间和运行日期，第五节的运行规定照常适用，所以调用方式、反问约定和时长上限都与封闭组相同。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_4">规则手册第二节“封闭组和开放组”</a> · <a href="brief.html#groups">赛事说明</a></p>
+</section>
+
+<section class="block" id="spot-check" aria-labelledby="spot-check-title">
+  <h2 class="heading-5" id="spot-check-title">随机抽查 <span class="tag caption-3">〔默认〕</span></h2>
+  <p class="body-3 sum">每届随机抽一支队伍〔默认〕，以主办方确认为准，核对它的运行方式和输入与冻结申报一致。</p>
+  <div class="prose body-3">
+    <ul>
+      <li>全部运行结束后，主办方用这支队伍冻结申报的版本，即申报表所列的版本号或代码提交号、系统提示词、模型和工具，重跑一道题，核对两件事：调用方式和格式转换与申报表相符；经格式转换后的输入与题目文本逐字一致。重跑的报告只用来核对，不计分。抽签方式和结果写入复核包。</li>
+      <li>所以冻结的版本要保存好，能原样再跑一次。</li>
+      <li>查出不一致，原因在队伍的，视同冻结后修改，取消该队全部成绩；原因在主办方的，该队受影响的运行各重跑一次。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：<a href="../notes/rules.html#_7">规则手册第五节“随机抽查”</a> · <a href="../notes/rules.html#_12">第十节 违规与处理</a></p>
+</section>
+
+<section class="block" id="starter-kit" aria-labelledby="starter-kit-title">
+  <h2 class="heading-5" id="starter-kit-title">新手包</h2>
+  <p class="body-3 sum">新手包是 <a href="starter-kit/README.md"><code>starter-kit</code></a> 文件夹，里面每个文件都能单独打开、下载。先读它的<a href="starter-kit/README.md">说明</a>。</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>文件</th><th>是什么</th></tr></thead>
+      <tbody>
+        <tr><td><a href="starter-kit/README.md">README.md</a></td><td>新手包的说明：里面有什么，怎样原样跑一遍，怎样换成你的智能体。</td></tr>
+        <tr><td><a href="starter-kit/申报表模板.json">申报表模板.json</a></td><td>冻结申报表的模板，统一运行程序能直接读取。现在填的是示例智能体的情况。</td></tr>
+        <tr><td><a href="starter-kit/系统提示词.md">系统提示词.md</a></td><td>示例系统提示词，示范申报时要交的系统提示词全文是什么样子。</td></tr>
+        <tr><td><a href="starter-kit/agent.py">agent.py</a></td><td>示例智能体：命令行方式，演示反问约定，不调用任何模型，报告里写明是示例。</td></tr>
+        <tr><td><a href="starter-kit/运行计划.json">运行计划.json</a></td><td>示例运行计划：用示例智能体跑练习题的提问版和裸题版，各一次，并写好两个文件的校验值。</td></tr>
+        <tr><td><a href="starter-kit/练习题/淡水湖/提问版.txt">练习题/淡水湖/提问版.txt</a></td><td>练习题的提问版，就是交给智能体的全文：出题手册第四节的原文，后面接附录一。</td></tr>
+        <tr><td><a href="starter-kit/练习题/淡水湖/裸题版.txt">练习题/淡水湖/裸题版.txt</a></td><td>练习题的裸题版，同上。</td></tr>
+        <tr><td><a href="starter-kit/交付要求.txt">交付要求.txt</a></td><td>统一交付要求和说明的原文（附录一）。</td></tr>
+        <tr><td><a href="starter-kit/check_report.py">check_report.py</a></td><td>检查一份报告是否包含交付要求的五个部分，主要结论是否在开头。</td></tr>
+        <tr><td><a href="starter-kit/check_report.md">check_report.md</a></td><td>检查小程序的说明：怎样算有这一部分，能查哪些格式，退出状态。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose body-3">
+    <p>统一运行程序不在新手包里，它在资料站所在仓库的 <code>tools</code> 目录：<a href="../tools/run_agents.py">程序</a>和<a href="../tools/run_agents.md">使用说明</a>。两者都只用 Python 自带的标准库，不需要装别的包。</p>
+    <p>练习题原文照抄<a href="../notes/question-handbook.html#example-lake">出题手册第四节实例一</a>，一字不改，“〔运行当日〕”也原样保留。练习题只用来熟悉题目和评法，不进入名次。</p>
+  </div>
+</section>
+
+<section class="block" id="self-check" aria-labelledby="self-check-title">
+  <h2 class="heading-5" id="self-check-title">用练习题自查</h2>
+  <p class="body-3 sum">在本机按主办方的办法跑一遍，看运行记录和报告，再检查报告的五个部分。</p>
+  <ol class="steps body-3">
+    <li><strong>原样跑一遍示例。</strong>在仓库根目录运行下面的命令，一两秒就跑完。运行记录里有两行，“输入校验值是否一致”都是“一致”，示例智能体各反问了一次。
+      <pre class="code"><code>python3 tools/run_agents.py site/starter-kit/运行计划.json</code></pre>
+    </li>
+    <li><strong>换成你的智能体。</strong>复制申报表模板，按你的智能体填写每一项，改调用方式；在运行计划的“智能体”里换成你的申报文件。想快一点试通，可以临时把运行计划里的时长上限改小。</li>
+    <li><strong>检查报告。</strong>结果在 <code>site/starter-kit/运行结果</code> 下面，按日期、队伍、题目、版本分开。把下面命令里的“示例队”换成你的队伍名称：
+      <pre class="code"><code>python3 site/starter-kit/check_report.py site/starter-kit/运行结果/*/示例队/淡水湖/*/报告.md</code></pre>
+    </li>
+    <li><strong>看报告怎样走到名次。</strong>跟着淡水湖这道题，看评委怎样判定、怎样算出名次区间。<a href="walkthrough.html">一道题走完全程</a></li>
+  </ol>
+  <p class="refs caption-2">同一天再跑一遍，已经有结果的运行会被跳过；想从头再跑，先删掉 <code>运行结果</code> 目录。详见<a href="starter-kit/README.md">新手包的说明</a>。</p>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap caption-2">
+    <span>深度研究评测基准 · 本地资料站 · 2026 年 10 月 30 日</span>
+    <nav aria-label="说明页面"><a href="brief.html">赛事说明</a><a href="start.html">上手</a><a href="news.html">公告</a><a href="faq.html">常见问题</a><a href="teams.html">技术文档</a><a href="index.html">资料站首页</a></nav>
+  </div>
+</footer>
+</body>
+</html>
