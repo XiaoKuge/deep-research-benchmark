@@ -1,0 +1,46 @@
+你在一项"深度研究报告评测方法"的小规模检验中担任核验员，负责独立重核 15 条断言。
+
+工作目录：/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/research-plan
+
+先读两份文件：
+1. `stage4-rubric.md`：评审细则。重点是第五节（来源标签、对错标签、来源只列在文末的情况、"疑似编造"的第二次核查）。
+2. `stage5-pilot/question-card.md`：题目卡。截止时间是 2026-03-03。
+
+要核验的断言，来自 `stage5-pilot/reports/` 下的报告。下表给出每条断言的 id、所在报告和断言内容。请到报告原文中找到这条断言及其所引来源，自己判定，不要依赖别人的结论。
+
+| id | 报告 | 断言 |
+|---|---|---|
+| E-c2 | E.md | Perplexity Deep Research 会执行数十次搜索、阅读上百个来源，在 Humanity's Last Exam 上达到 21.1% 准确率 |
+| E-c5 | E.md | ChatGPT 深度研究配额有限：Plus 每月约 10 次，免费用户约 2 次 |
+| E-c6 | E.md | ChatGPT 深度研究在可靠性上被评为"显著比 Perplexity 更可靠" |
+| E-c9 | E.md | Claude（3.5 Sonnet）不支持内置联网搜索，需要外接工具，因此深度研究体验天然弱于 Perplexity 和 ChatGPT |
+| E-c10 | E.md | Gemini 的 Deep Research 更多依赖 Google 搜索加文档生态，没有像 Perplexity、ChatGPT 那样专门的深度调研模式 |
+| D-c1 | D.md | 哪家的 Deep Research 最好没有统一答案，没有一个平台能在速度、准确性、逻辑深度、生态整合与成本上同时最优 |
+| D-c3 | D.md | Gemini Deep Research 能在一次任务中同时检索公网与用户的 Gmail、Google Drive |
+| D-c5 | D.md | 在 BrowseComp-Plus 上，Claude Opus 4.6（多智能体框架）以 86.8% 居首 |
+| D-c8 | D.md | 2026 年初 ChatGPT 深度研究升级：执行前先提澄清问题，并生成可编辑的研究计划，由 GPT-5.2 等模型驱动 |
+| A-c2 | A.md | ChatGPT 的研究能力以 GPT-4o 的 Search 模式为代表，仍是聊天式，可能不会自行规划多步任务 |
+| A-c6 | A.md | DeepSeek 没有面向普通用户的界面，也没有内置搜索，只是供开发者调用的模型和 API |
+| C-c4 | C.md | Gemini Deep Research 完整研究只需 1–2 分钟，不到 ChatGPT 的十分之一 |
+| C-c10 | C.md | DeepSeek-R1 不内置联网检索，知识局限于训练截止时间，要做深度研究须由开发者自行集成搜索 |
+| F-c3 | F.md | 在 Perplexity 发布的 DRACO 评测（100 个任务、10 个领域）上，Perplexity Deep Research 排名领先 |
+| F-c4 | F.md | 在 LiveDRBench（ICLR 2026）上 OpenAI 的模型表现最好 |
+
+对每条断言：
+1. **source_label**：只能是"支持""部分支持""不支持""失效但有存档""找不到（疑似编造）""没有出处"之一。
+   - 有网址的，打开核对。可以用 WebFetch 或 mcp__fetch__fetch；如未加载，先用 ToolSearch 加载。
+   - 只有文末来源列表的，按细则在列表中查找支持。
+   - 形如【12†L886-L895】的引注标记没有网址，记为"没有出处"。
+2. **correct**：只能是"正确""有误""无法判断"之一。用 WebSearch 独立核对，以截至 2026-03-03 的信息为准，注意排除之后才出现的信息。
+3. 两项各写一句依据。
+
+规则：
+- 不要读 `stage5-pilot/out/` 下的任何文件。
+- 除了你的输出文件，不要创建或修改任何文件。
+- 网络请求只做读取和检索。
+
+输出写到 `stage5-pilot/out/verify-sonnet-subset.json`，必须是合法的 JSON，写完后用 python3 检查。格式如下：
+
+{"verifier":"sonnet","claims":[{"id":"E-c2","source_label":"…","source_note":"…","correct":"…","correct_basis":"…"}]}
+
+最后只回复一句话：输出文件路径。
