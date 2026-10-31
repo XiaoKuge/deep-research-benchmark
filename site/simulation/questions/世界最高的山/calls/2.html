@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟出题 世界最高的山 第 2 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟出题 世界最高的山第 2 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这道题</a>
+    <p class="eyebrow caption-1">模拟出题 世界最高的山 · 第 2 次调用</p>
+    <h1 class="heading-3">出题 · 提问版和裸题版</h1>
+    <p class="body-3 lede">Anthropic（claude），Claude Opus 5.5，只给材料，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟出题 世界最高的山的第 2 次调用，共 11 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>出题-提问版和裸题版</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">Anthropic（claude）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">Claude Opus 5.5（<code>claude-opus-5-5</code>）</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6"><code>[]</code></dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 20:07:24.827（UTC−07:00）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 20:07:30.694（UTC−07:00）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">5.867 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>4e5a42c78e817ab6427168dd3e299b6d31b3731f628a6aaf536329e3da071152</code>（<code>SHA-256</code>）</dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>ccf0ad0e7422ba5aebdfe52100ea117454e85a2d955ff9572ec63722523c3660</code>（<code>SHA-256</code>）</dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/Users/zonghuanwu/.local/bin/claude -p --output-format stream-json --verbose --no-session-persistence --safe-mode --strict-mcp-config --disable-slash-commands --permission-mode dontAsk --tools </code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E8%B0%83%E7%94%A8%E8%AE%B0%E5%BD%95.jsonl">调用记录文件</a>的第 2 行，记录里的序号是 2</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="1.html">上一次调用</a></li><li><a class="caption-1" href="3.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 8278 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 8278 字，点开看全文</summary><pre class="raw" id="prompt">
+下面附《深度研究出题手册》第一至六节的原文（不含模板和常见问题），出题时以它为准。
+
+===== 出题手册原文开始 =====
+一 先弄懂三个词
+调研：为了回答提问者的一个具体问题，用截至某一天已经存在的信息，系统地查找、甄别、分析和整合，得出有理有据的结论。
+结论可以是描述现状、解释原因、预测未来或建议行动。做问卷、做访谈这类收集新一手资料的工作，探索人类还没有答案的科研前沿，以及不查资料、凭记忆作答，都不算这里说的调研。
+深：调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。推进得越远，调研就越深。
+依据毛泽东《实践论》对&quot;认识由浅入深&quot;的刻画。原文说，全体是&quot;事情的历史和全部现状&quot;，本质是&quot;事情的性质及此一事情和其它事情的内部联系&quot;。
+深度研究：以推进到本质、全体和内部联系为目标的调研。由智能体自主完成的，就是智能体的深度研究。
+&quot;深&quot;可以分成四层。把一道题想象成一片湖：智能体一开始只看到水面，往下查得越多，看到的层越深。下图每一层都用后面实例一的题目&quot;中国最大的淡水湖是哪一个&quot;举例。
+水面：一次检索就能看到的
+现象：事情本身的事实和表面特征。例：鄱阳湖是我国最大的淡水湖。
+全体：事情的历史和全部现状，包括容易被忽略的方面、例外和反例。例：鄱阳湖的水面随季节涨落，涨水和枯水时面积相差好几倍。
+内部联系：这件事和别的事之间的因果、制约、依赖。例：湖面的高低，由流进湖里的五条河和长江的水位共同决定。
+本质：事情的性质，包括一个词的名与实。例：&quot;最大&quot;按什么算？和俄罗斯共有的界湖算不算&quot;中国的湖&quot;？
+图 1 四层深度。它们不是要逐格填满的表，而是一把尺子，用来看一份报告推进到了哪里。&quot;各有所长&quot;&quot;技术在不断进步&quot;这类抽象的套话，不算本质。
+看似很浅的题，也能挖深
+&quot;法国的首都是哪里？&quot;一次检索就能答：巴黎。这个例子是本研究的发起人在讨论中提出的：理解深刻的人会用历史的眼光再看一眼。
+- 全体。历史上并非一直如此。1682 至 1789 年，王室和政府在凡尔赛；1871 至 1879 年，议会在凡尔赛开会；1914 年和 1940 年，政府曾撤到波尔多。
+- 本质。&quot;首都&quot;有名与实之分。1940 至 1944 年维希政权时期，巴黎名义上仍是首都，政府却设在维希。
+所以，挖深的空间不全由题目决定，有一部分要靠理解打开。这也是我们可以出&quot;看似简单&quot;的题的原因。
+三个容易弄混的地方
+深不是长：我们试评过六份真实报告。一份四万多字的报告，写对的深层要点反而比一份三万多字的少 6 条。
+深不是难：题目难，是题目的性质；深，是调研做到了哪一步。一道人人看得懂的题，照样能分出深浅。
+深不是用了深度研究模式：同一次试评中，一份不到两千字的普通联网问答，排进了第一档。
+二 一道题分成两半
+一道题由两份材料组成。题目卡交给智能体，深度地图只有评委能看。
+题目卡
+- 提问版：用提问者的口吻，一两句话说清谁在问、为什么问、问什么、截至哪天
+- 裸题版：只有问题本身
+- 两个版本都附统一的交付要求和说明
+交给 智能体；四栏的评委版留给评委
+智能体看不到深度地图
+深度地图
+- 浅答案：只看现象时的答案
+- 挖深之后，结论或建议在哪里改变
+- 要点表：每条要点的层级、重要性和出处，核心要点一条不漏
+只给 评委
+图 2 题目卡和深度地图要分开。
+为什么要分开。如果题面写着&quot;请考虑历史&quot;，我们测到的只是智能体会不会照着做，测不到它能不能自己想到。往哪里挖、挖到什么，只写在深度地图里。
+深度地图是必需的，但它不是标准答案。它是出题人在看到任何报告之前，预先登记下来的三样东西：浅答案、转折点、核心要点。它有三个用处：
+1. 题目的入场券。地图要证明，这道题往深处查，结论会改变。没有合格的地图，题目不能用。
+2. 预先登记层级和重要性。评审时，评委把几份报告的要点和地图上的要点合在一起，逐条判断。地图上已有的要点，地图标的层级和重要性就是默认值；评委组要改，必须依据来源或定义写出理由。地图写在看到报告之前，出题人不知道哪家会写什么，所以这些标注对各家都是中立的。
+3. 说明绝对水平。几份报告都没写到的核心要点，说明&quot;谁都不够深&quot;。只拿报告互相比较，看不出这一点。这一条只用来说明情况，不影响名次。
+它不做两件事。不封顶：智能体写出地图上没有、但正确又切题的深层内容，同样得分。不定对错：每条要点对不对，一律看来源，不看地图。
+三 出题七步
+七步按顺序做。有三处检查不通过，要退回前面重做。
+1. 选话题
+- 选你和评委有能力判断对错的领域。
+- 截至运行当天，相关信息已经公开，查得到。
+- 不需要问卷、访谈这类新的一手资料。
+- 不选科研前沿上还没有答案的问题。
+- 不选和被评智能体自己有关的话题，比如&quot;哪家智能体最好&quot;。否则等于让被评者评自己，评委也容易从内容认出是谁写的。
+一共出两道题，两种题型各出一道：
+- 看似简单型：字面答案人人知道，挖深的空间要靠理解打开。例如实例一，中国最大的淡水湖。
+- 开放时效型：本身开放、涉及面广、信息更新快，考查广度、由表及里和材料的新旧。例如实例二，欧盟《人工智能法》。
+2. 先写浅答案，再往深处查
+先写下只看现象时的答案。然后沿着图 1 的四层往下查：它的历史和全部现状是什么？它和别的事有什么因果？题目里的关键词，指的到底是什么？
+判断标准：挖深会不会改变结论。查到深处以后，给提问者的结论或建议会变，这道题就留有挖深的空间。不会变，就换题。
+例如&quot;100 摄氏度等于多少华氏度&quot;。温标的历史可以讲很多，但答案始终是 212 华氏度。挖得再深，结论也不变，这道题就分不出深浅。
+结论不变：回到第 1 步，换题
+3. 写题目卡
+先写评委版，四项：提问者、用途、问题、截止时间。再写交给智能体的两个版本：
+- 提问版：用提问者的口吻，把四项写成一两句话，内容和评委版一致，不多也不少。真实的用户不会填表，所以不用&quot;【提问者】&quot;这样的标签。
+- 裸题版：只有问题本身，就像用户只打了一句话。
+两个版本后面都原样附上第八节模板里的&quot;交付要求&quot;和&quot;说明&quot;，一字不改。题目文本就是智能体收到的唯一输入，任何人都不能针对某一道题改写。写评委版时注意：
+- 提问者写到具体的人：身份和处境。不必是真人，但要像真的。
+- 用途写他要拿结果做什么决定。
+- 问题用他会说的话来问。
+- 不点名要查的网站、机构或方法，不提示往哪里挖。
+- 不规定篇幅和格式。篇幅不是评分依据。
+- 只用文字，一次给全。
+4. 写深度地图
+写三部分：浅答案；挖深之后结论在哪里改变；要点表。要点表每一行写：
+- 要点：一句话，一条独立的认识；
+- 层级：现象、全体、内部联系、本质，四选一；
+- 重要性：核心或一般，核心指回答这道题不能缺少的认识；
+- 依据：出处网址，以及你有多大把握。
+一定要在看到任何智能体的报告之前写好，并写上日期。我们第一次试评时，深度地图是读过报告之后才写的，这成了那次试评的一个局限。
+写到什么程度为止
+下面五条都做到了，地图才算写完：
+1. 浅答案：写出只看现象时的答案。
+2. 转折点：至少一处，查到内部联系或本质之后，结论或建议改变了；转折点用到的每条要点都有出处。
+3. 四层都查过：现象、全体、内部联系、本质，每层至少一条要点。某一层确实找不到，写明查了什么。
+4. 核心要点写全：回答这道题不能缺少的认识，一条不漏。一般要点不求全，能让评委看出每一层是什么样子就够了。
+5. 两人对过：两位出题人各自独立列出核心要点，再用下面&quot;数鱼的办法&quot;对照，判断写全了没有。
+为什么只要求核心要点写全。地图上写了、却没有一份报告写到的要点，对每一份报告都是零分，不影响名次。地图真正影响名次的，是它预先登记的层级和重要性，其中分量最重的是&quot;核心&quot;。核心要点漏掉了，就只能由评委在看过报告之后再定，那样的判定没有事先登记的好。
+怎样判断写全了：数鱼的办法
+生态学家估计一个湖里有多少条鱼，用&quot;捕获—再捕获&quot;的办法：先捞一网，做上记号放回去；过几天再捞一网，看其中有多少条带记号。第二网里带记号的越多，说明没被捞到过的鱼越少。软件工程里也用同样的办法，根据几位审查员各自找到的缺陷和重合，估计还有多少缺陷没被找到[7]。
+两位出题人各自独立列核心要点，就是各捞一网。甲列了 a 条，乙列了 b 条，两人都列到的有 c 条：
+估计的核心要点总数 ≈ a × b ÷ c
+两人合并后共有 a + b − c 条。合并后的条数和估计总数相差不到 1 条〔默认〕，就算写全了；差得多，两人就针对只有一个人列到的方向，各自再查一轮，然后重新对照。两人一条都没重合（c = 0），说明离写全还很远。
+｜ 甲列的 ｜ 乙列的 ｜ 都列到的 ｜ 估计总数 ｜ 合并后 ｜ 结论
+｜ 4 ｜ 5 ｜ 4 ｜ 4 × 5 ÷ 4 = 5 ｜ 5 ｜ 写全了
+｜ 4 ｜ 4 ｜ 2 ｜ 4 × 4 ÷ 2 = 8 ｜ 6 ｜ 还差约 2 条，继续查
+这个办法有前提：两人对照之前不商量；每条要点被找到的机会差不多。两人都只找到容易找的那几条，估计会偏低；两人都没想到的同一个方向，它估计不出来。所以还要请领域专家审阅，赛后还有覆盖审计。
+还有一条参考：实例一的核心要点是 4 条。核心要点写到十条以上还在增加，多半是题目太宽，应当收窄问题，而不是继续加要点。
+正式比赛对地图还有几道关：两人独立写、按上面的办法对照；请一位领域专家审阅；运行前公布地图的校验值，赛后公开全文；赛后统计评委判为核心、地图上却没有的要点有几条。详见《深度研究比赛规则手册》第四节。
+5. 自查
+对照第七节的清单逐条勾选。
+6. 请另一位同学做泄露检查
+只给他题目卡，不给深度地图，请他回答三个问题：
+- 题面有没有暗示该往哪里挖？
+- 题面有没有直接给出中间答案？
+- 题面有没有点名要查的来源或方法？
+出题人自己往往看不出自己的暗示，所以要换一个人看。记下检查人、日期、发现了什么、怎么改的。
+发现泄露：回到第 3 步，改题目卡
+7. 闭卷对照
+找一个不参赛的模型，而且它和参赛的智能体不是同一家公司的同一系列。关掉联网，把题目卡交给它答。拿它的回答对照深度地图：不查资料就已经答到了大部分核心要点，说明这道题太浅，或者答案早已被模型记住了。
+闭卷对照只能筛掉坏题，不能证明题好。
+闭卷就答中了：回到第 1 步或第 2 步
+四 实例一：中国最大的淡水湖
+这是一道看似简单型的题。题目卡取自《对照报告收集规程》，深度地图是本手册的示范。
+题目卡 第一题 评委版看似简单型
+提问者
+一家少儿出版社的地理科普编辑。
+用途
+要在一本给初中生的地理科普书里，写一句关于&quot;中国最大的淡水湖&quot;的话，要求准确、经得起推敲。
+问题
+中国最大的淡水湖是哪一个？
+截止时间
+只使用截至〔运行当日〕已经公开的信息。
+附
+统一的交付要求和说明，见第八节。
+这张卡写对了什么。没有一个字提到季节、历史或统计口径。提问者和用途让&quot;准确、经得起推敲&quot;有了具体的含义：这句话要印进书里，给初中生看。
+上面是评委版。交给智能体的两个版本如下，后面都附统一的交付要求和说明：
+第一题 提问版交给智能体
+原文
+我是一家少儿出版社的地理科普编辑，正在编一本给初中生看的地理科普书，想在书里写一句关于&quot;中国最大的淡水湖&quot;的话，要准确、经得起推敲。中国最大的淡水湖是哪一个？只使用截至〔运行当日〕已经公开的信息。
+第一题 裸题版交给智能体
+原文
+中国最大的淡水湖是哪一个？
+深度地图（示范）
+浅答案：鄱阳湖。
+挖深之后，结论在哪里改变：答案的名字不变，但书里这句话的写法变了。只写&quot;鄱阳湖，面积多少平方公里&quot;，经不起推敲；要说明湖面随季节涨落，给数字时注明水位或时间，并且清楚&quot;最大&quot;不包括界湖、不包括咸水湖。
+｜ 编号 ｜ 要点 ｜ 层级 ｜ 重要性 ｜ 依据
+｜ L1 ｜ 鄱阳湖通常被称为我国最大的淡水湖，新华社的报道就这样称呼它。 ｜ 现象 ｜ 核心 ｜ [1]
+｜ L2 ｜ 鄱阳湖的水面随季节涨落极大，有&quot;洪水一片，枯水一线&quot;的说法。一篇 1985 年的论文记载：水位 21 米时，水面约 3,960 平方公里；水位 12 米时，只有约 500 平方公里；冬春枯水季节，露出大片湖滩草洲。 ｜ 全体 ｜ 核心 ｜ [2]
+｜ L3 ｜ 近年枯水越来越常见。2022 年 9 月 23 日，星子站水位退到 7.10 米，刷新 1951 年有记录以来的最低值，当时通江水体面积只有 244 平方公里。2025 年截至 12 月 14 日，已有 217 天低于 12 米的枯水线。 ｜ 全体 ｜ 一般 ｜ [3] [1]
+｜ L4 ｜ &quot;最大&quot;要先说清按什么算：哪个水位、哪种口径（水面面积、通江水体面积，还是蓄水量）。3,960、500、244 平方公里，都是有出处的&quot;鄱阳湖面积&quot;。只给一个数字、不说口径，这句话就经不起推敲。 ｜ 本质 ｜ 核心 ｜ [2] [3]
+｜ L5 ｜ 湖面的高低，由入湖河流的来水和长江的水位共同决定。鄱阳湖汇集赣江、修河、抚河、饶河、信江五条河的水，在湖口与长江相通。2022 年的枯水，江西省水文监测中心解释为降雨偏少六成、五河入湖水量偏少近六成，加上长江干流水位偏低。 ｜ 内部联系 ｜ 一般 ｜ [2] [3]
+｜ L6 ｜ &quot;中国的淡水湖&quot;有边界问题。中俄界湖兴凯湖全湖约 4,380 平方公里，比鄱阳湖涨水时还大，但在中国境内的部分只有 1,000 余平方公里。说&quot;最大&quot;，要清楚是否把界湖算进来。 ｜ 本质 ｜ 核心 ｜ [4]
+｜ L7 ｜ &quot;淡水&quot;也有边界。青海湖比鄱阳湖大（2021 年 9 月底水体面积约 4,626 平方公里），但它是咸水湖：含盐度超过每升 1 克的湖叫咸水湖。所以&quot;最大的湖&quot;和&quot;最大的淡水湖&quot;是两个问题。 ｜ 本质 ｜ 一般 ｜ [5]
+｜ L8 ｜ 排名在历史上可能变过。据赵淑清、方精云的研究，洞庭湖水体面积从 20 世纪 30 年代的约 5,075 平方公里，减少到 1998 年的约 2,918 平方公里，主要原因是围湖造田。按这组数字，当年的洞庭湖比今天鄱阳湖涨水时还大；当年谁是第一，还要查同一时期鄱阳湖的数字。 ｜ 全体 ｜ 一般 ｜ [6]，把握：中（只找到转引，原论文待查）
+依据栏的出处，是编写本手册时（2026 年 10 月 30 日）查到的，多数是新闻报道和论文摘要。正式出题时，要尽量追到原始出处，比如水文部门的监测数据和原论文。查不到原始出处的，像 L8 一样标明把握。
+对照&quot;写到什么程度为止&quot;。浅答案有；转折点落在本质层（L4、L6）；四层都有要点；核心要点 4 条（L1、L2、L4、L6）。只差第 5 条：这份示范只有一个人写，没有做两人对照，所以按规则还不算写完。
+挖深会改变结论：两种写法对比
+只看现象
+&quot;中国最大的淡水湖是鄱阳湖，面积 3,960 平方公里。&quot;
+批：这是水位 21 米时的数字。2022 年 9 月枯水时，通江水体只剩 244 平方公里。只给一个数，不说口径，经不起推敲。
+推进到全体和本质
+&quot;鄱阳湖是我国最大的淡水湖。它的湖面随季节涨落，涨水时一片汪洋，枯水时只剩几条水道，人们说它&#x27;洪水一片，枯水一线&#x27;。&quot;
+附给编辑的说明：书里要写面积，就注明是什么水位或哪一年；&quot;最大&quot;不包括中俄界湖兴凯湖；我国最大的湖是青海湖，但它是咸水湖。
+名字没变，给编辑的建议变了。这就是第 2 步要的&quot;挖深会改变结论&quot;。
+五 实例二：欧盟《人工智能法》
+这是一道开放时效型的题。题目卡同样取自《对照报告收集规程》。
+题目卡 第二题 评委版开放时效型
+提问者
+一家中国人工智能创业公司的海外业务负责人。公司约 80 人，准备以开源方式向欧盟市场发布一个通用大模型。
+用途
+决定发布之前要做哪些合规准备，以及要不要调整开源的方式。
+问题
+欧盟《人工智能法》对我们以开源方式发布通用大模型有什么影响？发布之前我们需要做哪些准备？要不要调整开源的方式？
+截止时间
+只使用截至〔运行当日〕已经公开的信息。
+附
+统一的交付要求和说明，见第八节。
+注意&quot;约 80 人&quot;这个细节。它是提问者处境的一部分，不是提示。法规对中小企业有没有特殊安排，题面一个字也没提；能不能从&quot;约 80 人&quot;联想到去查，要看智能体自己。
+第二题 提问版交给智能体
+原文
+我是一家中国人工智能创业公司的海外业务负责人。我们公司约 80 人，准备以开源方式向欧盟市场发布一个通用大模型，发布之前我得决定要做哪些合规准备、要不要调整开源的方式。欧盟《人工智能法》对我们以开源方式发布通用大模型有什么影响？发布之前我们需要做哪些准备？要不要调整开源的方式？只使用截至〔运行当日〕已经公开的信息。
+第二题 裸题版交给智能体
+原文
+欧盟《人工智能法》对以开源方式发布通用大模型有什么影响？
+深度地图要往哪些方向写。下面是出题时整理的方向，还不是成稿：
+- 法规中&quot;开源&quot;一词的边界，以及豁免的条件；
+- &quot;系统性风险&quot;的门槛；
+- 各项义务分阶段生效的时间，以及后来有没有调整；
+- 配套的指南和行为准则；
+- 各方对条款理解上的分歧；
+- 对中小企业的特殊安排；
+- 不确定之处有多大。
+这道题的信息更新很快，地图上每一条的对错都要以截止那天为准。所以它的深度地图，要等运行日期定下来以后，在运行之前写成。
+六 红笔批改：七道不合格的题
+下面每道题都有一处毛病。先自己想一想，再看红笔批语。
+请从历史变迁、季节变化和统计口径三个角度，分析中国最大的淡水湖。
+批：把深度地图写进了题面。这样测到的只是智能体会不会照着做。
+改：删掉三个角度，补上提问者、用途和截止时间。
+鄱阳湖枯水期面积会大幅缩小，那么中国最大的淡水湖还是它吗？
+批：题面给出了中间答案，智能体不用自己查到季节变化。
+改：只问&quot;中国最大的淡水湖是哪一个&quot;。
+各家大语言模型的深度研究功能，哪家做得最好？请做一份综合分析。
+批：没有提问者、用途和截止时间；话题就是被评的产品本身。这是我们 2026 年 3 月真用过的题：事后只能猜提问者和用途，报告写的又是各家自己，去掉产品名也藏不住是谁。
+改：换一个和参赛产品无关的话题。
+请调查我校大一新生每天使用手机的时间。
+批：要做问卷才能回答，属于收集新的一手资料，不在本手册说的调研之内。
+改：改成用已公开资料能回答的问题，例如&quot;截至今天，国内有哪些公开的大学生手机使用调查，结论是否一致&quot;，并补上提问者和用途。
+暗物质到底是什么？
+批：这是科研前沿上还没有答案的问题，评委也无从判断对错。调研不以推进人类知识的前沿为目标。
+改：改成现状调研，例如&quot;一位科普作者要写一篇文章，介绍截至今天科学界对暗物质有哪些主要假说、各有什么证据&quot;。
+100 摄氏度等于多少华氏度？
+批：可讲的东西不少，但挖得再深，答案还是 212 华氏度。挖深不改变结论，就分不出深浅。
+改：换题。
+请写一份不少于一万字的报告，分析中国最大的淡水湖。
+批：篇幅不是评分依据，规定字数只会鼓励注水。试评时，我们故意往一份报告里塞了一段无关的背景，它一分也没有得到。
+改：删掉字数要求，只附统一的交付要求。
+===== 出题手册原文结束 =====
+
+你在模拟一位出题人。下面是一道题的评委版题目卡，请按第 3 步写交给智能体的两个版本：
+- 提问版：用提问者的口吻，把四项写成一两句话，内容和评委版一致，不多也不少；不用「【提问者】」这样的标签；最后一句原样写「只使用截至〔运行当日〕已经公开的信息。」
+- 裸题版：只有问题本身，就像用户只打了一句话。
+交付要求和说明由程序原样附上，你不要写。
+
+评委版：
+【提问者】一家出版社的小学科学教材编辑，正在编写一册小学科学教材。
+【用途】决定教材里关于世界上最高的山的那句话怎么写。这句话要印进教材给小学生看，要求准确、经得起推敲。
+【问题】世界上最高的山是哪一座？
+【截止时间】只使用截至〔运行当日〕已经公开的信息。
+
+只回复一个 JSON 对象，不要写别的文字。格式如下：
+{&quot;提问版&quot;: &quot;……&quot;, &quot;裸题版&quot;: &quot;……&quot;}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 144 字，一字不改。</p>
+  <pre class="raw" id="answer">
+{&quot;提问版&quot;: &quot;我是一家出版社的小学科学教材编辑，正在编写一册小学科学教材，得决定教材里关于“世界上最高的山”的那句话怎么写，这句话要印进教材给小学生看，要准确、经得起推敲。世界上最高的山是哪一座？只使用截至〔运行当日〕已经公开的信息。&quot;, &quot;裸题版&quot;: &quot;世界上最高的山是哪一座？&quot;}</pre>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 9534 字</summary><pre class="raw" id="raw-output">
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;init&quot;,&quot;cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpupkyxtyk/work&quot;,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;tools&quot;:[],&quot;mcp_servers&quot;:[],&quot;model&quot;:&quot;claude-opus-5-5&quot;,&quot;permissionMode&quot;:&quot;dontAsk&quot;,&quot;slash_commands&quot;:[],&quot;apiKeySource&quot;:&quot;none&quot;,&quot;claude_code_version&quot;:&quot;2.1.314&quot;,&quot;output_style&quot;:&quot;default&quot;,&quot;agents&quot;:[&quot;claude&quot;,&quot;Explore&quot;,&quot;general-purpose&quot;,&quot;Plan&quot;],&quot;skills&quot;:[],&quot;plugins&quot;:[{&quot;name&quot;:&quot;pyright-lsp&quot;,&quot;path&quot;:&quot;/Users/zonghuanwu/.claude/plugins/cache/claude-plugins-official/pyright-lsp/1.0.0&quot;,&quot;source&quot;:&quot;pyright-lsp@claude-plugins-official&quot;,&quot;version&quot;:&quot;1.0.0&quot;},{&quot;name&quot;:&quot;cc-plugin-agents-md&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-agents-md@builtin&quot;},{&quot;name&quot;:&quot;cc-plugin-telemetry&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-telemetry@builtin&quot;},{&quot;name&quot;:&quot;cc-plugin-plugin-authoring&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-plugin-authoring@builtin&quot;}],&quot;capabilities&quot;:[&quot;interrupt_receipt_v1&quot;,&quot;interrupt_cancel_queued_v1&quot;,&quot;interrupt_send_now_v1&quot;,&quot;interrupt_requeue_taken_v1&quot;,&quot;msg_lifecycle_v1&quot;,&quot;request_marker_lists_v1&quot;,&quot;ask_user_question_unanswered_v1&quot;,&quot;lifecycle_wakeup_source_v1&quot;,&quot;sdk_mcp_tools_list_changed&quot;,&quot;sdk_mcp_manifests&quot;,&quot;mcp_read_resource_v1&quot;,&quot;mcp_tool_ui_meta_v1&quot;,&quot;ui_surface_v1&quot;,&quot;mcp_call_result_not_for_model_v1&quot;],&quot;analytics_disabled&quot;:false,&quot;product_feedback_disabled&quot;:false,&quot;uuid&quot;:&quot;2c2f0fac-b94b-4623-8d19-8bb975ac99be&quot;,&quot;original_cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpupkyxtyk/work&quot;,&quot;additional_directories&quot;:[],&quot;messaging_socket_path&quot;:&quot;/tmp/cc-socks/8478.sock&quot;,&quot;fast_mode_state&quot;:&quot;off&quot;,&quot;fast_mode_disabled_reason&quot;:&quot;sdk_opt_in_required&quot;,&quot;per_turn_effort_active&quot;:true,&quot;view_mode&quot;:&quot;default&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:50,&quot;estimated_tokens_delta&quot;:50,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;uuid&quot;:&quot;69e62cc3-6ab5-41d2-8270-12ffa1248d5a&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:150,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;uuid&quot;:&quot;364ea229-7915-4294-8139-a25fbe103af0&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:300,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;uuid&quot;:&quot;f36fba0c-f814-432f-a737-760e1df6e1c9&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:441,&quot;estimated_tokens_delta&quot;:141,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;uuid&quot;:&quot;5e162eae-9392-4a8a-a7ac-efb8adea5562&quot;}
+{&quot;type&quot;:&quot;assistant&quot;,&quot;message&quot;:{&quot;model&quot;:&quot;claude-opus-5-5&quot;,&quot;id&quot;:&quot;msg_011CgZaSY8Wyx9szSAfEMzhU&quot;,&quot;type&quot;:&quot;message&quot;,&quot;role&quot;:&quot;assistant&quot;,&quot;content&quot;:[{&quot;type&quot;:&quot;thinking&quot;,&quot;thinking&quot;:&quot;&quot;,&quot;signature&quot;:&quot;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&quot;}],&quot;container&quot;:null,&quot;stop_reason&quot;:null,&quot;stop_sequence&quot;:null,&quot;stop_details&quot;:null,&quot;usage&quot;:{&quot;input_tokens&quot;:2,&quot;cache_creation_input_tokens&quot;:9315,&quot;cache_read_input_tokens&quot;:1659,&quot;cache_creation&quot;:{&quot;ephemeral_5m_input_tokens&quot;:0,&quot;ephemeral_1h_input_tokens&quot;:9315},&quot;output_tokens&quot;:8,&quot;service_tier&quot;:&quot;standard&quot;,&quot;inference_geo&quot;:&quot;global&quot;,&quot;speed&quot;:&quot;standard&quot;},&quot;input_transformations&quot;:[],&quot;diagnostics&quot;:null,&quot;context_management&quot;:null},&quot;parent_tool_use_id&quot;:null,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;uuid&quot;:&quot;dca8793f-2cfb-4bf8-a063-c5af0a3167aa&quot;,&quot;timestamp&quot;:&quot;2026-10-31T03:07:29.390Z&quot;,&quot;request_id&quot;:&quot;req_011CgZaSXtNRUGurdqfpsZ9Y&quot;,&quot;thinking_duration_ms&quot;:3426,&quot;thinking_display&quot;:&quot;updates&quot;}
+{&quot;type&quot;:&quot;assistant&quot;,&quot;message&quot;:{&quot;model&quot;:&quot;claude-opus-5-5&quot;,&quot;id&quot;:&quot;msg_011CgZaSY8Wyx9szSAfEMzhU&quot;,&quot;type&quot;:&quot;message&quot;,&quot;role&quot;:&quot;assistant&quot;,&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;提问版\&quot;: \&quot;我是一家出版社的小学科学教材编辑，正在编写一册小学科学教材，得决定教材里关于“世界上最高的山”的那句话怎么写，这句话要印进教材给小学生看，要准确、经得起推敲。世界上最高的山是哪一座？只使用截至〔运行当日〕已经公开的信息。\&quot;, \&quot;裸题版\&quot;: \&quot;世界上最高的山是哪一座？\&quot;}&quot;}],&quot;container&quot;:null,&quot;stop_reason&quot;:null,&quot;stop_sequence&quot;:null,&quot;stop_details&quot;:null,&quot;usage&quot;:{&quot;input_tokens&quot;:2,&quot;cache_creation_input_tokens&quot;:9315,&quot;cache_read_input_tokens&quot;:1659,&quot;cache_creation&quot;:{&quot;ephemeral_5m_input_tokens&quot;:0,&quot;ephemeral_1h_input_tokens&quot;:9315},&quot;output_tokens&quot;:8,&quot;service_tier&quot;:&quot;standard&quot;,&quot;inference_geo&quot;:&quot;global&quot;,&quot;speed&quot;:&quot;standard&quot;},&quot;input_transformations&quot;:[],&quot;diagnostics&quot;:null,&quot;context_management&quot;:null},&quot;parent_tool_use_id&quot;:null,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;uuid&quot;:&quot;5c5dfcd8-e80d-477f-b1f2-4a5b45304577&quot;,&quot;timestamp&quot;:&quot;2026-10-31T03:07:30.348Z&quot;,&quot;request_id&quot;:&quot;req_011CgZaSXtNRUGurdqfpsZ9Y&quot;}
+{&quot;type&quot;:&quot;rate_limit_event&quot;,&quot;rate_limit_info&quot;:{&quot;status&quot;:&quot;allowed&quot;,&quot;resetsAt&quot;:1793419200,&quot;rateLimitType&quot;:&quot;five_hour&quot;,&quot;overageStatus&quot;:&quot;rejected&quot;,&quot;overageDisabledReason&quot;:&quot;org_level_disabled&quot;,&quot;isUsingOverage&quot;:false,&quot;unifiedWindows&quot;:{&quot;five_hour&quot;:{&quot;utilization&quot;:0.62,&quot;resetsAt&quot;:1793419200,&quot;status&quot;:&quot;allowed&quot;},&quot;seven_day&quot;:{&quot;utilization&quot;:0.3,&quot;resetsAt&quot;:1793541600,&quot;status&quot;:&quot;allowed&quot;}}},&quot;uuid&quot;:&quot;446a6d68-311b-46e3-b475-b3fb946ba749&quot;,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;}
+{&quot;duration_api_ms&quot;:5180,&quot;stop_reason&quot;:&quot;end_turn&quot;,&quot;session_id&quot;:&quot;ccd35227-fe81-4b7c-a12c-bd6fc2889764&quot;,&quot;total_cost_usd&quot;:0.0861798,&quot;usage&quot;:{&quot;input_tokens&quot;:2,&quot;cache_creation_input_tokens&quot;:9315,&quot;cache_read_input_tokens&quot;:1659,&quot;output_tokens&quot;:566,&quot;output_tokens_details&quot;:{&quot;thinking_tokens&quot;:418},&quot;server_tool_use&quot;:{&quot;web_search_requests&quot;:0,&quot;web_fetch_requests&quot;:0},&quot;service_tier&quot;:&quot;standard&quot;,&quot;cache_creation&quot;:{&quot;ephemeral_1h_input_tokens&quot;:9315,&quot;ephemeral_5m_input_tokens&quot;:0},&quot;inference_geo&quot;:&quot;global&quot;,&quot;iterations&quot;:[{&quot;input_tokens&quot;:2,&quot;output_tokens&quot;:566,&quot;cache_read_input_tokens&quot;:1659,&quot;cache_creation_input_tokens&quot;:9315,&quot;cache_creation&quot;:{&quot;ephemeral_5m_input_tokens&quot;:0,&quot;ephemeral_1h_input_tokens&quot;:9315},&quot;type&quot;:&quot;message&quot;}],&quot;speed&quot;:&quot;standard&quot;,&quot;fallback_credit&quot;:null},&quot;modelUsage&quot;:{&quot;claude-opus-5-5&quot;:{&quot;inputTokens&quot;:2,&quot;outputTokens&quot;:566,&quot;cacheReadInputTokens&quot;:1659,&quot;cacheCreationInputTokens&quot;:9315,&quot;webSearchRequests&quot;:0,&quot;costUSD&quot;:0.0861798,&quot;contextWindow&quot;:1000000,&quot;maxOutputTokens&quot;:128000,&quot;thinkingTokens&quot;:418,&quot;cacheCreationEphemeral5mInputTokens&quot;:0,&quot;cacheCreationEphemeral1hInputTokens&quot;:9315,&quot;canonicalModel&quot;:&quot;claude-opus-5-5&quot;,&quot;provider&quot;:&quot;firstParty&quot;,&quot;costBasis&quot;:&quot;list&quot;}},&quot;permission_denials&quot;:[],&quot;terminal_reason&quot;:&quot;completed&quot;,&quot;fast_mode_state&quot;:&quot;off&quot;,&quot;fast_mode_disabled_reason&quot;:&quot;sdk_opt_in_required&quot;,&quot;subagent_stats&quot;:{&quot;spawned&quot;:0,&quot;requested&quot;:{&quot;background&quot;:0,&quot;foreground&quot;:0,&quot;unset&quot;:0},&quot;started_in_background&quot;:0,&quot;max_depth&quot;:0,&quot;spawned_by_subagents&quot;:0,&quot;completed&quot;:0,&quot;failed&quot;:0,&quot;killed&quot;:{&quot;parent&quot;:0,&quot;user&quot;:0,&quot;system&quot;:0},&quot;refused&quot;:{&quot;depth_limit&quot;:0,&quot;concurrency_limit&quot;:0,&quot;budget&quot;:0},&quot;by_type&quot;:{}},&quot;safety_stops&quot;:0,&quot;is_error&quot;:false,&quot;num_turns&quot;:1,&quot;subtype&quot;:&quot;success&quot;,&quot;api_error_status&quot;:null,&quot;result&quot;:&quot;{\&quot;提问版\&quot;: \&quot;我是一家出版社的小学科学教材编辑，正在编写一册小学科学教材，得决定教材里关于“世界上最高的山”的那句话怎么写，这句话要印进教材给小学生看，要准确、经得起推敲。世界上最高的山是哪一座？只使用截至〔运行当日〕已经公开的信息。\&quot;, \&quot;裸题版\&quot;: \&quot;世界上最高的山是哪一座？\&quot;}&quot;,&quot;ttft_ms&quot;:4357,&quot;type&quot;:&quot;result&quot;,&quot;duration_ms&quot;:5323,&quot;uuid&quot;:&quot;b3793d96-ab1f-40cd-b404-aa1b94b0ad1b&quot;,&quot;ttft_stream_ms&quot;:929,&quot;time_to_request_ms&quot;:142,&quot;first_content_frame_ms&quot;:930,&quot;queued_turn_count&quot;:0,&quot;result_index&quot;:0,&quot;model_usage_since_last_result&quot;:{&quot;claude-opus-5-5&quot;:{&quot;inputTokens&quot;:2,&quot;outputTokens&quot;:566,&quot;cacheReadInputTokens&quot;:1659,&quot;cacheCreationInputTokens&quot;:9315,&quot;webSearchRequests&quot;:0,&quot;costUSD&quot;:0.0861798,&quot;contextWindow&quot;:1000000,&quot;maxOutputTokens&quot;:128000,&quot;thinkingTokens&quot;:418,&quot;cacheCreationEphemeral5mInputTokens&quot;:0,&quot;cacheCreationEphemeral1hInputTokens&quot;:9315,&quot;canonicalModel&quot;:&quot;claude-opus-5-5&quot;,&quot;provider&quot;:&quot;firstParty&quot;,&quot;costBasis&quot;:&quot;list&quot;}}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

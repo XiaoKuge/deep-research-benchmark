@@ -1,0 +1,17 @@
+{
+  "steps": {
+    "claims_list": {"vendors": ["codex"], "times": 1},
+    "verify": {"vendors": ["claude", "codex", "google"], "times": 1},
+    "extract": {"vendors": ["codex", "google"], "times": 1},
+    "merge": {"vendors": ["codex"], "times": 1},
+    "reach": {"vendors": ["google"], "times": 1},
+    "judge": {"vendors": ["claude", "codex", "google"], "times": 1},
+    "rating": {"vendors": ["claude", "codex", "google"], "times": 1},
+    "pairwise": {"vendors": ["codex", "google"], "times": 1},
+    "direct": {"vendors": ["google"], "times": 1}
+  },
+  "models": {"google": "gemini-4-argon-medium"},
+  "substitutes": ["codex", "google", "claude"],
+  "workers": 3,
+  "seed": 0
+}
