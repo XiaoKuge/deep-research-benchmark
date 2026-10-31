@@ -53,6 +53,9 @@ class Page(HTMLParser):
                 self.links.append(a[key])
                 for b in self.open:
                     b["links"].append(a[key])
+        # 链接的本地样式文件按出现的先后并入样式表，与页面里的样式一起检查
+        if tag == "link" and "stylesheet" in a.get("rel", "") and not re.match(r"https?:", a.get("href", "")):
+            self.css.append(read(os.path.join(os.path.dirname(self.path), a["href"])))
         if tag in self.HIDDEN:
             self.hidden.append(tag)
         if tag in self.BLOCKS:
@@ -351,6 +354,30 @@ class FaqPage(CommonChecks, unittest.TestCase):
         for summary in self.page.of("summary"):
             with self.subTest(summary["text"].strip()):
                 self.assertNotRegex(summary["text"], r"(?<![A-Za-z])AI(?![A-Za-z])")
+
+
+class SharedStylesTest(unittest.TestCase):
+    """五个说明页面（赛事说明、上手、公告、常见问题、参赛队伍技术文档）共用的样式只写在 site/pages.css 一处。"""
+    NAMES = PAGES + ["teams.html"]
+
+    @staticmethod
+    def rules(css):
+        """样式表里的每一条规则（选择器连同声明），去掉注释和多余的空白。"""
+        css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+        return {re.sub(r"\s+", " ", r).strip() for r in re.findall(r"[^{}]+\{[^{}]*\}", css)}
+
+    def test_every_page_links_the_shared_stylesheet(self):
+        for name in self.NAMES:
+            with self.subTest(name):
+                self.assertIn('<link rel="stylesheet" href="pages.css">', read(os.path.join(SITE, name)))
+
+    def test_no_page_repeats_a_shared_rule(self):
+        shared = self.rules(read(os.path.join(SITE, "pages.css")))
+        self.assertGreater(len(shared), 50)
+        for name in self.NAMES:
+            inline = "".join(re.findall(r"<style>(.*?)</style>", read(os.path.join(SITE, name)), re.S))
+            with self.subTest(name):
+                self.assertEqual(self.rules(inline) & shared, set())
 
 
 class RulesWordingTest(unittest.TestCase):

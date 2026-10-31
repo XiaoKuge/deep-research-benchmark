@@ -101,6 +101,9 @@ class Page(HTMLParser):
                 self.links.append(a[key])
                 for item in self.stack:
                     item["links"].append(a[key])
+        # 链接的本地样式文件按出现的先后并入样式表，与页面里的样式一起检查
+        if tag == "link" and "stylesheet" in a.get("rel", "") and not re.match(r"https?:", a.get("href", "")):
+            self.css.append((self.path.parent / a["href"]).read_text(encoding="utf-8"))
         if tag in self.HIDDEN:
             self.hidden.append(tag)
         if tag in self.CODE:
