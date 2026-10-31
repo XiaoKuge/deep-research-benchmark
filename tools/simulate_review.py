@@ -61,6 +61,8 @@ STEPS = [("claims_list", "结论清单"), ("verify", "断言核验"), ("extract"
          ("rating", "环节评级"), ("pairwise", "两两比较"), ("direct", "直接回答")]
 STEP_NAMES = dict(STEPS)
 SINGLE_JUDGE_STEPS = ("claims_list", "merge")  # 细则：清单由一人抽出；要点池由一位评委合并
+MIN_VENDORS = 3
+THREE_VENDORS_RULE = '规则手册第七节"评委组"第 1 条：至少三家厂商的模型担任评委'
 
 # 默认用 Claude（Anthropic）、Codex（OpenAI）、Gemini（Google）三家，Kimi（月之暗面）作备用，与资料站写明的一致。
 DEFAULT_CONFIG = {
@@ -1138,6 +1140,22 @@ def summarize_steps(ctx):
     return steps
 
 
+def too_few_vendors(ctx):
+    """计划用三家以上的步骤，替代之后实际用到的厂商不足三家的：记下来，不中止运行。
+    只算拿到回答的调用（只估算时是未调用的记录）；一次也没有调用的步骤不算。"""
+    found = []
+    for key, name in STEPS:
+        planned = list(dict.fromkeys(ctx.config["steps"][key]["vendors"]))
+        if len(planned) < MIN_VENDORS:
+            continue
+        used = sorted({u["vendor"] for u in ctx.usage[name]
+                       if u["status"] in (models.SUCCEEDED, models.NOT_CALLED)}, key=models.VENDORS.index)
+        if used and len(used) < MIN_VENDORS:
+            found.append({"step": name, "planned_vendors": planned, "used_vendors": used,
+                          "rule": THREE_VENDORS_RULE})
+    return found
+
+
 def execute(args, config, question, reports, archive, manifests, mode, out, rubric):
     """跑一遍全部步骤；返回运行元数据（同时写进 out/run.json）。"""
     os.makedirs(out, exist_ok=True)
@@ -1196,6 +1214,7 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
                          "by_step": {name: len(ctx.usage[name]) for _, name in STEPS},
                          "max_calls": summary["max_calls"], "over_limit": summary["over_limit"]}
         meta["steps"] = summarize_steps(ctx)
+        meta["too_few_vendors"] = too_few_vendors(ctx)
         meta["unavailable"] = list(ctx.unavailable.values())
         meta["substitutions"] = sorted(ctx.substitutions, key=lambda s: (s["步骤"], s["任务"]))
         meta["invalid_answers"] = ctx.invalid
@@ -1246,6 +1265,9 @@ def describe(meta):
         lines.append("不可用：%s（%s），原因：%s" % (item["vendor"], item["company"], item["error"]))
     if meta["substitutions"]:
         lines.append("替代：%d 次调用换了厂商，见 run.json 的 substitutions" % len(meta["substitutions"]))
+    for item in meta["too_few_vendors"]:
+        lines.append("不合规则：%s计划用 %s，实际只用了 %s，不合%s" % (
+            item["step"], "、".join(item["planned_vendors"]), "、".join(item["used_vendors"]), item["rule"]))
     if meta["error"]:
         lines.append("中止原因：%s" % meta["error"])
     return "\n".join(lines)

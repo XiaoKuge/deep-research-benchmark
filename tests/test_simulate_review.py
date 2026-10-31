@@ -339,6 +339,9 @@ class StandardRunTest(unittest.TestCase):
                 self.assertIn(text, record["prompt"])
 
     # 工具限定：评审各步只给材料；只有引了网址却没有存档的结论，核验时只读网页
+    def test_a_run_that_keeps_three_vendors_records_no_rule_problem(self):
+        self.assertEqual(self.meta["too_few_vendors"], [])
+
     def test_every_step_is_materials_only_except_checking_unarchived_links(self):
         web = [r for r in self.records() if r["tools"] == "只读网页"]
         self.assertEqual(sorted(r["task"] for r in web),
@@ -362,6 +365,19 @@ KIMI_ERROR = ("退出状态 1；标准输出最后几行：Error code: 401 - "
 GOOGLE_ERROR = "退出状态 1；标准错误最后几行：还没有登录"
 
 
+def unavailable_replay():
+    """标准场景，只是 kimi 和 google 都不可用：kimi 的回答都改由 claude 给出，另外录下两家各一次失败。"""
+    entries = standard_replay()
+    for e in entries:
+        if e["vendor"] == "kimi":
+            e["vendor"] = "claude"
+    entries.insert(0, {"task": "评审-要点判定：评委 3", "vendor": "kimi", "status": "失败",
+                       "error": KIMI_ERROR})
+    entries.insert(1, {"task": "评审-要点判定：评委 3", "vendor": "google", "status": "失败",
+                       "error": GOOGLE_ERROR})
+    return entries
+
+
 class UnavailableVendorTest(unittest.TestCase):
     """厂商不可用：回放材料里录下了 kimi 和 google 各一次失败（kimi 登录过期、agy 没有登录）。
     kimi 的评委位置先换这一步没用到的 google，google 也不可用，再按替代顺序换成 claude。"""
@@ -371,15 +387,7 @@ class UnavailableVendorTest(unittest.TestCase):
         cls._tmp = tempfile.TemporaryDirectory()
         tmp = cls._tmp.name
         cls.inputs = build_inputs(tmp)
-        entries = standard_replay()
-        for e in entries:
-            if e["vendor"] == "kimi":
-                e["vendor"] = "claude"
-        entries.insert(0, {"task": "评审-要点判定：评委 3", "vendor": "kimi", "status": "失败",
-                           "error": KIMI_ERROR})
-        entries.insert(1, {"task": "评审-要点判定：评委 3", "vendor": "google", "status": "失败",
-                           "error": GOOGLE_ERROR})
-        replay = write_replay(os.path.join(tmp, "replay.jsonl"), entries)
+        replay = write_replay(os.path.join(tmp, "replay.jsonl"), unavailable_replay())
         cls.out = os.path.join(tmp, "review")
         cls.result = run_tool(cls.inputs, cls.out, "--replay", replay)
         cls.meta = read_json(os.path.join(cls.out, "run.json"))
@@ -414,6 +422,18 @@ class UnavailableVendorTest(unittest.TestCase):
         vendors = {r["vendor"] for r in read_records(os.path.join(self.out, "calls.jsonl"))}
         self.assertEqual(vendors, {"claude", "codex"})
         self.assertEqual(self.meta["steps"]["要点判定"]["by_vendor"], {"claude": 2, "codex": 1})
+
+    def test_steps_planned_for_three_vendors_that_used_fewer_are_recorded_against_the_rule(self):
+        # 断言核验和要点判定计划用 claude、codex、kimi 三家，kimi 换成 claude 之后只剩两家；
+        # 环节评级本来就只配了两家，不算在内。评审照样完成，不中止。
+        self.assertEqual(self.meta["status"], "完成")
+        found = {item["step"]: item for item in self.meta["too_few_vendors"]}
+        self.assertEqual(sorted(found), ["断言核验", "要点判定"])
+        for item in found.values():
+            self.assertEqual(item["planned_vendors"], ["claude", "codex", "kimi"])
+            self.assertEqual(item["used_vendors"], ["claude", "codex"])
+            self.assertIn("至少三家厂商的模型担任评委", item["rule"])
+        self.assertIn("至少三家", self.result.stdout)
 
     def test_the_review_still_finishes_with_the_substitute(self):
         self.assertEqual(self.result.returncode, 0, self.result.stdout + self.result.stderr)
