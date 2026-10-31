@@ -31,6 +31,7 @@
 标准 2 至 8 只在映射表列出扰动版本（perturb）时计算，例如第五阶段试评数据。
 """
 import argparse
+import importlib.util
 import json
 import os
 import random
@@ -38,7 +39,17 @@ import sys
 from statistics import median
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(HERE))
 OUT = os.path.join(HERE, "out")
+
+
+def load_common():
+    """仓库共用的小工具 tools/common.py，按文件路径载入，不改 sys.path，也不写字节码缓存。"""
+    sys.dont_write_bytecode = True
+    spec = importlib.util.spec_from_file_location("tools_common", os.path.join(ROOT, "tools", "common.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 ELEMENTS = ["①", "③", "④", "⑤", "⑦"]
 ELEMENT_NAMES = {"①": "切题与真实需要", "②": "时效", "③": "查找过程的交代", "④": "甄别来源与处理矛盾",
                  "⑤": "分析", "⑦": "结论与把握"}
@@ -422,9 +433,10 @@ def main():
     report["version"] = version
     if V12:
         report.update(export(main_reports, mapping, res, ratings, pool))
-    with open(args.output or os.path.join(HERE, f"results-v{version}.json"), "w", encoding="utf-8") as f:
-        json.dump(report, f, ensure_ascii=False, indent=1, default=list)
-    print(json.dumps(report, ensure_ascii=False, indent=1, default=list))
+    text = json.dumps(report, ensure_ascii=False, indent=1, default=list)
+    # 先写临时文件再整份替换：中途出错时旧的结果文件原样留着
+    load_common().write_text_atomic(args.output or os.path.join(HERE, f"results-v{version}.json"), text)
+    print(text)
 
 
 if __name__ == "__main__":

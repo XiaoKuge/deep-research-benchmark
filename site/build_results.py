@@ -3,14 +3,14 @@
 用法：在仓库根目录运行 python3 -I site/build_results.py [--input 目录] [--output 目录]
 
 不给 --input 时读第五阶段试评，默认写到 site/results/。只读 research-plan/stage5-pilot/ 下的文件，不改它们：
-- results-v1.2.json：第 1.2 版计分结果（名次区间、净分、严重问题、环节档位、分开的对）；
+- 第 1.2 版计分结果文件（文件名见 RESULTS_NAME）：名次区间、净分、严重问题、环节档位、分开的对；
 - mapping.json：匿名编号对应的产品；
 - out/ 下的评委输出：断言核验、要点池、环节评级、两两比较、对题目的直接回答；
 - judges/manifest.json：每个评委输出文件对应的提示词和模型。
 试评页面里的链接按页面放在 site/results/ 下来写。
 
 --input 给一次模拟评审的输出目录（simulation/reviews/<运行标识>/，格式见 tools/simulate_review.md）时，
-读其中的 run.json、calls.jsonl、mapping.json、data/、judgments/extract.json 和 results-v1.2.json，
+读其中的 run.json、calls.jsonl、mapping.json、data/、judgments/extract.json 和第 1.2 版计分结果文件，
 题目卡从 run.json 记下的题目目录读。这时 --output 必须给，页面里的链接按页面实际写到的目录来写。
 资料站的模拟评审页面由 site/build_simulation.py 调用这里的 build()，并把每一次调用的原文页链接进来。
 """
@@ -250,20 +250,23 @@ def shell(data, title, description, body):
 
 # ---------- 数据 ----------
 
-def load_score_module():
-    """计分程序里的权重和单条要点的计分公式，复核页上逐条列出的得分用它算，与名次用的是同一套公式。"""
+def load_module(name, path):
+    """按文件路径载入一个程序当模块用，不改 sys.path，也不写字节码缓存。"""
     sys.dont_write_bytecode = True
-    spec = importlib.util.spec_from_file_location("stage5_score", os.path.join(PILOT, "score.py"))
+    spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-SCORE = load_score_module()
+# 计分程序里的权重、单条要点的计分公式和环节名称：复核页上逐条列出的得分用它算，与名次用的是同一套。
+SCORE = load_module("stage5_score", os.path.join(PILOT, "score.py"))
+COMMON = load_module("tools_common", os.path.join(ROOT, "tools", "common.py"))
+RESULTS_NAME = "results-v1.2.json"  # 计分程序第 1.2 版写出的结果文件
 WEIGHTS = list(SCORE.LEVEL_W)  # 甲、乙、丙
 LEVELS = ["现象", "全体", "内部联系", "本质"]
-ELEMENTS = [("①", "切题与真实需要"), ("③", "查找过程的交代"), ("④", "甄别来源与处理矛盾"), ("⑤", "分析"), ("⑦", "结论与把握")]
-TIMELINESS = "时效"
+ELEMENTS = [(key, SCORE.ELEMENT_NAMES[key]) for key in SCORE.ELEMENTS]  # 五个环节：①③④⑤⑦
+TIMELINESS = SCORE.ELEMENT_NAMES["②"]
 
 
 def href(path, start):
@@ -309,7 +312,7 @@ class Data:
             self.to_src, self.to_site, self.to_notes = TO_PILOT, TO_SITE, TO_NOTES
             self.manifest = load(os.path.join(PILOT, "judges", "manifest.json"))
             self.question = read_question_card(os.path.join(PILOT, "question-card.md"))
-        self.results = load(os.path.join(source, "results-v1.2.json"))
+        self.results = load(os.path.join(source, RESULTS_NAME))
         self.mapping = load(os.path.join(source, "mapping.json"))
         self.reports = {r["label"]: r for r in self.results["reports"]}
         self.labels = [r["label"] for r in self.results["reports"]]
@@ -757,7 +760,7 @@ def rank_page(data):
     <li><a href="points.html">要点池</a>：全部 {len(data.pool)} 条要点，以及每条有哪几份报告写到</li>
     <li><a href="{TO_PILOT}question-card.md">题目卡</a>和<a href="{TO_PILOT}depth-map.md">出题人的深度地图</a></li>
     <li><a href="{TO_PILOT}judges/README.md">评委收到的提示词</a>：每次评委运行的提示词原文和清单</li>
-    <li><a href="{TO_PILOT}score.py">计分程序</a>和它写出的<a href="{TO_PILOT}results-v1.2.json">第 1.2 版结果文件</a>。在计分程序所在的目录运行 <code>python3 -I score.py mapping.json 1.2</code> 可以重算</li>
+    <li><a href="{TO_PILOT}score.py">计分程序</a>和它写出的<a href="{TO_PILOT}{RESULTS_NAME}">第 1.2 版结果文件</a>。在计分程序所在的目录运行 <code>python3 -I score.py mapping.json 1.2</code> 可以重算</li>
     <li><a href="{TO_NOTES}rules.html#_10">规则手册第八节：名次与公布</a>；<a href="{TO_NOTES}plan-stage5-report.html">第五阶段报告</a></li>
   </ul>
 </section>"""
@@ -788,7 +791,7 @@ def sim_materials(data):
     <li><a href="points.html">要点池</a>：全部 {len(data.pool)} 条要点，以及每条有哪几份报告写到</li>
     {question}
     {record}
-    <li><a href="{data.to_scorer}">计分程序</a>和它写出的<a href="{data.to_src}results-v1.2.json">第 1.2 版结果文件</a>。在仓库根目录运行 <code>python3 -I research-plan/stage5-pilot/score.py {esc(src)}/mapping.json 1.2 --data {esc(src)}/data</code> 可以重算</li>
+    <li><a href="{data.to_scorer}">计分程序</a>和它写出的<a href="{data.to_src}{RESULTS_NAME}">第 1.2 版结果文件</a>。在仓库根目录运行 <code>python3 -I research-plan/stage5-pilot/score.py {esc(src)}/mapping.json 1.2 --data {esc(src)}/data</code> 可以重算</li>
     <li><a href="{data.to_notes}rules.html#_10">规则手册第八节：名次与公布</a>；<a href="{data.to_guide}">模拟评审使用说明</a></li>
   </ul>
 </section>"""
@@ -1305,10 +1308,8 @@ def build(output, source=PILOT, links=None):
     pages = {"index.html": rank_page(data), "points.html": points_page(data)}
     for r in data.labels:
         pages[f"report-{r}.html"] = review_page(data, r)
-    os.makedirs(output, exist_ok=True)
     for name, text in pages.items():
-        with open(os.path.join(output, name), "w", encoding="utf-8") as f:
-            f.write(text)
+        COMMON.write_text_atomic(os.path.join(output, name), text)
     return sorted(pages)
 
 
@@ -1320,8 +1321,8 @@ def main():
     simulated = os.path.isfile(os.path.join(args.input, "run.json"))
     if simulated and not args.output:
         ap.error("模拟评审要用 --output 给出页面写到哪个目录")
-    if simulated and not os.path.isfile(os.path.join(args.input, "results-v1.2.json")):
-        ap.error("这次模拟评审没有结果文件 results-v1.2.json（中止了，或者只估算），没有名次可写")
+    if simulated and not os.path.isfile(os.path.join(args.input, RESULTS_NAME)):
+        ap.error(f"这次模拟评审没有结果文件 {RESULTS_NAME}（中止了，或者只估算），没有名次可写")
     build(args.output or DEFAULT_OUTPUT, os.path.abspath(args.input))
 
 
