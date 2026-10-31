@@ -9,7 +9,9 @@
 - 1.0：第一版。
 - 1.1：硬伤只看对题目的直接回答（direct-answers.json）；两两比较不能否决由核验确认的硬伤。
 - 1.2：在 1.1 之上加评审细则第四节末尾的两条：有争议的标注按对领先一方最不利的方式计分；
-  重抽样只在至少一份参与排名的报告写到的要点中进行。分开的标准和名次区间的算法不变。
+  重抽样只在至少一份参与排名的报告写到的要点中进行。另按规则手册第八节第 4 条：两两比较中与前面结果
+  相反的次数至少占四分之三（向上取整：四次至少三次，两次就要两次）才改为并列，第 1.0、1.1 版要每次都相反。
+  分开的标准和名次区间的算法不变。
 
 有争议的标注写在要点池（pool.json）里：要点的 level 或 importance 写成候选列表，第一项是登记的标注，
 例如 "importance": ["一般", "核心"]。第 1.0、1.1 版只用第一项；净分（net、net_scores）也按第一项计。
@@ -165,6 +167,18 @@ def pairwise_winners(pw_files):
     return res
 
 
+def vetoes(wins, y):
+    """两两比较是否否决"排在 y 前面"这一结果。wins 是各次判定的胜者。
+    第 1.2 版（规则第八节第 4 条）：判 y 更好的次数至少占四分之三，向上取整，四次至少三次，两次就要两次；
+    第 1.0、1.1 版：每次都判 y 更好。"""
+    if not wins:
+        return False
+    against = sum(w == y for w in wins)
+    if V12:
+        return 4 * against >= 3 * len(wins)
+    return against == len(wins)
+
+
 def rank(reports, ratings, off, claims, timeliness, traceable, pool, pw, seed=0):
     hard = {r: hard_defects(r, off, claims, traceable) for r in reports}
     net = {w: {r: net_score(r, pool, lw, claims) for r in reports} for w, lw in LEVEL_W.items()}
@@ -248,7 +262,7 @@ def rank(reports, ratings, off, claims, timeliness, traceable, pool, pw, seed=0)
                 wins = pw.get(frozenset((x, y)), [])
                 # 第 1.1 版修订 3：两两比较不能否决由核验确认的硬伤
                 protected = DIRECT is not None and reason == "硬伤分档"
-                if wins and all(w == y for w in wins) and not protected:
+                if vetoes(wins, y) and not protected:
                     vetoed.add((x, y))
                 else:
                     above.add((x, y))

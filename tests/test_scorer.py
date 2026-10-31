@@ -81,11 +81,13 @@ class PilotDataTest(unittest.TestCase):
 ELEMENTS = ["①", "③", "④", "⑤", "⑦"]
 
 
-def write_question(folder, points, grades):
-    """把一道示意题写成计分程序读的文件：映射表、要点池、环节评级、断言核验、直接回答。
+def write_question(folder, points, grades, timeliness=None, pairwise=()):
+    """把一道示意题写成计分程序读的文件：映射表、要点池、环节评级、断言核验、直接回答、两两比较。
 
     points：要点列表，每条有 pid、level、importance、reach（报告 → 符合或相反）。
     grades：报告 → 五个环节（①③④⑤⑦）的档位。没有硬伤，没有来源不支持的结论。
+    timeliness：报告 → 时效的档位，不给的都记为 1。
+    pairwise：两两比较的各次判定，每次一项 (排在前面的报告, 排在后面的报告, 判定)，判定是 first、second 或 tie。
     返回 (映射表路径, 数据目录)。
     """
     data = os.path.join(folder, "data")
@@ -105,8 +107,11 @@ def write_question(folder, points, grades):
         "off_topic": {"value": False}} for r in reports}})
     dump(os.path.join(data, "verify-example.json"), {"reports": {r: {
         "claims": [{"id": f"{r}-c1", "core": True, "source_label": "支持", "correct": "正确"}],
-        "timeliness": {"score": 1}, "traceable_sources": True} for r in reports}})
+        "timeliness": {"score": (timeliness or {}).get(r, 1)}, "traceable_sources": True} for r in reports}})
     dump(os.path.join(data, "direct-answers.json"), {r: {"ids": [f"{r}-c1"]} for r in reports})
+    if pairwise:
+        dump(os.path.join(data, "pairwise-example.json"), {"pairs": [
+            {"first": a, "second": b, "verdict": v} for a, b, v in pairwise]})
     return mapping, data
 
 
@@ -136,6 +141,50 @@ class ContestedLabelTest(unittest.TestCase):
         # 在第一种权重下一号与二号的净分都是 0，不再领先，两份并列。
         disputed = self.score(self.points(["本质", "现象"], ["内部联系", "现象"], ["本质", "现象"]))
         self.assertEqual(disputed, {"一号": [1, 2], "二号": [1, 2]})
+
+
+class PairwiseVetoTest(unittest.TestCase):
+    """规则第八节第 4 条：两两比较只用来否决。四次中至少三次与前面的结果相反，这一对才改为并列；
+    比较次数不是四次时，相反的次数至少占四分之三，向上取整（两次就要两次都相反）。"""
+
+    # 一号比二号多写到三条深的核心要点，深度净分分开：一号第 1 名，二号第 2 名
+    GRADES = {"一号": (2, 0, 1, 1, 2), "二号": (2, 2, 1, 2, 1)}
+    POINTS = [
+        {"pid": "L1", "level": "现象", "importance": "核心", "reach": {"一号": "符合", "二号": "符合"}},
+        {"pid": "L4", "level": "本质", "importance": "核心", "reach": {"一号": "符合"}},
+        {"pid": "L5", "level": "内部联系", "importance": "一般", "reach": {"一号": "符合"}},
+        {"pid": "L6", "level": "本质", "importance": "核心", "reach": {"一号": "符合"}},
+    ]
+    SEPARATED = {"一号": [1, 1], "二号": [2, 2]}
+    TIED = {"一号": [1, 2], "二号": [1, 2]}
+
+    def score(self, pairwise, version="1.2"):
+        with tempfile.TemporaryDirectory() as tmp:
+            mapping, data = write_question(tmp, self.POINTS, self.GRADES, pairwise=pairwise)
+            return intervals(run_scorer(version, mapping, data))
+
+    # 每次判定写成 (排在前面的报告, 排在后面的报告, 判定)；"二号更好"就是与前面的结果相反
+    FOUR_WITH_THREE_AGAINST = [("一号", "二号", "second"), ("二号", "一号", "first"),
+                               ("一号", "二号", "second"), ("二号", "一号", "second")]
+    FOUR_WITH_TWO_AGAINST = [("一号", "二号", "second"), ("二号", "一号", "first"),
+                             ("一号", "二号", "first"), ("二号", "一号", "second")]
+
+    def test_three_of_four_against_turns_the_pair_into_a_tie(self):
+        self.assertEqual(self.score(self.FOUR_WITH_THREE_AGAINST), self.TIED)
+
+    def test_two_of_four_against_keeps_the_pair_apart(self):
+        self.assertEqual(self.score(self.FOUR_WITH_TWO_AGAINST), self.SEPARATED)
+
+    def test_with_two_comparisons_both_must_be_against(self):
+        both = [("一号", "二号", "second"), ("二号", "一号", "first")]
+        self.assertEqual(self.score(both), self.TIED)
+        one_and_a_draw = [("一号", "二号", "second"), ("二号", "一号", "tie")]
+        self.assertEqual(self.score(one_and_a_draw), self.SEPARATED)
+
+    def test_versions_1_0_and_1_1_still_need_every_comparison_against(self):
+        for version in ("1.0", "1.1"):
+            with self.subTest(version=version):
+                self.assertEqual(self.score(self.FOUR_WITH_THREE_AGAINST, version), self.SEPARATED)
 
 
 WALK = os.path.join(ROOT, "tests", "fixtures", "scorer-walkthrough")
