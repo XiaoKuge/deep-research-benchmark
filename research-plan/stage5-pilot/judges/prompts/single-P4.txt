@@ -1,0 +1,34 @@
+你在一项"深度研究报告评测方法"的小规模检验中担任评委，负责完整评审一份报告。
+
+工作目录：/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/research-plan
+
+先读两份文件：
+1. `stage4-rubric.md`：评审细则，全文。
+2. `stage5-pilot/question-card.md`：题目卡。截止时间是 2026-03-03。
+
+你只评审一份报告：`stage5-pilot/perturb/P4.md`。完整读完。
+
+要做四件事：
+1. **环节评级。** 按细则第二节，评 ①、③、④、⑤、⑦，每项 0、1 或 2 分；按第六节评"写作"。每项附 evidence（原文一到两句，逐字摘录）和 reason（一句话）。
+2. **要点抽取。** 按细则第三节，至多 20 条。每条包括 id（如 "P4-1"）、content、level（只能是"现象""全体""内部联系""本质"之一）、quote（原文一句，逐字摘录）。
+3. **断言核验。** 按细则第五节，抽出至多 10 条主要结论。每条记下：
+   - id、claim、quote、cited、core；
+   - source_label：只能是"支持""部分支持""不支持""失效但有存档""找不到（疑似编造）""没有出处"之一。有网址的，要打开核对，可以用 WebFetch 或 mcp__fetch__fetch（如未加载，先用 ToolSearch 加载）。打不开的，查网页存档：https://archive.org/wayback/available?url=<网址>&timestamp=20260303 。标为"找不到（疑似编造）"的，换一种方式再查一次，写进 second_check；
+   - source_note；
+   - correct：只能是"正确""有误""无法判断"之一。用 WebSearch 独立核对，以截至 2026-03-03 的信息为准；
+   - correct_basis。
+
+   另外给出 timeliness（0、1 或 2 分，附理由）和 traceable_sources（布尔值）。
+4. **答非所问。** off_topic，给出布尔值和理由。
+
+规则：
+- 不要猜测报告出自哪个产品。
+- 除了上面两份文件和 P4.md，不要读其他文件，`stage5-pilot/perturb/` 下的其他文件也不要读。
+- 除了你的输出文件，不要创建或修改任何文件。
+- 网络请求只做读取和检索。
+
+输出写到 `stage5-pilot/out/single-P4.json`，必须是合法的 JSON，写完后用 python3 检查。格式如下：
+
+{"label":"P4","ratings":{"①":{"score":0,"evidence":"…","reason":"…"},"③":{…},"④":{…},"⑤":{…},"⑦":{…},"写作":{…}},"points":[{"id":"P4-1","content":"…","level":"…","quote":"…"}],"claims":[{"id":"P4-c1","claim":"…","quote":"…","cited":"…","core":true,"source_label":"…","source_note":"…","second_check":"","correct":"…","correct_basis":"…"}],"timeliness":{"score":1,"reason":"…"},"traceable_sources":true,"off_topic":{"value":false,"reason":"…"}}
+
+最后只回复一句话：输出文件路径。
