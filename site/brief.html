@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赛事说明 · 深度研究评测基准</title>
+<meta name="description" content="深度研究赛项比什么、分几个阶段、每个阶段做什么、名次怎样公布。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：命名文字样式，字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, p { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, td, dd { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-3); }
+
+  /* 页首：回到资料站，四页之间跳转 */
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 16px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .pages a { padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); text-decoration: none; transition: background-color 300ms var(--ease), color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); color: var(--ink); }
+  .pages a[aria-current="page"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
+  .notice { max-width: 680px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+  .notice strong { color: var(--ink); font-weight: 600; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; max-width: 760px; }
+  .toc a { padding: 4px 12px; border-radius: 9999px; background: var(--surface); color: var(--ink); text-decoration: none; transition: background-color 300ms var(--ease); }
+  .toc a:hover { background: var(--line); }
+
+  /* 正文的每一节 */
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-bottom: 1px solid var(--line); max-width: 760px; }
+  .block:last-of-type { border-bottom: 0; }
+  .block .sum { margin-top: 12px; color: var(--ink-2); }
+  .prose { margin-top: 24px; }
+  .prose p + p, .prose p + ul, .prose ul + p, .prose p + ol, .prose ol + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
+  .prose strong { font-weight: 600; }
+  .refs { margin-top: 16px; color: var(--ink-3); }
+  .refs a { color: var(--ink-2); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 24px; }
+  .card { border: 1px solid var(--line); border-radius: 16px; padding: 24px; background: var(--raised); }
+  .card .tag { color: var(--ink-3); margin-bottom: 8px; }
+  .card ul { margin: 12px 0 0; padding-left: 24px; }
+  .card li + li { margin-top: 8px; }
+  .card .refs { margin-top: 16px; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); }
+  td:first-child { white-space: nowrap; }
+  .pending { color: var(--warn); font-weight: 600; white-space: nowrap; }
+  .done { color: var(--ok); font-weight: 600; white-space: nowrap; }
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  footer a { color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="index.html">← 回到资料站</a>
+    <nav class="pages body-5" aria-label="说明页面">
+      <a href="brief.html" aria-current="page">赛事说明</a>
+      <a href="start.html">上手</a>
+      <a href="news.html">公告</a>
+      <a href="faq.html">常见问题</a>
+    </nav>
+    <p class="eyebrow caption-1">深度研究赛项</p>
+    <h1 class="heading-3">赛事说明</h1>
+    <p class="body-3 lede">深度研究赛项比的是各参赛智能体就同一道题交出的报告。这一页讲清比什么、分几个阶段、每个阶段做什么、名次怎样公布。每一节末尾都指向比赛规则手册里的原文，以原文为准。</p>
+    <p class="body-6 notice"><strong>先说清楚：</strong>本页依据<a href="../notes/rules.html">《深度研究比赛规则手册》</a>草案第 3 版。标〔默认〕的条款，主办方还没有最终确认；标〔待定〕的日期、奖项和报名方式，还没有定，定下后在<a href="news.html">公告页</a>公布。</p>
+    <nav class="toc body-6" aria-label="本页目录">
+      <a href="#what">比什么</a>
+      <a href="#stages">两个阶段</a>
+      <a href="#schedule">日程、奖项与报名</a>
+      <a href="#run">运行</a>
+      <a href="#review">评审</a>
+      <a href="#ranking">名次与公布</a>
+      <a href="#appeals">申诉</a>
+      <a href="#groups">封闭组和开放组</a>
+      <a href="#spot-check">随机抽查</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+<section class="block" id="what" aria-labelledby="what-title">
+  <h2 class="heading-5" id="what-title">比什么</h2>
+  <p class="body-3 sum">比的是报告。重点是调研的深，前提是可靠。</p>
+  <div class="prose body-3">
+    <p><strong>深度研究</strong>，是以推进到本质、全体和内部联系为目标的调研。<strong>调研</strong>，是为了回答提问者的一个具体问题，用截至某一天已经存在的信息，系统地查找、甄别、分析和整合，得出有理有据的结论。</p>
+    <ul>
+      <li>每届出两道题：一道看似简单型，一道开放时效型。</li>
+      <li>每道题写成三个版本。评委版只给评委；提问版和裸题版交给智能体。所以每个智能体运行 2 道题 × 2 个版本，共 4 次。</li>
+      <li>每次运行交付一份书面报告，必须包含五个部分：主要结论、论证与解释、出处、把握程度、查找与来源说明。</li>
+      <li>名次只代表"在本届题目上的报告名次"，不代表智能体在一切任务上的能力。</li>
+      <li>篇幅、格式、引用条数、文笔不进入名次，写作好坏单独公布。搜索次数、用时和所用工具不统一，也不计分，它们属于智能体自身的能力。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_3">第一节 比什么</a>、<a href="../notes/rules.html#_5">第三节 题目</a>、<a href="../notes/rules.html#_8">第六节 交付要求</a></p>
+</section>
+
+<section class="block" id="stages" aria-labelledby="stages-title">
+  <h2 class="heading-5" id="stages-title">练习阶段和正式阶段</h2>
+  <p class="body-3 sum">练习题公开，正式题保密。名次只按正式阶段的两道题排。</p>
+  <div class="cards">
+    <div class="card body-3">
+      <p class="tag caption-3">练习阶段</p>
+      <h3 class="heading-6">练习题全文公开</h3>
+      <ul>
+        <li>练习题的三个版本和深度地图都能看到。目前只有一道，就是出题手册里的"中国最大的淡水湖"。</li>
+        <li>参赛队伍可以拿它对照交付要求自查报告；所有人都可以跟着它看一道题怎样从出题走到名次公布。</li>
+        <li>练习题只用来熟悉题目和评法，不进入名次。</li>
+      </ul>
+      <p class="refs caption-2"><a href="../notes/question-handbook.html#example-lake">出题手册实例一：中国最大的淡水湖</a> · <a href="walkthrough.html">一道题走完全程</a></p>
+    </div>
+    <div class="card body-3">
+      <p class="tag caption-3">正式阶段</p>
+      <h3 class="heading-6">两道正式题，赛前保密</h3>
+      <ul>
+        <li>一道看似简单型，一道开放时效型，由出题人独立出题。</li>
+        <li>赛前保密：运行开始时才交给智能体，全部运行结束前不对外公开。深度地图在运行前只公布校验值。</li>
+        <li>赛后公开：题目和深度地图全文随复核包公开，题目不再复用。</li>
+        <li>名次只按这两道题排。</li>
+      </ul>
+      <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_5">第三节 题目</a>、<a href="../notes/rules.html#_6">第四节 深度地图</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="schedule" aria-labelledby="schedule-title">
+  <h2 class="heading-5" id="schedule-title">日程、奖项与报名</h2>
+  <p class="body-3 sum">按一届的先后排列。日期、奖项和报名方式都还没有定。</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>事项</th><th>时间</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>练习题公开</td><td><span class="done">已公开</span></td><td>淡水湖一题，见出题手册实例一。</td></tr>
+        <tr><td>冻结截止</td><td><span class="pending">〔待定〕</span></td><td>运行日前 7 天〔默认〕。截止前提交冻结申报表，此后不得修改智能体。</td></tr>
+        <tr><td>运行日</td><td><span class="pending">〔待定〕</span></td><td>封闭组的全部运行在这一天完成，截止时间就是这一天。</td></tr>
+        <tr><td>开放组运行日</td><td><span class="pending">〔待定〕</span></td><td>封闭组全部运行结束后，另定一天〔默认〕。</td></tr>
+        <tr><td>临时名次和复核包</td><td><span class="pending">〔待定〕</span></td><td>评审结束后同时公布。</td></tr>
+        <tr><td>申诉期</td><td><span class="pending">〔待定〕</span></td><td>临时名次公布后 7 天〔默认〕。</td></tr>
+        <tr><td>最终名次</td><td><span class="pending">〔待定〕</span></td><td>申诉期结束、申诉处理完毕后公布。</td></tr>
+        <tr><td>奖项</td><td><span class="pending">〔待定〕</span></td><td>奖项需要唯一名次时，并列的两份由独立专家两两判断决定，不用写作好坏决定。</td></tr>
+        <tr><td>报名方式</td><td><span class="pending">〔待定〕</span></td><td>定下后在公告页公布。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="refs caption-2">日程有变动，在<a href="news.html">公告页</a>公布。</p>
+</section>
+
+<section class="block" id="run" aria-labelledby="run-title">
+  <h2 class="heading-5" id="run-title">运行</h2>
+  <p class="body-3 sum">全部运行由主办方统一进行〔默认〕。参赛队伍在运行前看不到题目，运行中也不接触智能体。</p>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>冻结与申报。</strong>每支队伍在冻结截止前把智能体冻结，并提交冻结申报表：版本号或代码提交号、系统提示词全文、所用模型、工具清单、格式转换方式、调用接口或程序包。此后到比赛结束不得修改。</li>
+      <li><strong>题目原样输入。</strong>题目文本原样作为智能体收到的唯一输入，任何人都不得针对某一道题改写。</li>
+      <li><strong>同一天，新会话。</strong>全部运行在同一天完成，截止时间就是运行当日。每次运行从全新的会话开始，不保留其他运行的记忆。</li>
+      <li><strong>输入逐字核对。</strong>运行日志中的输入要与题目文本逐字一致，用校验值比对。</li>
+      <li><strong>不交互。</strong>智能体提问或要求确认研究计划时，一律回复："题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。"</li>
+      <li><strong>时长上限 120 分钟〔默认〕。</strong>超时以届时已交付的内容为准；没有交付的，这次运行记为未交付。</li>
+      <li><strong>故障重跑〔默认〕。</strong>因主办方运行环境的故障中断的，允许重跑一次；智能体自身出错不重跑。</li>
+      <li><strong>日志和存档。</strong>保存每次运行的输入、输出和起止时间；报告引用的网页在运行后 24 小时内存档，附存档时间和校验值。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_4">第二节 冻结与申报</a>、<a href="../notes/rules.html#_7">第五节 运行</a></p>
+</section>
+
+<section class="block" id="review" aria-labelledby="review-title">
+  <h2 class="heading-5" id="review-title">评审</h2>
+  <p class="body-3 sum">评审分五步，评委看不到队伍名和产品名。</p>
+  <div class="prose body-3">
+    <ol>
+      <li><strong>预处理。</strong>统一格式，去掉队伍名和产品名，原件另存。</li>
+      <li><strong>断言核验。</strong>带来源的结论全部打开来源核对，另加至多 10 条不带来源的主要结论。每条记来源标签和对错标签，"找不到"要经第二次核查才算确认编造。</li>
+      <li><strong>要点池。</strong>合并深度地图和全部报告的要点，逐条判定对不对、切不切题、深到哪一层、重不重要。</li>
+      <li><strong>环节评级。</strong>切题与真实需要、查找过程的交代、甄别来源与处理矛盾、分析、结论与把握，各评 0、1、2 档，每个评级都要引报告原文为证。</li>
+      <li><strong>两两比较。</strong>只用来核对名次。</li>
+    </ol>
+    <p><strong>评委组。</strong>至少三家厂商的模型担任评委，每个评委评两次，判定取中位数或多数。全部关键判定由人工审计，另随机抽查一成。关键判定，指把它反过来，相邻两份报告的先后就会改变的判定。</p>
+    <p><strong>现阶段</strong>还没有真人评委，评审由大模型程序按评审细则模拟，怎样运行见<a href="start.html#simulation">上手页</a>。</p>
+  </div>
+  <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_9">第七节 评审</a> · <a href="../notes/plan-stage4-rubric.html">评审细则第 1.2 版</a></p>
+</section>
+
+<section class="block" id="ranking" aria-labelledby="ranking-title">
+  <h2 class="heading-5" id="ranking-title">名次与公布</h2>
+  <p class="body-3 sum">公布的是名次区间，例如"第 1 至 2 名"，不硬排第几名。</p>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>两个版本。</strong>主名次用提问版的报告；裸题版的名次按同样的规则另行公布，并说明两者是否一致。</li>
+      <li><strong>每道题内的排法。</strong>有硬伤的报告排在没有硬伤的之后；同一档内比深度净分，写对的、切题的要点得分，写错的扣分；分不开时比五个环节的评级；两两比较只能把一对改为并列。</li>
+      <li><strong>分开的标准。</strong>换三种层级权重、并且在至少九成的 1,000 次重抽样中先后都相同，才算分开。有争议的标注〔默认〕按对领先一方最不利的方式计分，只能让一对报告并列，不能把它们拉开。</li>
+      <li><strong>两道题合并〔默认〕。</strong>一对智能体至少在一道题上分开、在另一道题上不反向，才算在总名次上分开。</li>
+      <li><strong>先临时，后最终。</strong>先公布临时名次和复核包；申诉期结束、申诉处理完毕后，公布最终名次。</li>
+      <li><strong>注明规则版本〔默认〕。</strong>每届开始前公布这一届用的规则版本，届中不改；名次注明依据哪一版。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_10">第八节 名次与公布</a> · 算一遍的例子：<a href="walkthrough.html">一道题走完全程</a></p>
+</section>
+
+<section class="block" id="appeals" aria-labelledby="appeals-title">
+  <h2 class="heading-5" id="appeals-title">申诉</h2>
+  <p class="body-3 sum">临时名次公布后有 7 天〔默认〕申诉期，对所有参赛队伍同等开放。</p>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>复核包与临时名次同时公开。</strong>里面有三个版本的题目和深度地图全文、冻结申报表、原始报告和运行日志、被引网页的存档、全部评委提示词和原始输出、要点池及每条判定的依据、计分代码和名次。</li>
+      <li><strong>互查〔默认〕。</strong>申诉期内，各队都能看到所有队伍的报告和全部判定，不只是自己的，也可以对别家报告的具体判定提异议。</li>
+      <li><strong>指向具体判定。</strong>申诉和异议都必须指向某一条具体判定，并附证据；笼统的"评得不公"不受理。</li>
+      <li><strong>裁决与重算。</strong>由不参与评分的申诉专员裁决，结果公开。改变的判定经计分代码重算，可能影响其他队伍的名次。</li>
+    </ul>
+  </div>
+  <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_11">第九节 申诉与复核</a></p>
+</section>
+
+<section class="block" id="groups" aria-labelledby="groups-title">
+  <h2 class="heading-5" id="groups-title">封闭组和开放组〔默认〕</h2>
+  <p class="body-3 sum">参赛分两组。每支队伍在冻结截止前选定参加哪一组，也可以两组都参加，两组分别申报、分别运行。</p>
+  <div class="cards">
+    <div class="card body-3">
+      <p class="tag caption-3">封闭组</p>
+      <h3 class="heading-6">看到题目后不做调整</h3>
+      <ul>
+        <li>题目原文原样作为唯一输入，看到题目后不做任何针对题目的调整。</li>
+        <li>主名次只在封闭组内排。</li>
+      </ul>
+    </div>
+    <div class="card body-3">
+      <p class="tag caption-3">开放组</p>
+      <h3 class="heading-6">看到题目后可以调整</h3>
+      <ul>
+        <li>允许看到题目后改写题目文本、修改配置或提示词、针对某道题单独配置；运行中人工干预仍不允许。</li>
+        <li>封闭组全部运行结束后才拿到题目，另定一天统一运行。</li>
+        <li>每一处调整在运行前申报，随复核包公开。</li>
+        <li>名次单独公布，不与封闭组比较。</li>
+      </ul>
+    </div>
+  </div>
+  <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_4">第二节 冻结与申报</a></p>
+</section>
+
+<section class="block" id="spot-check" aria-labelledby="spot-title">
+  <h2 class="heading-5" id="spot-title">随机抽查〔默认〕</h2>
+  <p class="body-3 sum">每届随机抽一支队伍，核对它的运行方式和输入与冻结申报一致。</p>
+  <div class="prose body-3">
+    <p>全部运行结束后，主办方用这支队伍冻结申报的版本重跑一道题，核对两件事：调用方式和格式转换与申报表相符；经格式转换后的输入与题目文本逐字一致。重跑的报告只用来核对，不计分。抽签方式和结果写入复核包。</p>
+    <p>查出不一致，原因在队伍的，视同冻结后修改，取消该队全部成绩；原因在主办方的，该队受影响的运行各重跑一次。</p>
+  </div>
+  <p class="refs caption-2">原文：规则手册<a href="../notes/rules.html#_7">第五节 运行</a>、<a href="../notes/rules.html#_12">第十节 违规与处理</a></p>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap caption-2">
+    <span>深度研究评测基准 · 本地资料站 · 2026 年 10 月 30 日</span>
+    <nav aria-label="说明页面"><a href="brief.html">赛事说明</a><a href="start.html">上手</a><a href="news.html">公告</a><a href="faq.html">常见问题</a><a href="index.html">资料站首页</a></nav>
+  </div>
+</footer>
+</body>
+</html>

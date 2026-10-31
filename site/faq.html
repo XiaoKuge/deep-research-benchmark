@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>常见问题 · 深度研究评测基准</title>
+<meta name="description" content="资料站和出题手册的常见问题，按出题、参赛、评审分三组。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：命名文字样式，字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, p { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, td, dd { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-3); }
+
+  /* 页首：回到资料站，四页之间跳转 */
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 16px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .pages a { padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); text-decoration: none; transition: background-color 300ms var(--ease), color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); color: var(--ink); }
+  .pages a[aria-current="page"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
+  .notice { max-width: 680px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+  .notice strong { color: var(--ink); font-weight: 600; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; max-width: 760px; }
+  .toc a { padding: 4px 12px; border-radius: 9999px; background: var(--surface); color: var(--ink); text-decoration: none; transition: background-color 300ms var(--ease); }
+  .toc a:hover { background: var(--line); }
+
+  /* 正文的每一节 */
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-bottom: 1px solid var(--line); max-width: 760px; }
+  .block:last-of-type { border-bottom: 0; }
+  .block .sum { margin-top: 12px; color: var(--ink-2); }
+  .prose { margin-top: 24px; }
+  .prose p + p, .prose p + ul, .prose ul + p, .prose p + ol, .prose ol + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
+  .prose strong { font-weight: 600; }
+  .refs { margin-top: 16px; color: var(--ink-3); }
+  .refs a { color: var(--ink-2); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 24px; }
+  .card { border: 1px solid var(--line); border-radius: 16px; padding: 24px; background: var(--raised); }
+  .card .tag { color: var(--ink-3); margin-bottom: 8px; }
+  .card ul { margin: 12px 0 0; padding-left: 24px; }
+  .card li + li { margin-top: 8px; }
+  .card .refs { margin-top: 16px; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); }
+  td:first-child { white-space: nowrap; }
+  .pending { color: var(--warn); font-weight: 600; white-space: nowrap; }
+  .done { color: var(--ok); font-weight: 600; white-space: nowrap; }
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  footer a { color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  /* 本页：问答，与资料站首页的问答同一种样式 */
+  .i { width: 20px; height: 20px; flex: none; fill: currentColor; }
+  .faq { margin-top: 16px; }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .i { color: var(--ink-3); transition: transform 300ms var(--ease); margin-top: 2px; }
+  .faq details[open] summary .i { transform: rotate(45deg); }
+  .faq .ans { padding-bottom: 16px; color: var(--ink-2); }
+  .faq .ans p + p { margin-top: 8px; }
+  .faq .ans strong { color: var(--ink); font-weight: 600; }
+  .faq .ans .from { color: var(--ink-3); }
+  .faq .ans .from a { color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { .faq summary .i { transition: none; } }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="i-plus" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></symbol></svg>
+<a class="skip caption-1" href="#main">跳到正文</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="index.html">← 回到资料站</a>
+    <nav class="pages body-5" aria-label="说明页面">
+      <a href="brief.html">赛事说明</a>
+      <a href="start.html">上手</a>
+      <a href="news.html">公告</a>
+      <a href="faq.html" aria-current="page">常见问题</a>
+    </nav>
+    <p class="eyebrow caption-1">深度研究赛项</p>
+    <h1 class="heading-3">常见问题</h1>
+    <p class="body-3 lede">资料站首页的问答和出题手册的常见问题，合在这一页，按出题、参赛、评审分成三组。答案保持原意，每一条都注明原处；规则后来有变动的，另加补充。</p>
+    <nav class="toc body-6" aria-label="本页目录">
+      <a href="#setting">出题</a>
+      <a href="#competing">参赛</a>
+      <a href="#reviewing">评审</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+<section class="block" id="setting" aria-labelledby="setting-title">
+  <h2 class="heading-5" id="setting-title">出题</h2>
+  <p class="body-3 sum">题目怎样写、深度地图怎样写、写到什么程度为止。</p>
+  <div class="faq">
+    <details id="q-hard"><summary class="title-3">题目越难越好吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>不是。深是调研的深，不是题目的难。实例一人人看得懂，照样能分出深浅。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-why-asker"><summary class="title-3">真实用户很少写明自己是谁，题目为什么要写？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>评委要有参照，才能判断切不切题。交给智能体的提问版用提问者的口吻写成一两句话；另外每道题再跑一个只有问题本身的裸题版，名次单独公布，看两者是否一致。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a></p>
+    </div></details>
+
+    <details id="q-real-use"><summary class="title-3">真实使用时，用户很少写明自己是谁、要做什么。题目这样写，符合真实场景吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>不完全符合。真实请求往往只有一句话：DRACO 论文举的一条 Perplexity 用户原话是"tax efficient investing with irregular freelance income base on my situation"，说了"按我的情况"，却没说是什么情况。产品也常常反问，补的正是读者、范围、用途这类信息。评委版仍然写明提问者和用途，是因为评委要有参照，才能判断切不切题；基础级又不允许交互，所以交给智能体的题目相当于"澄清之后的提问"。这个取舍的代价是，基础级测不到"从一句话里推断真实需要"。所以我们做了三件事：交给智能体的是提问者口吻的一两句话，不是带标签的表格；每道题另跑一个只有问题本身的裸题版，名次单独公布，看两者是否一致；"从一句话推断需要"留给进阶的交互形态专门去测。统一的交付要求也不是真实用户会提的，它是为了让评委能评、让各家可比。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-cutoff"><summary class="title-3">为什么截止时间定在运行当天？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>所有智能体在同一天运行，截止时间取当天，就不会出现"用了截止之后的材料"的问题。评委判断对错和新旧，也以这一天为准。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-multimodal"><summary class="title-3">可以出带图片、要多轮对话的题吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>出题手册只讲基础级：只用文字，一次给全，不交互。带图片或文件的多模态题、允许多轮对话的交互题，是两种不同的进阶形态，以后另写。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-map-what"><summary class="title-3">深度地图是什么？它会不会让评分不客观？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>它是出题人在看到报告之前写下的浅答案、转折点和核心要点，只给评委。它是必需的，但不是标准答案：地图上没有、但正确又切题的要点同样得分。</p>
+      <p>地图上写了而没人写到的要点，对每份报告都是零分，不影响名次；它影响分数只通过预先登记的层级和重要性，有争议的标注按对领先一方最不利的方式计分。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a>。更详细的说明见下一问。</p>
+    </div></details>
+
+    <details id="q-map-optional"><summary class="title-3">深度地图是不是可有可无？它写多写少有弹性，会不会让评分不客观、不权威？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>不是可有可无。它是必需的，但不是标准答案，三个用处见<a href="../notes/question-handbook.html#halves">出题手册第二节</a>。至于弹性，要分开看地图影响名次的两条路。</p>
+      <p><strong>第一条路：地图上写了哪些要点。</strong>这一条不影响名次。地图上写了、却没有一份报告写到的要点，对每一份报告都是零分；有报告写到的要点，本来就会进入要点池。我们在第一次试评的数据上核对过：去掉地图上那 2 条谁都没写到的要点，6 份报告的净分和名次完全不变。规则还规定，估计名次有多大把握时的重抽样，只在至少一份报告写到的要点中进行。这样，地图写多写少，对名次的影响严格为零。</p>
+      <p><strong>第二条路：地图给要点标的层级和重要性。</strong>这一条会影响分数，所以规则把它管住：地图上的标注是事先登记的默认值，评委组改动要写依据；地图上没有的要点，评委判定时看不到它出自哪份报告、出自几份报告，判为核心的列入人工审计；有争议的标注，包括评委组改动过的地图标注，在比较两份报告时，按对领先一方最不利的方式再算一遍，仍然领先才算分开。也就是说，有争议的判定只能让两份报告并列，不能把它们拉开。试评中，把地图上 8 条要点的重要性全部反过来，名次不变；把全部 122 条要点的重要性抹平，原来分开的 12 对报告中有 1 对变成分不开。信息检索评测有过类似的研究：不同评委对"相关不相关"的判断常常不一致，但给检索系统排出的先后大体一致<a href="../notes/question-handbook.html#ref8">[8]</a>。</p>
+      <p><strong>剩下的弹性在出题人这一侧。</strong>地图漏掉核心要点，评委就要在看过报告之后再定。所以<a href="../notes/question-handbook.html#steps">出题手册第三节</a>写明了写到什么程度为止；赛后还要数一数，评委判为核心、地图上却没有的要点有几条，每道题超过 1 条〔默认〕，就在审计结果里记为"地图核心要点不全"。试评那张地图就不合格：评委判为核心的 11 条要点中，有 8 条地图上没有。这可能是地图漏了，也可能是评委把核心判宽了，审计就是要把这种情况摆出来查。</p>
+      <p><strong>权威性</strong>来自两点：地图在运行前封存、赛后公开，谁都能核对它没有被改过；每一个分开的名次，都不依赖任何有争议的判定。代价是分开的名次可能变少。"最不利重算"这条规则还没有在真实比赛中检验过，计分程序也还要按它更新。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-map-trust"><summary class="title-3">凭什么相信能写出好的深度地图？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>不能事先保证，只能把要求写清楚、把关设够，让问题能被发现。要求是<a href="../notes/question-handbook.html#steps">出题手册第三节</a>"写到什么程度为止"的五条。关有五道：入选条件（至少一处转折点落在内部联系或本质层，每条附出处）；两位出题人独立编写，用数鱼的办法判断核心要点写全了没有；领域专家审阅；运行前公布地图的校验值、赛后公开全文，证明没有看了报告再改；赛后统计评委判为核心、地图上却没有的要点有几条。地图偏弱，后果有两种：一是放过一道浅题，各家拉不开差距；二是核心要点漏得多，评委要在看过报告之后再定，判定不如事先登记的好。后一种会被赛后审计数出来。这五道关够不够，要等第一届的审计数字来回答。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-map-full"><summary class="title-3">深度地图要写得很全吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>核心要点要全，一般要点不求全。地图上谁都没写到的要点不影响名次，所以一般要点多写无益；核心要点漏了，评委就要在看过报告之后再定。写到什么程度为止，见<a href="../notes/question-handbook.html#steps">出题手册第三节</a>的五条；核心要点写全了没有，用数鱼的办法判断。实例一写了 8 条，其中核心 4 条。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-map-wrong"><summary class="title-3">深度地图写错了怎么办？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>对错一律看来源，地图上的事实错误会在评审时被发现。地图标错了层级或重要性，评委组可以改，但要写依据；改动过的标注算有争议，只能让名次并列，不能把名次拉开。所以每条都要附出处，把握不足的要标明。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+  </div>
+</section>
+
+<section class="block" id="competing" aria-labelledby="competing-title">
+  <h2 class="heading-5" id="competing-title">参赛</h2>
+  <p class="body-3 sum">智能体能不能按题调整、运行时怎样应对、什么会影响名次。</p>
+  <div class="faq">
+    <details id="q-tune"><summary class="title-3">参赛队伍能不能看了题目再改提示词？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>不能。智能体在题目公布前冻结并申报，由主办方统一运行，题目文本原样作为唯一输入，运行日志里的输入要逐字核对。</p>
+      <p><strong>补充：</strong>规则手册草案第 3 版另设开放组〔默认〕，允许看到题目后调整智能体，但每一处调整都要在运行前申报，并随复核包公开；开放组的名次单独公布，不与封闭组比较。主名次只在封闭组内排，封闭组仍然不能改。见<a href="brief.html#groups">赛事说明：封闭组和开放组</a>。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a></p>
+    </div></details>
+
+    <details id="q-rewrite"><summary class="title-3">智能体的开发者能不能根据题目里的提问者和用途，去改写提示词？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>不能针对题目改。题目文本原样作为智能体收到的唯一输入，一次给全；任何人都不能针对某一道题改写、补充或删减，开发者不行，主办方也不行。开发者能做的，是在看到题目之前把智能体定下来：系统提示词、检索策略、工作流程，所有题目都用同一套，其中也可以让智能体专门利用提问者和用途这两类信息。理由有三：理解提问者要什么，本身就是被测的能力，看了题再改写，测到的是人；改写时很难不把"往哪里挖"写进去；各家收到的输入要逐字相同，名次才可比。为了让这条规则能执行，比赛规则规定参赛方在题目公布前冻结并申报智能体，由主办方统一运行，运行日志里的输入要和题目文本逐字一致，见<a href="../notes/rules.html">《深度研究比赛规则手册》</a>第二节和第五节。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a>。开放组的例外见上一问的补充。</p>
+    </div></details>
+
+    <details id="q-asks-back"><summary class="title-3">智能体反问我，或者要我确认研究计划，怎么办？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>一律回复："题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。"界面只能点"批准计划"的，直接批准，不作修改。记下它问了什么。</p>
+      <p>正式比赛由主办方统一运行，这条统一答复写在<a href="../notes/rules.html#_7">规则手册第五节</a>和附录二。</p>
+      <p class="from caption-2">原处：<a href="../notes/question-handbook.html#faq">出题手册第九节</a></p>
+    </div></details>
+
+    <details id="q-length"><summary class="title-3">篇幅长、引用多，会加分吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>不会。篇幅、格式、引用条数、文笔都不进入名次；同一个要点写多遍也不加分。写作好坏单独公布。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a></p>
+    </div></details>
+
+    <details id="q-open-local"><summary class="title-3">怎样在本机打开这些材料？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>双击 site 文件夹里的 index.html 就是资料站首页，其余材料点链接即可。文献索引的留言功能需要先运行 serve.py。全部材料都在本机，不需要联网，也不需要登录。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a></p>
+    </div></details>
+  </div>
+</section>
+
+<section class="block" id="reviewing" aria-labelledby="reviewing-title">
+  <h2 class="heading-5" id="reviewing-title">评审</h2>
+  <p class="body-3 sum">评委靠不靠得住、名次怎样定、评法检验到了哪一步。</p>
+  <div class="faq">
+    <details id="q-existing"><summary class="title-3">为什么不直接用现有的评测工具？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>我们逐一审视了 18 个，没有一个能直接用。最常见的问题是：评委判得对不对没人核对；名次差距比误差还小；写错不扣分。详见<a href="../notes/plan-stage2-summary.html">第二阶段汇总</a>。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a></p>
+    </div></details>
+
+    <details id="q-ai-judges"><summary class="title-3">评委是 AI，怎样保证判得对？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>评委至少来自三家厂商，每个评委评两次。关键判定，也就是反过来就会改变相邻名次的判定，全部人工审计，另外随机抽查一成。每个判定都要引报告原文或来源为证。</p>
+      <p><strong>补充：</strong>现阶段还没有真人评委，评审由大模型程序模拟，用 Claude、Codex、Kimi 三家模型，每一次调用的提示词和回答原文都留记录。见<a href="start.html#simulation">上手页</a>。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a></p>
+    </div></details>
+
+    <details id="q-intervals"><summary class="title-3">为什么公布名次区间，不直接排第几名？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>两份报告要算分开，得过两道检查：换三种算分口径都领先；从要点池里随机换一批要点重新计分，重复一千次，至少九成仍然领先。分不开的就并列，公布成"第 1 至 2 名"这样的区间，不硬排。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a></p>
+    </div></details>
+
+    <details id="q-tested"><summary class="title-3">这套评法检验过了吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3">
+      <p>只做过一次小规模试评，8 条验收标准通过 4 条，据此改成第 1.1 版。第 1.1 版的正式检验还要一批按规程新收集的报告；深度地图一节的第 1.2 版修订也还没有检验。</p>
+      <p class="from caption-2">原处：<a href="index.html#faq">资料站首页的问答</a> · 试评经过见<a href="../notes/plan-stage5-report.html">第五阶段报告</a></p>
+    </div></details>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap caption-2">
+    <span>深度研究评测基准 · 本地资料站 · 2026 年 10 月 30 日</span>
+    <nav aria-label="说明页面"><a href="brief.html">赛事说明</a><a href="start.html">上手</a><a href="news.html">公告</a><a href="faq.html">常见问题</a><a href="index.html">资料站首页</a></nav>
+  </div>
+</footer>
+
+<script>
+// 从别处链接到某一问时，自动展开它
+(function () {
+  function openTarget() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    if (el && el.tagName === 'DETAILS') el.open = true;
+  }
+  window.addEventListener('hashchange', openTarget);
+  openTarget();
+})();
+</script>
+</body>
+</html>
