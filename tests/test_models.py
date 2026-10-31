@@ -2,8 +2,8 @@
 
 一律用假的命令行程序和回放方式，不真的调用模型。
 假程序把收到的参数、标准输入和工作目录记到同目录的 invocations.jsonl，
-再按各家命令行的输出格式给出一段回答。google（agy）的输出格式按帮助信息和更新记录写成，
-尚未经真实调用确认（见 tools/models.md）。
+再按各家命令行的输出格式给出一段回答。假 agy 的输入要求和输出格式照登录后真实调用查明的写
+（2026 年 10 月，见 tools/models.md 的 google 一节）：参数和标准输入不合要求时像真的 agy 一样报错退出。
 """
 import json
 import os
@@ -63,27 +63,44 @@ elif VENDOR == "kimi":
                       "content": [{{"type": "think", "think": "想一想"}},
                                   {{"type": "text", "text": REPLY}}]}}, ensure_ascii=False))
 elif VENDOR == "google":
-    tools = []
-    for line in seen.get("agent_md", "").splitlines():
-        if line.startswith("tools:"):
-            tools = json.loads(line[len("tools:"):])
-    init = {{"type": "init", "model": "gemini-fake-1", "tools": GOOGLE.get("tools", tools)}}
-    if GOOGLE.get("drop_tools"):
-        del init["tools"]
-    print(json.dumps(init, ensure_ascii=False))
-    print(json.dumps({{"type": "step_update", "step_type": "PLANNER_RESPONSE"}}))
-    result = {{"type": "result", "response": REPLY}}
+    def fail(message):
+        sys.stderr.write(message + "\n")
+        sys.exit(1)
+    if "-p" not in args or args.index("-p") + 1 >= len(args):
+        fail("flag needs an argument: -p")
+    stream = "--input-format" in args and args[args.index("--input-format") + 1] == "stream-json"
+    if not stream:
+        fail("假 agy 只按流式输入运行")
+    if args[args.index("-p") + 1] != "":
+        fail("流式输入时命令行上不能再给提示词")
+    for line in stdin.splitlines():
+        message = json.loads(line)
+        for field in ("event", "message"):
+            if field not in message:
+                fail('missing the "%s" field' % field)
+    model = GOOGLE.get("model") or (args[args.index("--model") + 1] if "--model" in args
+                                    else "gemini-fake-1")
+    # 启动事件列出 agy 注册过的全部工具（真的有 60 个），与智能体文件里配置的工具无关
+    registered = ["run_command", "view_file", "write_to_file", "search_web", "read_url_content"]
+    print(json.dumps({{"event": "init", "init": {{"model": model, "cwd": os.getcwd(),
+                                                "tools": registered}}}}, ensure_ascii=False))
+    for index, step in enumerate(GOOGLE.get("steps", ["user_input", "agent_response"])):
+        for state in ("ACTIVE", "DONE"):
+            print(json.dumps({{"event": "step_update", "step_update": {{
+                "step_index": index, "state": state, "step_type": step, "usage": {{}}}}}}))
+    result = {{"status": "SUCCESS", "response": REPLY, "num_turns": 1,
+              "usage": {{"input_tokens": 442}}}}
     result.update(GOOGLE.get("result", {{}}))
     if not GOOGLE.get("no_result"):
-        print(json.dumps(result, ensure_ascii=False))
+        print(json.dumps({{"event": "result", "result": result}}, ensure_ascii=False))
 '''
 
 
 def make_fake(directory, vendor, reply="好", exit_code=0, sleep=0, google=None):
     """在 directory 下写一个名叫 vendor 的假命令行程序，返回它的路径。
 
-    google 是给假 agy 的改动：tools 换掉启动事件里的工具列表，drop_tools 去掉工具列表，
-    result 并进结果事件，no_result 不输出结果事件。
+    google 是给假 agy 的改动：model 换掉启动事件报告的模型，steps 换掉步骤类型的序列
+    （默认是 user_input、agent_response），result 并进结果事件，no_result 不输出结果事件。
     """
     path = os.path.join(directory, vendor)
     with open(path, "w", encoding="utf-8") as f:
@@ -143,14 +160,23 @@ class LiveCallTest(FakeProgramCase):
         self.assertEqual(answer, "泄露检查：没有发现")
         self.assertEqual(invocations(self.fakes)[0]["stdin"], "两个版本")
 
-    def test_google_call_returns_the_response_of_the_result_event(self):
-        run = self.live_run(reply="出题调研：找到三处来源")
-        answer, _ = run.call(task="出题-调研", vendor="google", prompt="调研这个题目",
-                             tools=models.WEB_READ_ONLY)
-        self.assertEqual(answer, "出题调研：找到三处来源")
+    def test_google_call_sends_the_prompt_as_one_json_line_and_returns_the_response(self):
+        run = self.live_run(reply="评审意见：通过")
+        prompt = "评审这份报告\n第二行带\"引号\"\r\n第三行\u2028第四行"
+        answer, record = run.call(task="评审", vendor="google", prompt=prompt,
+                                  tools=models.MATERIALS_ONLY)
+        self.assertEqual(answer, "评审意见：通过")
         seen = invocations(self.fakes)[0]
-        self.assertEqual(seen["stdin"], "调研这个题目")
-        self.assertNotIn("调研这个题目", seen["args"])
+        args = seen["args"]
+        self.assertEqual(value_after(args, "--input-format"), "stream-json")
+        self.assertEqual(value_after(args, "--output-format"), "stream-json")
+        self.assertEqual(args[-2:], ["-p", ""])  # -p 必须带值，流式输入时给空串
+        self.assertNotIn(prompt, args)
+        self.assertTrue(seen["stdin"].endswith("\n"))
+        self.assertEqual(len(seen["stdin"].splitlines()), 1)  # 提示词里的各种换行都转义在 JSON 里
+        self.assertEqual(json.loads(seen["stdin"]),
+                         {"event": "user", "message": {"role": "user", "content": prompt}})
+        self.assertEqual(record["prompt"], prompt)  # 调用记录仍记原始提示词
 
 
 def value_after(args, flag):
@@ -237,7 +263,8 @@ class ToolLimitTest(FakeProgramCase):
     def test_google_materials_only_uses_an_agent_with_no_tools(self):
         seen = self.args_for("google", models.MATERIALS_ONLY)
         args = seen["args"]
-        self.assertEqual(args[-1], "-p")  # 不带值的 -p：提示词从标准输入读
+        self.assertEqual(args[-2:], ["-p", ""])  # 提示词走流式输入，不放在命令行上
+        self.assertEqual(value_after(args, "--input-format"), "stream-json")
         self.assertEqual(value_after(args, "--output-format"), "stream-json")
         self.assertEqual(value_after(args, "--agent"), "materials-only")
         for flag in ("--sandbox", "--disable-slash-commands"):
@@ -342,23 +369,26 @@ class CallRecordTest(FakeProgramCase):
         self.assertEqual(len(read_log(self.log)), 2)
 
 
-    def test_google_record_has_company_reported_model_and_tools_and_the_agent_file(self):
+    def test_google_record_has_company_reported_model_and_the_agent_file(self):
         run = self.live_run(reply="好")
         _, record = run.call(task="试探", vendor="google", prompt="你好",
-                             tools=models.WEB_READ_ONLY)
+                             tools=models.WEB_READ_ONLY, model="gemini-4-argon-low")
         self.assertEqual(set(record), RECORD_FIELDS)
         self.assertEqual(read_log(self.log), [record])
         self.assertEqual(record["vendor"], "google")
         self.assertEqual(record["company"], "Google")
         self.assertEqual(record["status"], "成功")
         self.assertEqual(record["answer_sha256"], SHA256_HAO)
-        self.assertEqual(record["reported_model"], "gemini-fake-1")
-        self.assertEqual(record["reported_tools"], ["search_web", "read_url_content"])
+        self.assertEqual(record["prompt"], "你好")
+        self.assertEqual(record["prompt_sha256"], SHA256_NIHAO)
+        self.assertEqual(record["reported_model"], "gemini-4-argon-low")
+        # 启动事件列的是 agy 注册过的全部工具，不是这个智能体能用的工具，所以不记
+        self.assertIsNone(record["reported_tools"])
         agent_md = record["config_files"]["work/.agents/agents/web-read-only/agent.md"]
         self.assertEqual(json.loads(frontmatter(agent_md)["tools"]),
                          ["search_web", "read_url_content"])
         self.assertEqual(record["command"][0], run.programs["google"])
-        self.assertIn('"type": "result"', record["raw_output"])
+        self.assertIn('"event": "result"', record["raw_output"])
 
 
 def write_log(path, records):
@@ -519,11 +549,11 @@ class FailureTest(FakeProgramCase):
 
 
 class GoogleCheckTest(FakeProgramCase):
-    """agy 的工具限定和输出格式都还没有经过真实调用确认，所以每次调用都按 agy 自己的报告核实；
-    核实不了或不符合，就记为失败并写明原因，不把回答交出去。"""
+    """按 agy 自己的报告核实每次调用（报告的格式见 tools/models.md 的 google 一节）；
+    不符合就记为失败并写明原因，不把回答交出去。"""
 
-    def google_call(self, limit=models.MATERIALS_ONLY, **google):
-        programs = {"google": make_fake(self.fakes, "google", reply="回答", google=google)}
+    def google_call(self, limit=models.MATERIALS_ONLY, reply="回答", **google):
+        programs = {"google": make_fake(self.fakes, "google", reply=reply, google=google)}
         run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs)
         with self.assertRaises(models.ModelCallError) as caught:
             run.call(task="评审", vendor="google", prompt="好", tools=limit)
@@ -533,35 +563,42 @@ class GoogleCheckTest(FakeProgramCase):
         self.assertEqual(read_log(self.log), [record])
         return record["error"]
 
-    def test_tools_beyond_the_limit_fail_the_call(self):
-        error = self.google_call(tools=["search_web", "run_command"])
-        self.assertIn("run_command", error)
+    def test_a_result_that_is_not_success_fails_with_the_error_agy_reports(self):
+        error = self.google_call(result={"status": "ERROR", "response": "半截回答",
+                                         "error": "模型服务暂时不可用"})
+        self.assertIn("ERROR", error)
+        self.assertIn("模型服务暂时不可用", error)
+
+    def test_a_reported_model_that_is_not_gemini_fails_the_call(self):
+        error = self.google_call(model="claude-opus-5-5-thinking")
+        self.assertIn("claude-opus-5-5-thinking", error)
+        self.assertIn("gemini", error)
+
+    def test_materials_only_fails_when_agy_reports_steps_other_than_input_and_answer(self):
+        error = self.google_call(steps=["user_input", "search_web", "agent_response",
+                                        "read_url_content", "search_web"])
         self.assertIn("只给材料", error)
+        self.assertIn("search_web、read_url_content", error)
+        self.assertNotIn("agent_response", error)
 
-    def test_a_missing_tool_list_fails_the_call_because_the_limit_cannot_be_checked(self):
-        error = self.google_call(limit=models.WEB_READ_ONLY, drop_tools=True)
-        self.assertIn("无法核实", error)
+    def test_web_read_only_does_not_check_step_types(self):
+        programs = {"google": make_fake(self.fakes, "google", reply="找到三处来源",
+                                        google={"steps": ["user_input", "search_web",
+                                                          "agent_response"]})}
+        run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs)
+        answer, _ = run.call(task="出题-调研", vendor="google", prompt="调研",
+                             tools=models.WEB_READ_ONLY)
+        self.assertEqual(answer, "找到三处来源")
 
-    def test_refused_tool_calls_fail_the_call(self):
-        denied = [{"tool_name": "read_url_content", "reason": "需要人确认"}]
-        error = self.google_call(limit=models.WEB_READ_ONLY, result={"denied_actions": denied})
-        self.assertIn("拒绝", error)
-        self.assertIn("read_url_content", error)
-
-    def test_a_turn_that_ended_early_fails_the_call(self):
-        error = self.google_call(result={"finished_reason": "error"})
-        self.assertIn("finished_reason", error)
-        self.assertIn("error", error)
+    def test_a_successful_result_with_an_empty_response_fails_the_call(self):
+        # 只读网页档被要求读网页时，agy 报告成功但回答是空串（读网页要人批准，非交互运行被拒）
+        error = self.google_call(limit=models.WEB_READ_ONLY, reply="")
+        self.assertIn("回答为空", error)
+        self.assertIn("只读网页", error)
 
     def test_a_missing_result_event_fails_the_call(self):
         error = self.google_call(no_result=True)
         self.assertIn("结果事件", error)
-        self.assertIn("待登录后用一次真实调用确认", error)
-
-    def test_a_result_event_without_response_text_fails_the_call(self):
-        error = self.google_call(result={"response": None})
-        self.assertIn("response", error)
-        self.assertIn("待登录后用一次真实调用确认", error)
 
     def test_a_program_that_exits_with_an_error_keeps_its_own_message(self):
         programs = {"google": make_fake(self.fakes, "google", exit_code=3)}
@@ -599,11 +636,24 @@ class GuideTest(unittest.TestCase):
                         "## 试探调用的结果"):
             self.assertIn(heading, self.guide)
 
-    def test_google_section_states_login_and_what_is_still_unconfirmed(self):
-        google = self.guide.split("### google", 1)[1].split("\n## ", 1)[0]
-        for phrase in ("输出解析待登录后用一次真实调用确认", "登录", "会话记录", "--settings",
-                       "--dangerously-skip-permissions", "denied_actions"):
+    def section(self, heading):
+        return self.guide.split(heading + "\n", 1)[1].split("\n## ", 1)[0]
+
+    def test_google_section_states_the_facts_confirmed_by_real_calls(self):
+        google = self.section("### google")
+        for phrase in ("已用真实调用确认", "2026 年 10 月 30 日", "--input-format stream-json",
+                       '-p ""', '"event": "user"', "step_type", "gemini-4-argon-medium",
+                       "只读网页档暂不可用", "会话", "关不掉", "--settings",
+                       "--dangerously-skip-permissions"):
             self.assertIn(phrase, google, phrase)
+        for guess in ("待登录", "denied_actions", "finished_reason", "还没有登录"):
+            self.assertNotIn(guess, google, guess)
+
+    def test_probe_results_include_the_google_calls_after_login(self):
+        probes = self.section("## 试探调用的结果")
+        for phrase in ("gemini-4-argon-low", "没有工具", "user_input", "agent_response"):
+            self.assertIn(phrase, probes, phrase)
+        self.assertNotIn("没有做试探调用", probes)
 
     def test_every_record_field_is_explained(self):
         for field in RECORD_FIELDS:
@@ -613,7 +663,7 @@ class GuideTest(unittest.TestCase):
 class ModelChoiceTest(FakeProgramCase):
     def test_named_model_is_passed_and_default_model_passes_nothing(self):
         run = self.live_run()
-        for vendor in models.VENDORS:
+        for vendor in ("claude", "codex", "kimi"):
             run.call(task="试探", vendor=vendor, prompt="好", tools=models.MATERIALS_ONLY,
                      model="某个模型")
             run.call(task="试探", vendor=vendor, prompt="好", tools=models.MATERIALS_ONLY)
@@ -621,6 +671,19 @@ class ModelChoiceTest(FakeProgramCase):
         for named, default in zip(seen[0::2], seen[1::2]):
             self.assertEqual(value_after(named["args"], "--model"), "某个模型", named["vendor"])
             self.assertNotIn("--model", default["args"])
+
+    def test_google_uses_gemini_4_argon_medium_unless_a_model_is_named(self):
+        # agy 也能用 Claude 和 GPT 的模型，当 Google 评委时必须是 Gemini，所以不用 agy 自己的默认模型
+        run = self.live_run()
+        _, default = run.call(task="试探", vendor="google", prompt="好",
+                              tools=models.MATERIALS_ONLY)
+        _, named = run.call(task="试探", vendor="google", prompt="好",
+                            tools=models.MATERIALS_ONLY, model="gemini-4-argon-low")
+        seen = invocations(self.fakes)
+        self.assertEqual(value_after(seen[0]["args"], "--model"), "gemini-4-argon-medium")
+        self.assertEqual(default["model"], "gemini-4-argon-medium")
+        self.assertEqual(value_after(seen[1]["args"], "--model"), "gemini-4-argon-low")
+        self.assertEqual(named["model"], "gemini-4-argon-low")
 
 
 if __name__ == "__main__":
