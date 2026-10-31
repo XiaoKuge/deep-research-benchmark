@@ -769,6 +769,25 @@ def step_extract(ctx):
     return points
 
 
+def source_hints(ctx, text, entry_ids):
+    """要点文字里透露出处的地方：报告代号（"报告 A"，两个字以上的代号单独出现也算）、条目编号
+    （例如 claude-1:A-3、A-c2）、产品名（取自名称表）。题目卡或深度地图要点里本来就有的产品名不算：
+    评委本来就看得到，透露不了要点出自哪份报告。"""
+    found = []
+    given = (ctx.question["card"] + "\n" + "\n".join(m["content"] for m in ctx.question["map_points"])).lower()
+    for report in ctx.reports:
+        label, name = report["label"], report["name"]
+        code = r"报告\s*%s(?![A-Za-z0-9])" % re.escape(label)
+        if len(label) >= 2:
+            code += r"|(?<![A-Za-z0-9])%s(?![A-Za-z0-9])" % re.escape(label)
+        if re.search(code, text):
+            found.append("报告代号 %s" % label)
+        if name and name != label and name.lower() not in given and name.lower() in text.lower():
+            found.append("产品名 %s" % name)
+    found += ["条目编号 %s" % i for i in sorted(entry_ids) if i in text]
+    return found
+
+
 def step_merge(ctx, points, verified):
     """一位评委把地图要点、抽取的要点和主要结论合并成要点池；写到哪份报告由来源推出。"""
     (slot, planned), = ctx.slots("merge")
@@ -791,6 +810,18 @@ def step_merge(ctx, points, verified):
     raw = (data or {}).get("points", [])
     if not ctx.estimate and (data is None or not isinstance(raw, list)):
         raise ReviewError("要点池合并的回答无效，评审无法继续")
+    if not ctx.estimate:
+        # 合并时隐去出处：要点文字里出现报告代号、条目编号或产品名，这次合并判为回答无效
+        leaks = []
+        for item in raw:
+            content = str(item.get("content", "")) if isinstance(item, dict) else ""
+            hints = source_hints(ctx, content, owner)
+            if hints:
+                leaks.append("「%s」（%s）" % (content, "、".join(hints)))
+        if leaks:
+            ctx.problem("merge", task, vendor, "合并后的要点文字里出现了报告代号、条目编号或产品名，透露了出处：%s"
+                        % "；".join(leaks))
+            raise ReviewError("要点池合并的回答无效：要点文字里透露了出处（见 invalid_answers），评审无法继续")
     pool, used = [], set()
     for item in raw if isinstance(raw, list) else []:
         if not isinstance(item, dict) or not str(item.get("content", "")).strip():

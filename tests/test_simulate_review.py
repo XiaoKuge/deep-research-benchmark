@@ -443,6 +443,56 @@ class UnavailableVendorTest(unittest.TestCase):
         self.assertIn("kimi", self.result.stdout)
 
 
+def merge_with(texts):
+    """标准场景的回放材料，只是合并一步的要点文字换成 texts（按 MERGED 的顺序）。"""
+    entries = standard_replay()
+    for e in entries:
+        if e["task"] == "评审-要点池合并：评委 1":
+            e["answer"] = json.dumps({"points": [{"content": text, "sources": sources, "opposite": []}
+                                                 for text, sources in zip(texts, MERGED)]}, ensure_ascii=False)
+    return entries
+
+
+class MergeHidesSourcesTest(unittest.TestCase):
+    """合并时隐去出处要有程序检查：合并后的要点文字里出现报告代号或产品名（取自名称表），
+    这次合并判为回答无效，按已有的无效回答处理（只有一位评委合并，评审停止）。"""
+
+    def run_with(self, texts):
+        with tempfile.TemporaryDirectory() as tmp:
+            inputs = build_inputs(tmp)
+            replay = write_replay(os.path.join(tmp, "replay.jsonl"), merge_with(texts))
+            out = os.path.join(tmp, "review")
+            result = run_tool(inputs, out, "--replay", replay)
+            return result, read_json(os.path.join(out, "run.json")), os.path.exists(
+                os.path.join(out, "results-v1.2.json"))
+
+    def assertRejected(self, texts, shown):
+        result, meta, has_results = self.run_with(texts)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertEqual(meta["status"], "中止")
+        self.assertIn("要点池合并", meta["error"])
+        self.assertFalse(has_results)
+        problems = [p for p in meta["invalid_answers"] if p["step"] == "要点池合并"]
+        self.assertEqual(len(problems), 1)
+        self.assertIn(shown, problems[0]["problem"])
+
+    def test_a_product_name_in_a_merged_point_makes_the_merge_invalid(self):
+        self.assertRejected(["产品乙说引用多不等于引用准"] + POINT_TEXT[1:], "产品乙")
+
+    def test_a_report_code_in_a_merged_point_makes_the_merge_invalid(self):
+        self.assertRejected(POINT_TEXT[:3] + ["报告 Bravo 认为定义各家不同"] + POINT_TEXT[4:], "Bravo")
+
+    def test_an_entry_number_in_a_merged_point_makes_the_merge_invalid(self):
+        self.assertRejected(POINT_TEXT[:5] + ["中文与英文覆盖不同（见 claude-1:Alpha-6）"] + POINT_TEXT[6:],
+                            "claude-1:Alpha-6")
+
+    def test_points_without_codes_or_names_pass(self):
+        result, meta, has_results = self.run_with(POINT_TEXT)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(meta["invalid_answers"], [])
+        self.assertTrue(has_results)
+
+
 class WebTierTest(unittest.TestCase):
     """google 不能用于只读网页一档：断言核验里所引网址没有存档的那一组（Charlie），计划给 google 的评委位置
     直接按替代顺序换一家（先挑这一步没配的 kimi），记一条替代，不发调用，google 也不算不可用。
