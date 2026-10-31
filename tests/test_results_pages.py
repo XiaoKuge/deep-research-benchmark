@@ -128,7 +128,7 @@ class RankPageTest(unittest.TestCase):
                 self.assertIn(f"report-{r}.html", self.page.links)
 
     def test_names_the_five_elements_and_timeliness_in_full(self):
-        for name in ["抓住真实需要", "交代查找过程", "甄别来源与处理矛盾", "分析", "结论与把握", "时效"]:
+        for name in ["切题与真实需要", "查找过程的交代", "甄别来源与处理矛盾", "分析", "结论与把握", "时效"]:
             with self.subTest(name=name):
                 self.assertIn(name, self.page.text)
 
