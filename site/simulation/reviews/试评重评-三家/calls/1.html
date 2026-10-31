@@ -9,100 +9,106 @@
 <link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  /* 样式乙：浅灰的布纹纸面（纸纹图片在页面里另外指定，因为路径随页面深浅不同），Inter 字体，白色玻璃卡片，玫红作强调色。
+     字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
   :root {
-    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
-    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
-    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --paper: #ececeb; --raised: rgba(255, 255, 255, .62); --surface: rgba(255, 255, 255, .45); --glass-line: rgba(255, 255, 255, .86); --line: rgba(34, 34, 34, .12);
+    --ink: #202020; --ink-2: #4a4a4a; --ink-3: #78777b;
+    --accent: #a2264a; --rose: #ad314d; --ok: #2f7a4f; --warn: #a8501f; --bad: #b42318;
+    --shadow: 0 1px 2px rgba(50, 28, 39, .08), 0 12px 32px rgba(50, 28, 39, .06);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
-      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
-      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
-      color-scheme: dark;
-    }
-  }
-  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
-  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
-  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
-  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
-  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
-  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .heading-1 { font-size: 48px; line-height: 1.22; font-weight: 400; letter-spacing: .01em; }
+  .heading-3 { font-size: 36px; line-height: 1.28; font-weight: 400; letter-spacing: .01em; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 500; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 500; }
+  .title-3 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-4 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-3 { font-size: 18px; line-height: 32px; font-weight: 400; }
+  .body-5 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-6 { font-size: 16px; line-height: 28px; font-weight: 400; }
   .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-2 { font-size: 14px; line-height: 24px; font-weight: 400; }
   .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
   .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+  @media (max-width: 767px) {
+    .heading-1 { font-size: 30px; }
+    .heading-3 { font-size: 24px; }
+    .body-3 { font-size: 16px; line-height: 28px; }
+  }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
-    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--paper) center top / cover fixed; }
+  body { margin: 0; background: transparent; color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 28px;
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; overflow-wrap: anywhere; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: rgba(240, 240, 238, .5); pointer-events: none; }
+  ::selection { background: rgba(173, 49, 77, .2); }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { text-wrap: balance; }
   p, li, td, blockquote { text-wrap: pretty; }
-  a { color: var(--accent); text-underline-offset: 4px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
-  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
-  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  a { color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1336px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 48px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
   .skip:focus { top: 16px; }
   .muted { color: var(--ink-2); }
   .faint { color: var(--ink-3); }
 
-  header.top { padding-block: 32px 24px; }
-  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
-  .back:hover { color: var(--ink); text-decoration: underline; }
-  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
-  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+  /* 页首 */
+  header.top { padding-bottom: 48px; }
+  header.top .wrap > .back { display: flex; align-items: center; min-height: 80px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: .02em; }
+  header.top .wrap > .back:hover { color: var(--accent); }
+  .eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 48px; margin-bottom: 16px; color: var(--rose); letter-spacing: 0.08em; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--rose); flex: none; }
+  .lede { max-width: 860px; margin-top: 24px; color: var(--ink-2); }
 
-  /* 演示声明：每页都有，名次页上最醒目 */
-  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
-    border: 1px solid var(--warn); background: var(--surface); }
-  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
-  .demo strong { display: block; font-weight: 600; color: var(--ink); }
-  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+  /* 演示声明：每页都有，玫红的玻璃卡片 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 960px; margin-top: 32px; padding: 24px 32px; border-radius: 16px;
+    color: rgba(255, 255, 255, .92); background: var(--rose) center / cover no-repeat; border: 1px solid rgba(255, 255, 255, .36);
+    box-shadow: 0 2px 4px rgba(50, 28, 39, .30), inset 0 1px 0 rgba(255, 255, 255, .24); text-shadow: 0 1px 2px rgba(60, 21, 35, .16); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: #fff; margin-top: 4px; }
+  .demo strong { display: block; font-weight: 600; color: #fff; }
+  .demo p + p { margin-top: 8px; color: rgba(255, 255, 255, .88); }
+  .demo a { color: #fff; text-decoration-color: rgba(255, 255, 255, .6); }
 
   /* 页面之间的跳转 */
-  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
-  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-    background: var(--raised); transition: background-color 300ms var(--ease); }
-  .pages a:hover { background: var(--surface); }
-  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 8px 16px; border-radius: 9999px; color: var(--ink); text-decoration: none;
+    background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); transition: transform 300ms var(--ease), background-color 300ms var(--ease); }
+  .pages a:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .86); }
+  .pages a[aria-current="page"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 
   main { padding-bottom: 96px; }
-  .block { padding-block: 48px; border-top: 1px solid var(--line); }
-  .block > h2 { margin-bottom: 8px; }
-  .block > .sum { max-width: 760px; color: var(--ink-2); }
-  .block > .sum + .sum { margin-top: 8px; }
-  .sub { margin-top: 32px; }
-  .sub > h3 { margin-bottom: 8px; }
-  .prose { max-width: 760px; }
-  .prose p + p { margin-top: 8px; }
-  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
-  .prose li + li { margin-top: 4px; }
+  .block { padding-block: 64px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 16px; }
+  .block > .sum { max-width: 860px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 12px; }
+  .sub { margin-top: 40px; }
+  .sub > h3 { margin-bottom: 12px; }
+  .prose { max-width: 860px; }
+  .prose p + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 12px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
 
   /* 名次区间横条 */
-  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .ranks { margin-top: 32px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .rank-row { display: grid; grid-template-columns: 192px minmax(0, 1fr) 128px; gap: 24px; align-items: center; padding: 12px 0; }
   .rank-axis { color: var(--ink-3); padding: 0; }
-  .rank-who a { color: var(--ink); text-decoration: none; }
-  .rank-who a:hover { text-decoration: underline; }
+  .rank-who a { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 500; }
+  .rank-who a:hover { color: var(--accent); }
   .rank-who .faint { display: block; }
-  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 32px; }
   .track .slot { border-left: 1px solid var(--line); }
   .track .slot:last-child { border-right: 1px solid var(--line); }
-  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .track .bar { position: absolute; top: 4px; height: 24px; border-radius: 9999px; background: var(--rose); box-shadow: 0 2px 4px rgba(50, 28, 39, .25), inset 0 1px 0 rgba(255, 255, 255, .3); }
   .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .axis-labels span { text-align: center; }
-  .rank-text { white-space: nowrap; }
+  .rank-text { white-space: nowrap; font-weight: 500; }
   @media (max-width: 639px) {
     .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
     .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
@@ -111,33 +117,34 @@
   }
 
   /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
-  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
-  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
-  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; line-height: 24px; background: var(--raised); }
+  th, td { border-bottom: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-weight: 600; color: var(--ink-2); background: rgba(255, 255, 255, .5); white-space: nowrap; }
   td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
   td a { white-space: nowrap; }
-  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+  .legend { margin-top: 12px; color: var(--ink-3); max-width: 860px; }
 
   /* 分开的对 */
-  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .pairs li { padding: 16px 24px; border-radius: 16px; background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pairs .who { font-weight: 600; }
   .pairs p + p { margin-top: 4px; color: var(--ink-2); }
 
   /* 卡片：主要结论、评级、比较 */
-  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
-  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
-  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cards { margin-top: 24px; display: grid; gap: 16px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   .card-head .title-3 { margin-right: 4px; }
-  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
-  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card h4 { margin: 16px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; }
+  .card blockquote { margin: 0; padding-left: 16px; border-left: 2px solid var(--rose); color: var(--ink-2); }
   .card p + p { margin-top: 4px; }
-  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
   @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
 
   /* 标签：文字用正文颜色，前面的小圆点表示状态 */
-  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .5); color: var(--ink); white-space: nowrap; }
   .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
   .tag.ok::before { background: var(--ok); }
   .tag.warn::before { background: var(--warn); }
@@ -145,25 +152,26 @@
   .tag.plain::before { display: none; }
 
   /* 数字小格 */
-  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
-  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+  .stats { margin-top: 32px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .stat { padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .stat .heading-6 { margin-top: 8px; font-size: 24px; line-height: 32px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 8px; color: var(--ink-2); }
 
   /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
-  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table { margin-top: 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
   .pool-table td.content { min-width: 320px; }
   .pool-table td.content p + details { margin-top: 4px; }
   .pool-table td.who { min-width: 160px; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
-  a.tag:hover { background: var(--surface); }
-  .pool-table tr:target td { background: var(--surface); }
+  a.tag:hover { background: rgba(255, 255, 255, .86); }
+  .pool-table tr:target td { background: rgba(173, 49, 77, .08); }
   @media (max-width: 767px) {
+    .pool-table { border: 0; border-radius: 0; box-shadow: none; }
     .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
     .pool-table thead { display: none; }
-    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table tr { border: 1px solid var(--glass-line); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px; background: var(--raised); }
     .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
     .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
     .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
@@ -173,14 +181,14 @@
   summary { cursor: pointer; color: var(--ink-2); }
   details[open] summary { margin-bottom: 4px; }
 
-  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 860px; }
   .links li { padding-left: 16px; position: relative; }
-  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+  .links li::before { content: ""; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 9999px; background: var(--rose); }
 
-  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer { border-top: 1px solid var(--line); padding-block: 40px; color: var(--ink-3); }
   footer a { color: var(--ink-2); }
   code { font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pages a:hover { transform: none; } }
 
   /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
   .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
@@ -201,6 +209,7 @@
   .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
   .alert strong { color: var(--bad); }
 </style>
+<style>html { background-image: url("../../../../assets/paper.webp"); }</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -208,19 +217,19 @@
   <div class="wrap">
     <a class="back caption-1" href="../index.html">← 回到这次评审</a>
     <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 1 次调用</p>
-    <h1 class="heading-3">评审 · 结论清单：报告 A，评委 1</h1>
+    <h1 class="heading-1">评审 · 结论清单：报告 A，评委 1</h1>
     <p class="body-3 lede">OpenAI（codex），命令行默认模型，只给材料，成功。</p>
     <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
   </div>
 </header>
 <main id="main"><div class="wrap">
 <section class="block" id="info" aria-labelledby="info-h">
-  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <h2 class="heading-3" id="info-h">这次调用</h2>
   <p class="body-3 sum">模拟评审 试评重评 三家的第 1 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
   <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-结论清单：报告 A，评委 1</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">OpenAI（codex）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 23:40:06.564（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 23:41:53.672（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">107.108 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>ff3afee65920ce55887bfded50dcd6c127011ca52a00127e7d37bc59aafbcf3d</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>fd7d8c1b5a2f85d290aaee2a502a7bb821d717d3d0902a4c4c3f1b428e764d0f</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/codex exec --json --output-last-message /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpwi69gj_1/last-message.txt --cd /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpwi69gj_1/work --ephemeral --skip-git-repo-check --ignore-user-config --ignore-rules --sandbox read-only -c approval_policy=&quot;never&quot; --disable shell_tool --disable unified_exec -c web_search=&quot;disabled&quot; -</code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 1 行，记录里的序号是 1</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="2.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
 </section>
 <section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
-  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <h2 class="heading-3" id="prompt-text-h">提示词全文</h2>
   <p class="body-3 sum">共 46828 字，从标准输入交给命令行，一字不改。</p>
   <details><summary class="caption-2">提示词共 46828 字，点开看全文</summary><pre class="raw" id="prompt">
 你在一项深度研究报告评测的模拟评审中担任清单员，负责为一份报告列出&quot;主要结论清单&quot;。所有核验员都使用你列的这一份清单，所以要按固定的规则列，不要凭喜好取舍。
@@ -613,13 +622,13 @@ The images below illustrate ChatGPT Search output (weather query) with evidence-
 </pre></details>
 </section>
 <section class="block" id="answer-text" aria-labelledby="answer-text-h">
-  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <h2 class="heading-3" id="answer-text-h">回答全文</h2>
   <p class="body-3 sum">共 28093 字，一字不改。</p>
   <details><summary class="caption-2">回答共 28093 字，点开看全文</summary><pre class="raw" id="answer">
 {&quot;claims&quot;:[{&quot;claim&quot;:&quot;Gemini Deep Research 能自主规划并执行网页及私有数据的多步搜索，生成带引用的多页报告。&quot;,&quot;quote&quot;:&quot;For example, Google’s Gemini Deep Research agent autonomously plans and executes multi-step searches over the web and private data (Gmail, Drive, Chat), producing multi-page, cited reports【8†L183-L189】【14†L49-L57】.&quot;,&quot;cited&quot;:&quot;【8†L183-L189】【14†L49-L57】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT 的 GPT-4o Search 模式能获取最新网页答案并提供实时来源链接。&quot;,&quot;quote&quot;:&quot;ChatGPT has introduced an integrated **Search** mode (GPT-4o) that fetches up-to-date web answers with live source links【25†L51-L59】.&quot;,&quot;cited&quot;:&quot;【25†L51-L59】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude Research 通过迭代搜索生成附有易于核查引用的答案。&quot;,&quot;quote&quot;:&quot;Anthropic’s Claude offers a “Research” mode that performs iterative searches and returns answers with “easy-to-check citations”【27†L41-L48】.&quot;,&quot;cited&quot;:&quot;【27†L41-L48】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 是实时 AI 搜索引擎，综合网页内容给出带脚注来源的直接答案。&quot;,&quot;quote&quot;:&quot;Perplexity functions as a real-time AI search engine, synthesizing web content into direct answers with footnoted sources【34†L203-L210】.&quot;,&quot;cited&quot;:&quot;【34†L203-L210】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 于 2024 年 10 月推出 Explore 模式，每次查询可以深入阅读数百个网页。&quot;,&quot;quote&quot;:&quot;Moonshot’s Kimi provides extremely long-context reasoning (up to 256K tokens) and launched an AI-powered **Explore** mode (Oct 2024) that “deeply reads” hundreds of web pages per query【19†L104-L112】.&quot;,&quot;cited&quot;:&quot;【19†L104-L112】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 发布 V3、R1、V3.1 等开放 MoE 模型，具备 128K 上下文和较强推理模式，其研究用途主要通过 API 实现。&quot;,&quot;quote&quot;:&quot;DeepSeek (China) releases open MoE models (V3, R1, V3.1, etc.) with 128K token windows and strong reasoning modes【40†L315-L324】, though its research use is primarily via API.&quot;,&quot;cited&quot;:&quot;【40†L315-L324】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini 尤其适合企业及 Google Workspace 集成研究，优势包括搜索与用户数据整合、长上下文、多模态及思考面板。&quot;,&quot;quote&quot;:&quot;In short, **Gemini** shines in enterprise/Workspace-integrated research with Google search and user data (long context, multimodal, chain-of-thought via a “thinking” panel)【14†L69-L76】【8†L183-L189】.&quot;,&quot;cited&quot;:&quot;【14†L69-L76】【8†L183-L189】&quot;,&quot;urls&quot;:[],&quot;core&quot;:true},{&quot;claim&quot;:&quot;ChatGPT 凭借广泛网页搜索、来源链接和庞大插件生态，适合一般查询和多轮研究。&quot;,&quot;quote&quot;:&quot;**ChatGPT (OpenAI)** offers broad web search with source links and a huge plugin ecosystem, making it ideal for general queries and multi-turn research【25†L51-L59】【25†L99-L107】.&quot;,&quot;cited&quot;:&quot;【25†L51-L59】【25†L99-L107】&quot;,&quot;urls&quot;:[],&quot;core&quot;:true},{&quot;claim&quot;:&quot;Claude 注重安全、迭代探索、扩展思考及网页工具，适合企业中的复杂研究任务。&quot;,&quot;quote&quot;:&quot;**Claude** focuses on safe, iterative exploration (including “extended thinking” and web tools), suited for complex research tasks in enterprise settings【27†L41-L48】【29†L216-L224】.&quot;,&quot;cited&quot;:&quot;【27†L41-L48】【29†L216-L224】&quot;,&quot;urls&quot;:[],&quot;core&quot;:true},{&quot;claim&quot;:&quot;Perplexity 专为研究打造，使用持续更新的网页索引，提供简洁带引用的答案及 Google Drive 等连接器。&quot;,&quot;quote&quot;:&quot;**Perplexity** is built specifically for research: it uses continuously-updated web indexes and provides concise, cited answers and connectors (e.g. Google Drive)【34†L203-L210】【36†L49-L58】.&quot;,&quot;cited&quot;:&quot;【34†L203-L210】【36†L49-L58】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 面向超长上下文场景和中国研究市场，Explore 大规模抓取网页，模型具备万亿参数 MoE 和 256K 上下文。&quot;,&quot;quote&quot;:&quot;**Kimi** targets extreme-long-context scenarios and research in the Chinese market: its “Explore” mode aggressively crawls hundreds of pages, and its models boast trillion-parameter MoEs with 256K context【19†L104-L112】【16†L204-L207】.&quot;,&quot;cited&quot;:&quot;【19†L104-L112】【16†L204-L207】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 面向构建智能体工作流的开发者，提供大上下文开放模型和 R1 等专门推理模式。&quot;,&quot;quote&quot;:&quot;**DeepSeek** offers open LLMs with large context and dedicated reasoning modes (R1 with chain-of-thought), aimed at developers building agentic workflows【40†L315-L324】【22†L45-L53】.&quot;,&quot;cited&quot;:&quot;【40†L315-L324】【22†L45-L53】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research 自主搜索并深入浏览网页，以寻找相关且最新的信息。&quot;,&quot;quote&quot;:&quot;It “autonomously searches and deeply browses the web … to find relevant, up-to-date information”【14†L62-L70】.&quot;,&quot;cited&quot;:&quot;【14†L62-L70】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 经合成数据后训练，并使用第三方搜索服务及合作伙伴直接提供的内容。&quot;,&quot;quote&quot;:&quot;The ChatGPT Search model (GPT‑4o) was “post-trained using … synthetic data” and explicitly “leverages third-party search providers, as well as content provided directly by our partners, to provide the information users are looking for”【25†L139-L144】.&quot;,&quot;cited&quot;:&quot;【25†L139-L144】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude Research 会同时研究 Gmail、Calendar、Docs 等内部上下文和网页，并进行迭代搜索。&quot;,&quot;quote&quot;:&quot;With Research on, “Claude will kick off the research process across your internal context (Gmail, Calendar, Docs) and the web,” conducting iterative searches【27†L59-L64】.&quot;,&quot;cited&quot;:&quot;【27†L59-L64】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Anthropic API 的 Web Search 工具可直接访问实时网页内容，回答超出模型知识截止时间的最新问题。&quot;,&quot;quote&quot;:&quot;Anthropic’s API also offers a **Web Search tool** giving “direct access to real-time web content, allowing it to answer questions with up-to-date information beyond its knowledge cutoff”【29†L216-L224】.&quot;,&quot;cited&quot;:&quot;【29†L216-L224】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 结合实时网页搜索，因此回答始终基于当前互联网内容并引用来源。&quot;,&quot;quote&quot;:&quot;By design, it is a search engine, “incorporat[ing] real-time web search capabilities” so that responses are always based on **current Internet content**, citing sources【34†L203-L210】.&quot;,&quot;cited&quot;:&quot;【34†L203-L210】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 的抓取行为受到法律审视并存在法律及知识产权争议。&quot;,&quot;quote&quot;:&quot;(Note: Perplexity’s scraping practices have drawn legal scrutiny【34†L213-L220】.)&quot;,&quot;cited&quot;:&quot;【34†L213-L220】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 可以通过 Google Drive 等 App Connectors 搜索个人文件。&quot;,&quot;quote&quot;:&quot;Perplexity can also connect to personal data via “App Connectors” (e.g. Google Drive) to search user files【36†L47-L56】.&quot;,&quot;cited&quot;:&quot;【36†L47-L56】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi Explore 单次查询执行数千次并行搜索，查询量为普通搜索的十倍，最多阅读约 500 页。&quot;,&quot;quote&quot;:&quot;In effect, one query dispatches thousands of parallel searches (Kimi claims 10× the queries of normal search) and reads up to ~500 pages per query【19†L104-L112】【19†L124-L130】.&quot;,&quot;cited&quot;:&quot;【19†L104-L112】【19†L124-L130】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;2025 年中的 Kimi-Researcher 是自主智能体模型，通过内部并行搜索工具执行约 23 步、多轮搜索并访问 200 多个 URL。&quot;,&quot;quote&quot;:&quot;Kimi also now has **Kimi-Researcher** (mid-2025), an autonomous agentic model that performs multi-turn search (around 23 steps, 200+ URLs) via an internal parallel search tool【22†L10-L18】【22†L45-L53】.&quot;,&quot;cited&quot;:&quot;【22†L10-L18】【22†L45-L53】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek R1 专门面向复杂数学、编程和思维链推理。&quot;,&quot;quote&quot;:&quot;The BentoML guide notes DeepSeek’s R1 model is specialized for “complex math, coding, and reasoning” with chain-of-thought【40†L315-L324】.&quot;,&quot;cited&quot;:&quot;【40†L315-L324】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research 使用规划、搜索、阅读、迭代的流程。&quot;,&quot;quote&quot;:&quot;Gemini’s Deep Research agent “plans -&gt; search -&gt; read -&gt; iterate”【12†L849-L857】.&quot;,&quot;cited&quot;:&quot;【12†L849-L857】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek-V3-0324 等模型具有公开检查点，并通过强化学习更新。&quot;,&quot;quote&quot;:&quot;DeepSeek’s models are open (e.g. DeepSeek-V3-0324) with public checkpoints and have been updated via reinforcement learning【40†L278-L287】.&quot;,&quot;cited&quot;:&quot;【40†L278-L287】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 显示可点击来源链接，并提供可查看完整参考资料的 Sources 侧栏。&quot;,&quot;quote&quot;:&quot;After answering a query, ChatGPT shows clickable source links (news articles, websites) at the top of the response【25†L100-L107】. Users can open a “Sources” sidebar for full references【25†L100-L107】.&quot;,&quot;cited&quot;:&quot;【25†L100-L107】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;报告所引示例中的 ChatGPT 天气回答链接了 AccuWeather 来源并展示 Sources 面板。&quot;,&quot;quote&quot;:&quot;(The images below illustrate this: ChatGPT answered a weather question with a linked AccuWeather source【25†L100-L107】 and shows a “Sources” panel.)&quot;,&quot;cited&quot;:&quot;【25†L100-L107】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude API 网页搜索工具会在回答中自动引用搜索结果的来源。&quot;,&quot;quote&quot;:&quot;In its API web-search tool, Claude “automatically cites sources from search results as part of its answer”【29†L216-L224】.&quot;,&quot;cited&quot;:&quot;【29†L216-L224】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi-Researcher 论文主要讨论强化学习，没有详细介绍引用格式。&quot;,&quot;quote&quot;:&quot;(The Kimi-Researcher paper does not detail citation style, focusing on learning via reinforcement learning【22†L10-L18】.)&quot;,&quot;cited&quot;:&quot;【22†L10-L18】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 本身通常不提供显式来源链接；所引 BentoML 指南仅区分 V3 的直接回答和 R1 的逐步推理，没有提及引用。&quot;,&quot;quote&quot;:&quot;Their inferences are “direct answers” or chain-of-thought text, without explicit source links. (The BentoML guide distinguishes DeepSeek-V3’s “Direct answers” vs R1’s step-by-step reasoning【40†L315-L324】, but no mention of citing.)&quot;,&quot;cited&quot;:&quot;【40†L315-L324】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini 3.1 Pro 在 beta 中支持 100 万 token 上下文。&quot;,&quot;quote&quot;:&quot;As of Gemini 3.1 Pro, **1 million tokens** are supported in beta【7†L214-L222】.&quot;,&quot;cited&quot;:&quot;【7†L214-L222】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;2026 年 2 月的 Claude Opus 4.6 通常有 200K 上下文，beta 支持最高 100 万 token。&quot;,&quot;quote&quot;:&quot;Claude Opus 4.6 (Feb 2026) supports up to **1M tokens** (beta)【31†L22-L26】, with 200K normally.&quot;,&quot;cited&quot;:&quot;【31†L22-L26】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 提供 compaction 功能来总结较早的上下文。&quot;,&quot;quote&quot;:&quot;Claude also offers “compaction” to summarize older context【31†L63-L70】.&quot;,&quot;cited&quot;:&quot;【31†L63-L70】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;截至 2025 年末，ChatGPT 的 GPT-4 Turbo/4o 支持约 128K token 上下文。&quot;,&quot;quote&quot;:&quot;**OpenAI ChatGPT** (GPT-4 Turbo/4o) supports up to about **128K tokens** (as of late 2025)【49†L7-L11】.&quot;,&quot;cited&quot;:&quot;【49†L7-L11】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 在 2023 年 11 月率先提供 128K 上下文，并于 2025 年 9 月扩展到 256K。&quot;,&quot;quote&quot;:&quot;**Kimi** was the first with **128K tokens** (Nov 2023) and has since moved to **256K tokens** (Sep 2025)【16†L204-L207】.&quot;,&quot;cited&quot;:&quot;【16†L204-L207】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 的 OK Computer 模式可以同时摄入数百万个数据点。&quot;,&quot;quote&quot;:&quot;Kimi’s “OK Computer” mode can also ingest millions of data points concurrently【16†L209-L217】.&quot;,&quot;cited&quot;:&quot;【16†L209-L217】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 没有公布官方上下文窗口，但使用 GPT-5.2 等前沿模型处理长上下文。&quot;,&quot;quote&quot;:&quot;**Perplexity**: No official context window is published, but it uses frontier LLMs under the hood (e.g. GPT-5.2 for long contexts as cited by Perplexity Computer)【37†L153-L160】.&quot;,&quot;cited&quot;:&quot;【37†L153-L160】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;报告将 DeepSeek 称为 Moonshot 的模型，并称其 V3、R1、V3.1 支持最高 128K 上下文。&quot;,&quot;quote&quot;:&quot;**DeepSeek** (Moonshot’s models) supports up to **128K tokens** (DeepSeek-V3, R1, V3.1)【40†L315-L324】.&quot;,&quot;cited&quot;:&quot;【40†L315-L324】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini 原生支持文本、图像、音频和视频输入。&quot;,&quot;quote&quot;:&quot;Gemini models can process text, images, audio, and video【7†L242-L245】.&quot;,&quot;cited&quot;:&quot;【7†L242-L245】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT 对话支持上传图像和 Advanced Voice 音频交互。&quot;,&quot;quote&quot;:&quot;Its conversation can include image uploads and audio (Advanced Voice)【25†L146-L154】.&quot;,&quot;cited&quot;:&quot;【25†L146-L154】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 针对天气、股票等问题提供带视觉面板的专门答案。&quot;,&quot;quote&quot;:&quot;ChatGPT Search also has specialized answers for weather, stocks, etc., with visual panels【25†L87-L96】.&quot;,&quot;cited&quot;:&quot;【25†L87-L96】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi K2 模型支持图像与文本多模态。&quot;,&quot;quote&quot;:&quot;Kimi K2 models are **multimodal** (image + text)【3†L220-L223】.&quot;,&quot;cited&quot;:&quot;【3†L220-L223】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Moonshot 正在测试 AI 视频生成。&quot;,&quot;quote&quot;:&quot;The company is testing AI video generation【15†L181-L188】 and has an image understanding feature (Kimi-VL).&quot;,&quot;cited&quot;:&quot;【15†L181-L188】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research 的思考面板展示已获得的信息及下一步行动。&quot;,&quot;quote&quot;:&quot;Google introduced a “thinking” panel so users see what Gemini learned so far and its next moves【14†L153-L156】.&quot;,&quot;cited&quot;:&quot;【14†L153-L156】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research 流程包含迭代自我批评和多轮处理。&quot;,&quot;quote&quot;:&quot;The Deep Research pipeline itself involves iterative self-critique and multiple passes【14†L158-L162】, though the final report is a polished synthesis.&quot;,&quot;cited&quot;:&quot;【14†L158-L162】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi-Researcher 在每一步定义由思考和行动组成的输出。&quot;,&quot;quote&quot;:&quot;The Kimi-Researcher model, for example, defines a (think_t, action_t) output at each step【22†L45-L53】, and Kimi’s UI (like Gemini) shows a “thinking mode” where it can output intermediate reasoning if prompted.&quot;,&quot;cited&quot;:&quot;【22†L45-L53】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek R1 可通过提示、think 标签或系统指令展示推理步骤。&quot;,&quot;quote&quot;:&quot;Its R1 model is designed for chain-of-thought and can be prompted to show its reasoning steps (using `&lt;think&gt;` tokens or system instructions)【40†L315-L324】.&quot;,&quot;cited&quot;:&quot;【40†L315-L324】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek-V3.1 的混合模式允许在思考与非思考行为之间切换。&quot;,&quot;quote&quot;:&quot;DeepSeek-V3.1 even has a hybrid mode where you can switch between “thinking” and “non-thinking” behavior【40†L284-L293】.&quot;,&quot;cited&quot;:&quot;【40†L284-L293】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;开发者可通过 Google Cloud Generative AI API 使用 Gemini 3.1 Pro 等模型。&quot;,&quot;quote&quot;:&quot;For developers, Gemini models (3.1 Pro etc.) are available via the Google Cloud Generative AI API (GenAI)【12†L860-L869】.&quot;,&quot;cited&quot;:&quot;【12†L860-L869】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research 智能体通过 Interactions API 访问，目前不接受用户自定义工具。&quot;,&quot;quote&quot;:&quot;The Deep Research agent itself is accessed via the **Interactions API**【12†L860-L868】 and currently cannot take custom tools from users.&quot;,&quot;cited&quot;:&quot;【12†L860-L868】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude API 向开发者提供 Web Search 和 Code 工具。&quot;,&quot;quote&quot;:&quot;Developers can use **Web Search** and **Code** tools via API (as documented【29†L216-L224】【29†L253-L261】).&quot;,&quot;cited&quot;:&quot;【29†L216-L224】【29†L253-L261】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity Max 能在后台编排 ChatGPT、Claude、Gemini 等多个模型。&quot;,&quot;quote&quot;:&quot;Perplexity Max (new) even allows orchestrating multiple models (ChatGPT, Claude, Gemini) behind the scenes【37†L151-L160】.&quot;,&quot;cited&quot;:&quot;【37†L151-L160】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi-VL 和 K2 采用类似 MIT 的许可证开源，使团队能够运行兼容 DeepSeek 的推理。&quot;,&quot;quote&quot;:&quot;Kimi-VL and K2 are open-sourced under MIT-like licenses【15†L149-L158】【16†L200-L208】, so teams can run DeepSeek-compatible inference.&quot;,&quot;cited&quot;:&quot;【15†L149-L158】【16†L200-L208】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 提供模型 API，并在 Hugging Face 开放 V3、R1、V3.1 等模型。&quot;,&quot;quote&quot;:&quot;DeepSeek provides an API for its models (via deepseek.com) and open-source releases (DeepSeek-V3, R1, V3.1 on Hugging Face【40†L307-L315】).&quot;,&quot;cited&quot;:&quot;【40†L307-L315】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;BentoML 指南展示如何通过代码把 DeepSeek 模型集成到智能体工作流。&quot;,&quot;quote&quot;:&quot;BentoML’s guide shows how to integrate DeepSeek models with code for “agentic workflows”【39†L75-L83】.&quot;,&quot;cited&quot;:&quot;【39†L75-L83】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 首先向 Plus 和 Enterprise 用户开放，免费用户随后获得。&quot;,&quot;quote&quot;:&quot;Plus and Enterprise users get immediate access to Search; free users get it later【25†L39-L47】.&quot;,&quot;cited&quot;:&quot;【25†L39-L47】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini 用户从提示栏选择 Deep Research，输入主题后由系统自主分解任务。&quot;,&quot;quote&quot;:&quot;In Gemini’s web/mobile app, users select “Deep Research” from the prompt bar. They enter a topic (e.g. “market analysis of X”), and Gemini autonomously breaks it down【14†L57-L66】.&quot;,&quot;cited&quot;:&quot;【14†L57-L66】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 用户通过网页或桌面应用左下角的 Research 按钮启用研究。&quot;,&quot;quote&quot;:&quot;On claude.ai or desktop apps, a user toggles the “Research” button (bottom left)【27†L51-L59】.&quot;,&quot;cited&quot;:&quot;【27†L51-L59】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 可以上传文件或连接应用，在一次查询中联合搜索网页和私有数据。&quot;,&quot;quote&quot;:&quot;Users can also upload documents or connect apps; the query can then cover web+private data jointly【36†L49-L58】.&quot;,&quot;cited&quot;:&quot;【36†L49-L58】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 的来源链接使答案能够核查，从而减少幻觉。&quot;,&quot;quote&quot;:&quot;It generally **provides source links** so answers can be checked, reducing hallucination【25†L51-L59】【25†L100-L107】.&quot;,&quot;cited&quot;:&quot;【25†L51-L59】【25†L100-L107】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 4.6 公告称其整体安全水平不逊于任何其他前沿模型。&quot;,&quot;quote&quot;:&quot;The Claude 4.6 announcement highlights “overall safety profile as good as, or better than, any other frontier model”【31†L43-L47】.&quot;,&quot;cited&quot;:&quot;【31†L43-L47】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 网页搜索通过动态过滤和代码执行剔除无关内容，以提高准确性。&quot;,&quot;quote&quot;:&quot;The web search tool includes dynamic filtering and code execution to improve accuracy by weeding out irrelevant content【29†L270-L279】.&quot;,&quot;cited&quot;:&quot;【29†L270-L279】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity Pro 宣传十倍引用密度，体现其对来源引用的重视。&quot;,&quot;quote&quot;:&quot;Perplexity Pro’s feature of “10× citation density”【48†L270-L273】 suggests extra emphasis on sourcing.&quot;,&quot;cited&quot;:&quot;【48†L270-L273】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research 智能体处于预览阶段，Google 提醒用户核查引用。&quot;,&quot;quote&quot;:&quot;The Deep Research agent is in preview, and Google cautions that it should be fact-checked (“review the citations provided”【12†L895-L903】).&quot;,&quot;cited&quot;:&quot;【12†L895-L903】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Moonshot 团队声称其模型在数学和编程方面可匹敌 GPT-4。&quot;,&quot;quote&quot;:&quot;The Moonshot team claims strong performance (e.g. matching GPT-4 in math/coding【15†L183-L188】).&quot;,&quot;cited&quot;:&quot;【15†L183-L188】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;中国新闻报道称 Kimi 已基本消除幻觉，但报告将其视为未经验证的宣传。&quot;,&quot;quote&quot;:&quot;Chinese news reports also claim they have “basically eliminated” hallucination【16†L247-L254】 (though that’s unverified PR).&quot;,&quot;cited&quot;:&quot;【16†L247-L254】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;BentoML 文章称 DeepSeek R1-0528 相比早期模型的幻觉减少约 45%—50%。&quot;,&quot;quote&quot;:&quot;The BentoML article notes DeepSeek-R1’s high reasoning but also explicitly says hallucination was reduced by ~45–50% in R1-0528 compared to earlier models【40†L257-L264】.&quot;,&quot;cited&quot;:&quot;【40†L257-L264】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 可能依照出版商协议向 Vox Media 等合作伙伴记录查询。&quot;,&quot;quote&quot;:&quot;The Search mode likely logs queries to partners (Vox Media, etc.) as per OpenAI’s publisher agreements【25†L129-L138】, but user data is isolated under OpenAI’s policies.&quot;,&quot;cited&quot;:&quot;【25†L129-L138】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Google 的 Deep Research 文档警告用户不要上传不可信文件，并应审查恶意网页。&quot;,&quot;quote&quot;:&quot;The docs warn about security: don’t upload untrusted docs, vet malicious pages【12†L886-L895】.&quot;,&quot;cited&quot;:&quot;【12†L886-L895】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 的网页搜索工具符合零数据保留条件，传入数据在响应后不被存储。&quot;,&quot;quote&quot;:&quot;The web search tool is “ZDR-eligible” – data passed through it is not stored after the response【29†L228-L230】.&quot;,&quot;cited&quot;:&quot;【29†L228-L230】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 企业产品宣传 SOC 2 Type II、加密及不使用客户数据训练的保证。&quot;,&quot;quote&quot;:&quot;It markets itself to enterprises with SOC2 Type II, encryption, and an explicit guarantee that “no training is done on customer data”【48†L291-L294】.&quot;,&quot;cited&quot;:&quot;【48†L291-L294】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 的 Google Drive 连接器遵守 Google 权限，并私密同步文件。&quot;,&quot;quote&quot;:&quot;The Google Drive Connector respects Google permissions【36†L49-L58】 and syncs files privately.&quot;,&quot;cited&quot;:&quot;【36†L49-L58】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 企业计划提供审计日志和数据保留控制。&quot;,&quot;quote&quot;:&quot;Enterprise plans include audit logging and data retention controls【36†L49-L58】【48†L285-L293】.&quot;,&quot;cited&quot;:&quot;【36†L49-L58】【48†L285-L293】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 正向 Plus、Teams 及最终所有用户推广。&quot;,&quot;quote&quot;:&quot;ChatGPT Search (GPT-4o) is being rolled out to Plus, Teams, and eventually all users【25†L39-L47】.&quot;,&quot;cited&quot;:&quot;【25†L39-L47】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research API 采用按量付费，在 Gemini 模型费用之上计费。&quot;,&quot;quote&quot;:&quot;In the Google AI API (GenAI) model, pricing is pay-as-you-go on top of Gemini’s cost【12†L860-L869】.&quot;,&quot;cited&quot;:&quot;【12†L860-L869】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;一次包含多次搜索及约 60K 输出 token 的典型 Gemini Deep Research 任务，估计花费数美元。&quot;,&quot;quote&quot;:&quot;Example estimates: a typical Deep Research task (multiple searches and ~60K output tokens) costs a few dollars【12†L874-L881】.&quot;,&quot;cited&quot;:&quot;【12†L874-L881】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude API 的价格是每百万输入 token 5 美元、每百万输出 token 25 美元。&quot;,&quot;quote&quot;:&quot;Claude’s API is priced at $5 per million input tokens and $25 per million output tokens (consistent with [31†L78-L81]).&quot;,&quot;cited&quot;:&quot;[31†L78-L81]&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity Pro 为每月 20 美元或每年 200 美元，并提供无限 Pro 查询和多步搜索。&quot;,&quot;quote&quot;:&quot;**Perplexity Pro** is $20/month ($200/yr) and grants “unlimited Pro queries” with multi-step search【48†L253-L262】.&quot;,&quot;cited&quot;:&quot;【48†L253-L262】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 企业 Pro/Max 席位价格为每用户每月 40—325 美元。&quot;,&quot;quote&quot;:&quot;Enterprise seats run $40–$325 per user/month (for Pro/Max tiers)【48†L274-L283】【48†L299-L308】, with heavy usage quotas.&quot;,&quot;cited&quot;:&quot;【48†L274-L283】【48†L299-L308】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 应用免费但有基本限额，例如每天五次免费搜索。&quot;,&quot;quote&quot;:&quot;The Kimi apps are free with basic rate limits (e.g. 5 free searches per day【19†L114-L122】).&quot;,&quot;cited&quot;:&quot;【19†L114-L122】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 的 Moderato、Allegretto、Vivace 等付费订阅提供更多使用量、更快服务及 K2 Turbo、Kimi-Researcher 等高级模型。&quot;,&quot;quote&quot;:&quot;Premium subscriptions (“Moderato”, “Allegretto”, “Vivace”) offer higher usage, faster service, and access to Kimi’s advanced models (K2 Turbo, Kimi-Researcher, etc.)【16†L229-L237】.&quot;,&quot;cited&quot;:&quot;【16†L229-L237】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 的 API 和模型似乎大多免费或开放，核心模型权重采用 MIT 许可证。&quot;,&quot;quote&quot;:&quot;DeepSeek’s APIs and models appear to be mostly free or open (MIT license) for the core LLM weights【40†L307-L315】.&quot;,&quot;cited&quot;:&quot;【40†L307-L315】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;OpenAI 于 2024 年 10 月推出基于 GPT-4o、整合网页浏览及引用的 ChatGPT Search。&quot;,&quot;quote&quot;:&quot;*Oct 2024:* Launched **ChatGPT Search** (GPT-4o) that integrates web browsing with citations【25†L51-L59】.&quot;,&quot;cited&quot;:&quot;【25†L51-L59】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;OpenAI 于 2024 年 12 月扩大 Search 的可用范围，并与 Le Monde 等出版商合作。&quot;,&quot;quote&quot;:&quot;*Dec 2024:* Made Search broadly available; partnered with publishers (Le Monde, etc.)【25†L100-L107】.&quot;,&quot;cited&quot;:&quot;【25†L100-L107】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Google 于 2024 年 12 月推出基于 Gemini 3 的 Gemini Deep Research 产品类别。&quot;,&quot;quote&quot;:&quot;*Dec 2024:* Introduced **Gemini Deep Research** as a product category (Gemini 3 model)【14†L158-L162】.&quot;,&quot;cited&quot;:&quot;【14†L158-L162】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Google 于 2025 年初发布具备 256K 上下文的多模态 Gemini 3.0 Ultra，并将 Gemini 3.1 描述为 2026 年 3 月预览。&quot;,&quot;quote&quot;:&quot;*Early 2025:* Released Gemini 3.0 “Ultra” (256K context, multimodal) and 3.1 (March 2026 preview)【8†L183-L189】【7†L214-L222】.&quot;,&quot;cited&quot;:&quot;【8†L183-L189】【7†L214-L222】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini 3.1 Pro 预览版于 2026 年 2 月增加 100 万 token 上下文。&quot;,&quot;quote&quot;:&quot;*Feb 2026:* Added 1M token context in Gemini 3.1 Pro preview【7†L214-L222】.&quot;,&quot;cited&quot;:&quot;【7†L214-L222】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Anthropic 于 2026 年 2 月发布 Claude Opus 4.6，提供 100 万上下文 beta 及更强编程和搜索能力。&quot;,&quot;quote&quot;:&quot;*Feb 2026:* Released **Claude Opus 4.6** (1M context beta, superior coding/search abilities)【31†L22-L31】.&quot;,&quot;cited&quot;:&quot;【31†L22-L31】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 于 2026 年 2 月推出使用 19 个模型的多智能体研究助手 Computer，并向 Max 订阅者提供。&quot;,&quot;quote&quot;:&quot;*Feb 2026:* Launched **Perplexity Computer** (multi-agent research assistant using 19 models)【37†L109-L118】【37†L151-L160】, available to Max subscribers.&quot;,&quot;cited&quot;:&quot;【37†L109-L118】【37†L151-L160】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Moonshot 于 2025 年 6 月发布 Kimi-Researcher，并开源万亿参数 Kimi K2。&quot;,&quot;quote&quot;:&quot;*June 2025:* Released **Kimi-Researcher** agent (June 2025)【16†L194-L200】, and open-sourced Kimi K2 (1T param)【16†L199-L207】.&quot;,&quot;cited&quot;:&quot;【16†L194-L200】【16†L199-L207】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Moonshot 于 2026 年 1 月发布万亿参数、具备视觉和智能体思考模式的 Kimi K2.5。&quot;,&quot;quote&quot;:&quot;*Jan 2026:* Released **Kimi K2.5** with 1T params, vision and agentic “thinking” modes【3†L220-L223】.&quot;,&quot;cited&quot;:&quot;【3†L220-L223】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 于 2025 年 3 月发布改进推理能力的 DeepSeek-V3-0324。&quot;,&quot;quote&quot;:&quot;*Mar 2025:* Updated **DeepSeek-V3-0324** (improved reasoning)【40†L237-L242】.&quot;,&quot;cited&quot;:&quot;【40†L237-L242】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 于 2025 年 5 月发布 R1-0528，显著升级推理并减少幻觉。&quot;,&quot;quote&quot;:&quot;*May 2025:* Released **DeepSeek-R1-0528** (major reasoning upgrade, hallucination reduced)【40†L247-L255】【40†L257-L264】.&quot;,&quot;cited&quot;:&quot;【40†L247-L255】【40†L257-L264】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 于 2025 年 8 月发布具有混合思考模式的 V3.1。&quot;,&quot;quote&quot;:&quot;*Aug 2025:* Released **DeepSeek-V3.1** (hybrid thinking mode)【40†L276-L285】.&quot;,&quot;cited&quot;:&quot;【40†L276-L285】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini Deep Research 的异步任务耗时数分钟，不适合即时查询。&quot;,&quot;quote&quot;:&quot;– Async workflow (minutes-long tasks)【12†L849-L857】 not suited to instant queries&quot;,&quot;cited&quot;:&quot;【12†L849-L857】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini 受 Google 搜索授权限制，部分内容受到限制。&quot;,&quot;quote&quot;:&quot;– Limited to Google’s search licensing (some content restrictions)【12†L891-L900】&quot;,&quot;cited&quot;:&quot;【12†L891-L900】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Gemini 适合市场分析、文献综述、尽职调查等需要梳理网页及内部文件的深入任务。&quot;,&quot;quote&quot;:&quot;In-depth tasks like market analysis, literature reviews, due diligence – anywhere one needs an “analyst-in-the-box” to comb web and internal docs【12†L849-L857】.&quot;,&quot;cited&quot;:&quot;【12†L849-L857】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 最新模型在 DeepSearch 基准上领先，具有较强复杂推理能力。&quot;,&quot;quote&quot;:&quot;– Strong on complex reasoning (latest models lead on DeepSearch benchmarks【31†L53-L61】).&quot;,&quot;cited&quot;:&quot;【31†L53-L61】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 支持中文及技术领域，免费使用吸引了 3600 万月活跃用户。&quot;,&quot;quote&quot;:&quot;– Supports Chinese language and technical domains; free usage attracts big user base (36M MAU)【3†L178-L181】.&quot;,&quot;cited&quot;:&quot;【3†L178-L181】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 在开发者自行构建基础上支持多模态和智能体工作流。&quot;,&quot;quote&quot;:&quot;– Supports multimodal (VL models) and agentic workflows if built on【22†L45-L53】.&quot;,&quot;cited&quot;:&quot;【22†L45-L53】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;报告举例称，ChatGPT Search 回答巴黎天气问题时会给出所谓巴黎附近 Positano 的天气，并列出 AccuWeather 来源。&quot;,&quot;quote&quot;:&quot;*Query:* “What is the weather in Paris on Nov 3, 2024?” ChatGPT (with Search enabled) responds conversationally, e.g. “The forecast for Positano (near Paris) on Nov 3 shows mild weather with rain,” and lists a specific AccuWeather source at the top【25†L51-L59】【42†】.&quot;,&quot;cited&quot;:&quot;【25†L51-L59】【42†】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;报告以假设性 Perplexity 回答为例，称锂离子电池包价格从 2010 年约每千瓦时 1000 美元降至 2025 年约 120 美元。&quot;,&quot;quote&quot;:&quot;Perplexity would return a succinct answer: e.g. “Lithium-ion battery pack prices have fallen from about $1,000 per kWh in 2010 to roughly $120 per kWh in 2025【34†L203-L210】.”&quot;,&quot;cited&quot;:&quot;【34†L203-L210】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT Search 界面支持点击地球图标搜索，报告图片中的示例查询是 Positano 11 月 2—3 日的天气。&quot;,&quot;quote&quot;:&quot;【41†embed_image】 *Figure: ChatGPT’s Search interface. Users can type a question and click the globe icon to search (here, “Positano weather Nov 2-3”). The response includes a weather forecast. (Source: OpenAI blog【25†L51-L59】.)*&quot;,&quot;cited&quot;:&quot;【41†embed_image】【25†L51-L59】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;报告图注认为 ChatGPT Search 可确保答案以可核查内容为依据。&quot;,&quot;quote&quot;:&quot;OpenAI’s Search ensures answers are grounded in verifiable content【25†L100-L107】.&quot;,&quot;cited&quot;:&quot;【25†L100-L107】&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT 仍是聊天式产品，可能无法自主规划多步任务。&quot;,&quot;quote&quot;:&quot;– Still chat-style (may not plan multi-step tasks on its own).&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;ChatGPT 免费版仅限 GPT-3.5，高级模型需要 Plus 或 Enterprise。&quot;,&quot;quote&quot;:&quot;– Requires Plus/Enterprise for advanced models; free tier is limited to GPT-3.5.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 没有面向消费者的界面，用户主要通过 API 或 Python 客户端提交提示。&quot;,&quot;quote&quot;:&quot;**DeepSeek**: Has no consumer UI. Users (typically developers) submit prompts via API or a Python client.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;DeepSeek 缺少集成搜索，需要开发者自行添加检索、来源及智能体，适合构建自定义研究流水线。&quot;,&quot;quote&quot;:&quot;– No integrated search or UI; purely a model/API offering.&lt;br&gt;– Requires developer expertise to add retrieval, sources, or agents.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Kimi 的答案似乎没有正式来源链接，重完整性和多页输出而轻可追溯性。&quot;,&quot;quote&quot;:&quot;It seems Kimi’s answers are delivered directly (like standard chatbots) without formal source links. The focus is on completeness and multi-page output rather than traceability.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Perplexity 的核心问答仅限文本，不能原生摄入图像或搜索结果中的其他模态。&quot;,&quot;quote&quot;:&quot;It cannot natively ingest images or other modalities in search results.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 的视觉能力弱于 Gemini，除 Claude-in-Excel 外尚无面向用户的图像界面。&quot;,&quot;quote&quot;:&quot;Claude’s vision capabilities are more limited compared to Gemini (no direct user UI for images yet, aside from Claude-in-Excel).&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;Claude 的扩展思考不会向用户展示思维链，用户只能看到最终答案。&quot;,&quot;quote&quot;:&quot;**Claude** similarly does not publicly reveal its chains of thought. Its “extended thinking” tools can let it run longer reasoning (e.g. “parrot mode”), but users see only the final answer.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;截至报告所述时间，GPT-5（o1）系列仍只是传闻，尚未正式进入应用。&quot;,&quot;quote&quot;:&quot;GPT-5 (o1) series rumored but not officially in apps yet.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false},{&quot;claim&quot;:&quot;OpenAI 的政策是不将数据用于模型训练，尤其是 Enterprise/Edu 数据，用户也可以选择退出共享。&quot;,&quot;quote&quot;:&quot;OpenAI’s policy is that data is not used to train models (especially in Enterprise/Edu) and users can opt out of sharing.&quot;,&quot;cited&quot;:&quot;无&quot;,&quot;urls&quot;:[],&quot;core&quot;:false}]}</pre></details>
 </section>
 <section class="block" id="output" aria-labelledby="output-h">
-  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <h2 class="heading-3" id="output-h">命令行的原始输出</h2>
   <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
   <details><summary class="caption-2">标准输出原文，共 30250 字</summary><pre class="raw" id="raw-output">
 {&quot;type&quot;:&quot;thread.started&quot;,&quot;thread_id&quot;:&quot;01a190af-dc03-70c1-adbc-6b4846d446a9&quot;}

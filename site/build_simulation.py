@@ -271,8 +271,9 @@ def shell(to_site, title, description, body):
 <link rel="icon" href="{to_site}favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>{results.STYLE}{EXTRA_STYLE}</style>
+<style>html {{ background-image: url("{to_site}assets/paper.webp"); }}</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -321,7 +322,7 @@ class Site:
   <div class="wrap">
     <a class="back caption-1" href="{back}">← {esc(back_text)}</a>
     <p class="eyebrow caption-1">{eyebrow}</p>
-    <h1 class="heading-3">{title_html}</h1>
+    <h1 class="heading-1">{title_html}</h1>
     <p class="body-3 lede">{lede_html}</p>
     <nav aria-label="模拟出题和模拟评审"><ul class="pages">{lis}</ul></nav>
   </div>
@@ -339,7 +340,7 @@ class Site:
 def section(sid, title, intro, content):
     intro_html = "".join(f'<p class="body-3 sum">{p}</p>' for p in ([intro] if isinstance(intro, str) else intro) if p)
     return f"""<section class="block" id="{sid}" aria-labelledby="{sid}-h">
-  <h2 class="heading-5" id="{sid}-h">{title}</h2>
+  <h2 class="heading-3" id="{sid}-h">{title}</h2>
   {intro_html}
   {content}
 </section>"""
@@ -522,15 +523,15 @@ def question_page(site, q):
         gone = "".join(f'<li><code>{esc(kv(o))}</code></li>' for o in outages)
         sections.append(section("roles", "角色和厂商", "每个角色配置的是哪家、实际用了哪家；某一家不可用时换了哪家。",
                                 results.table(["角色", "配置的厂商", "用到的厂商", "模型", "工具限定", "替代"], trows)
-                                + (f'<div class="sub"><h3 class="heading-6">不可用的厂商</h3><ul class="links body-6">{gone}</ul></div>' if gone else "")))
+                                + (f'<div class="sub"><h3 class="heading-5">不可用的厂商</h3><ul class="links body-6">{gone}</ul></div>' if gone else "")))
     files = []
     for fid, name, title, note in QUESTION_FILES:
         text = read_text(os.path.join(q.folder, name))
         if text is None:
-            files.append(f'<div class="file" id="file-{fid}"><h3 class="heading-6">{esc(title)}</h3>'
+            files.append(f'<div class="file" id="file-{fid}"><h3 class="heading-5">{esc(title)}</h3>'
                          f'<p class="body-6 muted">这道题没有这个文件{"，原因见上面的说明" if notes else ""}。</p></div>')
             continue
-        files.append(f'<div class="file" id="file-{fid}"><div class="file-head"><h3 class="heading-6">{esc(title)}</h3>'
+        files.append(f'<div class="file" id="file-{fid}"><div class="file-head"><h3 class="heading-5">{esc(title)}</h3>'
                      f'<a class="caption-2" href="{site.link(os.path.join(q.folder, name), page)}">原文件</a></div>'
                      f'<p class="body-6 muted">{esc(note)}</p>{raw_block(text, fid, FOLD_FILE, "")}</div>')
     sections.append(section("files", "题目卡、深度地图和检查记录", "下面是题目目录里的文件原文，一字不改。", "".join(files)))
@@ -726,13 +727,13 @@ def review_page(site, review):
     extra = ""
     gone = run.get("unavailable") or []
     if gone:
-        extra += (f'<div class="sub"><h3 class="heading-6">不可用的厂商</h3>'
+        extra += (f'<div class="sub"><h3 class="heading-5">不可用的厂商</h3>'
                   + results.table(["厂商", "公司", "第一次失败的任务", "原因", "发现的时间"],
                                   [[esc(u.get("vendor", "")), esc(u.get("company", "")), esc(task_text(u.get("first_failed_task", ""))),
                                     f'<code>{esc(u.get("error") or "")}</code>', esc(when(u.get("noticed_at")))] for u in gone]) + "</div>")
     subs = run.get("substitutions") or []
     if subs:
-        extra += (f'<div class="sub"><h3 class="heading-6">替代</h3>'
+        extra += (f'<div class="sub"><h3 class="heading-5">替代</h3>'
                   + results.table(["步骤", "任务", "原来的厂商", "改用的厂商", "原因"],
                                   [[esc(s["步骤"]), esc(task_text(s["任务"])), esc(s["原来的厂商"]), esc(s["改用的厂商"]),
                                     esc(s["原因"])] for s in subs]) + "</div>")

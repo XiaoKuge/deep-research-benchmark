@@ -24,7 +24,7 @@ DEFAULT_MARK = "〔默认〕，以主办方确认为准"
 
 # 资料站的视觉规则，见 site/index.html 的样式和共用说明
 SPACING = {0, 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96}
-FONT_SIZES = {12, 14, 16, 18, 20, 24, 30, 36, 48, 60}
+FONT_SIZES = {12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96}  # Tailwind text-xs 至 text-8xl
 LINE_HEIGHTS = {16, 20, 24, 28, 32, 36, 40, 48, 60}
 RADII = {2, 4, 6, 8, 12, 16, 24, 9999}
 EASE = "cubic-bezier(0.22, 1, 0.36, 1)"
@@ -298,7 +298,7 @@ class TeamDocsTest(unittest.TestCase):
         raw = PAGE.read_text(encoding="utf-8")
         self.assertIn('name="viewport"', raw)
         self.assertIn(EASE, css)
-        self.assertIn("prefers-color-scheme: dark", css)
+        self.assertIn("color-scheme: light", css, "样式乙只用浅色一套，要写明 color-scheme")
         self.assertNotIn("gradient(", css, "不用背景渐变")
         checks = [
             (r"(?:margin|padding)[\w-]*|gap|row-gap|column-gap", SPACING, "间距"),

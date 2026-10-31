@@ -39,7 +39,7 @@ SECRET_KEYS = {"话题", "选题理由", "浅答案", "怎样改变", "提问者
 
 # 资料站的视觉规则，见 site/index.html 的样式和共用说明
 SPACING = {0, 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96}
-FONT_SIZES = {12, 14, 16, 18, 20, 24, 30, 36, 48, 60}
+FONT_SIZES = {12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72, 96}  # Tailwind text-xs 至 text-8xl
 LINE_HEIGHTS = {16, 20, 24, 28, 32, 36, 40, 48, 60}
 RADII = {2, 4, 6, 8, 12, 16, 24, 9999}
 EASE = "cubic-bezier(0.22, 1, 0.36, 1)"
@@ -604,7 +604,7 @@ class CommittedPagesTest(unittest.TestCase):
 
 
 class VisualRulesTest(unittest.TestCase):
-    """沿用资料站的视觉规则：命名文字样式、固定的间距和字号档位、减速动效曲线、深浅两套颜色、不用背景渐变、
+    """沿用资料站的视觉规则：命名文字样式、固定的间距和字号档位、减速动效曲线、只用浅色一套颜色、不用背景渐变、
     代码以外的可见文字里不用连字符。"""
     PAGES = [("questions.html",), ("reviews.html",), ("questions", "萤火虫", "index.html"), ("questions", "保密题", "index.html"),
              ("reviews", "test-run", "index.html"), ("reviews", "secret-run", "index.html"),
@@ -617,7 +617,7 @@ class VisualRulesTest(unittest.TestCase):
             with self.subTest(page="/".join(parts)):
                 self.assertIn('name="viewport"', read(page.path))
                 self.assertIn(EASE, css)
-                self.assertIn("prefers-color-scheme: dark", css)
+                self.assertIn("color-scheme: light", css, "样式乙只用浅色一套，要写明 color-scheme")
                 self.assertNotIn("gradient(", css)
             checks = [(r"(?:margin|padding)[\w-]*|gap|row-gap|column-gap", SPACING, "间距"), (r"font-size", FONT_SIZES, "字号"),
                       (r"line-height", LINE_HEIGHTS, "行高"), (r"border-radius", RADII, "圆角")]

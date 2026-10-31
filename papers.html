@@ -9,20 +9,30 @@
 <link rel="icon" href="site/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="site/pages.css">
 <style>
   .topics { columns: 2 280px; column-gap: 24px; margin: 16px 0 0; padding: 0; list-style: none; }
   .topics li { break-inside: avoid; padding-block: 4px; }
-  .papers { list-style: none; margin: 16px 0 0; padding: 0; }
-  .paper { padding-block: 16px; border-top: 1px solid var(--line); }
+  /* 每篇论文一张卡片：上面是 arXiv PDF 第一页的截图，点截图或题目打开 arXiv */
+  .papers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+  .paper { display: flex; flex-direction: column; padding: 12px 12px 24px; border-radius: 16px; background: var(--glass); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
+  .paper .thumb { display: block; aspect-ratio: 560 / 725; overflow: hidden; border-radius: 8px; background: #fff; box-shadow: 0 1px 2px rgba(50, 28, 39, .12);
+    transition: transform 300ms var(--ease), box-shadow 300ms var(--ease); }
+  .paper .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .paper .thumb:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(50, 28, 39, .16); }
+  .paper h3, .paper p, .paper details { padding-inline: 12px; }
+  .paper h3 { margin-top: 16px; }
+  .paper h3 a { color: var(--ink); text-decoration: none; }
+  .paper h3 a:hover { color: var(--accent); }
   .paper .meta { color: var(--ink-3); margin-top: 4px; overflow-wrap: anywhere; }
   .paper .why { color: var(--ink-2); margin-top: 8px; }
   .paper .more { margin-top: 8px; }
   .paper details { margin-top: 8px; }
   .paper summary { cursor: pointer; color: var(--ink-2); }
-  .paper summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .paper details p { margin-top: 8px; color: var(--ink-2); }
+  .paper summary:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .paper details p { margin-top: 8px; padding: 0; color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { .paper .thumb:hover { transform: none; } }
 </style>
 </head>
 <body>
@@ -32,15 +42,15 @@
   <div class="wrap">
     <a class="back caption-1" href="site/index.html">← 回到资料站</a>
     <p class="eyebrow caption-1">深度研究评测基准</p>
-    <h1 class="heading-3">文献索引</h1>
-    <p class="body-3 lede">23 篇论文，2025 年 8 月到 2026 年 10 月。点题目打开 arXiv，全文的版权在原作者。建议阅读顺序：A → D → C → B → E，其余随意。</p>
+    <h1 class="heading-1">文献索引</h1>
+    <p class="body-3 lede">23 篇论文，2025 年 8 月到 2026 年 10 月。每张卡片上是论文 PDF 的第一页，点它或题目打开 arXiv；全文的版权在原作者。建议阅读顺序：A → D → C → B → E，其余随意。</p>
   </div>
 </header>
 
 <main id="main">
 <div class="wrap">
 <section class="block" id="topics">
-  <h2 class="heading-5">专题分析和研究过程</h2>
+  <h2 class="heading-3">专题分析和研究过程</h2>
   <ul class="topics">
     <li class="body-6"><a href="notes/overview-tools.html">评测工具一览：哪些能&quot;喂报告、出分数&quot;</a></li>
     <li class="body-6"><a href="notes/overview-definitions.html">23 篇有没有定义 Research / Deep Research</a></li>
@@ -64,9 +74,10 @@
   </ul>
 </section>
 <section class="block" id="group-A">
-  <h2 class="heading-5">A. 记忆与污染：Agent 真的在搜吗</h2>
+  <h2 class="heading-3">A. 记忆与污染：Agent 真的在搜吗</h2>
   <ul class="papers">
 <li class="paper" id="2605.28721">
+  <a class="thumb" href="https://arxiv.org/abs/2605.28721" aria-label="在 arXiv 打开 LiveBrowseComp"><img src="site/assets/papers/2605.28721.webp" alt="LiveBrowseComp 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2605.28721">LiveBrowseComp</a></h3>
   <p class="meta caption-2">2026-05 · 预印本 · LiveBrowseComp: Are Search Agents Searching, or Just Verifying What They Already Know?</p>
   <p class="why body-6">BrowseComp 上不用工具能答对多达 44.5%；新集合用近 90 天的事实出题，闭卷 &lt;2%，排名改变</p>
@@ -74,6 +85,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">基于 LLM 的搜索智能体是真的在搜索，还是在用网络验证它们已经知道的东西？我们在 BrowseComp 上用三项诊断研究这个问题。分析揭示了“内在知识依赖”（Intrinsic Knowledge Dependence，IKD）：即便有工具可用，智能体也常常依赖内在知识——即检索之前就已编码在模型中的信息——而不是外部证据。智能体不使用工具就能答对多达 44.5% 的 BrowseComp 题目；它们超过一半的搜索查询来自内部生成的假设，而非检索到的线索；当支撑答案的证据被移除后，它们的表现甚至不如闭卷基线。这些结果表明，静态搜索基准可能在奖励“靠记忆的验证”，而不是“由证据驱动的发现”，把智能体已经知道的和它能找到的混为一谈。随后我们提出 LiveBrowseComp，一个旨在评估智能体在内在知识覆盖范围之外表现的深度搜索基准。它包含 335 道人工撰写的题目，答案依赖于基准构建前 90 天内发布的事实，取自六个持续更新的来源，并过滤掉了全球性的热点事件。在 LiveBrowseComp 上，所有被评测智能体的闭卷准确率都低于 2%，联网成绩比在 BrowseComp 上下降 25–40 分，以往的模型排名也不再能可靠地预测表现。LiveBrowseComp 发布于 https://huggingface.co/datasets/Forival/LiveBrowseComp。</p></details>
 </li>
 <li class="paper" id="2606.05241">
+  <a class="thumb" href="https://arxiv.org/abs/2606.05241" aria-label="在 arXiv 打开 Search-Time Contamination"><img src="site/assets/papers/2606.05241.webp" alt="Search-Time Contamination 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2606.05241">Search-Time Contamination</a></h3>
   <p class="meta caption-2">2026-06 · 预印本 · Search-Time Contamination in Deep Research Agents: Measuring Performance Inflation in Public Benchmark Evaluation</p>
   <p class="why body-6">评测时搜到 benchmark 元数据或答案，三级污染，最多虚高 4%</p>
@@ -82,9 +94,10 @@
   </ul>
 </section>
 <section class="block" id="group-B">
-  <h2 class="heading-5">B. 引用伪造</h2>
+  <h2 class="heading-3">B. 引用伪造</h2>
   <ul class="papers">
 <li class="paper" id="2604.03173">
+  <a class="thumb" href="https://arxiv.org/abs/2604.03173" aria-label="在 arXiv 打开 Reference Hallucinations"><img src="site/assets/papers/2604.03173.webp" alt="Reference Hallucinations 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2604.03173">Reference Hallucinations</a></h3>
   <p class="meta caption-2">2026-04 · 投稿中 · Detecting and Correcting Reference Hallucinations in Commercial LLMs and Deep Research Agents</p>
   <p class="why body-6">用 Wayback 区分伪造 URL 与链接失效；伪造 3–13%，Deep Research Agent 最高</p>
@@ -93,9 +106,10 @@
   </ul>
 </section>
 <section class="block" id="group-C">
-  <h2 class="heading-5">C. 评分条目（rubric）怎么建</h2>
+  <h2 class="heading-3">C. 评分条目（rubric）怎么建</h2>
   <ul class="papers">
 <li class="paper" id="2601.08536">
+  <a class="thumb" href="https://arxiv.org/abs/2601.08536" aria-label="在 arXiv 打开 DeepResearch Bench II"><img src="site/assets/papers/2601.08536.webp" alt="DeepResearch Bench II 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2601.08536">DeepResearch Bench II</a></h3>
   <p class="meta caption-2">2026-01 · 预印本 · DeepResearch Bench II: Diagnosing Deep Research Agents via Rubrics from Expert Reports</p>
   <p class="why body-6">132 题、9,430 条二元条目，最强模型满足不到一半（本地 PDF 为 2026-09 修订版 v3）</p>
@@ -103,12 +117,14 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">深度研究智能体（DRA）旨在帮助用户搜索网络、综合信息，并交付全面的调查报告。以往的基准要么对系统产出有意义洞见和高质量写作的能力评估不足，要么采用粗粒度或由 LLM 定义的标准，难以核验，且可能偏离人类专家的判断。为解决这些问题，我们提出 Deep Research Bench II，一个评估 DRA 的新基准。它包含覆盖 22 个领域的 132 个有据可依的研究任务；每个任务要求智能体产出一份研究报告，并由总计 9,430 条细粒度二元评分条目进行评估，涵盖信息召回、分析和呈现三个维度。所有评分条目均源自精心挑选的专家撰写的调查文章，经过一个四阶段的“LLM + 人工”流程构建：自动抽取，再加上超过 400 小时的专家审核，以确保标准可核验、并与人类专家判断一致。我们在 Deep Research Bench II 上评估了多个最先进的深度研究智能体，发现即便最强的模型也只能满足不到 50% 的评分条目，表明当前 DRA 与人类专家之间仍有很大差距。基准、评测脚本和全部评分条目已在 https://github.com/imlrz/DeepResearch-Bench-II 发布，以促进深度研究智能体的后续研究。</p></details>
 </li>
 <li class="paper" id="2607.12252">
+  <a class="thumb" href="https://arxiv.org/abs/2607.12252" aria-label="在 arXiv 打开 FinResearchBench II"><img src="site/assets/papers/2607.12252.webp" alt="FinResearchBench II 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2607.12252">FinResearchBench II</a></h3>
   <p class="meta caption-2">2026-07 · 预印本 · FinResearchBench II: A Deep Research Benchmark with Consensus-Derived Gold Rubrics for Distinguishing Financial Report Quality</p>
   <p class="why body-6">「三 judge 一致 + 能区分系统」双重筛选；注意其效度隐患</p>
   <details><summary class="body-6">中文摘要</summary><p class="body-6">深度研究智能体越来越多地被用来撰写长篇金融报告，但大规模评测仍受制于一个瓶颈：需要人类专家来定义并执行高质量的评分条目。为解决这一问题，我们提出一条可扩展的流程，在最终环节无需人类专家即可生成高质量评分条目。我们基于 104 个真实用户查询构建了一个金融深度研究基准，并从模型生成的报告中自动合成了 14,450 条针对具体查询的候选评分条目。为了论证可以把人类专家从评分条目的执行中移除，我们在一个抽样子集上比较了三位人类专家与一个三 LLM 评审小组的评分判断，结果表明基于 LLM 的评估与人工评估足够一致，可在大规模评分条目筛选中替代人工——在两组均一致同意的条目上，标签级一致率达到 98.67%。随后我们通过两道过滤得出“共识金标准评分条目”：严格一致性过滤，只有当三个 LLM 评审在同一查询下的每份报告上都一致时才保留该条目；可区分性过滤，只有当一条评分条目在被评测系统中至少得到一次多数“是”和一次多数“否”时才保留。这一过程保留了 3,687 条通过一致性检验的评分条目，其中 2,600 条具有可区分性，构成最终的共识金标准评分条目集。用这套最终条目，我们在 10 个深度研究系统之间得到了区分清晰的排名，条目级通过率从 58.58% 到 22.23% 不等。更广泛地说，由于该流程把人类专家的执行从评分条目的生成和评估中移除，它天然可扩展，可用于基准评测、自动化系统比较，以及未来由评测驱动的系统改进研究。</p></details>
 </li>
 <li class="paper" id="2606.12871">
+  <a class="thumb" href="https://arxiv.org/abs/2606.12871" aria-label="在 arXiv 打开 DailyReport"><img src="site/assets/papers/2606.12871.webp" alt="DailyReport 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2606.12871">DailyReport</a></h3>
   <p class="meta caption-2">2026-06 · 预印本 · DailyReport: An Open-ended Benchmark for Evaluating Search Agents on Daily Search Tasks</p>
   <p class="why body-6">150 道真实时效需求题，3,546 条级联条目</p>
@@ -116,6 +132,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">搜索智能体（SA）通常借助大语言模型（LLM），通过自主浏览网络来源并把信息综合成全面的回答，来支持复杂的信息查找任务。在 SA 评测方面，以往基准主要关注真实用户场景中不太会出现的专门任务；而且它们依赖粗粒度的任务级评分条目，常常限制了评测的可解释性。为弥补这一缺口，我们提出 DailyReport，一个评估 SA 在日常搜索任务上能力的开放式基准。它包含 150 个开放式任务和 3,546 条相关评分条目，反映真实用户广泛讨论、时效性强的信息需求。每个任务被拆分为若干子任务，在相互解耦的维度上用级联评分条目评估。通过级联的表现归因和以用户为中心的汇总，我们为每个维度得出高度可解释的分数，并给出一个用户偏好分。我们在 17 个智能体系统上的结果表明，现有系统仍未达到用户的期望。为促进后续研究，数据集和代码已在 https://github.com/AGI-Eval-Official/DailyReport 公开。</p></details>
 </li>
 <li class="paper" id="2608.02163">
+  <a class="thumb" href="https://arxiv.org/abs/2608.02163" aria-label="在 arXiv 打开 From Simple QA to Deep Research"><img src="site/assets/papers/2608.02163.webp" alt="From Simple QA to Deep Research 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2608.02163">From Simple QA to Deep Research</a></h3>
   <p class="meta caption-2">2026-08 · 预印本 · From Simple QA to Deep Research: A Verifiable Benchmark Constructed through Iterative Task Evolution</p>
   <p class="why body-6">自动演化出 500 题，每题是原子步骤和检查点组成的 DAG</p>
@@ -123,6 +140,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">深度研究基准需要专家级的任务，以及基于任务专属知识的可靠评估。现有基准严重依赖专家撰写或已有的人工撰写材料，而全自动构建又难以保证一致且可追溯的核验。为弥补这一缺口，我们提出一个包含 500 个深度研究任务的可核验基准，覆盖 31 个主题、10 个大类，并设计了三种查询形式来考察深度研究所需的互补能力。该基准通过迭代式的“探索者—形式化者—挑战者”（Explorer-Formalizer-Challenger）流程自动构建，把简单问题逐步演化为深度研究任务。每个任务表示为由原子步骤及相应检查点构成的有向无环图（DAG），使查询、DAG 和评分条目能以受控方式共同演化。实验表明，该基准能清晰区分不同模型和查询类型，而其基于事实的逐点评分条目可以实现细粒度、与人类一致且稳定的评估。数据、实现和结果均已公开。</p></details>
 </li>
 <li class="paper" id="2602.11685">
+  <a class="thumb" href="https://arxiv.org/abs/2602.11685" aria-label="在 arXiv 打开 DRACO"><img src="site/assets/papers/2602.11685.webp" alt="DRACO 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2602.11685">DRACO</a></h3>
   <p class="meta caption-2">2026-02 · 预印本 · DRACO: a Cross-Domain Benchmark for Deep Research Accuracy, Completeness, and Objectivity</p>
   <p class="why body-6">Perplexity 发布，题目来自脱敏的真实用户请求；发布方即第一名</p>
@@ -131,21 +149,24 @@
   </ul>
 </section>
 <section class="block" id="group-D">
-  <h2 class="heading-5">D. 人类专家与效度</h2>
+  <h2 class="heading-3">D. 人类专家与效度</h2>
   <ul class="papers">
 <li class="paper" id="2603.05912">
+  <a class="thumb" href="https://arxiv.org/abs/2603.05912" aria-label="在 arXiv 打开 DeepFact"><img src="site/assets/papers/2603.05912.webp" alt="DeepFact 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2603.05912">DeepFact</a></h3>
   <p class="meta caption-2">2026-03 · ACL（S2 标注） · DeepFact: Co-Evolving Benchmarks and Agents for Deep Research Factuality</p>
   <p class="why body-6">专家一次性标注准确率仅 60.8%，「先审计后评分」4 轮后 90.9%</p>
   <details><summary class="body-6">中文摘要</summary><p class="body-6">搜索增强的 LLM 智能体可以生成深度研究报告（DRR），但在论断层面核验其事实性仍然困难。现有事实核查工具主要面向通用领域的事实型原子论断，也没有基准能检验这类核查器能否迁移到 DRR 上。而构建这样的基准本身就很困难。我们首先表明，在这一场景下，静态的专家标注基准很脆弱：在一项有博士级专家参与的对照研究中，不借助工具的专家在一组隐藏的、可核验论断的“微型金标准”上准确率只有 60.8%。我们提出“先审计、后评分”的演进式基准方法（Audit-then-Score，AtS）：基准的标签和理由可以明确修订——当核查器与当前基准意见不一致时，必须提交证据；由审计者裁决争议；被采纳的修订在给模型评分之前更新进基准。经过四轮 AtS，专家在微型金标准上的准确率升至 90.9%，说明专家作为审计者比作为一次性标注者可靠得多。我们将 AtS 实例化为 DeepFact-Bench（一个带可审计理由、有版本管理的 DRR 事实性基准）和 DeepFact-Eval（一个文档级核查智能体，另有分组的轻量版）。后者在 DeepFact-Bench 上优于现有核查器，并能很好地迁移到外部事实性数据集。</p></details>
 </li>
 <li class="paper" id="2610.18092">
+  <a class="thumb" href="https://arxiv.org/abs/2610.18092" aria-label="在 arXiv 打开 LifeSearch"><img src="site/assets/papers/2610.18092.webp" alt="LifeSearch 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2610.18092">LifeSearch</a></h3>
   <p class="meta caption-2">2026-10 · 预印本 · LifeSearch: Benchmarking Deep Research Agents for Real-World Life and Productivity</p>
   <p class="why body-6">最新；与人类排名 Spearman 0.89 / Kendall 0.81；judge 按人工标签选定</p>
   <details><summary class="body-6">中文摘要</summary><p class="body-6">深度研究（DR）智能体通过多步推理、长程网络搜索和证据综合来满足开放式的信息需求。然而，现有基准主要关注学术研究或合成任务，DR 智能体在真实生活和职业生产力场景中的能力缺乏充分评估。为弥补这一缺口，我们提出 LifeSearch，一个具有挑战性的基准，包含 203 个中英文任务，源自真实用户的查询种子，覆盖 7 个具体的生活与生产力领域。我们投入超过 4,500 小时的人工标注，构建了 4,000 多条由专家撰写的细粒度评分条目，既包括针对覆盖面和准确性的报告内容标准，也包括对数值、单位、日期和 URL 的具体标准。我们在统一的评测框架下对 12 个先进 DR 智能体进行了大量实验，系统分析了它们的表现规律和失败模式。我们发现，即便表现最好的前沿智能体 GPT-5.6 Sol 也只得到 63.4% 的分数，在真实的生活和职业 DR 任务上仍有很大提升空间。我们通过比较候选 LLM 评审与人工评分条目标签来选定评分配置；人类排名研究表明，基准总分与人类判断高度一致（Spearman ρ = 0.89，Kendall τ = 0.81）。LifeSearch 为推动 DR 智能体走向真实生活和生产力场景提供了一个严谨的评测框架和基础。</p></details>
 </li>
 <li class="paper" id="2605.17554">
+  <a class="thumb" href="https://arxiv.org/abs/2605.17554" aria-label="在 arXiv 打开 Expert Consulting Work"><img src="site/assets/papers/2605.17554.webp" alt="Expert Consulting Work 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2605.17554">Expert Consulting Work</a></h3>
   <p class="meta caption-2">2026-05 · 预印本 · Evaluating Deep Research Agents on Expert Consulting Work: A Benchmark with Verifiers, Rubrics, and Cognitive Traps</p>
   <p class="why body-6">确定性检查 + 专家评分 + 认知陷阱；门槛指标在 70 题下无分辨力（v2 曾撤回，结论打折扣）</p>
@@ -154,15 +175,17 @@
   </ul>
 </section>
 <section class="block" id="group-E">
-  <h2 class="heading-5">E. 可复现环境</h2>
+  <h2 class="heading-3">E. 可复现环境</h2>
   <ul class="papers">
 <li class="paper" id="2604.14683">
+  <a class="thumb" href="https://arxiv.org/abs/2604.14683" aria-label="在 arXiv 打开 DR³-Eval"><img src="site/assets/papers/2604.14683.webp" alt="DR³-Eval 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2604.14683">DR³-Eval</a></h3>
   <p class="meta caption-2">2026-04 · 预印本 · DR³-Eval: Towards Realistic and Reproducible Deep Research Evaluation</p>
   <p class="why body-6">每题一个静态沙箱语料（支撑文档 + 干扰 + 噪声）</p>
   <details><summary class="body-6">中文摘要</summary><p class="body-6">深度研究智能体（DRA）旨在解决涉及规划、检索、多模态理解和报告生成的复杂长程研究任务，但由于网络环境动态变化、任务定义模糊，对它们的评测仍然困难。我们提出 DR³-Eval，一个真实且可复现的基准，用于评估深度研究智能体在多模态、多文件报告生成上的表现。DR³-Eval 基于用户真实提供的材料构建，并为每个任务配备一个静态研究沙箱语料：它模拟开放网络的复杂性，同时完全可核验，其中包含支撑文档、干扰文档和噪声。此外，我们提出一个多维评测框架，衡量信息召回、事实准确性、引用覆盖、指令遵循和深度质量，并验证了它与人类判断的一致性。基于多个最先进语言模型、使用我们开发的多智能体系统 DR³-Agent 的实验表明，DR³-Eval 极具挑战性，并揭示了检索稳健性和幻觉控制方面的关键失败模式。代码和数据均已公开。</p></details>
 </li>
 <li class="paper" id="2508.06600">
+  <a class="thumb" href="https://arxiv.org/abs/2508.06600" aria-label="在 arXiv 打开 BrowseComp-Plus"><img src="site/assets/papers/2508.06600.webp" alt="BrowseComp-Plus 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2508.06600">BrowseComp-Plus</a></h3>
   <p class="meta caption-2">2025-08 · ACL 2026 · BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent</p>
   <p class="why body-6">约 10 万篇人工核验的固定语料，ACL 2026</p>
@@ -172,9 +195,10 @@
   </ul>
 </section>
 <section class="block" id="group-F">
-  <h2 class="heading-5">F. 计分规则的理论依据</h2>
+  <h2 class="heading-3">F. 计分规则的理论依据</h2>
   <ul class="papers">
 <li class="paper" id="2509.04664">
+  <a class="thumb" href="https://arxiv.org/abs/2509.04664" aria-label="在 arXiv 打开 Why Language Models Hallucinate"><img src="site/assets/papers/2509.04664.webp" alt="Why Language Models Hallucinate 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2509.04664">Why Language Models Hallucinate</a></h3>
   <p class="meta caption-2">2025-09 · OpenAI 预印本 · Why Language Models Hallucinate</p>
   <p class="why body-6">二元计分鼓励瞎猜；支撑「答错扣分、弃答 0 分」</p>
@@ -183,9 +207,10 @@
   </ul>
 </section>
 <section class="block" id="group-G">
-  <h2 class="heading-5">G. Deep Research 的定义与过程指标</h2>
+  <h2 class="heading-3">G. Deep Research 的定义与过程指标</h2>
   <ul class="papers">
 <li class="paper" id="2508.04183">
+  <a class="thumb" href="https://arxiv.org/abs/2508.04183" aria-label="在 arXiv 打开 LiveDRBench"><img src="site/assets/papers/2508.04183.webp" alt="LiveDRBench 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2508.04183">LiveDRBench</a></h3>
   <p class="meta caption-2">2025-08 · ICLR 2026 · Characterizing Deep Research: A Benchmark and Formal Definition</p>
   <p class="why body-6">主张 Deep Research 的本质是搜索时的高扇出，而非长报告；ICLR 2026</p>
@@ -193,6 +218,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">撰写综述或分析报告这类信息任务需要复杂的搜索与推理，近来被统称为“深度研究”（deep research），一些主打这类能力的新模型也沿用了这个名字。尽管关注度不断上升，深度研究任务的范围仍缺乏清晰界定，它与其他推理密集型问题的区别也少有人理解。本文对深度研究（DR）任务给出形式化刻画，并提出一个评估 DR 系统表现的基准。我们认为，深度研究的核心特征并不是产出冗长的报告式结果，而是搜索过程中对概念的高扇出，即广泛且推理密集的探索。为了实现客观评测，我们用一种中间输出表示来定义 DR：它编码搜索中发现的关键论断，从而把推理难题与表层的报告生成区分开。基于这一表述，我们提出了多样且有挑战性的基准 LiveDRBench，包含 100 个高难度任务，涵盖科学主题（如数据集、材料发现、现有技术检索）和公共事件（如航空事故、电影奖项）。在当前最先进的 DR 系统中，各子类别的 F1 分数在 0.02 到 0.72 之间；OpenAI 的模型表现最好，总体 F1 为 0.55。对推理轨迹的分析揭示了现有 DR 系统在引用来源数量、分支和回溯事件上的分布，为改进其搜索机制和事实依据（grounding）能力指出了方向。基准地址：https://github.com/microsoft/LiveDRBench。</p></details>
 </li>
 <li class="paper" id="2602.18940">
+  <a class="thumb" href="https://arxiv.org/abs/2602.18940" aria-label="在 arXiv 打开 DREAM"><img src="site/assets/papers/2602.18940.webp" alt="DREAM 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2602.18940">DREAM</a></h3>
   <p class="meta caption-2">2026-02 · ACL（S2 标注） · DREAM: Deep Research Evaluation with Agentic Metrics</p>
   <p class="why body-6"></p>
@@ -200,6 +226,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">深度研究智能体能生成分析师级别的报告，但由于不存在唯一的标准答案、研究质量又是多维的，评估它们依然困难。近期的基准提出了各不相同的方法，却都受困于“综合的幻象”（Mirage of Synthesis）：出色的表层流畅度和引用对齐，可能掩盖底层的事实与推理缺陷。我们通过一个跨四个垂直方向的分类体系刻画这一缺口，揭示出一个关键的能力错配：静态评估器天然缺乏评估时效有效性和事实正确性所需的工具使用能力。为此，我们提出 DREAM（Deep Research Evaluation with Agentic Metrics，基于智能体指标的深度研究评测），一个践行“能力对等”原则的框架——让评测本身也成为智能体。DREAM 通过一套评测协议组织评估：把与查询无关的通用指标，与由调用工具的智能体生成的自适应指标结合起来，从而实现对时效的感知覆盖、有依据的核验以及系统性的推理探查。受控评测表明，DREAM 对事实和时效衰减的敏感度显著高于现有基准，提供了一种可扩展、无需参考答案的评测范式。</p></details>
 </li>
 <li class="paper" id="2603.28407">
+  <a class="thumb" href="https://arxiv.org/abs/2603.28407" aria-label="在 arXiv 打开 MiroEval"><img src="site/assets/papers/2603.28407.webp" alt="MiroEval 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2603.28407">MiroEval</a></h3>
   <p class="meta caption-2">2026-03 · 预印本 · MiroEval: Benchmarking Multimodal Deep Research Agents in Process and Outcome</p>
   <p class="why body-6"></p>
@@ -209,9 +236,10 @@
   </ul>
 </section>
 <section class="block" id="group-H">
-  <h2 class="heading-5">H. 其他 benchmark</h2>
+  <h2 class="heading-3">H. 其他 benchmark</h2>
   <ul class="papers">
 <li class="paper" id="2601.06676">
+  <a class="thumb" href="https://arxiv.org/abs/2601.06676" aria-label="在 arXiv 打开 IDRBench"><img src="site/assets/papers/2601.06676.webp" alt="IDRBench 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2601.06676">IDRBench</a></h3>
   <p class="meta caption-2">2026-01 · 预印本 · IDRBench: Benchmarking the Interactive Capabilities of Deep Research Agents</p>
   <p class="why body-6"></p>
@@ -219,6 +247,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">基于大语言模型（LLM）的深度研究智能体会执行多步推理、网络探索和长篇报告生成。在这类长程工作流中，早期对用户意图的偏离可能误导整个研究，并在规划、搜索和综合环节中层层传导，因此及时的交互至关重要。然而，现有基准大多把深度研究当作静态的输入—输出任务，忽视了智能体获取并利用用户反馈的能力。我们提出 IDRBench，一个在受控澄清机会下评估交互式深度研究的基准。在统一的工作流和分阶段交互预算下，IDRBench 比较自主轨迹与交互轨迹：用任务相关的报告对齐度变化衡量交互收益，用轮次和 token 衡量交互成本。在 100 个任务、7 个闭源与开放权重 LLM 上的全面实验表明，交互使每个模型的全部五项对齐指标都有提升，平均提高 6.39 分，同时揭示了自主表现、对齐收益和沟通成本之间各不相同的权衡。在单个任务层面，交互在 74.4% 的情况下提升表现，但在 19.9% 的情况下反而降低表现，说明仅有澄清机会并不能保证更好的结果：成败取决于智能体问什么，以及它能否有效吸收得到的反馈。</p></details>
 </li>
 <li class="paper" id="2601.10504">
+  <a class="thumb" href="https://arxiv.org/abs/2601.10504" aria-label="在 arXiv 打开 DR-Arena"><img src="site/assets/papers/2601.10504.webp" alt="DR-Arena 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2601.10504">DR-Arena</a></h3>
   <p class="meta caption-2">2026-01 · ACL（S2 标注） · DR-Arena: an Automated Evaluation Framework for Deep Research Agents</p>
   <p class="why body-6"></p>
@@ -226,6 +255,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">随着大语言模型（LLM）越来越多地以深度研究（DR）智能体的形式开展自主调查和信息综合，如何可靠地评估其任务表现已成为关键瓶颈。现有基准主要依赖静态数据集，存在任务通用性有限、时间错位和数据污染等局限。为此，我们提出 DR-Arena，一个全自动评测框架，通过动态调查把 DR 智能体推向能力极限。DR-Arena 从最新的网络热点实时构建“信息树”，确保评分标准与真实世界的当前状态同步；并由一个自动“考官”生成结构化任务，测试两种正交能力：深度推理（Deep）与广度覆盖（Wide）。DR-Arena 还采用“自适应演进循环”——一个状态机控制器，根据实时表现动态提升任务复杂度，要求更深的推演或更广的汇总，直到出现明确的能力边界。在六个先进 DR 智能体上的实验表明，DR-Arena 与 LMSYS Search Arena 排行榜的 Spearman 相关系数达到 0.94。这在无需任何人工投入的前提下，达到了与人类偏好对齐的最高水平，证明 DR-Arena 可以可靠地替代成本高昂的人工评判。</p></details>
 </li>
 <li class="paper" id="2601.12346">
+  <a class="thumb" href="https://arxiv.org/abs/2601.12346" aria-label="在 arXiv 打开 MMDeepResearch-Bench"><img src="site/assets/papers/2601.12346.webp" alt="MMDeepResearch-Bench 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2601.12346">MMDeepResearch-Bench</a></h3>
   <p class="meta caption-2">2026-01 · 预印本 · MMDeepResearch-Bench: A Benchmark for Multimodal Deep Research Agents</p>
   <p class="why body-6"></p>
@@ -233,6 +263,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">深度研究智能体（DRA）通过多步搜索与综合生成富含引用的报告，但现有基准主要面向纯文本场景或短问答式的多模态任务，缺少对端到端多模态证据使用的考察。我们提出 MMDeepResearch-Bench（MMDR-Bench），一个包含 21 个领域、140 个专家设计任务的基准，每个任务提供一组图文材料，用于评估多模态理解和基于引用的报告生成。与以往设置相比，MMDR-Bench 强调带有明确证据使用的报告式综合：模型必须把视觉材料与有出处的论断联系起来，并在叙述、引用和视觉指代之间保持一致。我们还提出一套统一、可解释的评测流程：用于评估报告质量的 FLAE（公式—LLM 自适应评估），用于评估引用与证据对齐的 TRACE（可信的检索对齐引用评估），以及用于评估图文一致性的 MOSAIC（多模态支持对齐完整性检查）。每个环节都产出细粒度信号，支持单一总分之外的错误诊断。在 25 个最先进模型上的实验揭示了生成质量、引用规范和多模态依据之间的系统性权衡：文笔出色并不能保证忠实地使用证据，多模态完整性仍是深度研究智能体的关键瓶颈。</p></details>
 </li>
 <li class="paper" id="2603.01152">
+  <a class="thumb" href="https://arxiv.org/abs/2603.01152" aria-label="在 arXiv 打开 DeepResearch-9K"><img src="site/assets/papers/2603.01152.webp" alt="DeepResearch-9K 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2603.01152">DeepResearch-9K</a></h3>
   <p class="meta caption-2">2026-03 · SIGIR（S2 标注） · DeepResearch-9K: A Challenging Benchmark Dataset of Deep-Research Agent</p>
   <p class="why body-6"></p>
@@ -242,9 +273,10 @@
   </ul>
 </section>
 <section class="block" id="group-I">
-  <h2 class="heading-5">I. 综述</h2>
+  <h2 class="heading-3">I. 综述</h2>
   <ul class="papers">
 <li class="paper" id="2608.05179">
+  <a class="thumb" href="https://arxiv.org/abs/2608.05179" aria-label="在 arXiv 打开 Survey: Verification Gap"><img src="site/assets/papers/2608.05179.webp" alt="Survey: Verification Gap 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2608.05179">Survey: Verification Gap</a></h3>
   <p class="meta caption-2">2026-08 · 预印本 · Autonomous Research Agents: A Survey of AI Scientists and the Verification Gap</p>
   <p class="why body-6"></p>
@@ -252,6 +284,7 @@
   <details><summary class="body-6">中文摘要</summary><p class="body-6">大语言模型（LLM）智能体正越来越多地用于科研全流程：构思、文献检索、实验设计与执行、分析、撰写论文和审稿。端到端的“AI 科学家”系统如今已能产出形似论文的稿件，但它们的论断往往比它们的代码更难验证。本综述在计算型 AI/ML 研究中考察这一缺口——这是代码、基准、实验和论文最透明可见的领域。我们筛选了 125 篇候选文献，纳入 35 篇，对其中 26 项做全文编码：24 个可运行系统和两篇研究或立场论文。我们按七个审计维度编码：所处研究阶段、自主程度、评估方法、发布的产物、人工介入环节、新颖性核验，以及结果挑选的披露。主要规律是：发布代码已很普遍，但达到可复现级别和可核验论断的产物仍少得多。在 24 个可运行系统中，83% 发布了代码，但只有 38% 发布了随机种子或执行轨迹，38% 报告了任何新颖性核验方法。在九个闭环 L4 系统中，七个只是机械式重跑，一个仅为作者自称、未经外部检验；按我们的编码规则，语料中没有任何一个 LLM 时代的系统展示出经外部验证的环内判定器（oracle）。我们贡献了一个编码语料库、一张“研究阶段 × 自主程度”图谱、一份可审计性缺口分析，以及一份面向审稿人的报告清单。本综述认为，该领域的核心瓶颈已不仅是智能体能否完成研究任务，而是审稿人能否核验这些智能体产出的论断。</p></details>
 </li>
 <li class="paper" id="2608.27505">
+  <a class="thumb" href="https://arxiv.org/abs/2608.27505" aria-label="在 arXiv 打开 Survey: Rubric-Guided RL"><img src="site/assets/papers/2608.27505.webp" alt="Survey: Rubric-Guided RL 论文第一页" width="560" height="725" loading="lazy"></a>
   <h3 class="title-3"><a href="https://arxiv.org/abs/2608.27505">Survey: Rubric-Guided RL</a></h3>
   <p class="meta caption-2">2026-08 · 预印本 · A Survey on Rubric-Guided Reinforcement Learning for Language Models</p>
   <p class="why body-6"></p>

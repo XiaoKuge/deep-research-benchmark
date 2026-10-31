@@ -9,59 +9,60 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
   /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
   :root {
-    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
-    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
-    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --paper: #ececeb; --bg: #ececeb; --surface: rgba(255, 255, 255, .45); --raised: rgba(255, 255, 255, .62); --glass-line: rgba(255, 255, 255, .86); --line: rgba(34, 34, 34, .12);
+    --ink: #202020; --ink-2: #4a4a4a; --ink-3: #78777b;
+    --accent: #a2264a; --rose: #ad314d; --ok: #2f7a4f; --warn: #a8501f; --bad: #b42318;
+    --shadow: 0 1px 2px rgba(50, 28, 39, .08), 0 12px 32px rgba(50, 28, 39, .06);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
     --stage-h: 0px;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
-      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
-      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
-      color-scheme: dark;
-    }
-  }
-  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-1 { font-size: 48px; line-height: 1.22; font-weight: 400; letter-spacing: .01em; }
+  .heading-3 { font-size: 36px; line-height: 1.28; font-weight: 400; }
   .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
   .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
-  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
-  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
-  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .title-3 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-4 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-3 { font-size: 18px; line-height: 32px; font-weight: 400; }
+  .body-6 { font-size: 16px; line-height: 28px; font-weight: 400; }
   .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-2 { font-size: 14px; line-height: 24px; font-weight: 400; }
+  @media (max-width: 767px) { .heading-1 { font-size: 30px; } .heading-3 { font-size: 24px; } .body-3 { font-size: 16px; line-height: 28px; } }
   .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--stage-h) + 24px); }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--stage-h) + 24px); background: var(--paper) url("assets/paper.webp") center top / cover fixed; }
+  body { margin: 0; background: transparent; color: var(--ink); font-family: var(--font); font-size: 18px; line-height: 32px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { text-wrap: balance; }
   p, li, td { text-wrap: pretty; }
   a { color: var(--accent); text-underline-offset: 4px; }
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
-  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1336px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 48px; } }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: rgba(240, 240, 238, .5); pointer-events: none; }
   .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
   .skip:focus { top: 16px; }
 
-  header.top { padding-block: 32px 24px; }
-  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
-  .back:hover { color: var(--ink); text-decoration: underline; }
-  .lede { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
-  .notice { max-width: 680px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
-  .notice strong { color: var(--ink); font-weight: 600; }
+  /* 页首：回到资料站，下面是大标题和说明 */
+  header.top { padding-bottom: 48px; }
+  .back { display: flex; align-items: center; min-height: 80px; margin-bottom: 48px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: .02em; }
+  .back:hover { color: var(--accent); }
+  .top h1 { max-width: 960px; }
+  .lede { max-width: 860px; margin-top: 24px; color: var(--ink-2); }
+  .notice { max-width: 960px; margin-top: 32px; padding: 24px 32px; border-radius: 16px; color: rgba(255, 255, 255, .92);
+    background: var(--rose) url("assets/card-rose.jpg") center / cover no-repeat; border: 1px solid rgba(255, 255, 255, .36);
+    box-shadow: 0 2px 4px rgba(50, 28, 39, .30), inset 0 1px 0 rgba(255, 255, 255, .24); text-shadow: 0 1px 2px rgba(60, 21, 35, .16); }
+  .notice strong { color: #fff; font-weight: 600; }
+  .notice code { color: #fff; }
 
   /* 上方固定的架构图 */
-  .stage { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); padding-block: 8px; }
+  .stage { position: sticky; top: 0; z-index: 10; background: rgba(240, 240, 238, .9); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-bottom: 1px solid var(--line); padding-block: 8px; }
   .stage-frame { position: relative; overflow: hidden; margin: 0 auto; border-radius: 12px; border: 1px solid var(--line); }
   .stage iframe { position: absolute; left: 0; top: 0; border: 0; width: 1440px; height: 600px; transform-origin: 0 0; background: var(--bg); }
   .stage-bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 8px; color: var(--ink-2); }
@@ -91,7 +92,7 @@
 
   /* 每一站 */
   main { padding-bottom: 96px; }
-  .station { padding-block: 48px; border-bottom: 1px solid var(--line); max-width: 760px; }
+  .station { padding-block: 64px; border-bottom: 1px solid var(--line); max-width: 860px; }
   .station:last-of-type { border-bottom: 0; }
   .station .num { color: var(--ink-3); margin-bottom: 8px; }
   .station .sum { margin-top: 12px; color: var(--ink-2); }
@@ -100,20 +101,20 @@
   .flow p + p { margin-top: 8px; }
   .flow ol, .flow ul { margin: 8px 0 0; padding-left: 24px; }
   .flow li + li { margin-top: 4px; }
-  .box { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); }
+  .box { margin-top: 24px; padding: 24px; border-radius: 16px; background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .box .label { color: var(--ink-3); margin-bottom: 8px; }
-  .box blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); }
+  .box blockquote { margin: 0; padding-left: 16px; border-left: 2px solid var(--rose); }
   .box blockquote + .label { margin-top: 16px; }
   .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; }
-  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; line-height: 20px; background: var(--raised); }
-  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 16px; line-height: 24px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; }
   th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
   td.c { text-align: center; white-space: nowrap; }
   .yes { color: var(--ok); font-weight: 600; }
   .no { color: var(--bad); font-weight: 600; }
   .muted { color: var(--ink-3); }
   .result { margin-top: 16px; font-weight: 600; }
-  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer { border-top: 1px solid var(--line); padding-block: 40px; color: var(--ink-3); }
   footer a { color: var(--ink-2); }
   code { font-size: 14px; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -125,7 +126,7 @@
 <header class="top">
   <div class="wrap">
     <a class="back caption-1" href="index.html">← 回到资料站</a>
-    <h1 class="heading-3">一道题走完全程</h1>
+    <h1 class="heading-1">一道题走完全程</h1>
     <p class="body-3 lede">用出题手册里的"中国最大的淡水湖"作例子，跟着这道题从出题一直走到名次公布，一共十一站。往下读到哪一站，上面的架构图就亮到哪里；在图上点任一环节，页面也会跳到那一站。</p>
     <p class="body-6 notice"><strong>先说清楚：</strong>五个智能体、它们的报告，以及出题、评审、申诉过程中的具体情节，都是虚构的示意，不是真实结果。题目、深度地图和其中关于湖泊的事实取自出题手册，有出处。分数严格按规则手册的计分规则算出，同目录的 <code>walkthrough_example.py</code> 可以复算。</p>
   </div>
@@ -152,7 +153,7 @@
 
 <section class="station" id="step-qcard" data-node="qcard" data-name="题目卡">
   <p class="num caption-1">第 1 站</p>
-  <h2 class="heading-5">题目卡</h2>
+  <h2 class="heading-3">题目卡</h2>
   <p class="body-3 sum">把一个话题写成一道题，并写成三个版本。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>出题人选定的话题：中国最大的淡水湖。答案看起来只有一个词，但往深处查，书里这句话的写法会变。</p></div>
@@ -172,7 +173,7 @@
 
 <section class="station" id="step-depthmap" data-node="depthmap" data-name="深度地图">
   <p class="num caption-1">第 2 站</p>
-  <h2 class="heading-5">深度地图</h2>
+  <h2 class="heading-3">深度地图</h2>
   <p class="body-3 sum">出题人在看到任何报告之前，写下这道题往深处查会查到什么。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>同一道题，出题人自己往深处查了一遍。</p></div>
@@ -201,7 +202,7 @@
 
 <section class="station" id="step-agents" data-node="agents" data-name="五个参赛智能体">
   <p class="num caption-1">第 3 站</p>
-  <h2 class="heading-5">五个参赛智能体</h2>
+  <h2 class="heading-3">五个参赛智能体</h2>
   <p class="body-3 sum">五支队伍各交一个智能体，在题目公布前定下来。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>五支队伍各自的深度研究智能体。</p></div>
@@ -212,7 +213,7 @@
 
 <section class="station" id="step-runner" data-node="runner" data-name="统一运行">
   <p class="num caption-1">第 4 站</p>
-  <h2 class="heading-5">统一运行</h2>
+  <h2 class="heading-3">统一运行</h2>
   <p class="body-3 sum">主办方在同一天，把题目原文交给每个智能体。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>提问版原文，连同统一的交付要求；五个定下来的智能体。</p></div>
@@ -226,7 +227,7 @@
 
 <section class="station" id="step-reports" data-node="reports" data-name="报告与网页存档">
   <p class="num caption-1">第 5 站</p>
-  <h2 class="heading-5">报告与网页存档</h2>
+  <h2 class="heading-3">报告与网页存档</h2>
   <p class="body-3 sum">保存报告原件，去掉队名，存档报告引用的网页。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>五份报告。</p></div>
@@ -249,7 +250,7 @@
 
 <section class="station" id="step-verify" data-node="verify" data-name="断言核验">
   <p class="num caption-1">第 6 站</p>
-  <h2 class="heading-5">断言核验</h2>
+  <h2 class="heading-3">断言核验</h2>
   <p class="body-3 sum">逐条打开来源，核对报告的主要结论。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>五份匿名报告和网页存档。</p></div>
@@ -271,7 +272,7 @@
 
 <section class="station" id="step-pool" data-node="pool" data-name="要点池">
   <p class="num caption-1">第 7 站</p>
-  <h2 class="heading-5">要点池</h2>
+  <h2 class="heading-3">要点池</h2>
   <p class="body-3 sum">把所有要点合成一张表，逐条判定，记下谁写到了哪条。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>五份报告里的要点，和深度地图上的 8 条要点。</p></div>
@@ -300,7 +301,7 @@
 
 <section class="station" id="step-ratings" data-node="ratings" data-name="环节评级">
   <p class="num caption-1">第 8 站</p>
-  <h2 class="heading-5">环节评级</h2>
+  <h2 class="heading-3">环节评级</h2>
   <p class="body-3 sum">看报告做事的方式，在五个方面各评 0、1、2 三档。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>五份匿名报告。</p></div>
@@ -324,7 +325,7 @@
 
 <section class="station" id="step-scorer" data-node="scorer" data-name="计分程序">
   <p class="num caption-1">第 9 站</p>
-  <h2 class="heading-5">计分程序</h2>
+  <h2 class="heading-3">计分程序</h2>
   <p class="body-3 sum">按公开的规则，一步一步排出先后。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>核验结果、要点池、环节评级。</p></div>
@@ -381,7 +382,7 @@
 
 <section class="station" id="step-ranks" data-node="ranks" data-name="名次区间">
   <p class="num caption-1">第 10 站</p>
-  <h2 class="heading-5">名次区间</h2>
+  <h2 class="heading-3">名次区间</h2>
   <p class="body-3 sum">分不开的就并列，公布每份报告可能的名次范围。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>每一对报告分没分开。</p></div>
@@ -405,7 +406,7 @@
 
 <section class="station" id="step-package" data-node="package" data-name="复核包与申诉">
   <p class="num caption-1">第 11 站</p>
-  <h2 class="heading-5">复核包与申诉</h2>
+  <h2 class="heading-3">复核包与申诉</h2>
   <p class="body-3 sum">全部材料随名次公开，任何人都能重算；有异议可以申诉。</p>
   <div class="flow body-3">
     <div><h3 class="caption-3">进来的</h3><p>临时名次，以及前面每一站留下的全部材料。</p></div>

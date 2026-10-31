@@ -40,41 +40,7 @@ PAGES = [
      "深度研究比赛规则手册", "出题、冻结与申报、运行、交付、评审、名次、申诉和违规处理的规则", "3"),
 ]
 
-CSS = """
-  :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
-    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
-  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
-  a{color:var(--accent2)} a:hover{color:#fff}
-  .back{font-size:13px;text-decoration:none;color:var(--dim)}
-  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
-  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
-  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
-    border-top:1px solid var(--line)}
-  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
-  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
-  p{margin:10px 0}
-  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
-  strong{color:#fff;font-weight:620}
-  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
-  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
-    padding:10px 18px;margin:14px 0}
-  blockquote p{margin:6px 0}
-  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
-  .tbl{overflow-x:auto;margin:12px 0}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
-  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-  th{background:var(--panel2);color:var(--dim);font-weight:600}
-  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-    padding:8px 18px;margin:16px 0;font-size:14px}
-  nav.toc ul{padding-left:18px}
-  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
-  @media (max-width:640px){ h1{font-size:22px} }
-"""
+# 样式在 site/doc.css，资料站所有长文档页面共用
 
 TEMPLATE = """<!DOCTYPE html>
 <html lang="zh">
@@ -82,12 +48,15 @@ TEMPLATE = """<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
-<style>{css}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../site/doc.css">
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="../papers.html">← 文献索引</a>
-<div class="meta">{dek}。本页由 <code>{src}</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="docnav"><a class="back" href="../papers.html">← 文献索引</a><a href="../site/index.html">资料站首页</a></nav>
+{heading}<div class="meta">{dek}。本页由 <code>{src}</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
 <nav class="toc">{toc}</nav>
 {body}
 <footer>源文件：<code>{src}</code></footer>
@@ -103,9 +72,14 @@ def render(src, out, title, dek, toc_depth="2"):
     md = markdown.Markdown(extensions=["tables", "fenced_code", "toc", "sane_lists", "attr_list"],
                            extension_configs={"toc": {"toc_depth": toc_depth}})
     body = md.convert(text)
+    # 文档开头的一级标题放到最前面，后面才是出处说明和目录
+    heading = ""
+    m = re.match(r"\s*(<h1[^>]*>.*?</h1>)", body, re.S)
+    if m:
+        heading, body = m.group(1) + "\n", body[m.end():]
     body = re.sub(r"<table>", '<div class="tbl"><table>', body)
     body = re.sub(r"</table>", "</table></div>", body)
-    html = TEMPLATE.format(title=title, css=CSS, dek=dek, src=src, toc=md.toc, body=body)
+    html = TEMPLATE.format(title=title, heading=heading, dek=dek, src=src, toc=md.toc, body=body)
     path = os.path.join(ROOT, out)
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:

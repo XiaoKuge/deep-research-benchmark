@@ -9,7 +9,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="pages.css">
 <style>
   /* 本页的样式；各页共用的在 pages.css */
@@ -54,7 +54,7 @@
       <a href="faq.html">常见问题</a>
     </nav>
     <p class="eyebrow caption-1">深度研究赛项</p>
-    <h1 class="heading-3">上手</h1>
+    <h1 class="heading-1">上手</h1>
     <p class="body-3 lede">按你的身份找到第一步。出题同学、参赛队伍、评委各有一条路，每条都从一份材料读起。还不清楚比什么，先读<a href="brief.html">赛事说明</a>。</p>
     <p class="body-6 notice"><strong>现阶段：</strong>还没有真人出题者和评委，出题和评审由大模型程序模拟，运行的命令见<a href="#simulation">下面一节</a>。真人出题和评审时的第一步，照样保留在各自的卡片里。</p>
   </div>
@@ -64,12 +64,12 @@
 <div class="wrap">
 
 <section class="block wide" id="roles" aria-labelledby="roles-title">
-  <h2 class="heading-5" id="roles-title">三类人的第一步</h2>
+  <h2 class="heading-3" id="roles-title">三类人的第一步</h2>
   <div class="roles">
 
     <article class="card role body-3" id="setters" aria-labelledby="setters-title">
       <p class="tag caption-3">出题</p>
-      <h3 class="heading-6" id="setters-title">出题同学</h3>
+      <h3 class="heading-5" id="setters-title">出题同学</h3>
       <p class="body-6 now"><strong>现在：</strong>出题由模拟出题者担任，见<a href="#simulation">模拟出题</a>。</p>
       <p class="when caption-1">真人出题时</p>
       <ol>
@@ -82,7 +82,7 @@
 
     <article class="card role body-3" id="teams" aria-labelledby="teams-title">
       <p class="tag caption-3">参赛</p>
-      <h3 class="heading-6" id="teams-title">参赛队伍</h3>
+      <h3 class="heading-5" id="teams-title">参赛队伍</h3>
       <p class="body-6 now"><strong>现在：</strong>练习题已经公开，正式题赛前保密。日期和报名方式〔待定〕，见<a href="brief.html#schedule">赛事说明</a>。</p>
       <p class="when caption-1">参赛时</p>
       <ol>
@@ -94,7 +94,7 @@
 
     <article class="card role body-3" id="judges" aria-labelledby="judges-title">
       <p class="tag caption-3">评审</p>
-      <h3 class="heading-6" id="judges-title">评委</h3>
+      <h3 class="heading-5" id="judges-title">评委</h3>
       <p class="body-6 now"><strong>现在：</strong>评审由模拟评审程序担任，三家模型各当评委，见<a href="#simulation">模拟评审</a>。</p>
       <p class="when caption-1">真人评审时</p>
       <ol>
@@ -108,7 +108,7 @@
 </section>
 
 <section class="block" id="simulation" aria-labelledby="sim-title">
-  <h2 class="heading-5" id="sim-title">现阶段：出题者和评委由大模型程序模拟</h2>
+  <h2 class="heading-3" id="sim-title">现阶段：出题者和评委由大模型程序模拟</h2>
   <p class="body-3 sum">还没有真人出题者和评委的阶段，主办方用大模型程序模拟他们，从出题到名次的整条流程现在就能跑通。</p>
   <div class="prose body-3">
     <ul>
@@ -120,13 +120,13 @@
   <div class="cards">
     <div class="card body-3">
       <p class="tag caption-3">模拟出题</p>
-      <h3 class="heading-6">按出题手册七步出一道题</h3>
+      <h3 class="heading-5">按出题手册七步出一道题</h3>
       <pre class="cmd"><code>python3 tools/simulate_setter.py</code></pre>
       <p>写评委版、提问版、裸题版；两次互相独立的调用各写一份深度地图的核心要点，用数鱼的办法估计是否写全；另一个模型只看交给智能体的两个版本做泄露检查；换一家模型、不联网做闭卷对照。输出一个题目目录，附深度地图校验值和全部调用记录。</p>
     </div>
     <div class="card body-3">
       <p class="tag caption-3">模拟评审</p>
-      <h3 class="heading-6">按评审细则评一组报告</h3>
+      <h3 class="heading-5">按评审细则评一组报告</h3>
       <pre class="cmd"><code>python3 tools/simulate_review.py</code></pre>
       <p>做断言核验、要点抽取、要点池判定、环节评级和两两比较。要点池判定时评委看不到要点出自哪份报告、出自几份报告；没有一种意见达到三分之二的判定记为有争议。结果交给计分程序第 1.2 版，算出名次区间。</p>
     </div>
