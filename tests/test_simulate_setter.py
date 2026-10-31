@@ -242,7 +242,7 @@ class TemplateFormatTest(SetterCase):
         self.assertIn("【提问者】" + CARD["提问者"], card)
         self.assertIn(VERSIONS["提问版"], card)
         fixed = handbook_template("tpl-card")
-        fixed = fixed[fixed.index("【交付要求】"):]
+        fixed = fixed[fixed.index("交付要求："):]
         self.assertTrue(card.rstrip("\n").endswith(fixed.rstrip("\n")))
         # 交给智能体的两个文件：版本的文字，空一行，再接规则手册附录一的交付要求和说明，一字不改
         appendix = rules_appendix_one()

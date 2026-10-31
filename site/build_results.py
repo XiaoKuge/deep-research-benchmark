@@ -3,14 +3,14 @@
 用法：在仓库根目录运行 python3 -I site/build_results.py [--input 目录] [--output 目录]
 
 不给 --input 时读第五阶段试评，默认写到 site/results/。只读 research-plan/stage5-pilot/ 下的文件，不改它们：
-- results-v1.2.json：第 1.2 版计分结果（名次区间、净分、严重问题、环节档位、分开的对）；
+- 第 1.2 版计分结果文件（文件名见 RESULTS_NAME）：名次区间、净分、严重问题、环节档位、分开的对；
 - mapping.json：匿名编号对应的产品；
 - out/ 下的评委输出：断言核验、要点池、环节评级、两两比较、对题目的直接回答；
 - judges/manifest.json：每个评委输出文件对应的提示词和模型。
 试评页面里的链接按页面放在 site/results/ 下来写。
 
 --input 给一次模拟评审的输出目录（simulation/reviews/<运行标识>/，格式见 tools/simulate_review.md）时，
-读其中的 run.json、calls.jsonl、mapping.json、data/、judgments/extract.json 和 results-v1.2.json，
+读其中的 run.json、calls.jsonl、mapping.json、data/、judgments/extract.json 和第 1.2 版计分结果文件，
 题目卡从 run.json 记下的题目目录读。这时 --output 必须给，页面里的链接按页面实际写到的目录来写。
 资料站的模拟评审页面由 site/build_simulation.py 调用这里的 build()，并把每一次调用的原文页链接进来。
 """
@@ -250,20 +250,23 @@ def shell(data, title, description, body):
 
 # ---------- 数据 ----------
 
-def load_score_module():
-    """计分程序里的权重和单条要点的计分公式，复核页上逐条列出的得分用它算，与名次用的是同一套公式。"""
+def load_module(name, path):
+    """按文件路径载入一个程序当模块用，不改 sys.path，也不写字节码缓存。"""
     sys.dont_write_bytecode = True
-    spec = importlib.util.spec_from_file_location("stage5_score", os.path.join(PILOT, "score.py"))
+    spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-SCORE = load_score_module()
+# 计分程序里的权重、单条要点的计分公式和环节名称：复核页上逐条列出的得分用它算，与名次用的是同一套。
+SCORE = load_module("stage5_score", os.path.join(PILOT, "score.py"))
+COMMON = load_module("tools_common", os.path.join(ROOT, "tools", "common.py"))
+RESULTS_NAME = "results-v1.2.json"  # 计分程序第 1.2 版写出的结果文件
 WEIGHTS = list(SCORE.LEVEL_W)  # 甲、乙、丙
 LEVELS = ["现象", "全体", "内部联系", "本质"]
-ELEMENTS = [("①", "切题与真实需要"), ("③", "查找过程的交代"), ("④", "甄别来源与处理矛盾"), ("⑤", "分析"), ("⑦", "结论与把握")]
-TIMELINESS = "时效"
+ELEMENTS = [(key, SCORE.ELEMENT_NAMES[key]) for key in SCORE.ELEMENTS]  # 五个环节：①③④⑤⑦
+TIMELINESS = SCORE.ELEMENT_NAMES["②"]
 
 
 def href(path, start):
@@ -309,7 +312,7 @@ class Data:
             self.to_src, self.to_site, self.to_notes = TO_PILOT, TO_SITE, TO_NOTES
             self.manifest = load(os.path.join(PILOT, "judges", "manifest.json"))
             self.question = read_question_card(os.path.join(PILOT, "question-card.md"))
-        self.results = load(os.path.join(source, "results-v1.2.json"))
+        self.results = load(os.path.join(source, RESULTS_NAME))
         self.mapping = load(os.path.join(source, "mapping.json"))
         self.reports = {r["label"]: r for r in self.results["reports"]}
         self.labels = [r["label"] for r in self.results["reports"]]
@@ -343,10 +346,9 @@ class Data:
         return f"报告 {r}"
 
     def grades(self, r):
-        """五个环节和时效的档位，计分程序分不开时比较的就是这六项。"""
+        """五个环节的档位。深度净分分不开时，第 1.2 版计分程序比较的就是这五项（规则手册第八节第 3 条），时效不在其中。"""
         rep = self.reports[r]
-        g = [(name, rep["element_grades"][key]) for key, name in ELEMENTS]
-        return g + [(TIMELINESS, rep["timeliness"])]
+        return [(name, rep["element_grades"][key]) for key, name in ELEMENTS]
 
     def models(self):
         return sorted({run["model"] for run in self.manifest["runs"]})
@@ -574,7 +576,7 @@ def separated_story(data, x, y):
         return s
     gx, gy = dict(data.grades(x)), dict(data.grades(y))
     better = [k for k, _ in data.grades(x) if gx[k] > gy[k]]
-    return (f"深度净分分不开，于是比较环节评级和时效：{x} 在六项上都不低于 {y}，并在{join_cn(better)}上更高。"
+    return (f"深度净分分不开，于是比较五个环节的评级：{x} 在五个环节上都不低于 {y}，并在{join_cn(better)}上更高。"
             f"（{x}：{grades_inline(data, x)}；{y}：{grades_inline(data, y)}。）")
 
 
@@ -586,7 +588,10 @@ def tied_story(data, a, b):
     """一对分不开的报告：为什么分不开。"""
     if (a, b) in data.vetoed or (b, a) in data.vetoed:
         x, y = (a, b) if (a, b) in data.vetoed else (b, a)
-        return f"按前面的步骤 {x} 本应排在 {y} 之前，但两两比较每次都判 {y} 更好，这一对改为并列。"
+        votes = pairwise_votes(data).get(frozenset((x, y)), [])
+        against = sum(w == y for w in votes)
+        return (f"按前面的步骤 {x} 本应排在 {y} 之前，但两两比较 {len(votes)} 次中有 {against} 次判 {y} 更好，"
+                f"至少占四分之三，这一对改为并列。")
     ha, hb = bool(data.reports[a]["severe_problems"]), bool(data.reports[b]["severe_problems"])
     parts = ["两份都有严重问题，在同一档里比较。" if ha and hb else "两份都没有严重问题，在同一档里比较。"]
     na, nb = data.reports[a]["net_scores"], data.reports[b]["net_scores"]
@@ -606,10 +611,35 @@ def tied_story(data, a, b):
     up_a = [k for k, _ in data.grades(a) if ga[k] > gb[k]]
     up_b = [k for k, _ in data.grades(a) if gb[k] > ga[k]]
     if not up_a and not up_b:
-        parts.append("比较环节评级和时效，六项完全相同。")
+        parts.append("比较五个环节的评级，完全相同。")
     else:
-        parts.append(f"比较环节评级和时效，互有高低：{a} 在{join_cn(up_a)}上更高，{b} 在{join_cn(up_b)}上更高，谁也不是样样不低于对方。")
+        parts.append(f"比较五个环节的评级，互有高低：{a} 在{join_cn(up_a)}上更高，{b} 在{join_cn(up_b)}上更高，谁也不是样样不低于对方。")
     return "".join(parts)
+
+
+def pairwise_votes(data):
+    """每个无序对的各次两两比较判定的胜者（"tie" 表示相当），与计分程序 pairwise_winners 的算法相同。"""
+    votes = {}
+    for _, d in data.pairwise:
+        for it in d["pairs"]:
+            a, b, v = it["first"], it["second"], it["verdict"]
+            votes.setdefault(frozenset((a, b)), []).append(a if v == "first" else b if v == "second" else "tie")
+    return votes
+
+
+def veto_rule_text(data):
+    """两两比较怎样否决（规则手册第八节第 4 条），以及这次每对实际比了几次、要几次相反。
+    比较 n 次时至少要 n 的四分之三次相反，向上取整，与计分程序 vetoes 的算法相同。"""
+    counts = sorted({len(v) for v in pairwise_votes(data).values()})
+    s = ("两两比较只用来核对前面排出的先后：规则要求两位评委各按两种先后比一次，四次中至少三次与前面的结果相反，"
+         "这一对才改为并列；比较次数不是四次时，相反的次数至少要占四分之三。")
+    if len(counts) == 1:
+        s += f"这次每对比了 {counts[0]} 次，至少 {-(-3 * counts[0] // 4)} 次相反才改为并列。"
+    elif counts:
+        s += f"这次各对比较的次数在 {counts[0]} 到 {counts[-1]} 次之间，每对按自己比较的次数算。"
+    else:
+        s += "这次没有做两两比较。"
+    return s
 
 
 def all_pairs(data):
@@ -619,7 +649,7 @@ def all_pairs(data):
 
 # ---------- 名次页 ----------
 
-BASIS_TITLES = {"硬伤分档": "按严重问题分档分开", "深度净分": "按深度净分分开", "环节评级": "深度净分分不开，比较环节评级和时效分开"}
+BASIS_TITLES = {"硬伤分档": "按严重问题分档分开", "深度净分": "按深度净分分开", "环节评级": "深度净分分不开，比较五个环节的评级分开"}
 
 
 def rank_page(data):
@@ -662,13 +692,13 @@ def rank_page(data):
                numeric=(4, 5, 6))
     tw = table(["层级权重"] + LEVELS, [[f"{w}种"] + [num(SCORE.LEVEL_W[w][lv]) for lv in LEVELS] for w in WEIGHTS],
                numeric=(1, 2, 3, 4))
-    t2 = table(["报告"] + [name for _, name in ELEMENTS] + [TIMELINESS, "写作（不进入名次）"],
+    t2 = table(["报告"] + [name for _, name in ELEMENTS] + [f"{TIMELINESS}（不进入名次）", "写作（不进入名次）"],
                [[f'<a href="report-{r}.html">{esc(data.name(r))}</a>'] + [num(v) for _, v in data.grades(r)]
-                + [num(data.reports[r]["writing"])] for r in data.order],
+                + [num(data.reports[r]["timeliness"]), num(data.reports[r]["writing"])] for r in data.order],
                numeric=(1, 2, 3, 4, 5, 6, 7))
     basis = f"""<section class="block" id="basis" aria-labelledby="basis-h">
   <h2 class="heading-5" id="basis-h">名次从哪里来</h2>
-  <p class="body-3 sum">排法按<a href="{data.to_notes}rules.html#_10">规则手册第八节</a>，一步一步来：先按有没有严重问题分档；同一档里比深度净分；深度净分分不开，再比较环节评级和时效；两两比较只用来否决。</p>
+  <p class="body-3 sum">排法按<a href="{data.to_notes}rules.html#_10">规则手册第八节</a>，一步一步来：先按有没有严重问题分档；同一档里比深度净分；深度净分分不开，再比较五个环节的评级；两两比较只用来否决，四次中至少三次相反才改为并列。</p>
   <div class="sub">
     <h3 class="heading-6">严重问题和深度净分</h3>
     <div class="prose body-3 muted"><p>严重问题即规则手册所说的“硬伤”，有四种：确认编造来源；对题目的直接回答被可靠证据明确否定（计分结果里写作“主要结论与证据相反”）；答非所问；全篇没有可追溯的出处。有严重问题的报告排在所有没有严重问题的报告之后。</p>
@@ -677,9 +707,9 @@ def rank_page(data):
     {tw}
   </div>
   <div class="sub">
-    <h3 class="heading-6">环节评级和时效</h3>
-    <div class="prose body-3 muted"><p>五个环节各评 0、1、2 三档，{count_cn(len(data.ratings), "次")}评级取中位数；{data.timeliness_by}，也是 0 至 2 档。环节评级不加总，只在深度净分分不开时比较：一份报告每一项都不低于另一份、并且至少一项更高，才排在前面。写作只记录，不进入名次。</p>
-    <p>规则手册写的是比较五个环节；计分程序从第 1.0 版起把时效也算在内，比较的是环节评级和时效。这个出入留给主办方决定，这里照计分程序的做法如实列出。</p></div>
+    <h3 class="heading-6">环节评级</h3>
+    <div class="prose body-3 muted"><p>五个环节各评 0、1、2 三档，{count_cn(len(data.ratings), "次")}评级取中位数。环节评级不加总，只在深度净分分不开时比较：一份报告五个环节都不低于另一份、并且至少一个环节更高，才排在前面。{data.timeliness_by}，也是 0 至 2 档，列在表里，不进入名次；写作也只记录，不进入名次。</p>
+    <p>第 1.0、1.1 版的计分程序把时效也算进比较；第 1.2 版按规则手册第八节第 3 条，只比五个环节。</p></div>
     {t2}
   </div>
 </section>"""
@@ -703,7 +733,7 @@ def rank_page(data):
     pairs = f"""<section class="block" id="pairs" aria-labelledby="pairs-h">
   <h2 class="heading-5" id="pairs-h">哪些报告分开了</h2>
   <p class="body-3 sum">{count_cn(n)}报告两两成对，共 {total} 对。分开的有 {len(data.above)} 对，分不开的有 {len(tied)} 对；分不开的两份名次区间重叠。</p>
-  <p class="body-3 sum">两两比较只用来核对：同一位评委比两次，第二次交换每对的先后；两次都判排在后面的一份更好，这一对才改为并列。严重问题分档不能被否决。{esc(veto)}</p>
+  <p class="body-3 sum">{esc(veto_rule_text(data))}严重问题分档不能被否决。{esc(veto)}</p>
   {"".join(groups)}
 </section>"""
 
@@ -730,7 +760,7 @@ def rank_page(data):
     <li><a href="points.html">要点池</a>：全部 {len(data.pool)} 条要点，以及每条有哪几份报告写到</li>
     <li><a href="{TO_PILOT}question-card.md">题目卡</a>和<a href="{TO_PILOT}depth-map.md">出题人的深度地图</a></li>
     <li><a href="{TO_PILOT}judges/README.md">评委收到的提示词</a>：每次评委运行的提示词原文和清单</li>
-    <li><a href="{TO_PILOT}score.py">计分程序</a>和它写出的<a href="{TO_PILOT}results-v1.2.json">第 1.2 版结果文件</a>。在计分程序所在的目录运行 <code>python3 -I score.py mapping.json 1.2</code> 可以重算</li>
+    <li><a href="{TO_PILOT}score.py">计分程序</a>和它写出的<a href="{TO_PILOT}{RESULTS_NAME}">第 1.2 版结果文件</a>。在计分程序所在的目录运行 <code>python3 -I score.py mapping.json 1.2</code> 可以重算</li>
     <li><a href="{TO_NOTES}rules.html#_10">规则手册第八节：名次与公布</a>；<a href="{TO_NOTES}plan-stage5-report.html">第五阶段报告</a></li>
   </ul>
 </section>"""
@@ -761,7 +791,7 @@ def sim_materials(data):
     <li><a href="points.html">要点池</a>：全部 {len(data.pool)} 条要点，以及每条有哪几份报告写到</li>
     {question}
     {record}
-    <li><a href="{data.to_scorer}">计分程序</a>和它写出的<a href="{data.to_src}results-v1.2.json">第 1.2 版结果文件</a>。在仓库根目录运行 <code>python3 -I research-plan/stage5-pilot/score.py {esc(src)}/mapping.json 1.2 --data {esc(src)}/data</code> 可以重算</li>
+    <li><a href="{data.to_scorer}">计分程序</a>和它写出的<a href="{data.to_src}{RESULTS_NAME}">第 1.2 版结果文件</a>。在仓库根目录运行 <code>python3 -I research-plan/stage5-pilot/score.py {esc(src)}/mapping.json 1.2 --data {esc(src)}/data</code> 可以重算</li>
     <li><a href="{data.to_notes}rules.html#_10">规则手册第八节：名次与公布</a>；<a href="{data.to_guide}">模拟评审使用说明</a></li>
   </ul>
 </section>"""
@@ -1038,8 +1068,8 @@ def grades_section(data, r):
         rows.append([esc(name), f"<strong>{num(final)}</strong>"] + [num(data.ratings[key][r]["ratings"][k]["score"]) for key, _, _ in judges])
     tl = data.verify[r]["timeliness"]
     summary = table(["", "用于名次的档位"] + [esc(n) for _, n, _ in judges], rows, numeric=tuple(range(1, 2 + len(judges))))
-    summary += (f'<p class="legend caption-2">时效不在这张表里：它{"取各次环节评级的中位数" if data.sim else "由核验评委评"}，用于名次的档位是 {num(rep["timeliness"])}，'
-                f'理由见本节末尾。</p>')
+    summary += (f'<p class="legend caption-2">时效不在这张表里：它{"取各次环节评级的中位数" if data.sim else "由核验评委评"}，档位是 {num(rep["timeliness"])}，'
+                f'不进入名次，理由见本节末尾。</p>')
     blocks = []
     for k, name in keys:
         cards = "".join(
@@ -1054,7 +1084,7 @@ def grades_section(data, r):
     blocks.append(f'<div class="sub"><h3 class="heading-6">时效：{num(rep["timeliness"])} 档</h3><p class="body-6 prose">{"" if data.sim else "核验评委评。"}{esc(tl["reason"])}</p></div>')
     return f"""<section class="block" id="grades" aria-labelledby="grades-h">
   <h2 class="heading-5" id="grades-h">环节评级</h2>
-  <p class="body-3 sum">五个环节由{count_cn(len(judges), "次")}独立的评级各评 0、1、2 三档，每一档都引报告原文为证；用于名次的是{count_cn(len(judges), "次")}的中位数。{data.timeliness_by}。只有深度净分分不开时，才比较环节评级和时效。写作只记录，不进入名次。</p>
+  <p class="body-3 sum">五个环节由{count_cn(len(judges), "次")}独立的评级各评 0、1、2 三档，每一档都引报告原文为证；用于名次的是{count_cn(len(judges), "次")}的中位数。{data.timeliness_by}，不进入名次。只有深度净分分不开时，才比较五个环节的评级。写作只记录，不进入名次。</p>
   {summary}
   {"".join(blocks)}
 </section>"""
@@ -1079,7 +1109,7 @@ def pairwise_section(data, r):
             rows.append(f'<li><p class="who body-3">与<a href="report-{o}.html">{esc(data.name(o))}</a> 比较</p>{"".join(lines)}</li>')
     return f"""<section class="block" id="pairwise" aria-labelledby="pairwise-h">
   <h2 class="heading-5" id="pairwise-h">两两比较</h2>
-  <p class="body-3 sum">两两比较只用来核对前面排出的先后：同一位评委比两次，第二次交换每对的先后；两次都判排在后面的一份更好，这一对才改为并列。</p>
+  <p class="body-3 sum">{esc(veto_rule_text(data))}</p>
   <ul class="pairs">{"".join(rows)}</ul>
 </section>"""
 
@@ -1133,7 +1163,7 @@ def review_page(data, r):
     <div class="stat"><p class="caption-1 faint">名次区间</p><p class="heading-6">{esc(interval(rep))}</p></div>
     <div class="stat"><p class="caption-1 faint">严重问题</p><p class="heading-6">{esc(problems_text(data, r))}</p></div>
     <div class="stat"><p class="caption-1 faint">深度净分</p><p class="heading-6">{esc(nets)}</p></div>
-    <div class="stat"><p class="caption-1 faint">环节评级和时效</p><p class="body-6">{esc(grades_inline(data, r))}</p></div>
+    <div class="stat"><p class="caption-1 faint">环节评级</p><p class="body-6">{esc(grades_inline(data, r))}</p></div>
   </div>"""
     jump = "".join(f'<li><a class="caption-1" href="#{i}">{t}</a></li>' for i, t in
                    [("problems", "严重问题"), ("claims", "主要结论"), ("points", "写到的要点"), ("grades", "环节评级"),
@@ -1278,10 +1308,8 @@ def build(output, source=PILOT, links=None):
     pages = {"index.html": rank_page(data), "points.html": points_page(data)}
     for r in data.labels:
         pages[f"report-{r}.html"] = review_page(data, r)
-    os.makedirs(output, exist_ok=True)
     for name, text in pages.items():
-        with open(os.path.join(output, name), "w", encoding="utf-8") as f:
-            f.write(text)
+        COMMON.write_text_atomic(os.path.join(output, name), text)
     return sorted(pages)
 
 
@@ -1293,8 +1321,8 @@ def main():
     simulated = os.path.isfile(os.path.join(args.input, "run.json"))
     if simulated and not args.output:
         ap.error("模拟评审要用 --output 给出页面写到哪个目录")
-    if simulated and not os.path.isfile(os.path.join(args.input, "results-v1.2.json")):
-        ap.error("这次模拟评审没有结果文件 results-v1.2.json（中止了，或者只估算），没有名次可写")
+    if simulated and not os.path.isfile(os.path.join(args.input, RESULTS_NAME)):
+        ap.error(f"这次模拟评审没有结果文件 {RESULTS_NAME}（中止了，或者只估算），没有名次可写")
     build(args.output or DEFAULT_OUTPUT, os.path.abspath(args.input))
 
 

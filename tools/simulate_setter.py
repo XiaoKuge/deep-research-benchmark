@@ -175,9 +175,8 @@ def handbook_template(template_id):
 
 
 def card_delivery_block():
-    """题目卡第四部分的交付要求和说明，原文取自出题手册的题目卡模板。"""
-    card = handbook_template("tpl-card")
-    return card[card.index("【交付要求】"):].rstrip("\n")
+    """题目卡第四部分的交付要求和说明：与交给智能体的同一段，原文取自规则手册附录一（出题手册的题目卡模板照录）。"""
+    return agent_delivery_block()
 
 
 def agent_delivery_block():

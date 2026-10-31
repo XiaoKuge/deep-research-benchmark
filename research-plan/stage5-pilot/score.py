@@ -9,7 +9,10 @@
 - 1.0：第一版。
 - 1.1：硬伤只看对题目的直接回答（direct-answers.json）；两两比较不能否决由核验确认的硬伤。
 - 1.2：在 1.1 之上加评审细则第四节末尾的两条：有争议的标注按对领先一方最不利的方式计分；
-  重抽样只在至少一份参与排名的报告写到的要点中进行。分开的标准和名次区间的算法不变。
+  重抽样只在至少一份参与排名的报告写到的要点中进行。另按规则手册第八节第 3、4 条：深度净分分不开时只比
+  五个环节的评级，第 1.0、1.1 版把时效（②）也算在内；两两比较中与前面结果相反的次数至少占四分之三
+  （向上取整：四次至少三次，两次就要两次）才改为并列，第 1.0、1.1 版要每次都相反。
+  分开的标准和名次区间的算法不变。
 
 有争议的标注写在要点池（pool.json）里：要点的 level 或 importance 写成候选列表，第一项是登记的标注，
 例如 "importance": ["一般", "核心"]。第 1.0、1.1 版只用第一项；净分（net、net_scores）也按第一项计。
@@ -17,7 +20,7 @@
 第 1.2 版的结果文件保留第 1.1 版的全部字段（main、acceptance、separated、vetoed、version），另加供页面读取的：
 - reports：每份报告一项，按映射表的顺序。label 匿名标签，product 产品，rank_best 和 rank_worst 名次区间的
   两端，net_scores 三种权重下的深度净分，severe_problems 严重问题（即硬伤）名称列表，element_grades
-  五个环节（①③④⑤⑦）的档位，timeliness 时效（②）的档位，writing 写作档位（不进入名次）。
+  五个环节（①③④⑤⑦）的档位，timeliness 时效（②）的档位（第 1.2 版不进入名次），writing 写作档位（不进入名次）。
 - separated_pairs：分开的对，每对一项。higher 在前的报告，lower 在后的报告，basis 分开依据（硬伤分档、
   深度净分或环节评级）；依据是深度净分时，bootstrap_share 是三种权重下领先一方在重抽样中领先的比例，
   disputed_labels 是两份报告写到的有争议的要点在每种权重下所用的标注；其余依据下两者为 null 和 {}。
@@ -28,6 +31,7 @@
 标准 2 至 8 只在映射表列出扰动版本（perturb）时计算，例如第五阶段试评数据。
 """
 import argparse
+import importlib.util
 import json
 import os
 import random
@@ -35,7 +39,17 @@ import sys
 from statistics import median
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(HERE))
 OUT = os.path.join(HERE, "out")
+
+
+def load_common():
+    """仓库共用的小工具 tools/common.py，按文件路径载入，不改 sys.path，也不写字节码缓存。"""
+    sys.dont_write_bytecode = True
+    spec = importlib.util.spec_from_file_location("tools_common", os.path.join(ROOT, "tools", "common.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 ELEMENTS = ["①", "③", "④", "⑤", "⑦"]
 ELEMENT_NAMES = {"①": "切题与真实需要", "②": "时效", "③": "查找过程的交代", "④": "甄别来源与处理矛盾",
                  "⑤": "分析", "⑦": "结论与把握"}
@@ -144,8 +158,11 @@ def net_score(r, points, lw, claims):
 
 
 def element_profile(r, ratings, timeliness):
+    """深度净分分不开时比较的各项档位。环节评级取各次评级的中位数。
+    第 1.2 版按规则手册第八节第 3 条只比五个环节；第 1.0、1.1 版把时效（②）也算在内。"""
     prof = {e: median(run[e]["score"] for run in ratings[r]) for e in ELEMENTS}
-    prof["②"] = timeliness[r]
+    if not V12:
+        prof["②"] = timeliness[r]
     return prof
 
 
@@ -163,6 +180,18 @@ def pairwise_winners(pw_files):
             w = a if v == "first" else b if v == "second" else "tie"
             res.setdefault(frozenset((a, b)), []).append(w)
     return res
+
+
+def vetoes(wins, y):
+    """两两比较是否否决"排在 y 前面"这一结果。wins 是各次判定的胜者。
+    第 1.2 版（规则第八节第 4 条）：判 y 更好的次数至少占四分之三，向上取整，四次至少三次，两次就要两次；
+    第 1.0、1.1 版：每次都判 y 更好。"""
+    if not wins:
+        return False
+    against = sum(w == y for w in wins)
+    if V12:
+        return 4 * against >= 3 * len(wins)
+    return against == len(wins)
 
 
 def rank(reports, ratings, off, claims, timeliness, traceable, pool, pw, seed=0):
@@ -248,7 +277,7 @@ def rank(reports, ratings, off, claims, timeliness, traceable, pool, pw, seed=0)
                 wins = pw.get(frozenset((x, y)), [])
                 # 第 1.1 版修订 3：两两比较不能否决由核验确认的硬伤
                 protected = DIRECT is not None and reason == "硬伤分档"
-                if wins and all(w == y for w in wins) and not protected:
+                if vetoes(wins, y) and not protected:
                     vetoed.add((x, y))
                 else:
                     above.add((x, y))
@@ -256,7 +285,8 @@ def rank(reports, ratings, off, claims, timeliness, traceable, pool, pw, seed=0)
     n = len(reports)
     interval = {r: (1 + sum((y, r) in above for y in reports), n - sum((r, y) in above for y in reports))
                 for r in reports}
-    return dict(hard=hard, net=net, prof=prof, above=above, pre_veto=pre_veto, vetoed=vetoed,
+    return dict(hard=hard, net=net, prof=prof, timeliness={r: timeliness[r] for r in reports},
+                above=above, pre_veto=pre_veto, vetoed=vetoed,
                 how=how, interval=interval, sep=sep_cache, resampled=len(pool),
                 disputed=[pool[i]["pid"] for i in disputed])
 
@@ -350,7 +380,7 @@ def export(main_reports, mapping, res, ratings, pool):
             "net_scores": {w: round(res["net"][w][r], 2) for w in LEVEL_W},
             "severe_problems": res["hard"][r],
             "element_grades": {e: res["prof"][r][e] for e in ELEMENTS},
-            "timeliness": res["prof"][r]["②"],
+            "timeliness": res["timeliness"][r],
             "writing": median(run["写作"]["score"] for run in ratings[r]),
         })
     return {
@@ -403,9 +433,10 @@ def main():
     report["version"] = version
     if V12:
         report.update(export(main_reports, mapping, res, ratings, pool))
-    with open(args.output or os.path.join(HERE, f"results-v{version}.json"), "w", encoding="utf-8") as f:
-        json.dump(report, f, ensure_ascii=False, indent=1, default=list)
-    print(json.dumps(report, ensure_ascii=False, indent=1, default=list))
+    text = json.dumps(report, ensure_ascii=False, indent=1, default=list)
+    # 先写临时文件再整份替换：中途出错时旧的结果文件原样留着
+    load_common().write_text_atomic(args.output or os.path.join(HERE, f"results-v{version}.json"), text)
+    print(text)
 
 
 if __name__ == "__main__":

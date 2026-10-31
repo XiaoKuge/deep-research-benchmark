@@ -107,8 +107,8 @@ class GeneratorTest(unittest.TestCase):
 
 class RankPageTest(unittest.TestCase):
     """名次页。名次区间的期望值抄自已提交的第 1.2 版结果文件。"""
-    INTERVALS = {"A": "第 3 至 4 名", "B": "第 5 至 6 名", "C": "第 5 至 6 名",
-                 "D": "第 1 至 2 名", "E": "第 3 至 4 名", "F": "第 1 至 2 名"}
+    INTERVALS = {"A": "第 4 名", "B": "第 5 至 6 名", "C": "第 5 至 6 名",
+                 "D": "第 1 至 2 名", "E": "第 3 名", "F": "第 1 至 2 名"}
 
     @classmethod
     def setUpClass(cls):
@@ -132,8 +132,23 @@ class RankPageTest(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertIn(name, self.page.text)
 
-    def test_says_the_tie_break_compares_element_grades_and_timeliness(self):
-        self.assertIn("比较环节评级和时效", self.page.text)
+    def test_says_the_tie_break_compares_only_the_five_elements(self):
+        # 规则手册第八节第 3 条：分不开时比五个环节的评级；时效另评，不在其中
+        self.assertIn("深度净分分不开，再比较五个环节的评级", self.page.text)
+        self.assertNotIn("环节评级和时效", self.page.text)
+        self.assertNotIn("六项", self.page.text)
+
+    def test_e_before_a_is_explained_by_the_five_elements(self):
+        story = self.page.by_id["pair-E-A"]
+        self.assertIn("E 排在 A 之前", story)
+        self.assertIn("五个环节上都不低于 A", story)
+
+    def test_states_the_three_quarters_veto_rule_and_how_many_comparisons_each_pair_had(self):
+        # 规则手册第八节第 4 条；试评只有一位评委，每对比两次（第二次交换先后）
+        text = self.page.by_id["pairs"]
+        self.assertIn("四次中至少三次与前面的结果相反，这一对才改为并列", text)
+        self.assertIn("这次每对比了 2 次，至少 2 次相反才改为并列", text)
+        self.assertNotIn("两次都判排在后面的一份更好", text)
 
 
 class ReviewPageTest(unittest.TestCase):
