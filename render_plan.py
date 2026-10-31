@@ -11,7 +11,7 @@ import markdown
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 PAGES = [
-    # (源文件, 输出文件, 页面标题, 副标题)
+    # (源文件, 输出文件, 页面标题, 副标题[, 目录列到第几级标题，默认 2])
     ("research-plan/v3.md", "notes/plan-v3.html",
      "研究计划第三稿", "《智能体深度研究评测基准研究计划》当前稿"),
     ("research-plan/stage1-concepts.md", "notes/plan-stage1-concepts.html",
@@ -37,7 +37,7 @@ PAGES = [
     ("research-plan/site-mapping.md", "notes/plan-site-mapping.html",
      "资料与程序对照巡天网站结构", "现有资料和程序按巡天黑客松网站的结构逐项对照：已有、部分、缺，以及待办"),
     ("research-plan/rules.md", "notes/rules.html",
-     "深度研究比赛规则手册", "出题、冻结与申报、运行、交付、评审、名次、申诉和违规处理的规则"),
+     "深度研究比赛规则手册", "出题、冻结与申报、运行、交付、评审、名次、申诉和违规处理的规则", "3"),
 ]
 
 CSS = """
@@ -97,11 +97,11 @@ TEMPLATE = """<!DOCTYPE html>
 """
 
 
-def render(src, out, title, dek):
+def render(src, out, title, dek, toc_depth="2"):
     with open(os.path.join(ROOT, src), encoding="utf-8") as f:
         text = f.read()
-    md = markdown.Markdown(extensions=["tables", "fenced_code", "toc", "sane_lists"],
-                           extension_configs={"toc": {"toc_depth": "2"}})
+    md = markdown.Markdown(extensions=["tables", "fenced_code", "toc", "sane_lists", "attr_list"],
+                           extension_configs={"toc": {"toc_depth": toc_depth}})
     body = md.convert(text)
     body = re.sub(r"<table>", '<div class="tbl"><table>', body)
     body = re.sub(r"</table>", "</table></div>", body)
