@@ -1,0 +1,130 @@
+{
+ "judge": "示意",
+ "reports": {
+  "一号": {
+   "ratings": {
+    "①": {
+     "score": 1
+    },
+    "③": {
+     "score": 0
+    },
+    "④": {
+     "score": 0
+    },
+    "⑤": {
+     "score": 0
+    },
+    "⑦": {
+     "score": 1
+    },
+    "写作": {
+     "score": 1
+    }
+   },
+   "off_topic": {
+    "value": false
+   }
+  },
+  "二号": {
+   "ratings": {
+    "①": {
+     "score": 2
+    },
+    "③": {
+     "score": 2
+    },
+    "④": {
+     "score": 1
+    },
+    "⑤": {
+     "score": 2
+    },
+    "⑦": {
+     "score": 1
+    },
+    "写作": {
+     "score": 1
+    }
+   },
+   "off_topic": {
+    "value": false
+   }
+  },
+  "三号": {
+   "ratings": {
+    "①": {
+     "score": 2
+    },
+    "③": {
+     "score": 2
+    },
+    "④": {
+     "score": 2
+    },
+    "⑤": {
+     "score": 2
+    },
+    "⑦": {
+     "score": 2
+    },
+    "写作": {
+     "score": 1
+    }
+   },
+   "off_topic": {
+    "value": false
+   }
+  },
+  "四号": {
+   "ratings": {
+    "①": {
+     "score": 2
+    },
+    "③": {
+     "score": 0
+    },
+    "④": {
+     "score": 1
+    },
+    "⑤": {
+     "score": 1
+    },
+    "⑦": {
+     "score": 2
+    },
+    "写作": {
+     "score": 1
+    }
+   },
+   "off_topic": {
+    "value": false
+   }
+  },
+  "五号": {
+   "ratings": {
+    "①": {
+     "score": 1
+    },
+    "③": {
+     "score": 1
+    },
+    "④": {
+     "score": 0
+    },
+    "⑤": {
+     "score": 1
+    },
+    "⑦": {
+     "score": 1
+    },
+    "写作": {
+     "score": 1
+    }
+   },
+   "off_topic": {
+    "value": false
+   }
+  }
+ }
+}

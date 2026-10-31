@@ -1,0 +1,115 @@
+{
+ "points": [
+  {
+   "pid": "L1",
+   "content": "鄱阳湖通常被称为我国最大的淡水湖",
+   "correct": "正确",
+   "relevant": true,
+   "level": "现象",
+   "importance": "核心",
+   "reach": {
+    "一号": "符合",
+    "二号": "符合",
+    "三号": "符合",
+    "四号": "符合",
+    "五号": "符合"
+   }
+  },
+  {
+   "pid": "L2",
+   "content": "湖面随季节涨落极大，洪水一片，枯水一线",
+   "correct": "正确",
+   "relevant": true,
+   "level": "全体",
+   "importance": "核心",
+   "reach": {
+    "一号": "相反",
+    "二号": "符合",
+    "三号": "符合",
+    "四号": "符合"
+   }
+  },
+  {
+   "pid": "L3",
+   "content": "近年枯水越来越常见，2022 年水位创最低",
+   "correct": "正确",
+   "relevant": true,
+   "level": "全体",
+   "importance": "一般",
+   "reach": {
+    "二号": "符合",
+    "三号": "符合",
+    "四号": "符合"
+   }
+  },
+  {
+   "pid": "L4",
+   "content": "说最大要先说清按什么算：哪个水位、哪种口径",
+   "correct": "正确",
+   "relevant": true,
+   "level": "本质",
+   "importance": "核心",
+   "reach": {
+    "二号": "符合",
+    "三号": "符合"
+   }
+  },
+  {
+   "pid": "L5",
+   "content": "湖面高低由五条河的来水和长江水位共同决定",
+   "correct": "正确",
+   "relevant": true,
+   "level": "内部联系",
+   "importance": "一般",
+   "reach": {
+    "三号": "符合"
+   }
+  },
+  {
+   "pid": "L6",
+   "content": "中俄界湖兴凯湖更大，但大部分不在中国境内",
+   "correct": "正确",
+   "relevant": true,
+   "level": "本质",
+   "importance": "核心",
+   "reach": {
+    "三号": "符合"
+   }
+  },
+  {
+   "pid": "L7",
+   "content": "青海湖更大，但它是咸水湖",
+   "correct": "正确",
+   "relevant": true,
+   "level": "本质",
+   "importance": [
+    "一般",
+    "核心"
+   ],
+   "reach": {
+    "三号": "符合",
+    "四号": "符合"
+   }
+  },
+  {
+   "pid": "L8",
+   "content": "洞庭湖当年可能比今天的鄱阳湖还大",
+   "correct": "正确",
+   "relevant": true,
+   "level": "全体",
+   "importance": "一般",
+   "reach": {}
+  },
+  {
+   "pid": "X1",
+   "content": "鄱阳湖是白鹤等候鸟的越冬地",
+   "correct": "正确",
+   "relevant": false,
+   "level": "现象",
+   "importance": "一般",
+   "reach": {
+    "一号": "符合"
+   }
+  }
+ ]
+}
