@@ -4,7 +4,7 @@
 
 **Blocked by:** 03, 05, 06, 13
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 首页导航和资料库包含全部新页面入口
 - [x] 页脚三项存在

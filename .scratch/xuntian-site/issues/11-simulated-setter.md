@@ -4,7 +4,7 @@
 
 **Blocked by:** 10
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 一条命令产出完整的题目目录（用回放方式测试）
 - [x] 题目卡三个版本、深度地图要点表的格式与出题手册模板一致

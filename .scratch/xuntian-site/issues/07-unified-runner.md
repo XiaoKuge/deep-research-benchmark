@@ -4,7 +4,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 命令行方式和网络接口方式各有测试（假智能体）
 - [x] 反问时给出统一答复并记录问题（有测试）

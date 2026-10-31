@@ -4,7 +4,7 @@
 
 **Blocked by:** 02
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 生成器一条命令生成全部页面
 - [x] 名次页包含 A 至 F 六份报告、对应产品、名次区间和演示声明

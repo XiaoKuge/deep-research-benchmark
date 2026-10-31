@@ -12,7 +12,7 @@
 
 **Blocked by:** 15（已完成）
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 提示词按事实 1 走流式输入，参数含 `--input-format stream-json` 和空的 `-p`（有测试，假 agy 检查收到的参数和标准输入那一行 JSON）
 - [x] 按事实 2 解析：回答取 `result.response`；`result.status` 不是 SUCCESS 时失败并带上 `result.error`；回答为空时失败（有测试）

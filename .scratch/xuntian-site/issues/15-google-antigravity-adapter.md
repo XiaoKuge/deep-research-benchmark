@@ -4,7 +4,7 @@
 
 **Blocked by:** 10（已完成）
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 厂商列表加入 Google，接口不变，原有三家的行为不变
 - [x] 两档工具限定转成 agy 的对应参数（有测试，用假的命令行程序检查收到的参数和设置）

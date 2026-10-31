@@ -4,7 +4,7 @@
 
 **Blocked by:** 10, 01, 02, 08
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 一条命令从报告到结果文件（用回放方式测试）
 - [x] 输出能被计分程序第 1.2 版读取并算出名次区间

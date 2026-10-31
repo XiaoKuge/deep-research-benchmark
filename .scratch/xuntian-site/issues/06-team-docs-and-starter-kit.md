@@ -4,7 +4,7 @@
 
 **Blocked by:** 07
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 技术文档描述的调用方式与统一运行程序一致
 - [x] 新手包包含四样东西，申报表模板能被统一运行程序读取

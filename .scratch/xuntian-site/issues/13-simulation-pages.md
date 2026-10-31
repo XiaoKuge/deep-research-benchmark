@@ -4,7 +4,7 @@
 
 **Blocked by:** 11, 12, 03
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 题库页和评审记录页由一条命令生成
 - [x] 正式题赛前不泄露深度地图内容，只显示校验值（有测试）

@@ -4,7 +4,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 - [x] 第 1.1 版在试评数据上重现 results-v1.1.json 的名次区间
 - [x] 第 1.2 版在一道题走完全程的示意数据上得出：三号第 1，二号和四号第 2 至 3，一号第 4，五号第 5
