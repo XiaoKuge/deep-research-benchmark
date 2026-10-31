@@ -235,6 +235,16 @@ class HomeIsCurrent(unittest.TestCase):
                     self.assertIn(note, [p.text().strip() for p in home[question].find_all("p")])
         self.assertGreaterEqual(checked, 2, "常见问题页里至少有开放组和模拟评委两条补充")
 
+    def test_appeal_period_is_marked_as_a_default_term(self):
+        # 规则手册第九节：临时名次公布后有〔7 天，默认〕申诉期
+        text = self.home.text()
+        self.assertIn("〔7 天，默认〕申诉期", text)
+        self.assertNotIn("7 天申诉期", text)
+
+    def test_says_language_models_not_ai(self):
+        # 只查单独的“AI”，公司名 OpenAI 不算
+        self.assertNotRegex(self.home.text(), r"(?<![A-Za-z])AI(?![A-Za-z])")
+
     def test_home_faq_points_to_the_full_faq_page(self):
         self.assertIn("faq.html", [path_of(h) for h in self.home.by_id("faq").links()])
 

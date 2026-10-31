@@ -241,6 +241,14 @@ class TeamDocsTest(unittest.TestCase):
                 self.assertIn(phrase, guide, "使用说明里应当有这一条约定")
                 self.assertIn(phrase, self.page.text, "技术文档应当照使用说明写")
 
+    def test_names_the_checksum_algorithm_once_where_teams_compute_it_themselves(self):
+        # 其余地方只说“校验值”；队伍要自己算的那一处点一次算法名，并给出算的命令
+        self.assertEqual(self.page.text.count("SHA-256"), 1)
+        block = self.page.block("own-checksum")["text"]
+        self.assertIn("SHA-256", block)
+        self.assertIn("shasum -a 256", block)
+        self.assertIn("sha256sum", block)
+
     def test_declaration_example_is_the_starter_kit_template(self):
         shown = json.loads(self.page.block("declaration-example")["text"])
         template = json.loads((KIT / "申报表模板.json").read_text(encoding="utf-8"))

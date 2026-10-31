@@ -299,10 +299,11 @@ class FaqPage(CommonChecks, unittest.TestCase):
     NAME = "faq.html"
     GROUPS = {"setting": "出题", "competing": "参赛", "reviewing": "评审"}
 
-    # 资料站首页 2026 年 10 月 30 日的九问，各取答案里的一句原话，用来核对答案保持原意
+    # 资料站首页 2026 年 10 月 30 日的九问，各取答案里的一句原话，用来核对答案保持原意；
+    # 第二问的标题原为“评委是 AI”，按不用缩写的要求改成了白话
     SITE_QUESTIONS = {
         "为什么不直接用现有的评测工具？": "我们逐一审视了 18 个，没有一个能直接用",
-        "评委是 AI，怎样保证判得对？": "评委至少来自三家厂商，每个评委评两次",
+        "评委是大模型，怎样保证判得对？": "评委至少来自三家厂商，每个评委评两次",
         "为什么公布名次区间，不直接排第几名？": "重复一千次，至少九成仍然领先",
         "深度地图是什么？它会不会让评分不客观？": "它是必需的，但不是标准答案",
         "参赛队伍能不能看了题目再改提示词？": "智能体在题目公布前冻结并申报",
@@ -345,6 +346,21 @@ class FaqPage(CommonChecks, unittest.TestCase):
 
     def test_includes_the_handbook_questions(self):
         self.check_questions(self.HANDBOOK_QUESTIONS)
+
+    def test_question_titles_use_no_abbreviation_for_language_models(self):
+        for summary in self.page.of("summary"):
+            with self.subTest(summary["text"].strip()):
+                self.assertNotRegex(summary["text"], r"(?<![A-Za-z])AI(?![A-Za-z])")
+
+
+class RulesWordingTest(unittest.TestCase):
+    """说明页面转述规则的地方与规则手册草案第 3 版一致。"""
+
+    def test_unseen_map_points_hide_which_and_how_many_reports_they_came_from(self):
+        # 规则手册第七节第 3 条：地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告
+        for name in ["brief.html", "news.html", "start.html", "walkthrough.html"]:
+            with self.subTest(name):
+                self.assertIn("出自哪份报告、出自几份报告", Page(os.path.join(SITE, name)).text)
 
 
 if __name__ == "__main__":
