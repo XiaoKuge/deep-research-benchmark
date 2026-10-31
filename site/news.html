@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>公告 · 深度研究评测基准</title>
+<meta name="description" content="深度研究赛项的日程变动和规则版本变更。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：命名文字样式，字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, p { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, td, dd { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-3); }
+
+  /* 页首：回到资料站，四页之间跳转 */
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 16px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .pages a { padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); text-decoration: none; transition: background-color 300ms var(--ease), color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); color: var(--ink); }
+  .pages a[aria-current="page"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
+  .notice { max-width: 680px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+  .notice strong { color: var(--ink); font-weight: 600; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; max-width: 760px; }
+  .toc a { padding: 4px 12px; border-radius: 9999px; background: var(--surface); color: var(--ink); text-decoration: none; transition: background-color 300ms var(--ease); }
+  .toc a:hover { background: var(--line); }
+
+  /* 正文的每一节 */
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-bottom: 1px solid var(--line); max-width: 760px; }
+  .block:last-of-type { border-bottom: 0; }
+  .block .sum { margin-top: 12px; color: var(--ink-2); }
+  .prose { margin-top: 24px; }
+  .prose p + p, .prose p + ul, .prose ul + p, .prose p + ol, .prose ol + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
+  .prose strong { font-weight: 600; }
+  .refs { margin-top: 16px; color: var(--ink-3); }
+  .refs a { color: var(--ink-2); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 24px; }
+  .card { border: 1px solid var(--line); border-radius: 16px; padding: 24px; background: var(--raised); }
+  .card .tag { color: var(--ink-3); margin-bottom: 8px; }
+  .card ul { margin: 12px 0 0; padding-left: 24px; }
+  .card li + li { margin-top: 8px; }
+  .card .refs { margin-top: 16px; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); }
+  td:first-child { white-space: nowrap; }
+  .pending { color: var(--warn); font-weight: 600; white-space: nowrap; }
+  .done { color: var(--ok); font-weight: 600; white-space: nowrap; }
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  footer a { color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  /* 本页：公告列表 */
+  .feed { list-style: none; margin: 24px 0 0; padding: 0; max-width: 760px; }
+  .item { padding-block: 24px; border-top: 1px solid var(--line); }
+  .item .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--ink-3); margin-bottom: 8px; }
+  .item .kind { padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); }
+  .item .kind.rule { color: var(--accent); }
+  .item .kind.plan { color: var(--warn); }
+  .item p.text { margin-top: 8px; color: var(--ink-2); }
+  .item .refs { margin-top: 12px; }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="index.html">← 回到资料站</a>
+    <nav class="pages body-5" aria-label="说明页面">
+      <a href="brief.html">赛事说明</a>
+      <a href="start.html">上手</a>
+      <a href="news.html" aria-current="page">公告</a>
+      <a href="faq.html">常见问题</a>
+    </nav>
+    <p class="eyebrow caption-1">深度研究赛项</p>
+    <h1 class="heading-3">公告</h1>
+    <p class="body-3 lede">日程变动和规则版本变更，新的在上面。每一次规则或评法的版本变更，都记入规则手册附录五<a href="../notes/rules.html#version-changes">《版本变更记录》</a>，写明改了什么、为什么改；这里只列要点。</p>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+<section class="block" id="feed" aria-labelledby="feed-title">
+  <h2 class="heading-5" id="feed-title">全部公告</h2>
+  <ul class="feed">
+
+    <li><article class="item" id="n-schedule" aria-labelledby="n-schedule-title">
+      <p class="meta caption-2"><time datetime="2026-10-30">2026 年 10 月 30 日</time><span class="kind plan caption-3">日程</span></p>
+      <h3 class="heading-6" id="n-schedule-title">比赛日程还没有定</h3>
+      <p class="text body-3">冻结截止、运行日、开放组运行日、临时名次、申诉期和最终名次的日期都〔待定〕，奖项和报名方式也〔待定〕。规则手册里的时长先按默认值写：冻结截止在运行日前 7 天〔默认〕，申诉期 7 天〔默认〕。日期定下后在这里公告，并更新赛事说明里的日程表。</p>
+      <p class="refs caption-2"><a href="brief.html#schedule">赛事说明：日程、奖项与报名</a></p>
+    </article></li>
+
+    <li><article class="item" id="n-practice" aria-labelledby="n-practice-title">
+      <p class="meta caption-2"><time datetime="2026-10-30">2026 年 10 月 30 日</time><span class="kind caption-3">练习题</span></p>
+      <h3 class="heading-6" id="n-practice-title">练习题公开：中国最大的淡水湖</h3>
+      <p class="text body-3">练习阶段的练习题全文公开：评委版、提问版、裸题版三个版本和深度地图，都在出题手册实例一里。练习题不进入名次。想看这道题怎样从出题走到名次公布，读"一道题走完全程"。正式题两道，赛前保密，赛后公开。</p>
+      <p class="refs caption-2"><a href="../notes/question-handbook.html#example-lake">出题手册实例一</a> · <a href="walkthrough.html">一道题走完全程</a> · <a href="brief.html#stages">练习阶段和正式阶段</a></p>
+    </article></li>
+
+    <li><article class="item" id="n-rules-3" aria-labelledby="n-rules-3-title">
+      <p class="meta caption-2"><time datetime="2026-10-30">2026 年 10 月 30 日</time><span class="kind rule caption-3">规则</span></p>
+      <h3 class="heading-6" id="n-rules-3-title">规则手册升为草案第 3 版</h3>
+      <p class="text body-3">加入四条〔默认〕规则。一是申诉期内互查：各队能看到所有队伍的报告和全部判定，也能对别家报告的具体判定提异议。二是每届随机抽一支队伍，用它冻结申报的版本重跑一道题，核对运行方式和输入。三是一届一版规则，名次注明依据的版本。四是分封闭组和开放组，主名次只在封闭组内排，开放组单独公布。第十节为随机抽查和开放组各加一行处理办法，并新增附录五《版本变更记录》。这四条是对照外部评测网站时，从机器学习性能评测 MLPerf 的流程借来的。</p>
+      <p class="refs caption-2"><a href="../notes/rules.html#version-changes">版本变更记录</a> · <a href="../notes/rules.html">规则手册全文</a></p>
+    </article></li>
+
+    <li><article class="item" id="n-rubric-12" aria-labelledby="n-rubric-12-title">
+      <p class="meta caption-2"><time datetime="2026-10-30">2026 年 10 月 30 日</time><span class="kind rule caption-3">评法</span></p>
+      <h3 class="heading-6" id="n-rubric-12-title">评审细则升为第 1.2 版</h3>
+      <p class="text body-3">第四节加了深度地图标注的用法：地图上已有的要点，以地图登记的层级和重要性为默认值，评委组改动须依据来源或定义写明理由；判定地图上没有的要点时，不告诉评委它出自哪份报告。第四节末尾加了两条计分规则：有争议的标注按对领先一方最不利的方式计分；重抽样只在至少一份报告写到的要点中进行。第 1.2 版的改动还没有检验。</p>
+      <p class="refs caption-2"><a href="../notes/plan-stage4-rubric.html">评审细则</a> · <a href="../notes/rules.html#version-changes">版本变更记录</a></p>
+    </article></li>
+
+    <li><article class="item" id="n-rules-2" aria-labelledby="n-rules-2-title">
+      <p class="meta caption-2"><time datetime="2026-10-30">2026 年 10 月 30 日</time><span class="kind rule caption-3">规则</span></p>
+      <h3 class="heading-6" id="n-rules-2-title">规则手册草案第 2 版</h3>
+      <p class="text body-3">第四节重写深度地图的定位：它是必需的，但不是标准答案；地图写多写少不影响名次；加了写完的五条标准。第七、八、九节相应写明地图的标注是默认值、有争议标注的计分规则，以及复核包要多公开哪些内容。</p>
+      <p class="refs caption-2"><a href="../notes/rules.html#version-changes">版本变更记录</a></p>
+    </article></li>
+
+    <li><article class="item" id="n-rules-1" aria-labelledby="n-rules-1-title">
+      <p class="meta caption-2"><time datetime="2026-10-30">2026 年 10 月 30 日</time><span class="kind rule caption-3">规则</span></p>
+      <h3 class="heading-6" id="n-rules-1-title">规则手册草案第 1 版</h3>
+      <p class="text body-3">初版。规定出题、冻结与申报、运行、交付、评审、名次与公布、申诉与复核、违规与处理。</p>
+      <p class="refs caption-2"><a href="../notes/rules.html#version-changes">版本变更记录</a></p>
+    </article></li>
+
+    <li><article class="item" id="n-method-11" aria-labelledby="n-method-11-title">
+      <p class="meta caption-2"><time datetime="2026-10-29">2026 年 10 月 29 日</time><span class="kind rule caption-3">评法</span></p>
+      <h3 class="heading-6" id="n-method-11-title">评法第 1.1 版</h3>
+      <p class="text body-3">第五阶段小规模试评之后改了四处：硬伤只看报告对题目的直接回答；断言核验的清单由一人按固定规则抽出，所有核验员共用；两两比较不能否决由核验确认的硬伤；已知组改用人为构造的扰动版本。</p>
+      <p class="refs caption-2"><a href="../notes/plan-stage5-report.html">第五阶段报告</a> · <a href="../notes/rules.html#version-changes">版本变更记录</a></p>
+    </article></li>
+
+    <li><article class="item" id="n-method-10" aria-labelledby="n-method-10-title">
+      <p class="meta caption-2"><time datetime="2026-10-29">2026 年 10 月 29 日</time><span class="kind rule caption-3">评法</span></p>
+      <h3 class="heading-6" id="n-method-10-title">评法第 1.0 版</h3>
+      <p class="text body-3">初版。先核验每份报告的主要结论，再把深度地图和各份报告的要点合成要点池逐条判定；排名次时先看硬伤，再看深度净分，再看环节评级；分不开的并列，公布名次区间。</p>
+      <p class="refs caption-2"><a href="../notes/plan-stage4-design.html">第四阶段方案</a> · <a href="../notes/rules.html#version-changes">版本变更记录</a></p>
+    </article></li>
+
+  </ul>
+</section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap caption-2">
+    <span>深度研究评测基准 · 本地资料站 · 2026 年 10 月 30 日</span>
+    <nav aria-label="说明页面"><a href="brief.html">赛事说明</a><a href="start.html">上手</a><a href="news.html">公告</a><a href="faq.html">常见问题</a><a href="index.html">资料站首页</a></nav>
+  </div>
+</footer>
+</body>
+</html>
