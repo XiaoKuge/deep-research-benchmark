@@ -2,7 +2,8 @@
 
 一律用假的命令行程序和回放方式，不真的调用模型。
 假程序把收到的参数、标准输入和工作目录记到同目录的 invocations.jsonl，
-再按各家命令行的输出格式给出一段回答。
+再按各家命令行的输出格式给出一段回答。google（agy）的输出格式按帮助信息和更新记录写成，
+尚未经真实调用确认（见 tools/models.md）。
 """
 import json
 import os
@@ -21,6 +22,7 @@ VENDOR = {vendor!r}
 REPLY = {reply!r}
 EXIT = {exit_code!r}
 SLEEP = {sleep!r}
+GOOGLE = {google!r}
 here = os.path.dirname(os.path.abspath(__file__))
 args = sys.argv[1:]
 stdin = sys.stdin.read()
@@ -32,6 +34,12 @@ for flag in ("--agent-file", "--mcp-config-file"):
             seen[flag] = f.read()
 if "--skills-dir" in args:
     seen["skills_entries"] = sorted(os.listdir(args[args.index("--skills-dir") + 1]))
+if "--agent" in args:
+    agent_md = os.path.join(os.getcwd(), ".agents", "agents", args[args.index("--agent") + 1],
+                            "agent.md")
+    if os.path.exists(agent_md):
+        with open(agent_md, encoding="utf-8") as f:
+            seen["agent_md"] = f.read()
 with open(os.path.join(here, "invocations.jsonl"), "a", encoding="utf-8") as f:
     f.write(json.dumps(seen, ensure_ascii=False) + "\n")
 time.sleep(SLEEP)
@@ -54,15 +62,33 @@ elif VENDOR == "kimi":
     print(json.dumps({{"role": "assistant",
                       "content": [{{"type": "think", "think": "想一想"}},
                                   {{"type": "text", "text": REPLY}}]}}, ensure_ascii=False))
+elif VENDOR == "google":
+    tools = []
+    for line in seen.get("agent_md", "").splitlines():
+        if line.startswith("tools:"):
+            tools = json.loads(line[len("tools:"):])
+    init = {{"type": "init", "model": "gemini-fake-1", "tools": GOOGLE.get("tools", tools)}}
+    if GOOGLE.get("drop_tools"):
+        del init["tools"]
+    print(json.dumps(init, ensure_ascii=False))
+    print(json.dumps({{"type": "step_update", "step_type": "PLANNER_RESPONSE"}}))
+    result = {{"type": "result", "response": REPLY}}
+    result.update(GOOGLE.get("result", {{}}))
+    if not GOOGLE.get("no_result"):
+        print(json.dumps(result, ensure_ascii=False))
 '''
 
 
-def make_fake(directory, vendor, reply="好", exit_code=0, sleep=0):
-    """在 directory 下写一个名叫 vendor 的假命令行程序，返回它的路径。"""
+def make_fake(directory, vendor, reply="好", exit_code=0, sleep=0, google=None):
+    """在 directory 下写一个名叫 vendor 的假命令行程序，返回它的路径。
+
+    google 是给假 agy 的改动：tools 换掉启动事件里的工具列表，drop_tools 去掉工具列表，
+    result 并进结果事件，no_result 不输出结果事件。
+    """
     path = os.path.join(directory, vendor)
     with open(path, "w", encoding="utf-8") as f:
         f.write(FAKE_TEMPLATE.format(python=sys.executable, vendor=vendor, reply=reply,
-                                     exit_code=exit_code, sleep=sleep))
+                                     exit_code=exit_code, sleep=sleep, google=google or {}))
     os.chmod(path, 0o755)
     return path
 
@@ -117,6 +143,15 @@ class LiveCallTest(FakeProgramCase):
         self.assertEqual(answer, "泄露检查：没有发现")
         self.assertEqual(invocations(self.fakes)[0]["stdin"], "两个版本")
 
+    def test_google_call_returns_the_response_of_the_result_event(self):
+        run = self.live_run(reply="出题调研：找到三处来源")
+        answer, _ = run.call(task="出题-调研", vendor="google", prompt="调研这个题目",
+                             tools=models.WEB_READ_ONLY)
+        self.assertEqual(answer, "出题调研：找到三处来源")
+        seen = invocations(self.fakes)[0]
+        self.assertEqual(seen["stdin"], "调研这个题目")
+        self.assertNotIn("调研这个题目", seen["args"])
+
 
 def value_after(args, flag):
     """命令行参数里紧跟在 flag 后面的那个值；没有这个 flag 时返回 None。"""
@@ -127,6 +162,13 @@ def value_after(args, flag):
 
 def has_pair(args, flag, value):
     return any(args[i] == flag and args[i + 1] == value for i in range(len(args) - 1))
+
+
+def frontmatter(markdown):
+    """智能体说明文件（agent.md）开头两行 --- 之间的「键: 值」，值保留原文。"""
+    lines = markdown.splitlines()
+    end = lines.index("---", 1)
+    return dict(line.split(": ", 1) for line in lines[1:end])
 
 
 class ToolLimitTest(FakeProgramCase):
@@ -191,6 +233,35 @@ class ToolLimitTest(FakeProgramCase):
         self.assertEqual(seen["cwd_entries"], [])
         self.assertEqual(os.path.realpath(value_after(args, "--work-dir")),
                          os.path.realpath(seen["cwd"]))
+
+    def test_google_materials_only_uses_an_agent_with_no_tools(self):
+        seen = self.args_for("google", models.MATERIALS_ONLY)
+        args = seen["args"]
+        self.assertEqual(args[-1], "-p")  # 不带值的 -p：提示词从标准输入读
+        self.assertEqual(value_after(args, "--output-format"), "stream-json")
+        self.assertEqual(value_after(args, "--agent"), "materials-only")
+        for flag in ("--sandbox", "--disable-slash-commands"):
+            self.assertIn(flag, args)
+        self.assertNotIn("--dangerously-skip-permissions", args)
+        agent = frontmatter(seen["agent_md"])
+        self.assertEqual(agent["name"], "materials-only")
+        self.assertEqual(json.loads(agent["tools"]), [])
+        self.assertEqual(agent["excludeDefaultComponents"], "true")
+        self.assertEqual(agent["inheritCustomizations"], "false")
+        self.assertEqual(agent["mainAgent"], "true")
+        self.assertEqual(seen["cwd_entries"], [".agents"])
+
+    def test_google_web_read_only_allows_only_web_search_and_url_reading(self):
+        seen = self.args_for("google", models.WEB_READ_ONLY)
+        args = seen["args"]
+        self.assertEqual(value_after(args, "--agent"), "web-read-only")
+        self.assertIn("--sandbox", args)
+        self.assertNotIn("--dangerously-skip-permissions", args)
+        agent = frontmatter(seen["agent_md"])
+        self.assertEqual(agent["name"], "web-read-only")
+        self.assertEqual(json.loads(agent["tools"]), ["search_web", "read_url_content"])
+        self.assertEqual(agent["excludeDefaultComponents"], "true")
+        self.assertEqual(agent["inheritCustomizations"], "false")
 
     def test_kimi_web_read_only_allows_only_search_and_fetch(self):
         seen = self.args_for("kimi", models.WEB_READ_ONLY)
@@ -269,6 +340,25 @@ class CallRecordTest(FakeProgramCase):
         self.assertEqual(agent["agent"]["tools"], ["kimi_cli.tools.web:SearchWeb",
                                                    "kimi_cli.tools.web:FetchURL"])
         self.assertEqual(len(read_log(self.log)), 2)
+
+
+    def test_google_record_has_company_reported_model_and_tools_and_the_agent_file(self):
+        run = self.live_run(reply="好")
+        _, record = run.call(task="试探", vendor="google", prompt="你好",
+                             tools=models.WEB_READ_ONLY)
+        self.assertEqual(set(record), RECORD_FIELDS)
+        self.assertEqual(read_log(self.log), [record])
+        self.assertEqual(record["vendor"], "google")
+        self.assertEqual(record["company"], "Google")
+        self.assertEqual(record["status"], "成功")
+        self.assertEqual(record["answer_sha256"], SHA256_HAO)
+        self.assertEqual(record["reported_model"], "gemini-fake-1")
+        self.assertEqual(record["reported_tools"], ["search_web", "read_url_content"])
+        agent_md = record["config_files"]["work/.agents/agents/web-read-only/agent.md"]
+        self.assertEqual(json.loads(frontmatter(agent_md)["tools"]),
+                         ["search_web", "read_url_content"])
+        self.assertEqual(record["command"][0], run.programs["google"])
+        self.assertIn('"type": "result"', record["raw_output"])
 
 
 def write_log(path, records):
@@ -428,6 +518,61 @@ class FailureTest(FakeProgramCase):
         self.assertEqual(invocations(self.fakes), [])
 
 
+class GoogleCheckTest(FakeProgramCase):
+    """agy 的工具限定和输出格式都还没有经过真实调用确认，所以每次调用都按 agy 自己的报告核实；
+    核实不了或不符合，就记为失败并写明原因，不把回答交出去。"""
+
+    def google_call(self, limit=models.MATERIALS_ONLY, **google):
+        programs = {"google": make_fake(self.fakes, "google", reply="回答", google=google)}
+        run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs)
+        with self.assertRaises(models.ModelCallError) as caught:
+            run.call(task="评审", vendor="google", prompt="好", tools=limit)
+        record = caught.exception.record
+        self.assertEqual(record["status"], "失败")
+        self.assertEqual(record["answer"], "")
+        self.assertEqual(read_log(self.log), [record])
+        return record["error"]
+
+    def test_tools_beyond_the_limit_fail_the_call(self):
+        error = self.google_call(tools=["search_web", "run_command"])
+        self.assertIn("run_command", error)
+        self.assertIn("只给材料", error)
+
+    def test_a_missing_tool_list_fails_the_call_because_the_limit_cannot_be_checked(self):
+        error = self.google_call(limit=models.WEB_READ_ONLY, drop_tools=True)
+        self.assertIn("无法核实", error)
+
+    def test_refused_tool_calls_fail_the_call(self):
+        denied = [{"tool_name": "read_url_content", "reason": "需要人确认"}]
+        error = self.google_call(limit=models.WEB_READ_ONLY, result={"denied_actions": denied})
+        self.assertIn("拒绝", error)
+        self.assertIn("read_url_content", error)
+
+    def test_a_turn_that_ended_early_fails_the_call(self):
+        error = self.google_call(result={"finished_reason": "error"})
+        self.assertIn("finished_reason", error)
+        self.assertIn("error", error)
+
+    def test_a_missing_result_event_fails_the_call(self):
+        error = self.google_call(no_result=True)
+        self.assertIn("结果事件", error)
+        self.assertIn("待登录后用一次真实调用确认", error)
+
+    def test_a_result_event_without_response_text_fails_the_call(self):
+        error = self.google_call(result={"response": None})
+        self.assertIn("response", error)
+        self.assertIn("待登录后用一次真实调用确认", error)
+
+    def test_a_program_that_exits_with_an_error_keeps_its_own_message(self):
+        programs = {"google": make_fake(self.fakes, "google", exit_code=3)}
+        run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs)
+        with self.assertRaises(models.ModelCallError) as caught:
+            run.call(task="评审", vendor="google", prompt="好", tools=models.MATERIALS_ONLY)
+        record = caught.exception.record
+        self.assertEqual(record["exit_code"], 3)
+        self.assertIn("没有登录", record["error"])
+
+
 class NoSecretsTest(unittest.TestCase):
     """模块只用本机已登录的账号：不碰环境变量、不读任何凭据文件或钥匙串。"""
 
@@ -436,7 +581,7 @@ class NoSecretsTest(unittest.TestCase):
             source = f.read()
         for forbidden in ("API_KEY", "TOKEN", "auth.json", "credential", "keychain",
                           "os.environ", "getenv", "env=", ".codex", ".kimi", ".claude",
-                          "expanduser"):
+                          ".gemini", "expanduser"):
             self.assertNotIn(forbidden, source, forbidden)
 
 
@@ -448,11 +593,17 @@ class GuideTest(unittest.TestCase):
             self.guide = f.read()
 
     def test_required_sections_exist(self):
-        for heading in ("## 怎样调用", "## 两档工具限定", "## 三家命令行的参数",
-                        "### claude", "### codex", "### kimi", "## 调用记录",
+        for heading in ("## 怎样调用", "## 两档工具限定", "## 各家命令行的参数",
+                        "### claude", "### codex", "### kimi", "### google", "## 调用记录",
                         "## 回放", "## 只估算和调用次数上限", "## 不读取密钥",
                         "## 试探调用的结果"):
             self.assertIn(heading, self.guide)
+
+    def test_google_section_states_login_and_what_is_still_unconfirmed(self):
+        google = self.guide.split("### google", 1)[1].split("\n## ", 1)[0]
+        for phrase in ("输出解析待登录后用一次真实调用确认", "登录", "会话记录", "--settings",
+                       "--dangerously-skip-permissions", "denied_actions"):
+            self.assertIn(phrase, google, phrase)
 
     def test_every_record_field_is_explained(self):
         for field in RECORD_FIELDS:

@@ -1,6 +1,6 @@
-"""模型调用层：统一调用本机已登录的三家模型命令行（claude、codex、kimi）。
+"""模型调用层：统一调用本机已登录的四家模型命令行（claude、codex、kimi，以及 Google 的 agy）。
 
-用法、调用记录的字段和三家命令行参数的依据见同目录 models.md。
+用法、调用记录的字段和各家命令行参数的依据见同目录 models.md。
 """
 import hashlib
 import json
@@ -13,8 +13,10 @@ import threading
 import time
 from datetime import datetime
 
-VENDORS = ("claude", "codex", "kimi")
-COMPANIES = {"claude": "Anthropic", "codex": "OpenAI", "kimi": "月之暗面"}
+VENDORS = ("claude", "codex", "kimi", "google")
+COMPANIES = {"claude": "Anthropic", "codex": "OpenAI", "kimi": "月之暗面", "google": "Google"}
+# 各家命令行的程序名；Google 一家用 Antigravity 命令行 agy。
+COMMANDS = {"claude": "claude", "codex": "codex", "kimi": "kimi", "google": "agy"}
 
 MATERIALS_ONLY = "只给材料"
 WEB_READ_ONLY = "只读网页"
@@ -83,7 +85,7 @@ def _json_lines(stdout):
 
 
 def _model_args(model):
-    """三家都用 --model 指定模型；不指定时用命令行自己的默认模型。"""
+    """各家都用 --model 指定模型；不指定时用命令行自己的默认模型。"""
     return ["--model", model] if model else []
 
 
@@ -103,7 +105,7 @@ def _claude_args(tools, model, scratch, work):
     return args + _model_args(model)
 
 
-def _claude_answer(stdout, scratch):
+def _claude_answer(stdout, scratch, tools):
     found = {"answer": "", "reported_model": None, "reported_tools": None}
     for event in _json_lines(stdout):
         if event.get("type") == "system" and event.get("subtype") == "init":
@@ -133,7 +135,7 @@ def _codex_args(tools, model, scratch, work):
     return args + _model_args(model) + ["-"]
 
 
-def _codex_answer(stdout, scratch):
+def _codex_answer(stdout, scratch, tools):
     found = {"answer": "", "reported_model": None, "reported_tools": None}
     path = os.path.join(scratch, CODEX_LAST_MESSAGE)
     if os.path.exists(path):
@@ -169,7 +171,7 @@ def _kimi_args(tools, model, scratch, work):
             "--skills-dir", skills] + _model_args(model)
 
 
-def _kimi_answer(stdout, scratch):
+def _kimi_answer(stdout, scratch, tools):
     found = {"answer": "", "reported_model": None, "reported_tools": None}
     for message in _json_lines(stdout):
         if message.get("role") != "assistant":
@@ -185,10 +187,116 @@ def _kimi_answer(stdout, scratch):
     return found
 
 
+# ---- google（agy）--------------------------------------------------------------
+
+# agy 的工具限定写在工作目录里的一个自定义智能体说明文件（.agents/agents/<名字>/agent.md）里，
+# 用 --agent 选它。tools 列出允许的工具，excludeDefaultComponents 去掉默认的提示词段落和内置工具，
+# inheritCustomizations 不沿用用户的技能、规则、插件、子智能体和模型上下文协议服务器。
+GOOGLE_AGENTS = {MATERIALS_ONLY: "materials-only", WEB_READ_ONLY: "web-read-only"}
+GOOGLE_TOOLS = {MATERIALS_ONLY: [], WEB_READ_ONLY: ["search_web", "read_url_content"]}
+GOOGLE_PROMPTS = {
+    MATERIALS_ONLY: "按用户消息里的要求作答，只依据消息里给出的材料。",
+    WEB_READ_ONLY: "按用户消息里的要求作答，需要时可以检索网页和读取网页。",
+}
+
+
+def _google_agent_md(tools):
+    name = GOOGLE_AGENTS[tools]
+    return "\n".join([
+        "---",
+        "name: %s" % name,
+        "description: 模型调用层的单次调用（%s）" % tools,
+        "mainAgent: true",
+        "subagent: false",
+        "excludeDefaultComponents: true",
+        "inheritCustomizations: false",
+        "inheritMcp: false",
+        "tools: %s" % json.dumps(GOOGLE_TOOLS[tools]),
+        "---",
+        "",
+        "# %s" % name,
+        "",
+        GOOGLE_PROMPTS[tools],
+        "",
+    ])
+
+
+def _google_args(tools, model, scratch, work):
+    """-p 放在最后、不带值：提示词从标准输入读，也不会把紧跟的参数当成提示词。"""
+    folder = os.path.join(work, ".agents", "agents", GOOGLE_AGENTS[tools])
+    os.makedirs(folder)
+    with open(os.path.join(folder, "agent.md"), "w", encoding="utf-8") as f:
+        f.write(_google_agent_md(tools))
+    return (["--output-format", "stream-json", "--agent", GOOGLE_AGENTS[tools],
+             "--sandbox", "--disable-slash-commands"] + _model_args(model) + ["-p"])
+
+
+def _tool_names(reported):
+    """启动事件里的工具列表转成工具名列表；认不出的写法返回 None。"""
+    if not isinstance(reported, list):
+        return None
+    names = []
+    for item in reported:
+        name = item.get("name") if isinstance(item, dict) else item
+        if not isinstance(name, str):
+            return None
+        names.append(name)
+    return names
+
+
+# agy 的 stream-json 输出：开头的启动事件（type 为 init，列出模型和可用工具）、过程中的 step_update、
+# 最后的结果事件（type 为 result，回答在 response 里）。事件类型来自帮助信息和更新记录，
+# 字段名还没经过真实调用确认，所以下面每一步都核实，核实不了就明确报错。
+UNCONFIRMED = "agy 的输出格式按帮助信息和更新记录实现，待登录后用一次真实调用确认"
+
+
+def _google_problem(events, result, reported_tools, tools):
+    """按 agy 自己的报告核实这次调用；有问题返回原因，没有返回 None。"""
+    if not events:
+        return None  # 一行 JSON 也没有：交给通用的失败原因（退出状态和标准错误）
+    names = _tool_names(reported_tools)
+    if names is None:
+        return ("agy 的启动事件里没有认得出的可用工具列表，无法核实「%s」的工具限定是否生效（%s）"
+                % (tools, UNCONFIRMED))
+    extra = [name for name in names if name not in GOOGLE_TOOLS[tools]]
+    if extra:
+        return "agy 报告的可用工具超出「%s」的限定：%s" % (tools, "、".join(extra))
+    if result is None:
+        return "agy 的输出里没有结果事件（type 为 result 的一行）（%s）" % UNCONFIRMED
+    if result.get("finished_reason"):
+        return ("agy 报告这一轮没有正常结束（finished_reason 为 %s），出错说明见调用记录的 stderr 字段"
+                % result["finished_reason"])
+    if result.get("denied_actions"):
+        return ("agy 拒绝了这些工具调用（非交互运行时，需要人确认的工具调用一律拒绝）：%s"
+                % json.dumps(result["denied_actions"], ensure_ascii=False)[:2000])
+    if not isinstance(result.get("response"), str):
+        return "agy 的结果事件里没有文字形式的 response 字段（回答）（%s）" % UNCONFIRMED
+    return None
+
+
+def _google_answer(stdout, scratch, tools):
+    found = {"answer": "", "reported_model": None, "reported_tools": None}
+    events = list(_json_lines(stdout))
+    result = None
+    for event in events:
+        if event.get("type") == "init":
+            found["reported_model"] = event.get("model")
+            found["reported_tools"] = event.get("tools")
+        elif event.get("type") == "result":
+            result = event
+    problem = _google_problem(events, result, found["reported_tools"], tools)
+    if problem:
+        found["error"] = problem
+    elif result is not None:
+        found["answer"] = result["response"]
+    return found
+
+
 ADAPTERS = {
     "claude": (_claude_args, _claude_answer),
     "codex": (_codex_args, _codex_answer),
     "kimi": (_kimi_args, _kimi_answer),
+    "google": (_google_args, _google_answer),
 }
 
 
@@ -206,14 +314,17 @@ def _failure_reason(exit_code, stdout, stderr):
 
 
 def _config_files(scratch):
-    """调用前写进临时目录的设置文件（目前只有 kimi 的两个），原文记进调用记录。"""
+    """调用前写进临时目录的设置文件（kimi 的两个、google 的智能体说明文件），原文记进调用记录。
+
+    键是相对临时目录的路径，例如 "agent.yaml"、"work/.agents/agents/materials-only/agent.md"。
+    """
     files = {}
-    for name in sorted(os.listdir(scratch)):
-        path = os.path.join(scratch, name)
-        if os.path.isfile(path):
+    for folder, _, names in os.walk(scratch):
+        for name in names:
+            path = os.path.join(folder, name)
             with open(path, encoding="utf-8") as f:
-                files[name] = f.read()
-    return files
+                files[os.path.relpath(path, scratch).replace(os.sep, "/")] = f.read()
+    return dict(sorted(files.items()))
 
 
 # ---- 一次运行 ----------------------------------------------------------------
@@ -225,7 +336,7 @@ class ModelRun:
     mode            LIVE（真实调用）、REPLAY（回放）或 ESTIMATE（只估算）。
     max_calls       真实调用的次数上限，真实调用时必须给；只估算时用来判断是否超过上限。
     replay_from     回放时读的调用记录文件，一个路径或路径列表。
-    programs        {厂商: 程序路径}，测试时指向假的命令行程序；不给就在 PATH 里找。
+    programs        {厂商: 程序路径}，测试时指向假的命令行程序；不给就在 PATH 里找 COMMANDS 里的程序名。
     run_id          运行编号，不给就用开始时间。
     timeout_seconds 单次调用的时长上限，到了就停止该命令行并记为超时。
     """
@@ -254,7 +365,7 @@ class ModelRun:
         """调用一次模型，返回 (回答文本, 调用记录)。调用记录同时追加到 log_path。
 
         task        任务名，例如「出题-题目卡」「评审-要点抽取」；回放按它和提示词校验值取回答。
-        vendor      "claude"、"codex" 或 "kimi"。
+        vendor      "claude"、"codex"、"kimi" 或 "google"。
         prompt      提示词全文，从标准输入交给命令行。
         tools       MATERIALS_ONLY（只给材料）或 WEB_READ_ONLY（只读网页）。
         model       模型名，不给就用该命令行自己的默认模型。
@@ -326,10 +437,10 @@ class ModelRun:
     def _run_program(self, record):
         vendor, tools, model, prompt = (record["vendor"], record["tools"], record["model"],
                                         record["prompt"])
-        program = self.programs.get(vendor) or shutil.which(vendor)
+        program = self.programs.get(vendor) or shutil.which(COMMANDS[vendor])
         if not program or not os.path.exists(program):
             record["status"] = FAILED
-            record["error"] = "找不到命令行 %s（%s）" % (vendor, program or "不在 PATH 里")
+            record["error"] = "找不到命令行 %s（%s）" % (COMMANDS[vendor], program or "不在 PATH 里")
             return
         with tempfile.TemporaryDirectory() as scratch:
             work = os.path.join(scratch, "work")
@@ -358,7 +469,7 @@ class ModelRun:
             record["exit_code"] = process.returncode
             record["raw_output"] = stdout
             record["stderr"] = stderr[-STDERR_KEPT:]
-            found = read_answer(stdout, scratch)
+            found = read_answer(stdout, scratch, tools)
         error = found.pop("error", None)
         record.update(found)
         if timed_out:
