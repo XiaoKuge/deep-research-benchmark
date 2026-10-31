@@ -17,6 +17,7 @@ from html.parser import HTMLParser
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import models  # noqa: E402
+import substitutes  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HANDBOOK = os.path.join(ROOT, "research-plan", "question-handbook.src.html")
@@ -56,7 +57,7 @@ class NoVendor(Exception):
 
     def __init__(self, role, task, tried):
         super().__init__("%s（步骤「%s」）找不到可用的厂商：%s" % (
-            role, task, "；".join("%s %s" % pair for pair in tried) or "没有候选"))
+            role, task, substitutes.reasons(tried) or "没有候选"))
         self.tried = tried
 
 
@@ -245,45 +246,31 @@ def _vendor_label(vendor, model=None, reported=None):
     return label
 
 
-# ---- 回放材料里录下的失败 ----------------------------------------------------------
-
-class ReplayFailures:
-    """回放材料里状态为「失败」或「超时」的调用：回放时当作那一家在那一步不可用。"""
-
-    def __init__(self, sources):
-        self.slots = {}
-        for source in sources or []:
-            with open(source, encoding="utf-8") as f:
-                for line in f:
-                    if not line.strip():
-                        continue
-                    entry = json.loads(line)
-                    if entry.get("status") in (models.FAILED, models.TIMED_OUT):
-                        key = (entry.get("task"), entry.get("vendor"))
-                        self.slots.setdefault(key, []).append(
-                            "回放材料里录下这次调用「%s」：%s" % (entry["status"], entry.get("error") or "没有写原因"))
-
-    def take(self, task, vendor):
-        reasons = self.slots.get((task, vendor))
-        return reasons.pop(0) if reasons else None
-
-
 # ---- 角色和厂商 ------------------------------------------------------------------
 
-class Roles:
-    """每个角色先用配置的厂商；不可用时按 simulate_setter.md 写的规则换一家，并记下原因。"""
+def step_of(task):
+    """任务名里的步骤：出题-深度地图-乙-第1轮 的步骤是 深度地图，出题-闭卷对照-作答 的是 闭卷对照。"""
+    return task.split("-")[1]
 
-    def __init__(self, run, configured, model_of, replay_failures):
+
+class Roles:
+    """每个角色先用配置的厂商；不能用于这一档、或者不可用时，按 simulate_setter.md 写的规则换一家，并记下原因。
+
+    挑厂商和替代记录的格式用 substitutes.py，与模拟评审共用。某一家调用失败，就整次运行不再用它，
+    这个角色以后都用换来的这家；某一家只是不能用于这一档（google 不能用于只读网页一档），只换这一次，
+    这个角色在别的档里照常用它。
+    """
+
+    def __init__(self, run, configured, model_of):
         self.run = run
         self.configured = dict(configured)
         self.current = dict(configured)
         self.model_of = dict(model_of)
-        self.replay_failures = replay_failures
-        self.unavailable = {}   # 厂商 -> 原因
-        self.outages = []       # 每次发现不可用的记录
-        self.substitutions = []
+        self.vendors = substitutes.Vendors()
+        self.outages = []        # 每次发现不可用的记录
+        self.substitutions = []  # [(角色, 替代记录)]
         self.steps = []
-        self.map_vendors = []   # 写过深度地图的厂商
+        self.map_vendors = []    # 写过深度地图的厂商
 
     def _order(self, role):
         first = self.current[role]
@@ -301,19 +288,21 @@ class Roles:
 
         return [first] + sorted(rest, key=rank)
 
+    def _exclude(self, role):
+        if role != CLOSED:
+            return None
+        return lambda vendor: ("写过本题的深度地图，闭卷对照不能用它" if vendor in self.map_vendors else None)
+
     def _mark_unavailable(self, vendor, task, reason, call_index=None):
-        self.unavailable[vendor] = reason
-        self.outages.append({"厂商": vendor, "步骤": task, "原因": reason, "调用序号": call_index})
+        if self.vendors.mark_unavailable(vendor, reason):
+            self.outages.append({"厂商": vendor, "步骤": task, "原因": reason, "调用序号": call_index})
 
     def ask(self, role, task, prompt, tools, placeholder=""):
-        tried = []
-        for vendor in self._order(role):
-            if vendor in self.unavailable:
-                tried.append((vendor, "在本次运行前面的步骤里已经不可用"))
-                continue
-            if role == CLOSED and vendor in self.map_vendors:
-                tried.append((vendor, "写过本题的深度地图，闭卷对照不能用它"))
-                continue
+        failed = {}  # 这一步里调用失败了的厂商 -> 原因，写进替代记录
+        while True:
+            vendor, skipped = self.vendors.pick(self._order(role), tools, self._exclude(role), failed)
+            if vendor is None:
+                raise NoVendor(role, task, skipped)
             try:
                 answer, record = self.run.call(task, vendor, prompt, tools,
                                                model=self.model_of.get(vendor),
@@ -321,28 +310,28 @@ class Roles:
             except models.ModelCallError as error:
                 reason = error.record.get("error") or str(error)
                 self._mark_unavailable(vendor, task, reason, error.record.get("call_index"))
-                tried.append((vendor, "调用失败：" + reason))
+                failed[vendor] = "调用失败：" + reason
                 continue
             except models.ReplayMissing as missing:
-                reason = self.replay_failures.take(task, vendor)
-                if reason is None:
+                recorded = self.run.replay_failures.take(task, vendor)
+                if recorded is None:
                     raise Stop(str(missing)) from None
+                reason = "回放材料里录下这次调用「%s」：%s" % (recorded["status"],
+                                                      recorded.get("error") or "没有写原因")
                 self._mark_unavailable(vendor, task, reason)
-                tried.append((vendor, reason))
+                failed[vendor] = reason
                 continue
             except models.CallLimitExceeded as limit:
                 raise Stop(str(limit)) from None
-            self._used(role, task, vendor, tools, record, tried)
+            self._used(role, task, vendor, tools, record, skipped)
             return answer, record
-        raise NoVendor(role, task, tried)
 
-    def _used(self, role, task, vendor, tools, record, tried):
-        if vendor != self.current[role]:
-            self.substitutions.append({
-                "角色": role, "步骤": task, "配置的厂商": self.configured[role],
-                "原来用的厂商": self.current[role], "改用": vendor,
-                "原因": "；".join("%s：%s" % pair for pair in tried)})
-            self.current[role] = vendor
+    def _used(self, role, task, vendor, tools, record, skipped):
+        planned = self.current[role]
+        if vendor != planned:
+            self.substitutions.append((role, substitutes.record(step_of(task), task, planned, vendor, skipped)))
+            if self.vendors.is_unavailable(planned):
+                self.current[role] = vendor  # 原来的厂商整次运行都不可用：这个角色以后都用换来的这家
         if role in (MAP_A, MAP_B) and vendor not in self.map_vendors:
             self.map_vendors.append(vendor)
         self.steps.append({
@@ -370,11 +359,18 @@ class Roles:
             labels.append(_vendor_label(vendor, self.model_of.get(vendor),
                                         reported[-1] if reported else None))
         text = "、".join(labels)
-        for item in self.substitutions:
-            if item["角色"] == role:
-                text += "（配置的是 %s，在「%s」这一步换成了 %s，原因见%s）" % (
-                    item["原来用的厂商"], item["步骤"], item["改用"], META_FILE)
+        seen = set()
+        for item in self.substitutions_of(role):
+            pair = (item["原来的厂商"], item["改用的厂商"])
+            if pair in seen:  # 同一种替代在后面几轮又发生，只写第一次
+                continue
+            seen.add(pair)
+            text += "（配置的是 %s，在「%s」这一步换成了 %s，原因见%s）" % (
+                item["原来的厂商"], item["任务"], item["改用的厂商"], META_FILE)
         return text
+
+    def substitutions_of(self, role):
+        return [item for who, item in self.substitutions if who == role]
 
     def summary(self):
         result = {}
@@ -387,7 +383,7 @@ class Roles:
                 "命令行报告的模型": sorted({step["命令行报告的模型"] for step in steps
                                      if step["命令行报告的模型"]}),
                 "工具限定": sorted({step["工具限定"] for step in steps}),
-                "替代": [item for item in self.substitutions if item["角色"] == role],
+                "替代": self.substitutions_of(role),
             }
         return result
 
@@ -1121,7 +1117,8 @@ def _estimate_report(run, max_extra_rounds):
              % (summary["calls"], max_extra_rounds, summary["calls"] - extra),
              "按厂商：%s" % "，".join("%s %d 次" % item for item in summary["by_vendor"].items()),
              "按步骤：%s" % "，".join("%s %d 次" % item for item in summary["by_task"].items()),
-             "这是假定配置的厂商都可用时的次数；某一家不可用时，每换一家会多一次失败的调用。"]
+             "这是假定配置的厂商都可用时的次数；不能用于某一档的厂商（google 不能用于只读网页一档）已经按替代规则换好。"
+             "某一家不可用时，每换一家会多一次失败的调用。"]
     if summary["max_calls"] is not None:
         lines.append("调用次数上限 %d 次：%s。" % (summary["max_calls"], "会超过上限" if summary["over_limit"]
                                                  else "不会超过"))
@@ -1152,7 +1149,7 @@ def main(argv=None):
     if mode == models.ESTIMATE:
         with tempfile.TemporaryDirectory() as scratch:
             run = models.ModelRun(os.path.join(scratch, LOG_FILE), mode=mode, max_calls=args.max_calls)
-            roles = Roles(run, configured, model_of, ReplayFailures(None))
+            roles = Roles(run, configured, model_of)
             Setter(roles, inputs, today, args.max_extra_rounds).make()
             print(_estimate_report(run, args.max_extra_rounds))
         return 0
@@ -1168,7 +1165,7 @@ def main(argv=None):
     os.makedirs(folder)
     run = models.ModelRun(os.path.join(folder, LOG_FILE), mode=mode, max_calls=args.max_calls,
                           replay_from=args.replay, run_id=run_id, timeout_seconds=args.timeout_seconds)
-    roles = Roles(run, configured, model_of, ReplayFailures(args.replay))
+    roles = Roles(run, configured, model_of)
     meta = {"id": question_id, "kind": args.kind, "inputs": inputs, "generated_at": now.isoformat(
         timespec="seconds"), "date": today, "roles": roles, "folder": folder}
     try:
@@ -1186,8 +1183,8 @@ def main(argv=None):
     print("写完标准：%s" % "；".join("%s %s" % (key, "满足" if value else "没有满足")
                                     for key, value in checks["写完标准"].items()))
     print("泄露检查：%s；闭卷对照：%s" % (checks["泄露检查"], checks["闭卷对照"]))
-    for item in roles.substitutions:
-        print("替代：%s 在「%s」改用 %s。原因：%s" % (item["角色"], item["步骤"], item["改用"], item["原因"]))
+    for role, item in roles.substitutions:
+        print("替代：%s 在「%s」改用 %s。原因：%s" % (role, item["任务"], item["改用的厂商"], item["原因"]))
     if not roles.used(CLOSED):
         print("闭卷对照没有做：%s" % result["闭卷对照"].get("原因", ""))
     return 0

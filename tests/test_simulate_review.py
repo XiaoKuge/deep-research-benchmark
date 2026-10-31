@@ -399,9 +399,16 @@ class UnavailableVendorTest(unittest.TestCase):
         expected = {("断言核验", "评审-断言核验：报告 %s，评委 3" % unit) for unit in
                     ("Alpha，只给材料", "Bravo，只给材料", "Charlie，只给材料", "Charlie，只读网页")}
         expected.add(("要点判定", "评审-要点判定：评委 3"))
-        self.assertEqual({(s["step"], s["task"]) for s in self.meta["substitutions"]}, expected)
-        self.assertTrue(all(s["planned_vendor"] == "kimi" and s["vendor"] == "claude"
-                            for s in self.meta["substitutions"]))
+        substitutions = self.meta["substitutions"]
+        self.assertEqual({(s["步骤"], s["任务"]) for s in substitutions}, expected)
+        self.assertTrue(all(list(s) == ["步骤", "任务", "原来的厂商", "改用的厂商", "原因"] for s in substitutions))
+        self.assertTrue(all(s["原来的厂商"] == "kimi" and s["改用的厂商"] == "claude" for s in substitutions))
+        for s in substitutions:
+            self.assertIn("kimi：", s["原因"])
+            if "只读网页" in s["任务"]:  # google 不能用于只读网页一档，没有试它
+                self.assertIn("google：Google（agy）不能用于只读网页一档", s["原因"])
+            else:
+                self.assertIn("google：", s["原因"])
 
     def test_no_result_is_attributed_to_the_unavailable_vendor(self):
         vendors = {r["vendor"] for r in read_records(os.path.join(self.out, "calls.jsonl"))}
@@ -414,6 +421,49 @@ class UnavailableVendorTest(unittest.TestCase):
         self.assertEqual({r["label"]: (r["rank_best"], r["rank_worst"]) for r in results["reports"]},
                          {"Alpha": (1, 1), "Bravo": (2, 2), "Charlie": (3, 3)})
         self.assertIn("kimi", self.result.stdout)
+
+
+class WebTierTest(unittest.TestCase):
+    """google 不能用于只读网页一档：断言核验里所引网址没有存档的那一组（Charlie），计划给 google 的评委位置
+    直接按替代顺序换一家（先挑这一步没配的 kimi），记一条替代，不发调用，google 也不算不可用。
+    只估算时同样这样挑，估算的各家次数才与真实运行一致。"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tmp = tempfile.TemporaryDirectory()
+        cls.inputs = build_inputs(cls._tmp.name)
+        steps = dict(CONFIG["steps"], verify={"vendors": ["claude", "codex", "google"], "times": 1})
+        write(cls.inputs["config"], json.dumps(dict(CONFIG, steps=steps), ensure_ascii=False))
+        cls.out = os.path.join(cls._tmp.name, "review")
+        cls.result = run_tool(cls.inputs, cls.out, "--estimate")
+        cls.meta = read_json(os.path.join(cls.out, "run.json"))
+        cls.records = read_records(os.path.join(cls.out, "calls.jsonl"))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._tmp.cleanup()
+
+    def test_google_is_never_given_a_web_task(self):
+        self.assertEqual(self.result.returncode, 0, self.result.stderr)
+        web = [r for r in self.records if r["tools"] == "只读网页"]
+        self.assertEqual(sorted(r["vendor"] for r in web), ["claude", "codex", "kimi"])
+        google = [r for r in self.records if r["vendor"] == "google"]
+        self.assertEqual(len(google), 3)
+        self.assertTrue(all(r["tools"] == "只给材料" for r in google))
+
+    def test_the_substitution_names_the_tier_and_google_stays_available(self):
+        reason = "google：" + "Google（agy）不能用于只读网页一档"
+        self.assertEqual(len(self.meta["substitutions"]), 1)
+        item = self.meta["substitutions"][0]
+        self.assertEqual({k: item[k] for k in ("步骤", "任务", "原来的厂商", "改用的厂商")},
+                         {"步骤": "断言核验", "任务": "评审-断言核验：报告 Charlie，只读网页，评委 3",
+                          "原来的厂商": "google", "改用的厂商": "kimi"})
+        self.assertTrue(item["原因"].startswith(reason), item["原因"])
+        self.assertEqual(self.meta["unavailable"], [])
+
+    def test_the_estimate_counts_the_substitute(self):
+        self.assertEqual(self.meta["steps"]["断言核验"]["by_vendor"],
+                         {"claude": 4, "codex": 4, "google": 3, "kimi": 1})
 
 
 class EstimateTest(unittest.TestCase):

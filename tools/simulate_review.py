@@ -33,6 +33,7 @@ sys.path.insert(0, HERE)
 
 import archive_sources  # noqa: E402
 import models  # noqa: E402
+import substitutes  # noqa: E402
 
 PROMPTS = os.path.join(HERE, "review_prompts")
 RUBRIC = os.path.join(ROOT, "research-plan", "stage4-rubric.md")
@@ -430,36 +431,27 @@ def candidates(value):
 
 # ---- 调用模型：不可用时如实记录，并按替代顺序换一家 -------------------------
 
-def replay_failures(paths):
-    """回放材料里状态为失败或超时的记录：{厂商: 失败原因}。回放时据此重现"这家不可用"。"""
-    found = {}
-    for path in paths or []:
-        with open(path, encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                entry = json.loads(line)
-                if entry.get("status") in (models.FAILED, models.TIMED_OUT) and entry.get("vendor"):
-                    found.setdefault(entry["vendor"], entry.get("error") or entry["status"])
-    return found
-
-
 class _NowUnavailable(Exception):
-    """等着发第一个调用时，这一家已经被别的调用判为不可用。"""
+    """这一家刚被判为不可用：等着发第一个调用时已经被别的调用判为不可用（reason 为空），
+    或者回放时取不到它的回答、回放材料里又录下过它的失败（reason 写明）。"""
+
+    def __init__(self, reason=None):
+        super().__init__(reason or "")
+        self.reason = reason
 
 
 class Context:
-    def __init__(self, run, config, question, reports, archive, out, rubric, failures):
+    def __init__(self, run, config, question, reports, archive, out, rubric):
         self.run, self.config, self.question, self.reports = run, config, question, reports
         self.archive, self.out = archive, out
         self.estimate = run.mode == models.ESTIMATE
         self.workers = max(1, int(config["workers"]))
         self.seed = int(config["seed"])
-        self.failures = failures
         self.lock = threading.Lock()
         # 每一家在第一次调用成功之前，同一时间只发一个调用：这家不可用时，只白费一次失败的调用。
         self.first_call = {vendor: threading.Lock() for vendor in models.VENDORS}
         self.confirmed = set()
+        self.vendors = substitutes.Vendors()
         self.unavailable, self.substitutions, self.invalid = {}, [], []
         self.usage = {name: [] for _, name in STEPS}
         self.notes = {"evidence_not_found": [], "not_merged": [], "unknown_sources": [],
@@ -485,22 +477,20 @@ class Context:
         return item if item and item["text"] is not None else None
 
     # 调用
-    def vendor_for(self, step, planned):
-        """计划的厂商可用就用它；不可用时按替代顺序换一家，先挑这一步没配的厂商（尽量保持评委来自不同厂商）。"""
-        with self.lock:
-            if planned not in self.unavailable:
-                return planned
-            usable = [v for v in self.config["substitutes"] if v != planned and v not in self.unavailable]
-            in_step = set(self.config["steps"][step]["vendors"])
-            for vendor in [v for v in usable if v not in in_step] + [v for v in usable if v in in_step]:
-                return vendor
-        raise ReviewError("没有可用的厂商了：%s 都不可用" % "、".join(self.unavailable))
+    def pick(self, step, planned, tools, failed):
+        """先看计划的厂商；它不能用于这一档或已经不可用时，按替代顺序换一家，先挑这一步没配的厂商
+        （尽量让评委来自不同厂商）。返回 (厂商或 None, 跳过的各家和原因)。"""
+        in_step = set(self.config["steps"][step]["vendors"])
+        rest = [v for v in self.config["substitutes"] if v != planned]
+        order = [planned] + [v for v in rest if v not in in_step] + [v for v in rest if v in in_step]
+        return self.vendors.pick(order, tools, failed=failed)
 
     def mark_unavailable(self, vendor, task, error):
-        with self.lock:
-            self.unavailable.setdefault(vendor, {
-                "vendor": vendor, "company": models.COMPANIES[vendor], "first_failed_task": task,
-                "error": error, "noticed_at": now()})
+        if self.vendors.mark_unavailable(vendor, error):
+            with self.lock:
+                self.unavailable[vendor] = {
+                    "vendor": vendor, "company": models.COMPANIES[vendor], "first_failed_task": task,
+                    "error": error, "noticed_at": now()}
 
     def call_once(self, vendor, task, prompt, tools):
         """调用一次。失败时先把这一家记为不可用，再抛出异常；回放时取不到回答、又录下过这家失败的，同样处理。"""
@@ -512,14 +502,16 @@ class Context:
                 self.mark_unavailable(vendor, task, error.record.get("error"))
                 raise
             except models.ReplayMissing:
-                if vendor not in self.failures:
+                recorded = self.run.replay_failures.first_for(vendor)
+                if recorded is None:
                     raise
-                self.mark_unavailable(vendor, task, "回放材料里这家的调用失败：%s" % self.failures[vendor])
-                raise _NowUnavailable()
+                reason = "回放材料里这家的调用失败：%s" % (recorded.get("error") or recorded.get("status"))
+                self.mark_unavailable(vendor, task, reason)
+                raise _NowUnavailable(reason)
         if vendor in self.confirmed:
             return call()
         with self.first_call[vendor]:
-            if vendor in self.unavailable:
+            if self.vendors.is_unavailable(vendor):
                 raise _NowUnavailable()
             result = call()
             self.confirmed.add(vendor)
@@ -528,15 +520,21 @@ class Context:
     def ask(self, step, slot, planned, task, prompt, tools):
         """调用一次，返回 (实际用的厂商, 解析出的 JSON 对象)。只估算或回答无效时对象为 None。"""
         name = STEP_NAMES[step]
+        failed = {}  # 这一次调用里失败了的厂商 -> 原因，写进替代记录
         while True:
-            vendor = self.vendor_for(step, planned)
+            vendor, skipped = self.pick(step, planned, tools, failed)
+            if vendor is None:
+                raise ReviewError("没有可用的厂商了（任务「%s」）：%s" % (task, substitutes.reasons(skipped)))
             try:
                 answer, record = self.call_once(vendor, task, prompt, tools)
-            except _NowUnavailable:
+            except _NowUnavailable as gone:
+                if gone.reason:
+                    failed[vendor] = gone.reason
                 continue
             except models.ModelCallError as error:
                 with self.lock:
                     self.usage[name].append({"slot": slot, "vendor": vendor, "status": error.record["status"]})
+                failed[vendor] = "调用失败：%s" % (error.record.get("error") or error.record["status"])
                 continue
             break
         with self.lock:
@@ -544,8 +542,7 @@ class Context:
                                      "model": record.get("model"),
                                      "reported_model": record.get("reported_model")})
             if vendor != planned:
-                self.substitutions.append({"step": name, "slot": slot, "task": task,
-                                           "planned_vendor": planned, "vendor": vendor})
+                self.substitutions.append(substitutes.record(name, task, planned, vendor, skipped))
         if self.estimate:
             return vendor, None
         try:
@@ -1146,8 +1143,7 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
     run = models.ModelRun(os.path.join(out, "calls.jsonl"), mode=mode, max_calls=args.max_calls,
                           replay_from=args.replay if mode == models.REPLAY else None,
                           run_id=args.run_id)
-    failures = replay_failures(args.replay) if mode == models.REPLAY else {}
-    ctx = Context(run, config, question, reports, archive, out, rubric, failures)
+    ctx = Context(run, config, question, reports, archive, out, rubric)
     meta = {
         "run_id": run.run_id, "mode": mode, "started_at": now(), "finished_at": None,
         "status": None, "error": None,
@@ -1200,7 +1196,7 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
                          "max_calls": summary["max_calls"], "over_limit": summary["over_limit"]}
         meta["steps"] = summarize_steps(ctx)
         meta["unavailable"] = list(ctx.unavailable.values())
-        meta["substitutions"] = sorted(ctx.substitutions, key=lambda s: (s["step"], s["task"]))
+        meta["substitutions"] = sorted(ctx.substitutions, key=lambda s: (s["步骤"], s["任务"]))
         meta["invalid_answers"] = ctx.invalid
         meta["disputed_points"] = [p["pid"] for p in pool if p.get("disputed")]
         meta["audit_points"] = [p["pid"] for p in pool if p.get("audit")]

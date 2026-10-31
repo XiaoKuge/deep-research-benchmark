@@ -393,11 +393,13 @@ def failed(task, vendor, error=KIMI_401):
 
 class UnavailableVendorTest(SetterCase):
     def test_an_unavailable_map_writer_is_replaced_and_the_replacement_is_recorded(self):
-        # 本机现在的情况：kimi 登录过期，google（agy）还没登录
+        # 本机现在的情况：kimi 登录过期；google（agy）不能用于只读网页一档，写地图时根本不试它，
+        # 所以回放材料里录下的 google 失败用不上，google 也不记为不可用
         lines = material(overrides={"出题-深度地图-乙-第1轮": ("claude", depth_map("乙", 4))},
                          extra=[failed("出题-深度地图-乙-第1轮", "kimi"),
                                 failed("出题-深度地图-乙-第1轮", "google", AGY_LOGIN)])
-        code, printed = self.run_setter(lines=lines)
+        code, printed = self.run_setter("--map-b", "kimi", "--leak-checker", "codex", "--closed-book", "codex",
+                                        lines=lines)
         self.assertEqual(code, 0, printed)
         meta = self.metadata()
         b = meta["角色"]["乙"]
@@ -405,10 +407,13 @@ class UnavailableVendorTest(SetterCase):
         # 不换成 codex：codex 要留给闭卷对照
         self.assertEqual(b["用到的厂商"], ["claude"])
         self.assertEqual(len(b["替代"]), 1)
-        self.assertEqual(b["替代"][0]["改用"], "claude")
+        self.assertEqual(list(b["替代"][0]), ["步骤", "任务", "原来的厂商", "改用的厂商", "原因"])
+        self.assertEqual(b["替代"][0]["改用的厂商"], "claude")
+        self.assertEqual(b["替代"][0]["任务"], "出题-深度地图-乙-第1轮")
+        self.assertEqual(b["替代"][0]["步骤"], "深度地图")
         self.assertIn("401", b["替代"][0]["原因"])
-        self.assertIn("agy 还没有登录", b["替代"][0]["原因"])
-        self.assertEqual([item["厂商"] for item in meta["厂商不可用"]], ["kimi", "google"])
+        self.assertIn("google：Google（agy）不能用于只读网页一档", b["替代"][0]["原因"])
+        self.assertEqual([item["厂商"] for item in meta["厂商不可用"]], ["kimi"])
         self.assertTrue(any("两位出题人用了同一家" in note for note in meta["说明"]))
         self.assertEqual(meta["角色"]["闭卷对照"]["用到的厂商"], ["codex"])
         self.assertFalse([r for r in self.calls() if r["vendor"] in ("kimi", "google")])
@@ -432,6 +437,38 @@ class UnavailableVendorTest(SetterCase):
         self.assertIn("agy 还没有登录", closed)
         self.assertIn("写过本题的深度地图", closed)
         self.assertIn("结论：未做", self.read("深度地图.txt"))
+
+
+class WebTierTest(SetterCase):
+    """google 不能用于只读网页一档：写深度地图要读网页，配置给 google 的乙直接换一家，记一条替代，
+    原因写明不能用于只读网页一档；不发调用，google 也不算不可用，只给材料的步骤照常用它。"""
+
+    def test_a_map_writer_configured_as_google_is_replaced_without_a_call(self):
+        lines = material(overrides={"出题-深度地图-乙-第1轮": ("codex", depth_map("乙", 4)),
+                                    "出题-泄露检查": ("google", LEAK_OK),
+                                    "出题-闭卷对照-作答": ("kimi", "闭卷的回答：萤火虫少了是因为农药。")})
+        code, printed = self.run_setter("--map-b", "google", "--leak-checker", "google",
+                                        "--closed-book", "kimi", lines=lines)
+        self.assertEqual(code, 0, printed)
+        meta = self.metadata()
+        b = meta["角色"]["乙"]
+        self.assertEqual(b["用到的厂商"], ["codex"])  # 不换成 claude：甲已经是 claude；也不占闭卷对照的 kimi
+        self.assertEqual(len(b["替代"]), 1)
+        item = b["替代"][0]
+        self.assertEqual((item["步骤"], item["任务"], item["原来的厂商"], item["改用的厂商"]),
+                         ("深度地图", "出题-深度地图-乙-第1轮", "google", "codex"))
+        self.assertIn("google：Google（agy）不能用于只读网页一档", item["原因"])
+        self.assertEqual(meta["厂商不可用"], [])
+        self.assertEqual(meta["角色"]["泄露检查人"]["用到的厂商"], ["google"])
+        self.assertFalse([r for r in self.calls() if r["vendor"] == "google" and r["tools"] == "只读网页"])
+
+    def test_the_estimate_picks_the_same_substitute(self):
+        code, printed = self.run_setter("--map-b", "google", "--leak-checker", "google",
+                                        "--closed-book", "kimi", "--estimate", lines=False)
+        self.assertEqual(code, 0, printed)
+        # 乙的三轮地图都换成 codex；google 只做泄露检查；kimi 做闭卷作答
+        for count in ("claude 9 次", "codex 3 次", "google 1 次", "kimi 1 次"):
+            self.assertIn(count, printed)
 
 
 class EstimateTest(SetterCase):
