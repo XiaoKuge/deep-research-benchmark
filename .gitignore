@@ -4,3 +4,5 @@ __pycache__/
 *.tmp
 .DS_Store
 .backups/
+# 在新手包里本机试跑示例时生成的运行结果
+site/starter-kit/运行结果/
