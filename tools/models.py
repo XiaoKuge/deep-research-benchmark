@@ -17,6 +17,9 @@ VENDORS = ("claude", "codex", "kimi", "google")
 COMPANIES = {"claude": "Anthropic", "codex": "OpenAI", "kimi": "月之暗面", "google": "Google"}
 # 各家命令行的程序名；Google 一家用 Antigravity 命令行 agy。
 COMMANDS = {"claude": "claude", "codex": "codex", "kimi": "kimi", "google": "agy"}
+# 不指定模型时用的模型。agy 也能用 Claude 和 GPT 的模型，当 Google 评委时必须是 Gemini，
+# 所以 google 不用 agy 自己的默认模型；其余三家不在这里，用各自命令行的默认模型。
+DEFAULT_MODELS = {"google": "gemini-4-argon-medium"}
 
 MATERIALS_ONLY = "只给材料"
 WEB_READ_ONLY = "只读网页"
@@ -222,69 +225,74 @@ def _google_agent_md(tools):
 
 
 def _google_args(tools, model, scratch, work):
-    """-p 放在最后、不带值：提示词从标准输入读，也不会把紧跟的参数当成提示词。"""
+    """提示词走流式输入（见 _google_stdin）；-p 必须带值，流式输入时给空串，命令行上不放提示词。"""
     folder = os.path.join(work, ".agents", "agents", GOOGLE_AGENTS[tools])
     os.makedirs(folder)
     with open(os.path.join(folder, "agent.md"), "w", encoding="utf-8") as f:
         f.write(_google_agent_md(tools))
-    return (["--output-format", "stream-json", "--agent", GOOGLE_AGENTS[tools],
-             "--sandbox", "--disable-slash-commands"] + _model_args(model) + ["-p"])
+    return (["--input-format", "stream-json", "--output-format", "stream-json",
+             "--agent", GOOGLE_AGENTS[tools], "--sandbox", "--disable-slash-commands"]
+            + _model_args(model) + ["-p", ""])
 
 
-def _tool_names(reported):
-    """启动事件里的工具列表转成工具名列表；认不出的写法返回 None。"""
-    if not isinstance(reported, list):
-        return None
-    names = []
-    for item in reported:
-        name = item.get("name") if isinstance(item, dict) else item
-        if not isinstance(name, str):
-            return None
-        names.append(name)
-    return names
+def _google_stdin(prompt):
+    """agy 的流式输入：一行 JSON 是一条用户消息，后跟换行。
+
+    非 ASCII 字符一律写成 \\u 转义，整行只有 ASCII 字符，提示词里的任何换行或行分隔符都断不开这一行。
+    """
+    return json.dumps({"event": "user", "message": {"role": "user", "content": prompt}}) + "\n"
 
 
-# agy 的 stream-json 输出：开头的启动事件（type 为 init，列出模型和可用工具）、过程中的 step_update、
-# 最后的结果事件（type 为 result，回答在 response 里）。事件类型来自帮助信息和更新记录，
-# 字段名还没经过真实调用确认，所以下面每一步都核实，核实不了就明确报错。
-UNCONFIRMED = "agy 的输出格式按帮助信息和更新记录实现，待登录后用一次真实调用确认"
+# 只给材料档允许的步骤类型：收下用户消息、模型作答。别的步骤类型（例如调用工具）说明限定没生效。
+GOOGLE_MATERIALS_STEPS = ("user_input", "agent_response")
 
 
-def _google_problem(events, result, reported_tools, tools):
+def _google_problem(events, result, reported_model, tools):
     """按 agy 自己的报告核实这次调用；有问题返回原因，没有返回 None。"""
     if not events:
         return None  # 一行 JSON 也没有：交给通用的失败原因（退出状态和标准错误）
-    names = _tool_names(reported_tools)
-    if names is None:
-        return ("agy 的启动事件里没有认得出的可用工具列表，无法核实「%s」的工具限定是否生效（%s）"
-                % (tools, UNCONFIRMED))
-    extra = [name for name in names if name not in GOOGLE_TOOLS[tools]]
-    if extra:
-        return "agy 报告的可用工具超出「%s」的限定：%s" % (tools, "、".join(extra))
+    if not (isinstance(reported_model, str) and reported_model.startswith("gemini")):
+        shown = "「%s」" % reported_model if isinstance(reported_model, str) else "空的"
+        return ("agy 的启动事件报告的模型是%s，不是以 gemini 开头的 Gemini 模型；"
+                "当 Google 一家用时必须是 Gemini 模型" % shown)
+    if tools == MATERIALS_ONLY:
+        extra = []
+        for event in events:
+            if event.get("event") == "step_update":
+                step = (event.get("step_update") or {}).get("step_type")
+                if step not in GOOGLE_MATERIALS_STEPS and step not in extra:
+                    extra.append(step)
+        if extra:
+            return ("「%s」档里 agy 报告了收下用户消息、模型作答以外的步骤类型：%s"
+                    % (tools, "、".join(str(step) for step in extra)))
     if result is None:
-        return "agy 的输出里没有结果事件（type 为 result 的一行）（%s）" % UNCONFIRMED
-    if result.get("finished_reason"):
-        return ("agy 报告这一轮没有正常结束（finished_reason 为 %s），出错说明见调用记录的 stderr 字段"
-                % result["finished_reason"])
-    if result.get("denied_actions"):
-        return ("agy 拒绝了这些工具调用（非交互运行时，需要人确认的工具调用一律拒绝）：%s"
-                % json.dumps(result["denied_actions"], ensure_ascii=False)[:2000])
-    if not isinstance(result.get("response"), str):
-        return "agy 的结果事件里没有文字形式的 response 字段（回答）（%s）" % UNCONFIRMED
+        return "agy 的输出里没有结果事件（event 为 result 的一行）"
+    if result.get("status") != "SUCCESS":
+        return "agy 报告这一轮没有成功（status 为 %s）：%s" % (
+            result.get("status"), result.get("error") or "没有给出原因")
+    if not isinstance(result.get("response"), str) or not result["response"].strip():
+        reason = "agy 报告成功，但回答为空"
+        if tools == WEB_READ_ONLY:
+            reason += ("。只读网页档里模型去读网页时，读网页需要人批准，非交互运行被拒绝，"
+                       "回答就是空的；google 目前不能用于只读网页档")
+        return reason
     return None
 
 
+# agy 的 stream-json 输出（登录后用真实调用查明）：每行一个事件，事件名在 event 字段，
+# 内容嵌在与事件名同名的键里：init（启动事件）、step_update（步骤）、result（结果事件）。
+# 回答取 result.response；reported_model 取 init.model。init 里的 tools 是 agy 注册过的全部工具，
+# 不是这个智能体能用的工具，所以 reported_tools 留空（智能体能用的工具见 config_files 里的 agent.md）。
 def _google_answer(stdout, scratch, tools):
     found = {"answer": "", "reported_model": None, "reported_tools": None}
     events = list(_json_lines(stdout))
     result = None
     for event in events:
-        if event.get("type") == "init":
-            found["reported_model"] = event.get("model")
-            found["reported_tools"] = event.get("tools")
-        elif event.get("type") == "result":
-            result = event
-    problem = _google_problem(events, result, found["reported_tools"], tools)
+        if event.get("event") == "init":
+            found["reported_model"] = (event.get("init") or {}).get("model")
+        elif event.get("event") == "result":
+            result = event.get("result") or {}
+    problem = _google_problem(events, result, found["reported_model"], tools)
     if problem:
         found["error"] = problem
     elif result is not None:
@@ -292,11 +300,12 @@ def _google_answer(stdout, scratch, tools):
     return found
 
 
+# 每家：(拼参数, 取回答, 改写标准输入)。改写标准输入为 None 时，提示词原样写进标准输入。
 ADAPTERS = {
-    "claude": (_claude_args, _claude_answer),
-    "codex": (_codex_args, _codex_answer),
-    "kimi": (_kimi_args, _kimi_answer),
-    "google": (_google_args, _google_answer),
+    "claude": (_claude_args, _claude_answer, None),
+    "codex": (_codex_args, _codex_answer, None),
+    "kimi": (_kimi_args, _kimi_answer, None),
+    "google": (_google_args, _google_answer, _google_stdin),
 }
 
 
@@ -366,9 +375,10 @@ class ModelRun:
 
         task        任务名，例如「出题-题目卡」「评审-要点抽取」；回放按它和提示词校验值取回答。
         vendor      "claude"、"codex"、"kimi" 或 "google"。
-        prompt      提示词全文，从标准输入交给命令行。
+        prompt      提示词全文，从标准输入交给命令行（google 先由 _google_stdin 包成一行 JSON）；
+                    调用记录里记原文。
         tools       MATERIALS_ONLY（只给材料）或 WEB_READ_ONLY（只读网页）。
-        model       模型名，不给就用该命令行自己的默认模型。
+        model       模型名，不给时 google 用 DEFAULT_MODELS 里的模型，其余三家用命令行自己的默认模型。
         placeholder 只估算模式下返回的占位回答，好让后面的步骤照常往下走。
 
         失败或超时：写下记录后抛出 ModelCallError（记录在 .record 上）。
@@ -380,6 +390,7 @@ class ModelRun:
         if tools not in (MATERIALS_ONLY, WEB_READ_ONLY):
             raise ValueError("不认识的工具限定：%r，只能是「%s」或「%s」"
                              % (tools, MATERIALS_ONLY, WEB_READ_ONLY))
+        model = model or DEFAULT_MODELS.get(vendor)
         if self.mode == LIVE:
             with self._lock:
                 if self._started >= self.max_calls:
@@ -400,6 +411,11 @@ class ModelRun:
         if self.mode == ESTIMATE:
             record["status"] = NOT_CALLED
             record["answer"] = placeholder
+        elif self.mode == LIVE and vendor == "google" and tools == WEB_READ_ONLY:
+            # agy 非交互运行时读网页要人批准，一律被拒；模型可能凭记忆作答而被当成成功，所以直接判为不可用
+            record["status"] = FAILED
+            record["error"] = ("Google（agy）不能用于只读网页一档：非交互运行时读取网页需要人批准，"
+                               "一律被拒，没有启动 agy")
         elif self.mode == REPLAY:
             with self._lock:
                 self._replay_into(record)
@@ -445,7 +461,7 @@ class ModelRun:
         with tempfile.TemporaryDirectory() as scratch:
             work = os.path.join(scratch, "work")
             os.mkdir(work)
-            build_args, read_answer = ADAPTERS[vendor]
+            build_args, read_answer, to_stdin = ADAPTERS[vendor]
             argv = [program] + build_args(tools, model, scratch, work)
             record["command"] = argv
             record["config_files"] = _config_files(scratch)
@@ -455,7 +471,8 @@ class ModelRun:
                                        stderr=subprocess.PIPE, text=True, encoding="utf-8",
                                        errors="replace", cwd=work, start_new_session=True)
             try:
-                stdout, stderr = process.communicate(prompt, timeout=self.timeout_seconds)
+                stdin = to_stdin(prompt) if to_stdin else prompt
+                stdout, stderr = process.communicate(stdin, timeout=self.timeout_seconds)
                 timed_out = False
             except subprocess.TimeoutExpired:
                 try:
