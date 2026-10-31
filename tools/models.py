@@ -300,13 +300,86 @@ def _google_answer(stdout, scratch, tools):
     return found
 
 
-# 每家：(拼参数, 取回答, 改写标准输入)。改写标准输入为 None 时，提示词原样写进标准输入。
+def _google_finished(line):
+    """标准输出的这一行是不是结果事件。agy 有时写完结果事件后不退出（实测 65 秒答完，一直挂着）。"""
+    try:
+        event = json.loads(line)
+    except ValueError:
+        return False
+    return isinstance(event, dict) and event.get("event") == "result"
+
+
+# 每家：(拼参数, 取回答, 改写标准输入, 认出最后一行)。改写标准输入为 None 时，提示词原样写进标准输入；
+# 认出最后一行为 None 时，等命令行自己退出。
 ADAPTERS = {
-    "claude": (_claude_args, _claude_answer, None),
-    "codex": (_codex_args, _codex_answer, None),
-    "kimi": (_kimi_args, _kimi_answer, None),
-    "google": (_google_args, _google_answer, _google_stdin),
+    "claude": (_claude_args, _claude_answer, None, None),
+    "codex": (_codex_args, _codex_answer, None, None),
+    "kimi": (_kimi_args, _kimi_answer, None, None),
+    "google": (_google_args, _google_answer, _google_stdin, _google_finished),
 }
+
+
+def _stop(process):
+    try:
+        os.killpg(process.pid, signal.SIGKILL)  # 连同它启动的子进程一起停掉
+    except ProcessLookupError:
+        pass
+
+
+def _collect(process, stdin, timeout, finished=None, grace=15):
+    """写入标准输入，收齐两路输出。返回 (标准输出, 标准错误, 是否超时, 是否答完后被停掉)。
+
+    finished 认出标准输出里的最后一行（例如 agy 的结果事件）。给了它，看到这一行后再等 grace 秒，
+    命令行还不退出就停掉它；已经写出的输出照常交给取回答的函数。
+    """
+    if finished is None:
+        try:
+            stdout, stderr = process.communicate(stdin, timeout=timeout)
+            return stdout, stderr, False, False
+        except subprocess.TimeoutExpired:
+            _stop(process)
+            stdout, stderr = process.communicate()
+            return stdout, stderr, True, False
+    out, err, answered = [], [], threading.Event()
+
+    def write_stdin():
+        try:
+            process.stdin.write(stdin)
+            process.stdin.close()
+        except (BrokenPipeError, OSError):
+            pass
+
+    def read_stdout():
+        for line in process.stdout:
+            out.append(line)
+            if finished(line):
+                answered.set()
+
+    threads = [threading.Thread(target=target, daemon=True) for target in
+               (write_stdin, read_stdout, lambda: err.append(process.stderr.read()))]
+    for thread in threads:
+        thread.start()
+    deadline = time.monotonic() + timeout
+    timed_out = stopped = False
+    while process.poll() is None:
+        left = deadline - time.monotonic()
+        if left <= 0:
+            timed_out = True
+            break
+        if answered.wait(min(left, 0.1)):
+            try:
+                process.wait(timeout=min(grace, max(0, deadline - time.monotonic())))
+            except subprocess.TimeoutExpired:
+                stopped = True
+            break
+    if timed_out or stopped:
+        _stop(process)
+    process.wait()
+    for thread in threads:
+        thread.join()
+    process.stdout.close()
+    process.stderr.close()
+    return "".join(out), "".join(err), timed_out, stopped
 
 
 def _failure_reason(exit_code, stdout, stderr):
@@ -348,10 +421,11 @@ class ModelRun:
     programs        {厂商: 程序路径}，测试时指向假的命令行程序；不给就在 PATH 里找 COMMANDS 里的程序名。
     run_id          运行编号，不给就用开始时间。
     timeout_seconds 单次调用的时长上限，到了就停止该命令行并记为超时。
+    exit_grace_seconds google 写完结果事件后等它自己退出的秒数，过了就停掉它，回答照常取用。
     """
 
     def __init__(self, log_path, mode=LIVE, max_calls=None, replay_from=None, programs=None,
-                 run_id=None, timeout_seconds=1800):
+                 run_id=None, timeout_seconds=1800, exit_grace_seconds=15):
         if mode not in (LIVE, REPLAY, ESTIMATE):
             raise ValueError("不认识的方式：%r，只能是「%s」「%s」「%s」"
                              % (mode, LIVE, REPLAY, ESTIMATE))
@@ -362,6 +436,7 @@ class ModelRun:
         self.max_calls = max_calls
         self.programs = dict(programs or {})
         self.timeout_seconds = timeout_seconds
+        self.exit_grace_seconds = exit_grace_seconds
         self.run_id = run_id or datetime.now().strftime("%Y%m%d-%H%M%S")
         self.calls = 0
         self._started = 0
@@ -407,6 +482,7 @@ class ModelRun:
             "started_at": None, "ended_at": None, "duration_seconds": None,
             "command": None, "config_files": {}, "exit_code": None,
             "raw_output": "", "stderr": "", "replayed_from": None,
+            "stopped_after_answer": False,
         }
         if self.mode == ESTIMATE:
             record["status"] = NOT_CALLED
@@ -461,7 +537,7 @@ class ModelRun:
         with tempfile.TemporaryDirectory() as scratch:
             work = os.path.join(scratch, "work")
             os.mkdir(work)
-            build_args, read_answer, to_stdin = ADAPTERS[vendor]
+            build_args, read_answer, to_stdin, finished = ADAPTERS[vendor]
             argv = [program] + build_args(tools, model, scratch, work)
             record["command"] = argv
             record["config_files"] = _config_files(scratch)
@@ -470,17 +546,10 @@ class ModelRun:
             process = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE, text=True, encoding="utf-8",
                                        errors="replace", cwd=work, start_new_session=True)
-            try:
-                stdin = to_stdin(prompt) if to_stdin else prompt
-                stdout, stderr = process.communicate(stdin, timeout=self.timeout_seconds)
-                timed_out = False
-            except subprocess.TimeoutExpired:
-                try:
-                    os.killpg(process.pid, signal.SIGKILL)  # 连同它启动的子进程一起停掉
-                except ProcessLookupError:
-                    pass
-                stdout, stderr = process.communicate()
-                timed_out = True
+            stdin = to_stdin(prompt) if to_stdin else prompt
+            stdout, stderr, timed_out, stopped = _collect(
+                process, stdin, self.timeout_seconds, finished, self.exit_grace_seconds)
+            record["stopped_after_answer"] = stopped
             record["duration_seconds"] = round(time.monotonic() - clock, 3)
             record["ended_at"] = _now()
             record["exit_code"] = process.returncode
@@ -492,7 +561,7 @@ class ModelRun:
         if timed_out:
             record["status"] = TIMED_OUT
             record["error"] = "超过 %s 秒没有结束，已停止" % self.timeout_seconds
-        elif process.returncode != 0 or error or not record["answer"].strip():
+        elif (process.returncode != 0 and not stopped) or error or not record["answer"].strip():
             record["status"] = FAILED
             record["error"] = error or _failure_reason(process.returncode, stdout, stderr)
         else:

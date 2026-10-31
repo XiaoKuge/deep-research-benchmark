@@ -93,6 +93,8 @@ elif VENDOR == "google":
     result.update(GOOGLE.get("result", {{}}))
     if not GOOGLE.get("no_result"):
         print(json.dumps({{"event": "result", "result": result}}, ensure_ascii=False))
+    sys.stdout.flush()
+    time.sleep(GOOGLE.get("hang_after_result", 0))
 '''
 
 
@@ -100,7 +102,8 @@ def make_fake(directory, vendor, reply="好", exit_code=0, sleep=0, google=None)
     """在 directory 下写一个名叫 vendor 的假命令行程序，返回它的路径。
 
     google 是给假 agy 的改动：model 换掉启动事件报告的模型，steps 换掉步骤类型的序列
-    （默认是 user_input、agent_response），result 并进结果事件，no_result 不输出结果事件。
+    （默认是 user_input、agent_response），result 并进结果事件，no_result 不输出结果事件，
+    hang_after_result 是写完结果事件后再挂着不退出的秒数。
     """
     path = os.path.join(directory, vendor)
     with open(path, "w", encoding="utf-8") as f:
@@ -300,6 +303,7 @@ RECORD_FIELDS = {
     "reported_tools", "tools", "mode", "status", "error", "prompt", "prompt_sha256",
     "answer", "answer_sha256", "started_at", "ended_at", "duration_seconds", "command",
     "config_files", "exit_code", "raw_output", "stderr", "replayed_from",
+    "stopped_after_answer",
 }
 
 
@@ -585,6 +589,53 @@ class GoogleCheckTest(FakeProgramCase):
         record = caught.exception.record
         self.assertEqual(record["exit_code"], 3)
         self.assertIn("没有登录", record["error"])
+
+
+class HangAfterAnswerTest(FakeProgramCase):
+    """agy 有时写完结果事件后不退出（真实调用里见过：65 秒就答完，挂到 1800 秒被记成超时）。
+    看到结果事件后再等 exit_grace_seconds 秒，还不退出就停掉它，回答照常核实和取用，记录里写明。"""
+
+    def google_run(self, hang, timeout=20, **google):
+        programs = {"google": make_fake(self.fakes, "google", reply="回答",
+                                        google=dict(google, hang_after_result=hang))}
+        return models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs,
+                               timeout_seconds=timeout, exit_grace_seconds=0.5)
+
+    def test_an_answer_written_before_hanging_is_kept_and_the_program_stopped(self):
+        run = self.google_run(hang=30)
+        answer, record = run.call(task="评审", vendor="google", prompt="好",
+                                  tools=models.MATERIALS_ONLY)
+        self.assertEqual(answer, "回答")
+        self.assertEqual(record["status"], "成功")
+        self.assertIsNone(record["error"])
+        self.assertTrue(record["stopped_after_answer"])
+        self.assertLess(record["duration_seconds"], 10)
+        self.assertEqual(read_log(self.log), [record])
+
+    def test_a_failed_result_before_hanging_keeps_the_reason_agy_gives(self):
+        run = self.google_run(hang=30, result={"status": "ERROR", "error": "模型服务暂时不可用"})
+        with self.assertRaises(models.ModelCallError) as caught:
+            run.call(task="评审", vendor="google", prompt="好", tools=models.MATERIALS_ONLY)
+        record = caught.exception.record
+        self.assertEqual(record["status"], "失败")
+        self.assertIn("模型服务暂时不可用", record["error"])
+        self.assertTrue(record["stopped_after_answer"])
+
+    def test_a_program_that_exits_by_itself_is_not_marked_as_stopped(self):
+        run = self.google_run(hang=0)
+        _, record = run.call(task="评审", vendor="google", prompt="好", tools=models.MATERIALS_ONLY)
+        self.assertEqual(record["status"], "成功")
+        self.assertFalse(record["stopped_after_answer"])
+        self.assertEqual(record["exit_code"], 0)
+
+    def test_no_result_event_still_runs_into_the_time_limit(self):
+        run = self.google_run(hang=30, timeout=1.5, no_result=True)
+        with self.assertRaises(models.ModelCallError) as caught:
+            run.call(task="评审", vendor="google", prompt="好", tools=models.MATERIALS_ONLY)
+        record = caught.exception.record
+        self.assertEqual(record["status"], "超时")
+        self.assertFalse(record["stopped_after_answer"])
+        self.assertLess(record["duration_seconds"], 10)
 
 
 class GoogleWebTierTest(FakeProgramCase):
