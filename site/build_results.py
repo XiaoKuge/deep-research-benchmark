@@ -1,12 +1,18 @@
-"""从第五阶段试评的数据生成名次页、六个复核页和要点池页。
+"""从第五阶段试评的数据生成名次页、六个复核页和要点池页；也能为一次模拟评审生成同样格式的一套页面。
 
-用法：在仓库根目录运行 python3 -I site/build_results.py [--output 目录]
-默认写到 site/results/。只读 research-plan/stage5-pilot/ 下的文件，不改它们：
+用法：在仓库根目录运行 python3 -I site/build_results.py [--input 目录] [--output 目录]
+
+不给 --input 时读第五阶段试评，默认写到 site/results/。只读 research-plan/stage5-pilot/ 下的文件，不改它们：
 - results-v1.2.json：第 1.2 版计分结果（名次区间、净分、严重问题、环节档位、分开的对）；
 - mapping.json：匿名编号对应的产品；
 - out/ 下的评委输出：断言核验、要点池、环节评级、两两比较、对题目的直接回答；
 - judges/manifest.json：每个评委输出文件对应的提示词和模型。
-页面里的链接按页面放在 site/results/ 下来写。
+试评页面里的链接按页面放在 site/results/ 下来写。
+
+--input 给一次模拟评审的输出目录（simulation/reviews/<运行标识>/，格式见 tools/simulate_review.md）时，
+读其中的 run.json、calls.jsonl、mapping.json、data/、judgments/extract.json 和 results-v1.2.json，
+题目卡从 run.json 记下的题目目录读。这时 --output 必须给，页面里的链接按页面实际写到的目录来写。
+资料站的模拟评审页面由 site/build_simulation.py 调用这里的 build()，并把每一次调用的原文页链接进来。
 """
 import argparse
 import html
@@ -15,6 +21,7 @@ import json
 import os
 import re
 import sys
+from urllib.parse import quote
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -213,7 +220,12 @@ WARN_ICON = ('<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M128,24A104
              '88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"/></svg>')
 
 
-def shell(title, description, body):
+def style(n):
+    """名次横条的格数等于报告数。"""
+    return STYLE.replace("repeat(6, minmax(0, 1fr))", f"repeat({n}, minmax(0, 1fr))")
+
+
+def shell(data, title, description, body):
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -222,11 +234,11 @@ def shell(title, description, body):
 <title>{esc(title)} · 深度研究评测基准</title>
 <meta name="description" content="{esc(description)}">
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" href="{TO_SITE}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="{data.to_site}favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
-<style>{STYLE}</style>
+<style>{style(len(data.labels))}</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -254,32 +266,75 @@ ELEMENTS = [("①", "切题与真实需要"), ("③", "查找过程的交代"), 
 TIMELINESS = "时效"
 
 
+def href(path, start):
+    """从 start 目录到 path 的相对链接，路径里的非英文字符按网址的写法编码。"""
+    return quote(os.path.relpath(path, start).replace(os.sep, "/"))
+
+
+def read_jsonl(path):
+    if not os.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        return [json.loads(line) for line in f if line.strip()]
+
+
 class Data:
-    def __init__(self):
-        self.results = load(os.path.join(PILOT, "results-v1.2.json"))
-        self.mapping = load(os.path.join(PILOT, "mapping.json"))
-        self.manifest = load(os.path.join(PILOT, "judges", "manifest.json"))
-        self.question = read_question_card(os.path.join(PILOT, "question-card.md"))
+    """source 是第五阶段试评的目录（默认）或一次模拟评审的输出目录（有 run.json）。
+    links 只用于模拟评审：{"review": 评审记录页, "calls": 调用原文页所在的目录, "question": 题库里这道题的页面}，
+    都是文件系统路径；不给的就链接到原始文件。"""
+
+    def __init__(self, source=PILOT, output=DEFAULT_OUTPUT, links=None):
+        self.source = source
+        self.sim = os.path.isfile(os.path.join(source, "run.json"))
+        if self.sim:
+            links = links or {}
+            out = os.path.join(source, "data")
+            self.to_src = href(source, output) + "/"
+            self.to_site = href(HERE, output) + "/"
+            self.to_notes = href(os.path.join(ROOT, "notes"), output) + "/"
+            self.to_scorer = href(os.path.join(PILOT, "score.py"), output)
+            self.to_guide = href(os.path.join(ROOT, "tools", "simulate_review.md"), output)
+            self.review_page = href(links["review"], output) if links.get("review") else None
+            self.calls_dir = href(links["calls"], output) + "/" if links.get("calls") else None
+            self.question_page = href(links["question"], output) if links.get("question") else None
+            self.run = load(os.path.join(source, "run.json"))
+            self.calls = read_jsonl(os.path.join(source, "calls.jsonl"))
+            self.manifest = None
+            self.question = sim_question(self.run)
+            extract = os.path.join(source, "judgments", "extract.json")
+            self.extracted = {p["id"]: p for p in load(extract)["points"]} if os.path.isfile(extract) else {}
+            self.copies = {r["label"]: r.get("copy") for r in self.run.get("reports", [])}
+        else:
+            out = OUT
+            self.to_src, self.to_site, self.to_notes = TO_PILOT, TO_SITE, TO_NOTES
+            self.manifest = load(os.path.join(PILOT, "judges", "manifest.json"))
+            self.question = read_question_card(os.path.join(PILOT, "question-card.md"))
+        self.results = load(os.path.join(source, "results-v1.2.json"))
+        self.mapping = load(os.path.join(source, "mapping.json"))
         self.reports = {r["label"]: r for r in self.results["reports"]}
         self.labels = [r["label"] for r in self.results["reports"]]
         self.order = sorted(self.labels, key=lambda r: (self.reports[r]["rank_best"], self.reports[r]["rank_worst"], r))
         self.above = {(p["higher"], p["lower"]): p for p in self.results["separated_pairs"]}
         self.vetoed = {(p["higher"], p["lower"]) for p in self.results["vetoed_pairs"]}
-        self.pool = load(os.path.join(OUT, "pool.json"))["points"]
+        self.pool = load(os.path.join(out, "pool.json"))["points"]
         # 主要结论：与计分程序相同，按文件名顺序读 verify-*.json 里带 reports 的文件
         self.claims, self.verify, self.verify_file = {}, {}, {}
-        for name in sorted(os.listdir(OUT)):
+        for name in sorted(os.listdir(out)):
             if name.startswith("verify-"):
-                d = load(os.path.join(OUT, name))
+                d = load(os.path.join(out, name))
                 for r, v in d.get("reports", {}).items():
                     self.claims[r], self.verify[r], self.verify_file[r] = v["claims"], v, name
-        recheck = os.path.join(OUT, "verify-sonnet-subset.json")
+        recheck = os.path.join(out, "verify-sonnet-subset.json")
         self.recheck = {c["id"]: c for c in load(recheck)["claims"]} if os.path.exists(recheck) else {}
-        self.ratings = {n[len("rating-"):-len(".json")]: load(os.path.join(OUT, n))["reports"]
-                        for n in sorted(os.listdir(OUT)) if n.startswith("rating-")}
-        self.pairwise = [(n, load(os.path.join(OUT, n))) for n in sorted(os.listdir(OUT)) if n.startswith("pairwise-")]
-        self.direct = load(os.path.join(OUT, "direct-answers.json"))
-        self.runs = {os.path.basename(run["output"]): run for run in self.manifest["runs"]}
+        names = sorted(os.listdir(out), key=natural)
+        self.ratings = {n[len("rating-"):-len(".json")]: load(os.path.join(out, n))["reports"]
+                        for n in names if n.startswith("rating-")}
+        self.pairwise = [(n, load(os.path.join(out, n))) for n in names if n.startswith("pairwise-")]
+        self.direct = load(os.path.join(out, "direct-answers.json"))
+        self.runs = {os.path.basename(run["output"]): run for run in self.manifest["runs"]} if self.manifest else {}
+        # 只在页面上用到的说法：试评和模拟评审的做法不同
+        self.verifier_word = "评委组" if self.sim else "核验评委"
+        self.timeliness_by = "时效取各次环节评级的中位数" if self.sim else "时效由核验评委评"
 
     def product(self, r):
         return self.mapping["reports"][r]
@@ -295,6 +350,64 @@ class Data:
 
     def models(self):
         return sorted({run["model"] for run in self.manifest["runs"]})
+
+    def kind(self):
+        """页面上称呼这次评审的说法。"""
+        return "模拟评审" if self.sim else "试评"
+
+    def report_href(self, r):
+        if self.sim:
+            return self.to_src + quote(self.copies.get(r) or f"reports/{r}.md")
+        return f"{self.to_src}reports/{r}.md"
+
+    # ---- 只用于模拟评审：从调用记录里读出谁做了哪一步 ----
+
+    def task_calls(self, prefix, slot=None):
+        """任务名以 prefix 开头、状态为成功的调用；slot 给出时只取这位评委的。"""
+        found = []
+        for i, c in enumerate(self.calls, 1):
+            if c.get("status") == "成功" and c["task"].startswith(prefix):
+                if slot is None or c["task"].endswith(f"评委 {slot}"):
+                    found.append((i, c))
+        return found
+
+    def who(self, calls):
+        """几次调用用到的厂商和模型，写成"claude、codex"或"claude，Claude Opus 5.5"。"""
+        vendors = unique(c["vendor"] for _, c in calls)
+        models = unique(model_name(m) for m in (c.get("reported_model") or c.get("model") for _, c in calls) if m)
+        return "、".join(vendors) + ("，" + "、".join(models) if models else "")
+
+    def vendors(self):
+        """成功调用过的厂商：[(公司, 厂商)]，按第一次出现的先后。"""
+        return unique((c.get("company") or c["vendor"], c["vendor"]) for c in self.calls if c.get("status") == "成功")
+
+
+def natural(name):
+    """文件名里的数字按大小排：rating-2.json 排在 rating-10.json 前面。"""
+    return [int(x) if x.isdigit() else x for x in re.split(r"(\d+)", name)]
+
+
+def unique(items):
+    out = []
+    for x in items:
+        if x not in out:
+            out.append(x)
+    return out
+
+
+def sim_question(run):
+    """模拟评审的题目：问题取自题目卡的【问题】一栏，截止日期取 run.json 里实际用的。"""
+    q = run.get("question") or {}
+    card = os.path.join(q.get("dir") or "", "题目卡.txt")
+    text = ""
+    if q.get("dir") and os.path.isfile(card):
+        with open(card, encoding="utf-8") as f:
+            text = f.read()
+    m = re.search(r"【问题】(.+)", text)
+    cutoff = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", q.get("cutoff") or "")
+    return {"question": m.group(1).strip() if m else "（题目卡里没有找到问题一栏）",
+            "cutoff": "{} 年 {} 月 {} 日".format(*(int(x) for x in cutoff.groups())) if cutoff else "题目卡上写明的截止时间",
+            "id": os.path.basename(os.path.normpath(q["dir"])) if q.get("dir") else None}
 
 
 def read_question_card(path):
@@ -337,15 +450,56 @@ def join_cn(items):
     return "、".join(items)
 
 
+def count_cn(n, unit="份"):
+    """六份、两份、三次；十以上写数字。"""
+    if n == 2:
+        return "两" + unit
+    return f"{ORDINALS[n - 1]}{unit}" if 1 <= n <= 10 else f"{n} {unit}"
+
+
+def ordinal(i):
+    """第几次：从 0 数起的序号写成一、二、三；十以上写数字。"""
+    return ORDINALS[i] if i < len(ORDINALS) else f" {i + 1} "
+
+
+def task_text(task):
+    """调用记录里的任务名，可见文字里不出现连字符：出题-深度地图-甲-第1轮 写成 出题 · 深度地图 · 甲 · 第1轮。"""
+    return task.replace("-", " · ")
+
+
 def page_nav(data, current):
     items = [("index.html", "名次"), ("points.html", "要点池")] + [(f"report-{r}.html", f"报告 {r}") for r in data.labels]
     here = ' aria-current="page"'
     lis = "".join(f'<li><a class="caption-1" href="{href}"{here if href == current else ""}>{esc(text)}</a></li>'
                   for href, text in items)
-    return f'<nav aria-label="试评页面"><ul class="pages">{lis}</ul></nav>'
+    if data.sim and data.review_page:
+        lis += f'<li><a class="caption-1" href="{data.review_page}">评审记录</a></li>'
+    return f'<nav aria-label="{data.kind()}页面"><ul class="pages">{lis}</ul></nav>'
+
+
+def sim_notice(data, detail):
+    extra = ""
+    if detail:
+        vendors = data.vendors()
+        found = "、".join(f"{company}（{vendor}）" for company, vendor in vendors)
+        text = f"评委来自{count_cn(len(vendors), '家')}厂商：{found}。" if vendors else "这次评审没有成功的模型调用。"
+        if len(vendors) < 3:
+            text += "规则要求至少三家。"
+        gone = [u["vendor"] for u in data.run.get("unavailable", [])]
+        if gone:
+            text += f"{join_cn(gone)} 在这次运行中不可用，它的评委位置由别家替代。"
+        if data.run.get("mode") == "回放":
+            text += "这次是回放：回答取自录好的调用记录，没有真的调用模型。"
+        record = (f'<a href="{data.review_page}">这次评审的记录</a>' if data.review_page
+                  else f'<a href="{data.to_src}calls.jsonl">调用记录文件</a>')
+        extra = f'<p class="body-6">{esc(text)}用了哪些模型、每一次调用的提示词和回答原文，见{record}。</p>'
+    return (f'<div class="demo" role="note">{WARN_ICON}<div><p class="body-3"><strong>这是模拟评审的演示，评委全部由大模型担任，'
+            f'不是对产品的评价。</strong></p>{extra}</div></div>')
 
 
 def demo_notice(data, detail=True):
+    if data.sim:
+        return sim_notice(data, detail)
     models = join_cn(model_name(m) for m in data.models())
     same = [r for r in data.labels if any(data.product(r).lower() in m for m in data.models())]
     extra = ""
@@ -358,10 +512,16 @@ def demo_notice(data, detail=True):
             f'不是对产品的评价。</strong></p>{extra}</div></div>')
 
 
+def back_link(data):
+    if data.sim and data.review_page:
+        return f'<a class="back caption-1" href="{data.review_page}">← 回到这次评审的记录</a>'
+    return f'<a class="back caption-1" href="{data.to_site}index.html">← 回到资料站</a>'
+
+
 def header(data, current, eyebrow, title, lede_html, detail_notice):
     return f"""<header class="top">
   <div class="wrap">
-    <a class="back caption-1" href="{TO_SITE}index.html">← 回到资料站</a>
+    {back_link(data)}
     <p class="eyebrow caption-1">{esc(eyebrow)}</p>
     <h1 class="heading-3">{esc(title)}</h1>
     <p class="body-3 lede">{lede_html}</p>
@@ -371,7 +531,10 @@ def header(data, current, eyebrow, title, lede_html, detail_notice):
 </header>"""
 
 
-def footer():
+def footer(data):
+    if data.sim:
+        return (f'<footer><div class="wrap caption-2"><p>本页由 <code>site/build_results.py</code> 从模拟评审 <code>{esc(data.run["run_id"])}</code> '
+                f'的数据目录和第 1.2 版计分结果生成，不手工修改。<a href="{data.to_site}index.html">回到资料站</a></p></div></footer>')
     return (f'<footer><div class="wrap caption-2"><p>本页由 <code>site/build_results.py</code> 从第五阶段试评的评委输出和第 1.2 版计分结果生成，'
             f'不手工修改。<a href="{TO_SITE}index.html">回到资料站</a></p></div></footer>')
 
@@ -462,9 +625,15 @@ BASIS_TITLES = {"硬伤分档": "按严重问题分档分开", "深度净分": "
 def rank_page(data):
     n = len(data.labels)
     q = data.question
-    lede = (f"试评用一道题检验这套评法：“{esc(q['question'])}”六个产品各交一份报告，匿名编为 A 至 F。判断对错和时效，"
-            f"以截至 {esc(q['cutoff'])}（报告的生成日期）已经存在的信息为准。名次按区间公布，分不开的报告并列。")
-    head = header(data, "index.html", "第五阶段试评 · 评法第 1.2 版", "试评名次", lede, True)
+    if data.sim:
+        lede = (f"模拟评审 <code>{esc(data.run['run_id'])}</code> 让大模型按评审细则评审一道题的{count_cn(n)}报告：“{esc(q['question'])}”"
+                f"报告编为{esc(join_cn(data.labels))}。判断对错和时效，以截至 {esc(q['cutoff'])} 已经存在的信息为准。"
+                f"名次按区间公布，分不开的报告并列。")
+        head = header(data, "index.html", "模拟评审 · 评法第 1.2 版", "模拟评审名次", lede, True)
+    else:
+        lede = (f"试评用一道题检验这套评法：“{esc(q['question'])}”六个产品各交一份报告，匿名编为 A 至 F。判断对错和时效，"
+                f"以截至 {esc(q['cutoff'])}（报告的生成日期）已经存在的信息为准。名次按区间公布，分不开的报告并列。")
+        head = header(data, "index.html", "第五阶段试评 · 评法第 1.2 版", "试评名次", lede, True)
 
     axis = "".join(f'<span>{i}</span>' for i in range(1, n + 1))
     rows = [f'<li class="rank-row rank-axis caption-5" aria-hidden="true"><span class="rank-who">报告</span>'
@@ -480,7 +649,7 @@ def rank_page(data):
             f'<span class="track" aria-hidden="true">{slots}<span class="bar" style="left: calc({left:.4f}% + 2px); '
             f'width: calc({width:.4f}% - 4px);" title="{esc(data.name(r))}：{esc(interval(rep))}"></span></span>'
             f'<span class="rank-text body-5">{esc(interval(rep))}</span></li>')
-    chart = f'<ol class="ranks" aria-label="六份报告的名次区间">{"".join(rows)}</ol>'
+    chart = f'<ol class="ranks" aria-label="{count_cn(n)}报告的名次区间">{"".join(rows)}</ol>'
     ranks = f"""<section class="block" id="ranks" aria-labelledby="ranks-h">
   <h2 class="heading-5" id="ranks-h">名次区间</h2>
   <p class="body-3 sum">横条盖住的是这份报告可能的名次范围。最好名次等于 1 加上确定排在它前面的报告数；最差名次等于报告总数 {n} 减去确定排在它后面的报告数。横条越短，名次越确定；两条横条重叠，说明这两份报告分不开。点报告名可以看它的复核页。</p>
@@ -499,7 +668,7 @@ def rank_page(data):
                numeric=(1, 2, 3, 4, 5, 6, 7))
     basis = f"""<section class="block" id="basis" aria-labelledby="basis-h">
   <h2 class="heading-5" id="basis-h">名次从哪里来</h2>
-  <p class="body-3 sum">排法按<a href="{TO_NOTES}rules.html#_10">规则手册第八节</a>，一步一步来：先按有没有严重问题分档；同一档里比深度净分；深度净分分不开，再比较环节评级和时效；两两比较只用来否决。</p>
+  <p class="body-3 sum">排法按<a href="{data.to_notes}rules.html#_10">规则手册第八节</a>，一步一步来：先按有没有严重问题分档；同一档里比深度净分；深度净分分不开，再比较环节评级和时效；两两比较只用来否决。</p>
   <div class="sub">
     <h3 class="heading-6">严重问题和深度净分</h3>
     <div class="prose body-3 muted"><p>严重问题即规则手册所说的“硬伤”，有四种：确认编造来源；对题目的直接回答被可靠证据明确否定（计分结果里写作“主要结论与证据相反”）；答非所问；全篇没有可追溯的出处。有严重问题的报告排在所有没有严重问题的报告之后。</p>
@@ -509,7 +678,7 @@ def rank_page(data):
   </div>
   <div class="sub">
     <h3 class="heading-6">环节评级和时效</h3>
-    <div class="prose body-3 muted"><p>五个环节各评 0、1、2 三档，三次评级取中位数；时效由核验评委评，也是 0 至 2 档。环节评级不加总，只在深度净分分不开时比较：一份报告每一项都不低于另一份、并且至少一项更高，才排在前面。写作只记录，不进入名次。</p>
+    <div class="prose body-3 muted"><p>五个环节各评 0、1、2 三档，{count_cn(len(data.ratings), "次")}评级取中位数；{data.timeliness_by}，也是 0 至 2 档。环节评级不加总，只在深度净分分不开时比较：一份报告每一项都不低于另一份、并且至少一项更高，才排在前面。写作只记录，不进入名次。</p>
     <p>规则手册写的是比较五个环节；计分程序从第 1.0 版起把时效也算在内，比较的是环节评级和时效。这个出入留给主办方决定，这里照计分程序的做法如实列出。</p></div>
     {t2}
   </div>
@@ -533,7 +702,7 @@ def rank_page(data):
     total = len(all_pairs(data))
     pairs = f"""<section class="block" id="pairs" aria-labelledby="pairs-h">
   <h2 class="heading-5" id="pairs-h">哪些报告分开了</h2>
-  <p class="body-3 sum">六份报告两两成对，共 {total} 对。分开的有 {len(data.above)} 对，分不开的有 {len(tied)} 对；分不开的两份名次区间重叠。</p>
+  <p class="body-3 sum">{count_cn(n)}报告两两成对，共 {total} 对。分开的有 {len(data.above)} 对，分不开的有 {len(tied)} 对；分不开的两份名次区间重叠。</p>
   <p class="body-3 sum">两两比较只用来核对：同一位评委比两次，第二次交换每对的先后；两次都判排在后面的一份更好，这一对才改为并列。严重问题分档不能被否决。{esc(veto)}</p>
   {"".join(groups)}
 </section>"""
@@ -549,11 +718,11 @@ def rank_page(data):
     <p><strong>换一批要点。</strong>从要点池里随机抽出同样多条要点，每次抽完放回去，所以同一条可能被抽到两三次，也可能一次都没抽到。用抽出的这一批要点给两份报告重新算分，看谁高。这样重复一千次，数一数领先的一方在多少次里仍然领先，至少九成才算稳。一千只是重复的次数，不是一千种方案；次数多，算出的比例才准。</p>
     <p>为什么要换一批要点：要点池本身带有偶然，换一位出题人、换一组评委，列出的要点会有出入。只靠一两条要点撑着的领先，换一批要点就站不住；靠很多条要点积累起来的领先，怎么换都还在。</p>
     <p class="muted">这次的要点池共 {rs['pool_points']} 条，其中 {rs['resampled_points']} 条至少有一份报告写到。按第 1.2 版的规定，重抽样只在这 {rs['resampled_points']} 条里进行：没有报告写到的要点对每份报告都是 0 分，不该影响先后。重抽 {rs['rounds']} 遍，随机种子固定为 {rs['seed']}，任何人重跑都得到同样的比例；领先的比例至少要达到 {rs['separation_share'] * 100:g}% 才算分开。{esc(disputed)}</p>
-    <p class="muted">完整的例子见<a href="{TO_SITE}walkthrough.html#step-scorer">一道题走完全程</a>的第 9、10 站。</p>
+    <p class="muted">完整的例子见<a href="{data.to_site}walkthrough.html#step-scorer">一道题走完全程</a>的第 9、10 站。</p>
   </div>
 </section>"""
 
-    materials = f"""<section class="block" id="materials" aria-labelledby="materials-h">
+    materials = sim_materials(data) if data.sim else f"""<section class="block" id="materials" aria-labelledby="materials-h">
   <h2 class="heading-5" id="materials-h">复核材料</h2>
   <p class="body-3 sum">每一个数都能追到评委的输出和计分程序。有异议，先看对应报告的复核页。</p>
   <ul class="links body-3">
@@ -566,8 +735,36 @@ def rank_page(data):
   </ul>
 </section>"""
 
-    body = "\n".join([head, '<main id="main"><div class="wrap">', ranks, basis, pairs, checks, materials, "</div></main>", footer()])
-    return shell("试评名次", "第五阶段试评六份报告的名次区间、深度净分、严重问题、环节档位和分开的对。试评演示，不是对产品的评价。", body)
+    body = "\n".join([head, '<main id="main"><div class="wrap">', ranks, basis, pairs, checks, materials, "</div></main>", footer(data)])
+    if data.sim:
+        return shell(data, "模拟评审名次", f"模拟评审{count_cn(n)}报告的名次区间、深度净分、严重问题、环节档位和分开的对。演示，不是对产品的评价。", body)
+    return shell(data, "试评名次", "第五阶段试评六份报告的名次区间、深度净分、严重问题、环节档位和分开的对。试评演示，不是对产品的评价。", body)
+
+
+def repo_path(path):
+    """仓库里的路径写成相对仓库根目录的样子，仓库外的照原样。"""
+    path = os.path.abspath(path)
+    return os.path.relpath(path, ROOT) if path.startswith(ROOT + os.sep) else path
+
+
+def sim_materials(data):
+    labels = data.labels
+    src = repo_path(data.source)
+    question = (f'<li>题目：<a href="{data.question_page}">题库里的这道题</a>，有题目卡和深度地图</li>' if data.question_page else "")
+    record = (f'<li><a href="{data.review_page}">这次评审的记录</a>：用了哪些厂商和模型、调用了几次，以及每一次调用的提示词和回答原文</li>'
+              if data.review_page else f'<li><a href="{data.to_src}calls.jsonl">调用记录文件</a>：每一次调用的提示词和回答原文</li>')
+    return f"""<section class="block" id="materials" aria-labelledby="materials-h">
+  <h2 class="heading-5" id="materials-h">复核材料</h2>
+  <p class="body-3 sum">每一个数都能追到评委的回答和计分程序。有异议，先看对应报告的复核页。</p>
+  <ul class="links body-3">
+    <li>{count_cn(len(labels))}报告的复核页：{"、".join(f'<a href="report-{r}.html">{esc(data.name(r))}</a>' for r in labels)}</li>
+    <li><a href="points.html">要点池</a>：全部 {len(data.pool)} 条要点，以及每条有哪几份报告写到</li>
+    {question}
+    {record}
+    <li><a href="{data.to_scorer}">计分程序</a>和它写出的<a href="{data.to_src}results-v1.2.json">第 1.2 版结果文件</a>。在仓库根目录运行 <code>python3 -I research-plan/stage5-pilot/score.py {esc(src)}/mapping.json 1.2 --data {esc(src)}/data</code> 可以重算</li>
+    <li><a href="{data.to_notes}rules.html#_10">规则手册第八节：名次与公布</a>；<a href="{data.to_guide}">模拟评审使用说明</a></li>
+  </ul>
+</section>"""
 
 
 # ---------- 复核页 ----------
@@ -602,7 +799,10 @@ def point_scores(p, r):
 
 
 def rating_judges(data):
-    """三次环节评级：名字写成"第一次评级（Claude Opus 5.5）"。"""
+    """三次环节评级：名字写成"第一次评级（Claude Opus 5.5）"。模拟评审写成"评委 1（claude）"。"""
+    if data.sim:
+        return [(key, f"评委 {key}（{data.who(data.task_calls('评审-环节评级：', key)) or '没有成功的调用'}）", None)
+                for key in data.ratings]
     out = []
     for i, key in enumerate(data.ratings):
         run = data.runs[f"rating-{key}.json"]
@@ -619,6 +819,17 @@ def run_link(data, file_name):
 
 def point_quote(data, p, r):
     """这份报告写到这条要点的原文：取合并进这条要点的第一个出自这份报告的条目。"""
+    if data.sim:
+        for s in p["sources"]:
+            item = data.extracted.get(s)
+            if item and item.get("report") == r and item.get("quote"):
+                return item["quote"], f"评委 {item['slot']}（{item['vendor']}）抽取要点时从这份报告摘出的原文"
+            m = re.fullmatch(r"(.+)-c(\d+)", s)
+            if m and m.group(1) == r:
+                for c in data.claims.get(r, []):
+                    if c["id"] == s:
+                        return c["quote"], f"这份报告的主要结论（{claim_no(s)}）"
+        return None, None
     for s in p["sources"]:
         m = re.fullmatch(r"([a-z]+-\d+):([A-Z]+)-(\d+)", s)
         if m and m.group(2) == r and m.group(1) in data.ratings:
@@ -674,14 +885,14 @@ def problems_section(data, r):
                              for c in direct_claims))
     off_text = "".join(f'<p class="body-6">{esc(name)}：{"判为答非所问" if v["value"] else "不算答非所问"}。{esc(v["reason"])}</p>'
                        for name, v in off)
-    trace_text = (f'<p class="body-6">核验评委判定：{"有可追溯的出处" if traceable else "全篇没有可追溯的出处"}。'
-                  f'判定的理由写在核验评委的备注里，见下一节开头。</p>')
+    trace_text = (f'<p class="body-6">{data.verifier_word}判定：{"有可追溯的出处" if traceable else "全篇没有可追溯的出处"}。'
+                  f'判定的理由写在{data.verifier_word}的备注里，见下一节开头。</p>')
     items = [
         item("确认编造来源", "编造来源" in probs, fake_text),
         item("对题目的直接回答被可靠证据否定", "主要结论与证据相反" in probs, direct_text
              + ("" if not wrong else f'<p class="body-6">其中{esc(join_cn(claim_no(c["id"]) for c in wrong))} 被判有误，'
                                      f'计分结果记为“主要结论与证据相反”。</p>')),
-        item("答非所问", "答非所问" in probs, off_text + f'<p class="body-6 faint">三次评级中 {off_yes} 次判为答非所问，过半才算。</p>'),
+        item("答非所问", "答非所问" in probs, off_text + f'<p class="body-6 faint">{count_cn(len(off), "次")}评级中 {off_yes} 次判为答非所问，过半才算。</p>'),
         item("全篇没有可追溯的出处", "全篇没有可追溯的出处" in probs, trace_text),
     ]
     summary = " 没有严重问题。" if not probs else f" 有严重问题：{join_cn(probs)}。有严重问题的报告排在所有没有严重问题的报告之后。"
@@ -692,9 +903,21 @@ def problems_section(data, r):
 </section>"""
 
 
+def sim_claims_sum(data, r, claims, count_text):
+    lister = data.who(data.task_calls(f"评审-结论清单：报告 {r}，")) or "没有成功的调用"
+    checks = data.task_calls(f"评审-断言核验：报告 {r}，")
+    slots = unique(re.search(r"评委 (\d+)$", c["task"]).group(1) for _, c in checks if re.search(r"评委 (\d+)$", c["task"]))
+    return (f"清单员（{lister}）从这份报告列出 {len(claims)} 条主要结论，{len(slots)} 位核验员（{data.who(checks) or '没有成功的调用'}）"
+            f"逐条判定来源标签和对错标签，各取多数（{count_text}）。对错以截至 {data.question['cutoff']} 已经存在的信息为准。")
+
+
+def votes_text(votes):
+    return "，".join(f"{k} {v} 票" for k, v in votes.items())
+
+
 def claims_section(data, r):
     claims = data.claims[r]
-    verifier = model_name(data.runs[data.verify_file[r]]["model"])
+    verifier = None if data.sim else model_name(data.runs[data.verify_file[r]]["model"])
     direct = set(data.direct[r]["ids"])
     tl = data.verify[r]["timeliness"]
     cards = []
@@ -711,6 +934,11 @@ def claims_section(data, r):
         if c.get("second_check"):
             parts.append(f'<h4>第二次核查</h4><p class="body-6">{esc(c["second_check"])}</p>')
         parts.append(f'<h4>对错标签：{esc(c["correct"])}</h4><p class="body-6">{esc(c["correct_basis"])}</p>')
+        if c.get("votes") is not None:
+            v = c["votes"]
+            source = votes_text(v.get("source_label") or {}) or "没有投票：报告里这条结论没有网址，程序直接定为没有出处"
+            parts.append(f'<h4>核验员的票数</h4><p class="body-6">来源标签：{esc(source)}。对错标签：{esc(votes_text(v.get("correct") or {}) or "没有投票")}。'
+                         f'核验时的工具限定：{esc(join_cn(c.get("tools") or []))}。</p>')
         re_c = data.recheck.get(c["id"])
         if re_c:
             who = model_name(data.runs["verify-sonnet-subset.json"]["model"])
@@ -725,12 +953,20 @@ def claims_section(data, r):
     count_text = "，".join(f"{k} {v} 条" for k, v in counts.items())
     return f"""<section class="block" id="claims" aria-labelledby="claims-h">
   <h2 class="heading-5" id="claims-h">主要结论的核验</h2>
-  <p class="body-3 sum">核验评委（{esc(verifier)}）从这份报告抽出 {len(claims)} 条主要结论，逐条打开所引来源核对，记下来源标签和对错标签（{esc(count_text)}）。对错以截至 {esc(data.question['cutoff'])} 已经存在的信息为准。</p>
+  <p class="body-3 sum">{esc(sim_claims_sum(data, r, claims, count_text)) if data.sim else f"核验评委（{esc(verifier)}）从这份报告抽出 {len(claims)} 条主要结论，逐条打开所引来源核对，记下来源标签和对错标签（{esc(count_text)}）。对错以截至 {esc(data.question['cutoff'])} 已经存在的信息为准。"}</p>
   <p class="body-3 sum">来源标签有六种：支持、部分支持、不支持、失效但有存档、找不到、没有出处。“找不到”经第二次核查确认才算编造。所引来源不支持主要结论的，每处在深度净分里扣 {num(SCORE.UNSUPPORTED_W)}。对错标签有三种：正确、有误、无法判断。</p>
-  <div class="sub"><h3 class="heading-6">核验评委的备注</h3><p class="body-6 prose">{esc(data.verify[r]["notes"])}</p></div>
+  <div class="sub"><h3 class="heading-6">{data.verifier_word}的备注</h3><p class="body-6 prose">{esc(data.verify[r]["notes"])}</p></div>
   <div class="sub"><h3 class="heading-6">时效：{num(tl["score"])} 档</h3><p class="body-6 prose">{esc(tl["reason"])}</p></div>
   <ol class="cards">{"".join(cards)}</ol>
 </section>"""
+
+
+def no_quote_text(data, p, r):
+    if not data.sim:
+        return "没有单独抽出的原文：这一处是要点池评委核对报告原文时补记的。"
+    if p.get("reach_from", {}).get(r) == "写到核对":
+        return "没有单独抽出的原文：这一处是写到核对一步补记的。"
+    return "没有单独抽出的原文。"
 
 
 def points_section(data, r):
@@ -758,7 +994,7 @@ def points_section(data, r):
                 tag(REACH_TEXT.get(reach, reach), "ok" if reach == "符合" else "bad")]
         quote, where = point_quote(data, p, r)
         q = (f'<details><summary class="caption-2">报告原文（{esc(where)}）</summary><blockquote class="body-6">{esc(quote)}</blockquote></details>'
-             if quote else '<p class="caption-2 faint">没有单独抽出的原文：这一处是要点池评委核对报告原文时补记的。</p>')
+             if quote else f'<p class="caption-2 faint">{no_quote_text(data, p, r)}</p>')
         scores = "，".join(f"{w}种 {num(sc[w])}" for w in WEIGHTS)
         return (f'<li class="card" id="point-{esc(p["pid"])}"><div class="card-head"><a class="title-3" href="points.html#{esc(p["pid"])}">'
                 f'{esc(p["pid"])}</a>{"".join(tags)}</div><p class="body-3">{esc(p["content"])}</p>'
@@ -786,6 +1022,12 @@ def points_section(data, r):
 </section>"""
 
 
+def not_found_note(rating):
+    if rating.get("evidence_in_report") is False:
+        return '<p class="caption-2 faint">程序在报告里没有找到这段引文，档位没有改动，留给人工核对。</p>'
+    return ""
+
+
 def grades_section(data, r):
     judges = rating_judges(data)
     rep = data.reports[r]
@@ -796,22 +1038,23 @@ def grades_section(data, r):
         rows.append([esc(name), f"<strong>{num(final)}</strong>"] + [num(data.ratings[key][r]["ratings"][k]["score"]) for key, _, _ in judges])
     tl = data.verify[r]["timeliness"]
     summary = table(["", "用于名次的档位"] + [esc(n) for _, n, _ in judges], rows, numeric=tuple(range(1, 2 + len(judges))))
-    summary += (f'<p class="legend caption-2">时效不在这张表里：它由核验评委评，用于名次的档位是 {num(rep["timeliness"])}，'
+    summary += (f'<p class="legend caption-2">时效不在这张表里：它{"取各次环节评级的中位数" if data.sim else "由核验评委评"}，用于名次的档位是 {num(rep["timeliness"])}，'
                 f'理由见本节末尾。</p>')
     blocks = []
     for k, name in keys:
         cards = "".join(
             f'<li class="card"><div class="card-head"><span class="title-4">{esc(jn)}</span>{plain_tag(num(data.ratings[key][r]["ratings"][k]["score"]) + " 档")}</div>'
             f'<h4>引用的原文</h4><blockquote class="body-6">{esc(data.ratings[key][r]["ratings"][k]["evidence"])}</blockquote>'
-            f'<h4>理由</h4><p class="body-6">{esc(data.ratings[key][r]["ratings"][k]["reason"])}</p></li>'
+            f'<h4>理由</h4><p class="body-6">{esc(data.ratings[key][r]["ratings"][k]["reason"])}</p>'
+            f'{not_found_note(data.ratings[key][r]["ratings"][k])}</li>'
             for key, jn, _ in judges)
         final = rep["writing"] if k == "写作" else rep["element_grades"][k]
         blocks.append(f'<div class="sub" id="grade-{len(blocks) + 1}"><h3 class="heading-6">{esc(name)}：{num(final)} 档</h3>'
                       f'<ul class="cards grid-2">{cards}</ul></div>')
-    blocks.append(f'<div class="sub"><h3 class="heading-6">时效：{num(rep["timeliness"])} 档</h3><p class="body-6 prose">核验评委评。{esc(tl["reason"])}</p></div>')
+    blocks.append(f'<div class="sub"><h3 class="heading-6">时效：{num(rep["timeliness"])} 档</h3><p class="body-6 prose">{"" if data.sim else "核验评委评。"}{esc(tl["reason"])}</p></div>')
     return f"""<section class="block" id="grades" aria-labelledby="grades-h">
   <h2 class="heading-5" id="grades-h">环节评级</h2>
-  <p class="body-3 sum">五个环节由三次独立的评级各评 0、1、2 三档，每一档都引报告原文为证；用于名次的是三次的中位数。时效由核验评委评。只有深度净分分不开时，才比较环节评级和时效。写作只记录，不进入名次。</p>
+  <p class="body-3 sum">五个环节由{count_cn(len(judges), "次")}独立的评级各评 0、1、2 三档，每一档都引报告原文为证；用于名次的是{count_cn(len(judges), "次")}的中位数。{data.timeliness_by}。只有深度净分分不开时，才比较环节评级和时效。写作只记录，不进入名次。</p>
   {summary}
   {"".join(blocks)}
 </section>"""
@@ -829,7 +1072,8 @@ def pairwise_section(data, r):
                     continue
                 v = it["verdict"]
                 verdict = (f"判 {it['first']} 更好" if v == "first" else f"判 {it['second']} 更好" if v == "second" else "判两份相当")
-                lines.append(f'<p class="body-6"><strong>第{ORDINALS[i]}次比较</strong>（先读 {it["first"]}，后读 {it["second"]}）：'
+                who = f"{d.get('judge', '')}（{it.get('vendor', '')}）" if data.sim else f"第{ordinal(i)}次比较"
+                lines.append(f'<p class="body-6"><strong>{esc(who)}</strong>（先读 {it["first"]}，后读 {it["second"]}）：'
                              f'{esc(verdict)}。{esc(it["reason"])}</p>')
         if lines:
             rows.append(f'<li><p class="who body-3">与<a href="report-{o}.html">{esc(data.name(o))}</a> 比较</p>{"".join(lines)}</li>')
@@ -840,7 +1084,32 @@ def pairwise_section(data, r):
 </section>"""
 
 
+def concerns(task, r):
+    """这次调用是否涉及报告 r：只涉及一份报告的步骤写"报告 r，"，两两比较写"r 在前"或"r 在后"，合并和判定涉及全部报告。"""
+    return (f"报告 {r}，" in task or f"：{r} 在前，" in task or f"，{r} 在后，" in task
+            or task.startswith(("评审-要点池合并", "评审-要点判定")))
+
+
+def sim_prompts_section(data, r):
+    items = []
+    for i, c in enumerate(data.calls, 1):
+        if not concerns(c["task"], r):
+            continue
+        name = esc(task_text(c["task"]))
+        link = f'<a href="{data.calls_dir}{i}.html">{name}</a>' if data.calls_dir else name
+        items.append(f'<li>{link}<span class="faint">（{esc(c["vendor"])}，{esc(c.get("tools") or "")}，{esc(c.get("status") or "")}）</span></li>')
+    where = (f'<a href="{data.review_page}#calls">这次评审的记录</a>' if data.review_page
+             else f'<a href="{data.to_src}calls.jsonl">调用记录文件</a>')
+    return f"""<section class="block" id="prompts" aria-labelledby="prompts-h">
+  <h2 class="heading-5" id="prompts-h">评委收到的提示词</h2>
+  <p class="body-3 sum">这一页用到的每一次模型调用，提示词和回答的原文都可以点开看：下面是涉及这份报告的 {len(items)} 次调用。全部调用见{where}。</p>
+  <ul class="links body-6">{"".join(items)}</ul>
+</section>"""
+
+
 def prompts_section(data, r):
+    if data.sim:
+        return sim_prompts_section(data, r)
     files = [data.verify_file[r]] + [f"rating-{k}.json" for k in data.ratings] + ["pool.json", "direct-answers.json"]
     files += [name for name, _ in data.pairwise]
     if any(c["id"] in data.recheck for c in data.claims[r]):
@@ -848,7 +1117,7 @@ def prompts_section(data, r):
     links = "".join(run_link(data, f) for f in files if f in data.runs)
     return f"""<section class="block" id="prompts" aria-labelledby="prompts-h">
   <h2 class="heading-5" id="prompts-h">评委收到的提示词</h2>
-  <p class="body-3 sum">这一页用到的每一次评委运行，评委收到的提示词原文都存了档。全部清单和存档说明见<a href="{TO_PILOT}judges/README.md">评委提示词存档</a>。</p>
+  <p class="body-3 sum">这一页用到的每一次评委运行，评委收到的提示词原文都存了档。全部清单和存档说明见<a href="{data.to_src}judges/README.md">评委提示词存档</a>。</p>
   <ul class="links body-6">{links}</ul>
 </section>"""
 
@@ -856,8 +1125,9 @@ def prompts_section(data, r):
 def review_page(data, r):
     rep = data.reports[r]
     lede = (f"这一页列出{esc(data.name(r))}的全部评审材料：名次从哪里来、有没有严重问题、每条主要结论的核验、写到了要点池里的哪几条、"
-            f"环节评级引用的原文、两两比较的理由，以及评委收到的提示词。对哪一条判定有异议，可以照着依据和<a href=\"{TO_PILOT}reports/{r}.md\">报告原文</a>核对。")
-    head = header(data, f"report-{r}.html", "第五阶段试评 · 复核页", f"{data.name(r)}（{data.product(r)}）", lede, False)
+            f"环节评级引用的原文、两两比较的理由，以及评委收到的提示词。对哪一条判定有异议，可以照着依据和<a href=\"{data.report_href(r)}\">报告原文</a>核对。")
+    eyebrow = "模拟评审 · 复核页" if data.sim else "第五阶段试评 · 复核页"
+    head = header(data, f"report-{r}.html", eyebrow, f"{data.name(r)}（{data.product(r)}）", lede, False)
     nets = "，".join(f"{w}种 {num(rep['net_scores'][w])}" for w in WEIGHTS)
     stats = f"""<div class="stats">
     <div class="stat"><p class="caption-1 faint">名次区间</p><p class="heading-6">{esc(interval(rep))}</p></div>
@@ -870,15 +1140,17 @@ def review_page(data, r):
                     ("pairwise", "两两比较"), ("prompts", "提示词")])
     summary = f"""<section class="block" id="summary" aria-labelledby="summary-h">
   <h2 class="heading-5" id="summary-h">名次从哪里来</h2>
-  <p class="body-3 sum">与另外五份报告逐一相比，下面写明先后是按哪一步定的。</p>
+  <p class="body-3 sum">与另外{count_cn(len(data.labels) - 1)}报告逐一相比，下面写明先后是按哪一步定的。</p>
   {stats}
   <nav aria-label="本页各节"><ul class="pages">{jump}</ul></nav>
   <div class="sub"><h3 class="heading-6">与其他报告的先后</h3>{relation_items(data, r)}</div>
 </section>"""
     body = "\n".join([head, '<main id="main"><div class="wrap">', summary, problems_section(data, r), claims_section(data, r),
                       points_section(data, r), grades_section(data, r), pairwise_section(data, r), prompts_section(data, r),
-                      "</div></main>", footer()])
-    return shell(f"{data.name(r)}复核页", f"第五阶段试评{data.name(r)}的主要结论核验、写到的要点、环节评级和两两比较。试评演示，不是对产品的评价。", body)
+                      "</div></main>", footer(data)])
+    if data.sim:
+        return shell(data, f"{data.name(r)}复核页", f"模拟评审{data.name(r)}的主要结论核验、写到的要点、环节评级和两两比较。演示，不是对产品的评价。", body)
+    return shell(data, f"{data.name(r)}复核页", f"第五阶段试评{data.name(r)}的主要结论核验、写到的要点、环节评级和两两比较。试评演示，不是对产品的评价。", body)
 
 
 # ---------- 要点池页 ----------
@@ -889,8 +1161,28 @@ LEVEL_NOTES = {"现象": "事情本身的事实和表面特征。",
                "本质": "事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。"}
 
 
+def sim_sources_text(data, p):
+    depth, extracted, claims = [], {}, []
+    for s in p["sources"]:
+        m = re.fullmatch(r"(.+)-c(\d+)", s)
+        if re.fullmatch(r"M\d+", s):
+            depth.append(s)
+        elif s in data.extracted:
+            r = data.extracted[s].get("report")
+            extracted[r] = extracted.get(r, 0) + 1
+        elif m and m.group(1) in data.labels:
+            claims.append(f"报告 {m.group(1)} 的结论 {m.group(2)}")
+        else:
+            claims.append(s)
+    parts = [f"深度地图 {s}" for s in depth]
+    parts += [f"抽取要点时从报告 {r} 抽出的要点 {extracted[r]} 条" for r in data.labels if r in extracted]
+    return "；".join(parts + claims)
+
+
 def sources_text(data, p):
     """一条要点由哪些条目合并而来，写成白话。"""
+    if data.sim:
+        return sim_sources_text(data, p)
     depth, extracted, claims, perturbed = [], {}, [], 0
     for s in p["sources"]:
         if re.fullmatch(r"M\d+", s):
@@ -913,9 +1205,11 @@ def sources_text(data, p):
 
 def points_page(data):
     pool = data.pool
-    head = header(data, "points.html", "第五阶段试评 · 要点池", "试评要点池",
-                  f"要点池合并了出题人的深度地图和评委从六份报告里抽出的要点、主要结论，意思相同的合成一条，再逐条判定对不对、切不切题、"
-                  f"深到哪一层、是核心还是一般。共 {len(pool)} 条。每一行写明 A 至 F 哪几份报告写到、说法一致还是相反；点报告名可以跳到那份报告复核页上的同一条。", False)
+    n = count_cn(len(data.labels))
+    span = f"{data.labels[0]} 至 {data.labels[-1]}"
+    head = header(data, "points.html", f"{'模拟评审' if data.sim else '第五阶段试评'} · 要点池", f"{data.kind()}要点池",
+                  f"要点池合并了出题人的深度地图和评委从{n}报告里抽出的要点、主要结论，意思相同的合成一条，再逐条判定对不对、切不切题、"
+                  f"深到哪一层、是核心还是一般。共 {len(pool)} 条。每一行写明 {esc(span)} 哪几份报告写到、说法一致还是相反；点报告名可以跳到那份报告复核页上的同一条。", False)
 
     by = {(lv, imp): 0 for lv in LEVELS for imp in ("核心", "一般")}
     for p in pool:  # 有争议的要点按登记的标注计数
@@ -939,11 +1233,11 @@ def points_page(data):
     t_reports = table(["报告", "产品", "写到", "说法一致", "说法相反", "其中写对的核心要点"], per, numeric=(2, 3, 4, 5))
     summary = f"""<section class="block" id="summary" aria-labelledby="summary-h">
   <h2 class="heading-5" id="summary-h">要点池一览</h2>
-  <p class="body-3 sum">层级的定义取自<a href="{TO_NOTES}plan-stage4-rubric.html#_1">评审细则</a>第一节。抽象的套话不算本质；一条要点只有说出了具体的性质或联系，才能定为内部联系或本质。</p>
+  <p class="body-3 sum">层级的定义取自<a href="{data.to_notes}plan-stage4-rubric.html#_1">评审细则</a>第一节。抽象的套话不算本质；一条要点只有说出了具体的性质或联系，才能定为内部联系或本质。</p>
   {t_levels}
   <p class="body-3 sum" style="margin-top: 16px;">对错：{esc("，".join(f"{k} {v} 条" for k, v in correct.items()))}；不切题的 {irrelevant} 条。只有正确、切题的要点写对了才加分。</p>
   <div class="sub"><h3 class="heading-6">每份报告写到多少</h3>{t_reports}
-  <p class="legend caption-2">“说法相反”指报告写了与这条要点相反的说法。六份报告都没有写到的有 {len(nobody)} 条（{esc(join_cn(nobody))}），它们不参与重抽样。试评还用了四份为检验评法故意改动过的扰动版本，它们不进名次，这里不列出。</p></div>
+  <p class="legend caption-2">“说法相反”指报告写了与这条要点相反的说法。{n}报告都没有写到的有 {len(nobody)} 条（{esc(join_cn(nobody))}），它们不参与重抽样。{"" if data.sim else "试评还用了四份为检验评法故意改动过的扰动版本，它们不进名次，这里不列出。"}</p></div>
 </section>"""
 
     rows = []
@@ -954,7 +1248,7 @@ def points_page(data):
             if reach:
                 chips.append(f'<a class="tag caption-3 {"ok" if reach == "符合" else "bad"}" href="report-{r}.html#point-{esc(p["pid"])}">'
                              f'{r} {REACH_TEXT.get(reach, reach)}</a>')
-        who = "".join(chips) if chips else '<span class="faint">六份报告都没有写到</span>'
+        who = "".join(chips) if chips else f'<span class="faint">{n}报告都没有写到</span>'
         rows.append(
             f'<tr id="{esc(p["pid"])}"><td data-label="编号" class="pid"><strong>{esc(p["pid"])}</strong></td>'
             f'<td data-label="要点" class="content"><p>{esc(p["content"])}</p><details><summary class="caption-2">依据和出处</summary>'
@@ -970,14 +1264,17 @@ def points_page(data):
     <tbody>{"".join(rows)}</tbody>
   </table></div>
 </section>"""
-    body = "\n".join([head, '<main id="main"><div class="wrap">', summary, listing, "</div></main>", footer()])
-    return shell("试评要点池", f"第五阶段试评要点池的全部 {len(pool)} 条要点，以及每条有哪几份报告写到。试评演示，不是对产品的评价。", body)
+    body = "\n".join([head, '<main id="main"><div class="wrap">', summary, listing, "</div></main>", footer(data)])
+    if data.sim:
+        return shell(data, "模拟评审要点池", f"模拟评审要点池的全部 {len(pool)} 条要点，以及每条有哪几份报告写到。演示，不是对产品的评价。", body)
+    return shell(data, "试评要点池", f"第五阶段试评要点池的全部 {len(pool)} 条要点，以及每条有哪几份报告写到。试评演示，不是对产品的评价。", body)
 
 
 # ---------- 生成 ----------
 
-def build(output):
-    data = Data()
+def build(output, source=PILOT, links=None):
+    """生成名次页、每份报告的复核页和要点池页，返回写出的文件名。"""
+    data = Data(source, output, links)
     pages = {"index.html": rank_page(data), "points.html": points_page(data)}
     for r in data.labels:
         pages[f"report-{r}.html"] = review_page(data, r)
@@ -985,13 +1282,20 @@ def build(output):
     for name, text in pages.items():
         with open(os.path.join(output, name), "w", encoding="utf-8") as f:
             f.write(text)
+    return sorted(pages)
 
 
 def main():
-    ap = argparse.ArgumentParser(description="生成第五阶段试评的名次页、复核页和要点池页。")
-    ap.add_argument("--output", default=DEFAULT_OUTPUT, help="页面写到哪个目录，默认 site/results/")
+    ap = argparse.ArgumentParser(description="生成第五阶段试评（或一次模拟评审）的名次页、复核页和要点池页。")
+    ap.add_argument("--input", default=PILOT, help="读哪里：默认第五阶段试评；也可以给一次模拟评审的输出目录 simulation/reviews/<运行标识>/")
+    ap.add_argument("--output", default=None, help="页面写到哪个目录：试评默认 site/results/；模拟评审必须给")
     args = ap.parse_args()
-    build(args.output)
+    simulated = os.path.isfile(os.path.join(args.input, "run.json"))
+    if simulated and not args.output:
+        ap.error("模拟评审要用 --output 给出页面写到哪个目录")
+    if simulated and not os.path.isfile(os.path.join(args.input, "results-v1.2.json")):
+        ap.error("这次模拟评审没有结果文件 results-v1.2.json（中止了，或者只估算），没有名次可写")
+    build(args.output or DEFAULT_OUTPUT, os.path.abspath(args.input))
 
 
 if __name__ == "__main__":
