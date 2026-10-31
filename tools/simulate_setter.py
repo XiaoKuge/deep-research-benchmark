@@ -20,6 +20,7 @@ import models  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HANDBOOK = os.path.join(ROOT, "research-plan", "question-handbook.src.html")
+RULES = os.path.join(ROOT, "research-plan", "rules.md")
 DEFAULT_OUT = os.path.join(ROOT, "simulation", "questions")
 
 KINDS = ("练习题", "正式题")
@@ -173,10 +174,20 @@ def handbook_template(template_id):
     return html.unescape(match.group(1))
 
 
-def delivery_block():
-    """附在提问版和裸题版之后、一字不改的交付要求和说明，原文取自手册的题目卡模板。"""
+def card_delivery_block():
+    """题目卡第四部分的交付要求和说明，原文取自出题手册的题目卡模板。"""
     card = handbook_template("tpl-card")
     return card[card.index("【交付要求】"):].rstrip("\n")
+
+
+def agent_delivery_block():
+    """交给智能体时接在提问版和裸题版后面的交付要求和说明，原文取自规则手册附录一。
+    文字和题目卡模板里的相同，只是标题写成「交付要求：」；新手包里的练习题也是这样附的，
+    所以每道题交给智能体的这一段一个字节都不差。"""
+    with open(RULES, encoding="utf-8") as f:
+        rules = f.read()
+    match = re.search(r"^### 附录一[^\n]*\n(.*?)(?=^### )", rules, re.S | re.M)
+    return match.group(1).strip("\n")
 
 
 # ---- 小工具 --------------------------------------------------------------------
@@ -663,7 +674,7 @@ class Setter:
         answer, record = self._ask(SETTER, task, prompt_versions(card), models.MATERIALS_ONLY,
                                    PLACEHOLDERS["两个版本"])
         data = parse_json(answer, task)
-        block = delivery_block()
+        block = agent_delivery_block()
         result = {"调用序号": record["call_index"]}
         for name in ("提问版", "裸题版"):
             result[name] = _text(data.get(name))
@@ -798,7 +809,7 @@ def render_card(result):
     card, versions = result["评委版"], result["版本"]
     return ("一、评委版（只给评委）\n%s\n\n二、提问版（交给智能体）\n%s\n\n三、裸题版（交给智能体）\n%s\n\n"
             "四、附在提问版和裸题版之后，一字不改\n\n%s\n"
-            % (judge_card_lines(card), versions["提问版"], versions["裸题版"], delivery_block()))
+            % (judge_card_lines(card), versions["提问版"], versions["裸题版"], card_delivery_block()))
 
 
 def _fish_lines(current, roles):

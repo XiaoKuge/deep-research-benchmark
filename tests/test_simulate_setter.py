@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 import simulate_setter  # noqa: E402
 
 HANDBOOK = os.path.join(ROOT, "research-plan", "question-handbook.src.html")
+RULES = os.path.join(ROOT, "research-plan", "rules.md")
 
 # 默认的角色分工：出题人 claude，甲 claude，乙 kimi，泄露检查 codex，闭卷对照 codex。
 CARD = {
@@ -42,6 +43,13 @@ def handbook_template(template_id):
     with open(HANDBOOK, encoding="utf-8") as f:
         source = f.read()
     return html.unescape(re.search(r'<pre id="%s">(.*?)</pre>' % template_id, source, re.S).group(1))
+
+
+def rules_appendix_one():
+    """规则手册附录一：附在提问版和裸题版之后、一字不改的统一交付要求和说明（新手包的练习题也是这样附的）。"""
+    with open(RULES, encoding="utf-8") as f:
+        rules = f.read()
+    return re.search(r"^### 附录一[^\n]*\n(.*?)(?=^### )", rules, re.S | re.M).group(1).strip("\n")
 
 
 def template_labels(template):
@@ -236,9 +244,10 @@ class TemplateFormatTest(SetterCase):
         fixed = handbook_template("tpl-card")
         fixed = fixed[fixed.index("【交付要求】"):]
         self.assertTrue(card.rstrip("\n").endswith(fixed.rstrip("\n")))
-        # 交给智能体的两个文件：版本的文字，空一行，再接一字不改的交付要求和说明
-        self.assertEqual(self.read("提问版.txt"), VERSIONS["提问版"] + "\n\n" + fixed.rstrip("\n") + "\n")
-        self.assertEqual(self.read("裸题版.txt"), VERSIONS["裸题版"] + "\n\n" + fixed.rstrip("\n") + "\n")
+        # 交给智能体的两个文件：版本的文字，空一行，再接规则手册附录一的交付要求和说明，一字不改
+        appendix = rules_appendix_one()
+        self.assertEqual(self.read("提问版.txt"), VERSIONS["提问版"] + "\n\n" + appendix + "\n")
+        self.assertEqual(self.read("裸题版.txt"), VERSIONS["裸题版"] + "\n\n" + appendix + "\n")
 
     def test_depth_map_has_the_six_template_sections_and_a_matching_checksum(self):
         code, printed = self.run_setter()
