@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>上手 · 深度研究评测基准</title>
+<meta name="description" content="出题同学、参赛队伍、评委各自的第一步；现阶段出题者和评委由大模型程序模拟。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：命名文字样式，字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, p { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, td, dd { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-3); }
+
+  /* 页首：回到资料站，四页之间跳转 */
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 16px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .pages a { padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); text-decoration: none; transition: background-color 300ms var(--ease), color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); color: var(--ink); }
+  .pages a[aria-current="page"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
+  .notice { max-width: 680px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+  .notice strong { color: var(--ink); font-weight: 600; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; max-width: 760px; }
+  .toc a { padding: 4px 12px; border-radius: 9999px; background: var(--surface); color: var(--ink); text-decoration: none; transition: background-color 300ms var(--ease); }
+  .toc a:hover { background: var(--line); }
+
+  /* 正文的每一节 */
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-bottom: 1px solid var(--line); max-width: 760px; }
+  .block:last-of-type { border-bottom: 0; }
+  .block .sum { margin-top: 12px; color: var(--ink-2); }
+  .prose { margin-top: 24px; }
+  .prose p + p, .prose p + ul, .prose ul + p, .prose p + ol, .prose ol + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
+  .prose strong { font-weight: 600; }
+  .refs { margin-top: 16px; color: var(--ink-3); }
+  .refs a { color: var(--ink-2); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 24px; }
+  .card { border: 1px solid var(--line); border-radius: 16px; padding: 24px; background: var(--raised); }
+  .card .tag { color: var(--ink-3); margin-bottom: 8px; }
+  .card ul { margin: 12px 0 0; padding-left: 24px; }
+  .card li + li { margin-top: 8px; }
+  .card .refs { margin-top: 16px; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); }
+  td:first-child { white-space: nowrap; }
+  .pending { color: var(--warn); font-weight: 600; white-space: nowrap; }
+  .done { color: var(--ok); font-weight: 600; white-space: nowrap; }
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  footer a { color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  /* 本页：三类人的卡片和命令 */
+  .block.wide { max-width: none; }
+  .roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 24px; }
+  .role { display: flex; flex-direction: column; }
+  .role .now { margin-top: 12px; padding: 12px 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); }
+  .role .now strong { color: var(--ink); font-weight: 600; }
+  .role .when { margin-top: 16px; color: var(--ink-3); }
+  .role ol { margin: 8px 0 0; padding-left: 24px; }
+  .role li + li { margin-top: 12px; }
+  .role li strong { font-weight: 600; }
+  .role li a { white-space: nowrap; }
+  .cmd { margin: 12px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); overflow-x: auto; font-family: var(--mono); font-size: 14px; line-height: 20px; }
+  .cmd code { font-family: inherit; }
+  .card p + p, .card .cmd + p { margin-top: 12px; }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="index.html">← 回到资料站</a>
+    <nav class="pages body-5" aria-label="说明页面">
+      <a href="brief.html">赛事说明</a>
+      <a href="start.html" aria-current="page">上手</a>
+      <a href="news.html">公告</a>
+      <a href="faq.html">常见问题</a>
+    </nav>
+    <p class="eyebrow caption-1">深度研究赛项</p>
+    <h1 class="heading-3">上手</h1>
+    <p class="body-3 lede">按你的身份找到第一步。出题同学、参赛队伍、评委各有一条路，每条都从一份材料读起。还不清楚比什么，先读<a href="brief.html">赛事说明</a>。</p>
+    <p class="body-6 notice"><strong>现阶段：</strong>还没有真人出题者和评委，出题和评审由大模型程序模拟，运行的命令见<a href="#simulation">下面一节</a>。真人出题和评审时的第一步，照样保留在各自的卡片里。</p>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+<section class="block wide" id="roles" aria-labelledby="roles-title">
+  <h2 class="heading-5" id="roles-title">三类人的第一步</h2>
+  <div class="roles">
+
+    <article class="card role body-3" id="setters" aria-labelledby="setters-title">
+      <p class="tag caption-3">出题</p>
+      <h3 class="heading-6" id="setters-title">出题同学</h3>
+      <p class="body-6 now"><strong>现在：</strong>出题由模拟出题者担任，见<a href="#simulation">模拟出题</a>。</p>
+      <p class="when caption-1">真人出题时</p>
+      <ol>
+        <li><strong>第一步：读出题手册的"出题七步"。</strong>先弄懂三个词，再按七步出一道题：选话题，先写浅答案再往深处查，写题目卡，写深度地图，自查，请另一位同学做泄露检查，闭卷对照。<a href="../notes/question-handbook.html#steps">出题七步</a></li>
+        <li><strong>照模板写。</strong>题目卡写三个版本，深度地图写浅答案、转折点和要点表。<a href="../notes/question-handbook.html#templates">模板</a></li>
+        <li><strong>交卷前自查。</strong>对照清单逐条勾选，再请另一位同学做泄露检查。<a href="../notes/question-handbook.html#checklist">自查清单</a></li>
+      </ol>
+      <p class="refs caption-2">先看一道写好的：<a href="../notes/question-handbook.html#example-lake">实例一 中国最大的淡水湖</a> · <a href="../notes/question-handbook.html#redpen">红笔批改</a></p>
+    </article>
+
+    <article class="card role body-3" id="teams" aria-labelledby="teams-title">
+      <p class="tag caption-3">参赛</p>
+      <h3 class="heading-6" id="teams-title">参赛队伍</h3>
+      <p class="body-6 now"><strong>现在：</strong>练习题已经公开，正式题赛前保密。日期和报名方式〔待定〕，见<a href="brief.html#schedule">赛事说明</a>。</p>
+      <p class="when caption-1">参赛时</p>
+      <ol>
+        <li><strong>第一步：读比赛规则手册。</strong>特别是怎样冻结和申报智能体、主办方怎样统一运行、报告必须包含哪五个部分。<a href="../notes/rules.html">规则手册</a> · <a href="../notes/rules.html#_4">第二节</a> · <a href="../notes/rules.html#_7">第五节</a> · <a href="../notes/rules.html#_8">第六节</a></li>
+        <li><strong>读技术文档。</strong>智能体怎样申报、主办方怎样调用它、运行环境和时长上限。<a href="teams.html">技术文档</a></li>
+        <li><strong>用练习题自查。</strong>拿淡水湖这道练习题跑一遍，对照交付要求检查报告的五个部分；再看一道题怎样从报告走到名次。<a href="../notes/question-handbook.html#example-lake">练习题</a> · <a href="walkthrough.html">一道题走完全程</a></li>
+      </ol>
+    </article>
+
+    <article class="card role body-3" id="judges" aria-labelledby="judges-title">
+      <p class="tag caption-3">评审</p>
+      <h3 class="heading-6" id="judges-title">评委</h3>
+      <p class="body-6 now"><strong>现在：</strong>评审由模拟评审程序担任，三家模型各当评委，见<a href="#simulation">模拟评审</a>。</p>
+      <p class="when caption-1">真人评审时</p>
+      <ol>
+        <li><strong>第一步：读评审细则第 1.2 版。</strong>评委需要知道的定义、环节评级、要点抽取、要点池的判定、断言核验和硬伤，评委按它判定。<a href="../notes/plan-stage4-rubric.html">评审细则</a></li>
+        <li><strong>看一道题走完全程。</strong>跟着淡水湖这道题，看每一步的判定怎样进入计分，最后算出名次区间。<a href="walkthrough.html">一道题走完全程</a></li>
+        <li><strong>读规则里评审和名次的两节。</strong>评委组怎样组成、关键判定怎样审计、名次怎样排。<a href="../notes/rules.html#_9">第七节</a> · <a href="../notes/rules.html#_10">第八节</a></li>
+      </ol>
+    </article>
+
+  </div>
+</section>
+
+<section class="block" id="simulation" aria-labelledby="sim-title">
+  <h2 class="heading-5" id="sim-title">现阶段：出题者和评委由大模型程序模拟</h2>
+  <p class="body-3 sum">还没有真人出题者和评委的阶段，主办方用大模型程序模拟他们，从出题到名次的整条流程现在就能跑通。</p>
+  <div class="prose body-3">
+    <ul>
+      <li><strong>三家模型。</strong>Claude（Anthropic）、Codex（OpenAI）、Kimi（月之暗面）。程序调用本机已经登录的这三家命令行，不读取任何密钥。评委因此来自三家厂商，符合规则手册第七节"至少三家厂商"的要求。</li>
+      <li><strong>每次调用都留记录。</strong>记下模型、厂商、提示词全文、回答全文和时间，随复核包公开，谁都能判断模拟出来的结果可不可信。</li>
+      <li><strong>工具受限。</strong>评审各步只给材料，模型不能上网；出题调研和来源核验只许检索和读网页。</li>
+    </ul>
+  </div>
+  <div class="cards">
+    <div class="card body-3">
+      <p class="tag caption-3">模拟出题</p>
+      <h3 class="heading-6">按出题手册七步出一道题</h3>
+      <pre class="cmd"><code>python3 tools/simulate_setter.py</code></pre>
+      <p>写评委版、提问版、裸题版；两次互相独立的调用各写一份深度地图的核心要点，用数鱼的办法估计是否写全；另一个模型只看交给智能体的两个版本做泄露检查；换一家模型、不联网做闭卷对照。输出一个题目目录，附深度地图校验值和全部调用记录。</p>
+    </div>
+    <div class="card body-3">
+      <p class="tag caption-3">模拟评审</p>
+      <h3 class="heading-6">按评审细则评一组报告</h3>
+      <pre class="cmd"><code>python3 tools/simulate_review.py</code></pre>
+      <p>做断言核验、要点抽取、要点池判定、环节评级和两两比较。要点池判定时评委看不到要点出自哪份报告；没有一种意见达到三分之二的判定记为有争议。结果交给计分程序第 1.2 版，算出名次区间。</p>
+    </div>
+  </div>
+  <p class="refs caption-2">两条命令都在仓库根目录运行。命令名是暂定的，命令以程序的使用说明为准：要给哪些参数、结果放在哪里、调用次数上限怎样设，都看程序附带的说明。</p>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap caption-2">
+    <span>深度研究评测基准 · 本地资料站 · 2026 年 10 月 30 日</span>
+    <nav aria-label="说明页面"><a href="brief.html">赛事说明</a><a href="start.html">上手</a><a href="news.html">公告</a><a href="faq.html">常见问题</a><a href="index.html">资料站首页</a></nav>
+  </div>
+</footer>
+</body>
+</html>
