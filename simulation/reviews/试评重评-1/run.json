@@ -1,0 +1,469 @@
+{
+ "run_id": "试评重评-1",
+ "mode": "真实调用",
+ "started_at": "2026-10-30T20:05:49-07:00",
+ "finished_at": "2026-10-30T21:02:15-07:00",
+ "status": "中止",
+ "error": "没有可用的厂商了：claude、codex 都不可用",
+ "question": {
+  "dir": "simulation/questions/第五阶段试评题",
+  "kind": "练习题",
+  "cutoff": "2026-03-03",
+  "card_sha256": "fb9df09ca57bf5ea48487f9cb0f85c18cfc528b806cf90d17ababa28b0d9443f",
+  "depth_map_sha256": "10c7b5c2a599b81595d6c62f6bd594e9b0ab246ac39bc7230f3ba44a74b5021e",
+  "checksum_matches": true,
+  "map_points": [
+   "M1",
+   "M2",
+   "M3",
+   "M4",
+   "M5",
+   "M6",
+   "M7",
+   "M8"
+  ]
+ },
+ "reports": [
+  {
+   "label": "A",
+   "name": "ChatGPT",
+   "file": "research-plan/stage5-pilot/reports/A.md",
+   "sha256": "748146b3855888124ef1c7e85025f01da6840fa68b79d524e8dd950e89bb8078",
+   "characters": 41389,
+   "urls": 0,
+   "copy": "reports/A.md"
+  },
+  {
+   "label": "B",
+   "name": "Claude",
+   "file": "research-plan/stage5-pilot/reports/B.md",
+   "sha256": "1c32ceb9edd2f2f29baa5aeb4791752b0713fbee2279b459f60117794dbb6dd9",
+   "characters": 1237,
+   "urls": 0,
+   "copy": "reports/B.md"
+  },
+  {
+   "label": "C",
+   "name": "Kimi",
+   "file": "research-plan/stage5-pilot/reports/C.md",
+   "sha256": "0873e55a719d0c033adac5931f9d379f2f8f73a15552bd0c7e0cc86e1b70951b",
+   "characters": 31709,
+   "urls": 0,
+   "copy": "reports/C.md"
+  },
+  {
+   "label": "D",
+   "name": "Gemini",
+   "file": "research-plan/stage5-pilot/reports/D.md",
+   "sha256": "05696a02ba30199739059e73770147c5f3582e7770e34d7d985efa9efe36c3cd",
+   "characters": 84529,
+   "urls": 0,
+   "copy": "reports/D.md"
+  },
+  {
+   "label": "E",
+   "name": "Perplexity",
+   "file": "research-plan/stage5-pilot/reports/E.md",
+   "sha256": "8c1f2f86da09877801ea20ce60c2c96db8032665c1fe1e22874dfc8f7a21fa97",
+   "characters": 6251,
+   "urls": 6,
+   "copy": "reports/E.md"
+  },
+  {
+   "label": "F",
+   "name": "DeepSeek",
+   "file": "research-plan/stage5-pilot/reports/F.md",
+   "sha256": "9b1d68c6045784bdf318db42f8ed830a2ee206debe1bd73663ebd25921d5867d",
+   "characters": 1849,
+   "urls": 0,
+   "copy": "reports/F.md"
+  }
+ ],
+ "archive": {
+  "dir": null,
+  "manifests": [],
+  "usable_urls": 0
+ },
+ "config": {
+  "steps": {
+   "claims_list": {
+    "vendors": [
+     "claude"
+    ],
+    "times": 1
+   },
+   "verify": {
+    "vendors": [
+     "claude",
+     "claude",
+     "codex"
+    ],
+    "times": 1
+   },
+   "extract": {
+    "vendors": [
+     "claude",
+     "codex"
+    ],
+    "times": 1
+   },
+   "merge": {
+    "vendors": [
+     "claude"
+    ],
+    "times": 1
+   },
+   "reach": {
+    "vendors": [
+     "claude"
+    ],
+    "times": 1
+   },
+   "judge": {
+    "vendors": [
+     "claude",
+     "claude",
+     "codex"
+    ],
+    "times": 1
+   },
+   "rating": {
+    "vendors": [
+     "claude",
+     "claude",
+     "codex"
+    ],
+    "times": 1
+   },
+   "pairwise": {
+    "vendors": [
+     "claude",
+     "codex"
+    ],
+    "times": 1
+   },
+   "direct": {
+    "vendors": [
+     "claude"
+    ],
+    "times": 1
+   }
+  },
+  "models": {
+   "claude": null,
+   "codex": null,
+   "kimi": null,
+   "google": null
+  },
+  "substitutes": [
+   "claude",
+   "codex"
+  ],
+  "source_chars": 12000,
+  "workers": 3,
+  "seed": 0
+ },
+ "calls": {
+  "calls": 54,
+  "by_vendor": {
+   "claude": 32,
+   "codex": 22
+  },
+  "by_step": {
+   "结论清单": 6,
+   "断言核验": 21,
+   "要点抽取": 12,
+   "要点池合并": 1,
+   "写到核对": 8,
+   "要点判定": 3,
+   "环节评级": 3,
+   "两两比较": 0,
+   "直接回答": 0
+  },
+  "max_calls": 133,
+  "over_limit": false
+ },
+ "steps": {
+  "结论清单": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    }
+   ],
+   "calls": 6,
+   "by_vendor": {
+    "claude": 6
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5"
+    ]
+   }
+  },
+  "断言核验": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "claude"
+    },
+    {
+     "slot": 3,
+     "vendor": "codex"
+    }
+   ],
+   "calls": 21,
+   "by_vendor": {
+    "claude": 14,
+    "codex": 7
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5"
+    ],
+    "codex": [
+     "命令行默认模型"
+    ]
+   }
+  },
+  "要点抽取": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "codex"
+    }
+   ],
+   "calls": 12,
+   "by_vendor": {
+    "claude": 6,
+    "codex": 6
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5"
+    ],
+    "codex": [
+     "命令行默认模型"
+    ]
+   }
+  },
+  "要点池合并": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    }
+   ],
+   "calls": 1,
+   "by_vendor": {
+    "claude": 1
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5"
+    ]
+   }
+  },
+  "写到核对": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    }
+   ],
+   "calls": 8,
+   "by_vendor": {
+    "claude": 5,
+    "codex": 3
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5",
+     "命令行默认模型"
+    ],
+    "codex": [
+     "命令行默认模型"
+    ]
+   }
+  },
+  "要点判定": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "claude"
+    },
+    {
+     "slot": 3,
+     "vendor": "codex"
+    }
+   ],
+   "calls": 3,
+   "by_vendor": {
+    "codex": 3
+   },
+   "models": {
+    "codex": [
+     "命令行默认模型"
+    ]
+   }
+  },
+  "环节评级": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "claude"
+    },
+    {
+     "slot": 3,
+     "vendor": "codex"
+    }
+   ],
+   "calls": 3,
+   "by_vendor": {
+    "codex": 3
+   },
+   "models": {
+    "codex": [
+     "命令行默认模型"
+    ]
+   }
+  },
+  "两两比较": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "codex"
+    }
+   ],
+   "calls": 0,
+   "by_vendor": {},
+   "models": {}
+  },
+  "直接回答": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    }
+   ],
+   "calls": 0,
+   "by_vendor": {},
+   "models": {}
+  }
+ },
+ "unavailable": [
+  {
+   "vendor": "claude",
+   "company": "Anthropic",
+   "first_failed_task": "评审-写到核对：报告 D，评委 1",
+   "error": "命令行报告出错：You've hit your 5-hour limit · resets 9pm (America/Los_Angeles)",
+   "noticed_at": "2026-10-30T20:55:47-07:00"
+  },
+  {
+   "vendor": "codex",
+   "company": "OpenAI",
+   "first_failed_task": "评审-环节评级：报告 A，评委 1",
+   "error": "退出状态 1；没有拿到回答",
+   "noticed_at": "2026-10-30T21:02:14-07:00"
+  }
+ ],
+ "substitutions": [
+  {
+   "step": "写到核对",
+   "slot": 1,
+   "task": "评审-写到核对：报告 D，评委 1",
+   "planned_vendor": "claude",
+   "vendor": "codex"
+  },
+  {
+   "step": "写到核对",
+   "slot": 1,
+   "task": "评审-写到核对：报告 E，评委 1",
+   "planned_vendor": "claude",
+   "vendor": "codex"
+  },
+  {
+   "step": "写到核对",
+   "slot": 1,
+   "task": "评审-写到核对：报告 F，评委 1",
+   "planned_vendor": "claude",
+   "vendor": "codex"
+  },
+  {
+   "step": "要点判定",
+   "slot": 1,
+   "task": "评审-要点判定：评委 1",
+   "planned_vendor": "claude",
+   "vendor": "codex"
+  },
+  {
+   "step": "要点判定",
+   "slot": 2,
+   "task": "评审-要点判定：评委 2",
+   "planned_vendor": "claude",
+   "vendor": "codex"
+  }
+ ],
+ "invalid_answers": [],
+ "disputed_points": [],
+ "audit_points": [
+  "Q11"
+ ],
+ "notes": {
+  "evidence_not_found": [],
+  "not_merged": [],
+  "unknown_sources": [],
+  "map_points_added": [],
+  "map_points_merged_together": [],
+  "unjudged_points": [],
+  "unverified_claims": [],
+  "ignored_map_changes": 0,
+  "reach_added": 126
+ },
+ "outputs": {
+  "calls": "calls.jsonl",
+  "mapping": "mapping.json",
+  "reports": "reports",
+  "judgments": "judgments"
+ },
+ "estimate": {
+  "calls": 133,
+  "by_vendor": {
+   "claude": 83,
+   "codex": 50
+  },
+  "by_step": {
+   "结论清单": 6,
+   "断言核验": 21,
+   "要点抽取": 12,
+   "要点池合并": 1,
+   "写到核对": 6,
+   "要点判定": 3,
+   "环节评级": 18,
+   "两两比较": 60,
+   "直接回答": 6
+  },
+  "max_calls": 133,
+  "over_limit": false
+ }
+}
