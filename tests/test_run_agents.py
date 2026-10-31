@@ -8,6 +8,7 @@ import csv
 import datetime
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -20,6 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 RUNNER = ROOT / "tools" / "run_agents.py"
+GUIDE = ROOT / "tools" / "run_agents.md"
 RULES = ROOT / "research-plan" / "rules.md"
 
 QUESTION = "我是一名中学地理老师，想给学生讲清楚：中国最大的淡水湖是哪一个？\n交付要求：请交付一份书面报告。\n"
@@ -245,6 +247,14 @@ class NetworkAgentTest(RunnerTestCase):
         self.assertEqual(report.read_text(encoding="utf-8"), "收到答复：" + reply)
         self.assertEqual(self.space.records()[0]["智能体是否提问，问了什么"], "是：要不要先确认研究计划？")
 
+    def test_agent_that_only_ever_asks_is_stopped_after_twenty_questions(self):
+        agent = self.network(lambda request, release: (200, JSON_TYPE, {"反问": "还有问题"}))
+        self.space.network_agent("问不完队", agent.address)
+        self.space.question("淡水湖", "提问版")
+        self.run_ok()
+        self.assertEqual(len(agent.requests), 20)
+        self.assertEqual(self.space.records()[0]["文件名"], "未交付")
+
     def test_agent_that_does_not_answer_by_the_limit_is_recorded_as_not_delivered(self):
         def respond(request, release):
             release.wait(30)
@@ -297,6 +307,14 @@ class DeclarationTest(RunnerTestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("调用方式", result.stderr)
 
+    def test_same_question_and_version_listed_twice_is_rejected(self):
+        self.space.command_agent("回声队", ECHO_AGENT)
+        self.space.question("淡水湖", "提问版")
+        self.space.question("淡水湖", "提问版")
+        result = self.space.run("--parallel", "2")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("重复", result.stderr)
+
     def test_log_keeps_checksums_of_the_declaration_and_the_system_prompt(self):
         path = self.space.command_agent("回声队", ECHO_AGENT)
         self.space.question("淡水湖", "提问版")
@@ -305,6 +323,65 @@ class DeclarationTest(RunnerTestCase):
                          .read_text(encoding="utf-8"))
         self.assertEqual(log["申报文件校验值"], sha256(path.read_bytes()))
         self.assertEqual(log["系统提示词文件校验值"], sha256("你是一个调研助手。".encode("utf-8")))
+
+
+COUNTING_AGENT = """
+import pathlib, sys
+sys.stdin.read()
+counter = pathlib.Path("次数.txt")
+count = int(counter.read_text()) + 1 if counter.exists() else 1
+counter.write_text(str(count))
+print(f"第 {count} 次运行的报告")
+"""
+
+
+class RerunTest(RunnerTestCase):
+    def setUp(self):
+        super().setUp()
+        self.space.command_agent("回声队", COUNTING_AGENT)
+        self.space.command_agent("鹦鹉队", ECHO_AGENT)
+        self.space.question("淡水湖", "提问版")
+        self.run_ok()
+        self.original = self.space.run_folder("回声队", "淡水湖", "提问版") / "报告.md"
+        self.only_one = ("--team", "回声队", "--question", "淡水湖", "--version", "提问版")
+
+    def test_running_the_plan_again_does_not_overwrite_earlier_results(self):
+        self.run_ok()
+        self.assertEqual(self.original.read_text(encoding="utf-8"), "第 1 次运行的报告\n")
+        self.assertEqual(len(self.space.records()), 2)
+
+    def test_rerun_with_a_reason_goes_to_its_own_folder_and_is_recorded(self):
+        self.run_ok(*self.only_one, "--rerun-reason", "主办方机器断电")
+        rerun = self.space.day_folder / "回声队" / "淡水湖" / "提问版-重跑" / "报告.md"
+        self.assertEqual(rerun.read_text(encoding="utf-8"), "第 2 次运行的报告\n")
+        self.assertEqual(self.original.read_text(encoding="utf-8"), "第 1 次运行的报告\n")
+        rows = self.space.records()
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(
+            (rows[-1]["队伍"], rows[-1]["是否重跑，原因"], rows[-1]["文件名"]),
+            ("回声队", "是：主办方机器断电", "回声队/淡水湖/提问版-重跑/报告.md"),
+        )
+
+    def test_a_run_is_rerun_at_most_once(self):
+        self.run_ok(*self.only_one, "--rerun-reason", "主办方机器断电")
+        self.run_ok(*self.only_one, "--rerun-reason", "又断电了")
+        self.assertEqual(len(self.space.records()), 3)
+
+
+class ParallelTest(RunnerTestCase):
+    def test_runs_can_go_at_the_same_time_so_a_whole_day_fits(self):
+        for team in ["甲队", "乙队", "丙队"]:
+            self.space.command_agent(team, """
+                import sys, time
+                sys.stdin.read()
+                time.sleep(1.5)
+                print("# 主要结论")
+            """)
+        self.space.question("淡水湖", "提问版")
+        began = time.monotonic()
+        self.run_ok("--parallel", "3")
+        self.assertLess(time.monotonic() - began, 4.0)  # 一个接一个要 4.5 秒以上
+        self.assertEqual(sorted(row["队伍"] for row in self.space.records()), ["丙队", "乙队", "甲队"])
 
 
 class RunRecordTest(RunnerTestCase):
@@ -346,6 +423,12 @@ class InputChecksumTest(RunnerTestCase):
     def test_input_matching_the_frozen_checksum_is_recorded_as_consistent(self):
         self.space.command_agent("回声队", ECHO_AGENT)
         self.space.question("淡水湖", "提问版", checksum=sha256(QUESTION.encode("utf-8")))
+        self.run_ok()
+        self.assertEqual(self.space.records()[0]["输入校验值是否一致"], "一致")
+
+    def test_frozen_checksum_written_in_capitals_still_matches(self):
+        self.space.command_agent("回声队", ECHO_AGENT)
+        self.space.question("淡水湖", "提问版", checksum=" " + sha256(QUESTION.encode("utf-8")).upper())
         self.run_ok()
         self.assertEqual(self.space.records()[0]["输入校验值是否一致"], "一致")
 
@@ -468,6 +551,24 @@ class RunLogTest(RunnerTestCase):
         self.assertLessEqual(start, end)
 
 
+class AskLimitTest(RunnerTestCase):
+    def test_command_line_agent_that_keeps_asking_is_stopped_after_twenty_questions(self):
+        self.space.command_agent("问不完队", """
+            import os, sys
+            sys.stdin.read()
+            print("# 主要结论", flush=True)
+            while True:
+                print("[[反问]] 还有问题", flush=True)
+                open(os.environ["REPLY_PIPE"], encoding="utf-8").read()
+        """)
+        self.space.question("淡水湖", "提问版")
+        began = time.monotonic()
+        self.run_ok()
+        self.assertLess(time.monotonic() - began, 30)
+        cell = self.space.records()[0]["智能体是否提问，问了什么"]
+        self.assertEqual(cell, "是：" + "；".join(["还有问题"] * 20))
+
+
 class TimeLimitTest(RunnerTestCase):
     def run_with_short_limit(self):
         began = time.monotonic()
@@ -503,6 +604,64 @@ class TimeLimitTest(RunnerTestCase):
         folder = self.space.run_folder("沉默队", "淡水湖", "提问版")
         self.assertFalse((folder / "报告.md").exists())
         self.assertEqual(self.space.records()[0]["文件名"], "未交付")
+
+
+def guide_block(heading, language):
+    """取使用说明里某个二级标题下面第一个指定语言的代码块。"""
+    text = GUIDE.read_text(encoding="utf-8")
+    section = text.split(f"\n## {heading}\n", 1)[1].split("\n## ", 1)[0]
+    return section.split(f"```{language}\n", 1)[1].split("\n```", 1)[0]
+
+
+class GuideTest(unittest.TestCase):
+    def setUp(self):
+        self.text = GUIDE.read_text(encoding="utf-8")
+
+    def test_guide_has_every_required_section(self):
+        headings = [line[3:].strip() for line in self.text.splitlines() if line.startswith("## ")]
+        for heading in ["用途", "一条命令", "运行计划", "申报文件", "两种调用方式", "反问约定",
+                        "时长上限", "输入校验值", "运行结果", "重跑", "测试"]:
+            self.assertIn(heading, headings)
+
+    def test_local_links_in_the_guide_open(self):
+        for target in re.findall(r"\]\(([^)#]+)(?:#[^)]*)?\)", self.text):
+            if "://" in target:
+                continue
+            self.assertTrue((GUIDE.parent / target).exists(), target)
+
+    def test_guide_states_the_conventions_the_program_uses(self):
+        for phrase in ["[[反问]]", "REPLY_PIPE", '"往来"', '"报告"', '"反问"', '"答复"',
+                       appendix_two_reply()]:
+            self.assertIn(phrase, self.text)
+        for column in appendix_four_columns():
+            self.assertIn(column, self.text)
+
+    def test_examples_in_the_guide_run_through_the_program(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = json.loads(guide_block("运行计划", "json"))
+            declaration = json.loads(guide_block("申报文件", "json"))
+            plan["智能体"] = plan["智能体"][:1]
+            (root / plan["智能体"][0]).parent.mkdir(parents=True)
+            agent_folder = (root / plan["智能体"][0]).parent
+            (root / plan["智能体"][0]).write_text(json.dumps(declaration, ensure_ascii=False), encoding="utf-8")
+            (agent_folder / declaration["系统提示词文件"]).write_text("示例", encoding="utf-8")
+            (agent_folder / declaration["调用方式"]["命令"][-1]).write_text(
+                guide_block("反问约定", "python"), encoding="utf-8")
+            for entry in plan["题目"]:
+                (root / entry["文件"]).parent.mkdir(parents=True, exist_ok=True)
+                (root / entry["文件"]).write_text(QUESTION, encoding="utf-8")
+            (root / "运行计划.json").write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+            result = subprocess.run([sys.executable, "-I", str(RUNNER), str(root / "运行计划.json")],
+                                    capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            day = root / plan.get("输出目录", "运行结果") / datetime.date.today().isoformat()
+            with open(day / "运行记录.csv", encoding="utf-8-sig", newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(len(rows), len(plan["题目"]))
+            for row in rows:
+                self.assertNotEqual(row["文件名"], "未交付")
+                self.assertTrue(row["智能体是否提问，问了什么"].startswith("是："))
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@
 """
 
 import argparse
+import concurrent.futures
 import csv
 import datetime
 import errno
@@ -29,6 +30,9 @@ UNIFIED_REPLY = "题目已包含全部信息，请按你的理解直接进行，
 # 命令行方式的反问记号：标准输出里以它开头的一行是反问，不算报告内容。
 ASK_MARK = "[[反问]]"
 ASK_MARK_BYTES = ASK_MARK.encode("utf-8")
+
+# 一次运行里最多记录这么多次反问；到这个数还在问，就停止这次运行（防止无休止地一问一答）。
+MAX_ASKS = 20
 
 # 命令行方式里，统一答复通过这个环境变量给出的管道文件交给智能体。
 REPLY_PIPE_VARIABLE = "REPLY_PIPE"
@@ -81,12 +85,15 @@ def feed_input(stream, data, given):
             pass
 
 
-def read_output(stream, report, asks, pending):
+def read_output(stream, report, asks, pending, too_many_asks):
     """逐行读标准输出：反问行交给答复线程，其余行都是报告内容。"""
     for line in iter(stream.readline, b""):
         if line.startswith(ASK_MARK_BYTES):
             question = line[len(ASK_MARK_BYTES):].decode("utf-8", errors="replace").strip()
             asks.append({"问题": question, "时间": now().isoformat(timespec="seconds")})
+            if len(asks) >= MAX_ASKS:
+                too_many_asks.set()
+                break
             pending.put(question)
         else:
             report.extend(line)
@@ -104,7 +111,7 @@ def send_replies(pipe_path, pending, process):
                 handle = os.open(pipe_path, os.O_WRONLY | os.O_NONBLOCK)
             except OSError as error:
                 if error.errno != errno.ENXIO:  # ENXIO：智能体还没打开管道来读
-                    raise
+                    return
                 time.sleep(0.02)
                 continue
             try:
@@ -144,19 +151,22 @@ def run_command(call, folder, question_bytes, deadline, run_folder):
                     "标准错误文件": "标准错误.txt", "错误": f"无法启动申报的命令：{error}",
                 }
             given, report, asks, pending = bytearray(), bytearray(), [], queue.Queue()
+            too_many_asks = threading.Event()
             threads = [
                 threading.Thread(target=feed_input, args=(process.stdin, question_bytes, given)),
-                threading.Thread(target=read_output, args=(process.stdout, report, asks, pending)),
+                threading.Thread(target=read_output,
+                                 args=(process.stdout, report, asks, pending, too_many_asks)),
                 threading.Thread(target=send_replies, args=(pipe_path, pending, process)),
             ]
             for thread in threads:
                 thread.daemon = True
                 thread.start()
             timed_out = False
-            try:
-                process.wait(timeout=max(0, deadline - time.monotonic()))
-            except subprocess.TimeoutExpired:
-                timed_out = True
+            while process.poll() is None and not too_many_asks.is_set():
+                if time.monotonic() >= deadline:
+                    timed_out = True
+                    break
+                time.sleep(0.05)
             # 到时或正常结束后，都停掉整个进程组，免得留下后台子进程占着输出。
             stop_process_group(process)
             process.wait()
@@ -164,14 +174,20 @@ def run_command(call, folder, question_bytes, deadline, run_folder):
                 thread.join(timeout=2)
     finally:
         shutil.rmtree(pipe_folder, ignore_errors=True)
-    return {
+    outcome = {
         "报告": bytes(report),
         "输入": bytes(given),
         "反问": list(asks),
         "是否超时": timed_out,
-        "退出状态": "到时长上限，由运行程序停止" if timed_out else process.returncode,
+        "退出状态": process.returncode,
         "标准错误文件": "标准错误.txt",
     }
+    if timed_out:
+        outcome["退出状态"] = "到时长上限，由运行程序停止"
+    elif too_many_asks.is_set():
+        outcome["退出状态"] = "反问次数到上限，由运行程序停止"
+        outcome["错误"] = f"反问到了 {MAX_ASKS} 次，运行程序停止了这次运行"
+    return outcome
 
 
 def run_network(call, question_bytes, deadline):
@@ -220,6 +236,9 @@ def run_network(call, question_bytes, deadline):
         if isinstance(answer, dict) and "反问" in answer:
             question = str(answer["反问"]).strip()
             asks.append({"问题": question, "时间": now().isoformat(timespec="seconds")})
+            if len(asks) >= MAX_ASKS:
+                outcome["错误"] = f"反问到了 {MAX_ASKS} 次，运行程序停止了这次运行"
+                break
             exchanges.append({"反问": question, "答复": UNIFIED_REPLY})
             continue
         if isinstance(answer, dict) and isinstance(answer.get("报告"), str):
@@ -252,7 +271,15 @@ def describe_asks(asks):
     return "是：" + "；".join(ask["问题"] for ask in asks)
 
 
+RECORD_LOCK = threading.Lock()
+
+
 def append_record(path, row):
+    with RECORD_LOCK:
+        write_record(path, row)
+
+
+def write_record(path, row):
     new_file = not path.exists()
     with open(path, "a", encoding="utf-8-sig" if new_file else "utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=RECORD_COLUMNS)
@@ -324,8 +351,13 @@ def load_plan(plan_path):
         raise PlanProblem(f"{plan_path}：读不了运行计划（{error}）")
     folder = plan_path.parent
 
+    if not isinstance(plan, dict):
+        raise PlanProblem(f"{plan_path}：运行计划应当是一个 JSON 对象")
     agents = []
     for item in plan.get("智能体") or []:
+        if not isinstance(item, str):
+            problems.append(f"“智能体”里每一项应当是申报文件的路径，现在有 {item!r}")
+            continue
         agent = load_agent(folder / item, problems)
         if agent:
             agents.append(agent)
@@ -337,6 +369,9 @@ def load_plan(plan_path):
 
     questions = []
     for item in plan.get("题目") or []:
+        if not isinstance(item, dict):
+            problems.append(f"“题目”里每一项应当是一个 JSON 对象，现在有 {item!r}")
+            continue
         name, version, file_name = item.get("题目"), item.get("版本"), item.get("文件")
         if not name or not file_name:
             problems.append(f"运行计划里的题目缺少“题目”或“文件”：{item}")
@@ -353,11 +388,14 @@ def load_plan(plan_path):
             "题目": name,
             "版本": version,
             "文本": text,
-            "校验值": item.get("校验值") or sha256(text),
+            "校验值": str(item.get("校验值") or sha256(text)).strip().lower(),
             "校验值来源": "运行计划" if item.get("校验值") else "题目文件",
         })
     if not questions and not problems:
         problems.append("运行计划里没有列出题目")
+    pairs = [(question["题目"], question["版本"]) for question in questions]
+    for name, version in sorted({pair for pair in pairs if pairs.count(pair) > 1}):
+        problems.append(f"题目和版本重复：{name} {version}")
 
     if problems:
         raise PlanProblem("\n".join(problems))
@@ -373,11 +411,10 @@ def load_plan(plan_path):
     }
 
 
-def run_once(agent, question, limit_seconds, day_folder):
+def run_once(agent, question, limit_seconds, day_folder, run_folder, rerun_reason):
     """跑一次：一个智能体、一道题的一个版本。保存报告和日志，追加一行运行记录。"""
     team = agent["队伍"]
-    run_folder = day_folder / safe_name(team) / safe_name(question["题目"]) / question["版本"]
-    run_folder.mkdir(parents=True, exist_ok=True)
+    run_folder.mkdir(parents=True)
     started = now()
     deadline = time.monotonic() + limit_seconds
     call = agent["调用方式"]
@@ -416,6 +453,8 @@ def run_once(agent, question, limit_seconds, day_folder):
         "反问": [dict(ask, 答复=UNIFIED_REPLY) for ask in outcome["反问"]],
         "标准错误文件": outcome.get("标准错误文件"),
         "错误": outcome.get("错误"),
+        "是否重跑": bool(rerun_reason),
+        "重跑原因": rerun_reason,
         "申报文件": agent["申报文件"],
         "申报文件校验值": agent["申报文件校验值"],
         "系统提示词文件校验值": agent["系统提示词文件校验值"],
@@ -431,15 +470,65 @@ def run_once(agent, question, limit_seconds, day_folder):
         "结束": ended.strftime("%H:%M:%S"),
         "输入校验值是否一致": consistent,
         "智能体是否提问，问了什么": describe_asks(outcome["反问"]),
-        "是否重跑，原因": "否",
+        "是否重跑，原因": f"是：{rerun_reason}" if rerun_reason else "否",
         "文件名": report_path.relative_to(day_folder).as_posix() if delivered else "未交付",
     })
+    return describe_outcome(delivered, outcome)
+
+
+def describe_outcome(delivered, outcome):
+    if outcome["是否超时"]:
+        result = "到时长上限，以届时已交付的内容为准" if delivered else "到时长上限，未交付"
+    else:
+        result = "已交付" if delivered else "未交付"
+    if outcome["反问"]:
+        result += f"；反问 {len(outcome['反问'])} 次"
+    if outcome.get("错误"):
+        result += f"；错误：{outcome['错误'][:200]}"
+    return result
+
+
+def planned_runs(plan, args, day_folder):
+    """按运行计划和命令行上的筛选条件，列出这次要跑的运行；已有结果的不覆盖。"""
+    runs = []
+    for question in plan["题目"]:
+        if args.question and question["题目"] != args.question:
+            continue
+        if args.version and question["版本"] != args.version:
+            continue
+        for agent in plan["智能体"]:
+            if args.team and agent["队伍"] != args.team:
+                continue
+            label = f"{question['题目']} {question['版本']} {agent['队伍']}"
+            base = day_folder / safe_name(agent["队伍"]) / safe_name(question["题目"])
+            original = base / question["版本"]
+            rerun = base / (question["版本"] + "-重跑")
+            if not args.rerun_reason:
+                if original.exists():
+                    print(f"跳过：{label}，今天已经运行过；需要重跑请加 --rerun-reason 写明原因")
+                    continue
+                runs.append((agent, question, original, None, label))
+            elif not original.exists():
+                print(f"跳过：{label}，今天还没有运行过，谈不上重跑")
+            elif rerun.exists():
+                print(f"跳过：{label}，已经重跑过一次，规则只允许重跑一次")
+            else:
+                runs.append((agent, question, rerun, args.rerun_reason, label))
+    return runs
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="按运行计划调用参赛智能体")
     parser.add_argument("plan", help="运行计划文件（JSON）")
+    parser.add_argument("--team", help="只跑这支队伍")
+    parser.add_argument("--question", help="只跑这道题（写运行计划里的题目名称）")
+    parser.add_argument("--version", choices=VERSIONS, help="只跑这个版本")
+    parser.add_argument("--rerun-reason", help="重跑一次已经跑过的运行，并写明原因（会写进运行记录）")
+    parser.add_argument("--parallel", type=int, default=1, metavar="N",
+                        help="同时进行的运行数，默认 1（一个接一个）")
     args = parser.parse_args(argv)
+    if args.parallel < 1:
+        parser.error("--parallel 至少是 1")
 
     try:
         plan = load_plan(Path(args.plan).resolve())
@@ -449,9 +538,15 @@ def main(argv=None):
     day_folder = plan["输出目录"] / datetime.date.today().isoformat()
     day_folder.mkdir(parents=True, exist_ok=True)
 
-    for question in plan["题目"]:
-        for agent in plan["智能体"]:
-            run_once(agent, question, plan["时长上限秒"], day_folder)
+    def run_and_report(agent, question, run_folder, rerun_reason, label):
+        print(f"开始：{label}", flush=True)
+        result = run_once(agent, question, plan["时长上限秒"], day_folder, run_folder, rerun_reason)
+        print(f"结束：{label}：{result}", flush=True)
+
+    runs = planned_runs(plan, args, day_folder)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
+        for future in [pool.submit(run_and_report, *run) for run in runs]:
+            future.result()
     return 0
 
 
