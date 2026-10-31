@@ -44,98 +44,104 @@ def esc(s):
 
 
 STYLE = """
-  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  /* 样式乙：浅灰的布纹纸面（纸纹图片在页面里另外指定，因为路径随页面深浅不同），Inter 字体，白色玻璃卡片，玫红作强调色。
+     字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
   :root {
-    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
-    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
-    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --paper: #ececeb; --raised: rgba(255, 255, 255, .62); --surface: rgba(255, 255, 255, .45); --glass-line: rgba(255, 255, 255, .86); --line: rgba(34, 34, 34, .12);
+    --ink: #202020; --ink-2: #4a4a4a; --ink-3: #78777b;
+    --accent: #a2264a; --rose: #ad314d; --ok: #2f7a4f; --warn: #a8501f; --bad: #b42318;
+    --shadow: 0 1px 2px rgba(50, 28, 39, .08), 0 12px 32px rgba(50, 28, 39, .06);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
-      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
-      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
-      color-scheme: dark;
-    }
-  }
-  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
-  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
-  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
-  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
-  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
-  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .heading-1 { font-size: 48px; line-height: 1.22; font-weight: 400; letter-spacing: .01em; }
+  .heading-3 { font-size: 36px; line-height: 1.28; font-weight: 400; letter-spacing: .01em; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 500; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 500; }
+  .title-3 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-4 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-3 { font-size: 18px; line-height: 32px; font-weight: 400; }
+  .body-5 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-6 { font-size: 16px; line-height: 28px; font-weight: 400; }
   .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-2 { font-size: 14px; line-height: 24px; font-weight: 400; }
   .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
   .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+  @media (max-width: 767px) {
+    .heading-1 { font-size: 30px; }
+    .heading-3 { font-size: 24px; }
+    .body-3 { font-size: 16px; line-height: 28px; }
+  }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
-    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--paper) center top / cover fixed; }
+  body { margin: 0; background: transparent; color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 28px;
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; overflow-wrap: anywhere; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: rgba(240, 240, 238, .5); pointer-events: none; }
+  ::selection { background: rgba(173, 49, 77, .2); }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { text-wrap: balance; }
   p, li, td, blockquote { text-wrap: pretty; }
-  a { color: var(--accent); text-underline-offset: 4px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
-  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
-  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  a { color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1336px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 48px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
   .skip:focus { top: 16px; }
   .muted { color: var(--ink-2); }
   .faint { color: var(--ink-3); }
 
-  header.top { padding-block: 32px 24px; }
-  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
-  .back:hover { color: var(--ink); text-decoration: underline; }
-  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
-  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+  /* 页首 */
+  header.top { padding-bottom: 48px; }
+  header.top .wrap > .back { display: flex; align-items: center; min-height: 80px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: .02em; }
+  header.top .wrap > .back:hover { color: var(--accent); }
+  .eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 48px; margin-bottom: 16px; color: var(--rose); letter-spacing: 0.08em; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--rose); flex: none; }
+  .lede { max-width: 860px; margin-top: 24px; color: var(--ink-2); }
 
-  /* 演示声明：每页都有，名次页上最醒目 */
-  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
-    border: 1px solid var(--warn); background: var(--surface); }
-  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
-  .demo strong { display: block; font-weight: 600; color: var(--ink); }
-  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+  /* 演示声明：每页都有，玫红的玻璃卡片 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 960px; margin-top: 32px; padding: 24px 32px; border-radius: 16px;
+    color: rgba(255, 255, 255, .92); background: var(--rose) center / cover no-repeat; border: 1px solid rgba(255, 255, 255, .36);
+    box-shadow: 0 2px 4px rgba(50, 28, 39, .30), inset 0 1px 0 rgba(255, 255, 255, .24); text-shadow: 0 1px 2px rgba(60, 21, 35, .16); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: #fff; margin-top: 4px; }
+  .demo strong { display: block; font-weight: 600; color: #fff; }
+  .demo p + p { margin-top: 8px; color: rgba(255, 255, 255, .88); }
+  .demo a { color: #fff; text-decoration-color: rgba(255, 255, 255, .6); }
 
   /* 页面之间的跳转 */
-  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
-  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-    background: var(--raised); transition: background-color 300ms var(--ease); }
-  .pages a:hover { background: var(--surface); }
-  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 8px 16px; border-radius: 9999px; color: var(--ink); text-decoration: none;
+    background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); transition: transform 300ms var(--ease), background-color 300ms var(--ease); }
+  .pages a:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .86); }
+  .pages a[aria-current="page"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 
   main { padding-bottom: 96px; }
-  .block { padding-block: 48px; border-top: 1px solid var(--line); }
-  .block > h2 { margin-bottom: 8px; }
-  .block > .sum { max-width: 760px; color: var(--ink-2); }
-  .block > .sum + .sum { margin-top: 8px; }
-  .sub { margin-top: 32px; }
-  .sub > h3 { margin-bottom: 8px; }
-  .prose { max-width: 760px; }
-  .prose p + p { margin-top: 8px; }
-  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
-  .prose li + li { margin-top: 4px; }
+  .block { padding-block: 64px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 16px; }
+  .block > .sum { max-width: 860px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 12px; }
+  .sub { margin-top: 40px; }
+  .sub > h3 { margin-bottom: 12px; }
+  .prose { max-width: 860px; }
+  .prose p + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 12px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
 
   /* 名次区间横条 */
-  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .ranks { margin-top: 32px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .rank-row { display: grid; grid-template-columns: 192px minmax(0, 1fr) 128px; gap: 24px; align-items: center; padding: 12px 0; }
   .rank-axis { color: var(--ink-3); padding: 0; }
-  .rank-who a { color: var(--ink); text-decoration: none; }
-  .rank-who a:hover { text-decoration: underline; }
+  .rank-who a { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 500; }
+  .rank-who a:hover { color: var(--accent); }
   .rank-who .faint { display: block; }
-  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 32px; }
   .track .slot { border-left: 1px solid var(--line); }
   .track .slot:last-child { border-right: 1px solid var(--line); }
-  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .track .bar { position: absolute; top: 4px; height: 24px; border-radius: 9999px; background: var(--rose); box-shadow: 0 2px 4px rgba(50, 28, 39, .25), inset 0 1px 0 rgba(255, 255, 255, .3); }
   .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .axis-labels span { text-align: center; }
-  .rank-text { white-space: nowrap; }
+  .rank-text { white-space: nowrap; font-weight: 500; }
   @media (max-width: 639px) {
     .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
     .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
@@ -144,33 +150,34 @@ STYLE = """
   }
 
   /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
-  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
-  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
-  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; line-height: 24px; background: var(--raised); }
+  th, td { border-bottom: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-weight: 600; color: var(--ink-2); background: rgba(255, 255, 255, .5); white-space: nowrap; }
   td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
   td a { white-space: nowrap; }
-  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+  .legend { margin-top: 12px; color: var(--ink-3); max-width: 860px; }
 
   /* 分开的对 */
-  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .pairs li { padding: 16px 24px; border-radius: 16px; background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pairs .who { font-weight: 600; }
   .pairs p + p { margin-top: 4px; color: var(--ink-2); }
 
   /* 卡片：主要结论、评级、比较 */
-  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
-  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
-  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cards { margin-top: 24px; display: grid; gap: 16px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   .card-head .title-3 { margin-right: 4px; }
-  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
-  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card h4 { margin: 16px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; }
+  .card blockquote { margin: 0; padding-left: 16px; border-left: 2px solid var(--rose); color: var(--ink-2); }
   .card p + p { margin-top: 4px; }
-  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
   @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
 
   /* 标签：文字用正文颜色，前面的小圆点表示状态 */
-  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .5); color: var(--ink); white-space: nowrap; }
   .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
   .tag.ok::before { background: var(--ok); }
   .tag.warn::before { background: var(--warn); }
@@ -178,25 +185,26 @@ STYLE = """
   .tag.plain::before { display: none; }
 
   /* 数字小格 */
-  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
-  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+  .stats { margin-top: 32px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .stat { padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .stat .heading-6 { margin-top: 8px; font-size: 24px; line-height: 32px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 8px; color: var(--ink-2); }
 
   /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
-  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table { margin-top: 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
   .pool-table td.content { min-width: 320px; }
   .pool-table td.content p + details { margin-top: 4px; }
   .pool-table td.who { min-width: 160px; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
-  a.tag:hover { background: var(--surface); }
-  .pool-table tr:target td { background: var(--surface); }
+  a.tag:hover { background: rgba(255, 255, 255, .86); }
+  .pool-table tr:target td { background: rgba(173, 49, 77, .08); }
   @media (max-width: 767px) {
+    .pool-table { border: 0; border-radius: 0; box-shadow: none; }
     .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
     .pool-table thead { display: none; }
-    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table tr { border: 1px solid var(--glass-line); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px; background: var(--raised); }
     .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
     .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
     .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
@@ -206,14 +214,14 @@ STYLE = """
   summary { cursor: pointer; color: var(--ink-2); }
   details[open] summary { margin-bottom: 4px; }
 
-  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 860px; }
   .links li { padding-left: 16px; position: relative; }
-  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+  .links li::before { content: ""; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 9999px; background: var(--rose); }
 
-  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer { border-top: 1px solid var(--line); padding-block: 40px; color: var(--ink-3); }
   footer a { color: var(--ink-2); }
   code { font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pages a:hover { transform: none; } }
 """
 
 WARN_ICON = ('<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,'
@@ -237,8 +245,9 @@ def shell(data, title, description, body):
 <link rel="icon" href="{data.to_site}favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>{style(len(data.labels))}</style>
+<style>html {{ background-image: url("{data.to_site}assets/paper.webp"); }} .demo {{ background-image: url("{data.to_site}assets/card-rose.jpg"); }}</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -525,7 +534,7 @@ def header(data, current, eyebrow, title, lede_html, detail_notice):
   <div class="wrap">
     {back_link(data)}
     <p class="eyebrow caption-1">{esc(eyebrow)}</p>
-    <h1 class="heading-3">{esc(title)}</h1>
+    <h1 class="heading-1">{esc(title)}</h1>
     <p class="body-3 lede">{lede_html}</p>
     {demo_notice(data, detail_notice)}
     {page_nav(data, current)}
@@ -681,7 +690,7 @@ def rank_page(data):
             f'<span class="rank-text body-5">{esc(interval(rep))}</span></li>')
     chart = f'<ol class="ranks" aria-label="{count_cn(n)}报告的名次区间">{"".join(rows)}</ol>'
     ranks = f"""<section class="block" id="ranks" aria-labelledby="ranks-h">
-  <h2 class="heading-5" id="ranks-h">名次区间</h2>
+  <h2 class="heading-3" id="ranks-h">名次区间</h2>
   <p class="body-3 sum">横条盖住的是这份报告可能的名次范围。最好名次等于 1 加上确定排在它前面的报告数；最差名次等于报告总数 {n} 减去确定排在它后面的报告数。横条越短，名次越确定；两条横条重叠，说明这两份报告分不开。点报告名可以看它的复核页。</p>
   {chart}
 </section>"""
@@ -697,17 +706,17 @@ def rank_page(data):
                 + [num(data.reports[r]["timeliness"]), num(data.reports[r]["writing"])] for r in data.order],
                numeric=(1, 2, 3, 4, 5, 6, 7))
     basis = f"""<section class="block" id="basis" aria-labelledby="basis-h">
-  <h2 class="heading-5" id="basis-h">名次从哪里来</h2>
+  <h2 class="heading-3" id="basis-h">名次从哪里来</h2>
   <p class="body-3 sum">排法按<a href="{data.to_notes}rules.html#_10">规则手册第八节</a>，一步一步来：先按有没有严重问题分档；同一档里比深度净分；深度净分分不开，再比较五个环节的评级；两两比较只用来否决，四次中至少三次相反才改为并列。</p>
   <div class="sub">
-    <h3 class="heading-6">严重问题和深度净分</h3>
+    <h3 class="heading-5">严重问题和深度净分</h3>
     <div class="prose body-3 muted"><p>严重问题即规则手册所说的“硬伤”，有四种：确认编造来源；对题目的直接回答被可靠证据明确否定（计分结果里写作“主要结论与证据相反”）；答非所问；全篇没有可追溯的出处。有严重问题的报告排在所有没有严重问题的报告之后。</p>
     <p>深度净分等于写对的、切题的要点的分数之和，减去写错的扣分。一条要点的分数是层级权重乘以重要性（核心 2，一般 1）；核心内容写错扣 2，一般内容写错扣 1，所引来源不支持主要结论的每处扣 {num(SCORE.UNSUPPORTED_W)}。层级权重事先声明了三种，见下面第二张表。</p></div>
     {t1}
     {tw}
   </div>
   <div class="sub">
-    <h3 class="heading-6">环节评级</h3>
+    <h3 class="heading-5">环节评级</h3>
     <div class="prose body-3 muted"><p>五个环节各评 0、1、2 三档，{count_cn(len(data.ratings), "次")}评级取中位数。环节评级不加总，只在深度净分分不开时比较：一份报告五个环节都不低于另一份、并且至少一个环节更高，才排在前面。{data.timeliness_by}，也是 0 至 2 档，列在表里，不进入名次；写作也只记录，不进入名次。</p>
     <p>第 1.0、1.1 版的计分程序把时效也算进比较；第 1.2 版按规则手册第八节第 3 条，只比五个环节。</p></div>
     {t2}
@@ -722,16 +731,16 @@ def rank_page(data):
             continue
         lis = "".join(f'<li id="pair-{x}-{y}"><p class="who body-3">{x} 排在 {y} 之前</p><p class="body-6">{esc(separated_story(data, x, y))}</p></li>'
                       for x, y in items)
-        groups.append(f'<div class="sub"><h3 class="heading-6">{esc(title)}（{len(items)} 对）</h3><ul class="pairs">{lis}</ul></div>')
+        groups.append(f'<div class="sub"><h3 class="heading-5">{esc(title)}（{len(items)} 对）</h3><ul class="pairs">{lis}</ul></div>')
     tied = [(a, b) for a, b in all_pairs(data) if (a, b) not in data.above and (b, a) not in data.above]
     tied_lis = "".join(f'<li id="pair-{a}-{b}"><p class="who body-3">{a} 和 {b} 分不开</p><p class="body-6">{esc(tied_story(data, a, b))}</p></li>'
                        for a, b in tied)
-    groups.append(f'<div class="sub"><h3 class="heading-6">分不开的对（{len(tied)} 对）</h3><ul class="pairs">{tied_lis}</ul></div>')
+    groups.append(f'<div class="sub"><h3 class="heading-5">分不开的对（{len(tied)} 对）</h3><ul class="pairs">{tied_lis}</ul></div>')
     veto = ("两两比较没有否决任何一对。" if not data.vetoed else
             f"两两比较否决了 {len(data.vetoed)} 对：" + "、".join(f"{x} 和 {y}" for x, y in sorted(data.vetoed)) + "，改为并列。")
     total = len(all_pairs(data))
     pairs = f"""<section class="block" id="pairs" aria-labelledby="pairs-h">
-  <h2 class="heading-5" id="pairs-h">哪些报告分开了</h2>
+  <h2 class="heading-3" id="pairs-h">哪些报告分开了</h2>
   <p class="body-3 sum">{count_cn(n)}报告两两成对，共 {total} 对。分开的有 {len(data.above)} 对，分不开的有 {len(tied)} 对；分不开的两份名次区间重叠。</p>
   <p class="body-3 sum">{esc(veto_rule_text(data))}严重问题分档不能被否决。{esc(veto)}</p>
   {"".join(groups)}
@@ -741,7 +750,7 @@ def rank_page(data):
     disputed = ("没有标为有争议的要点。" if not rs["disputed_points"] else
                 f"有争议的要点有 {len(rs['disputed_points'])} 条（{join_cn(rs['disputed_points'])}），比较一对报告时按对领先一方最不利的标注计分。")
     checks = f"""<section class="block" id="checks" aria-labelledby="checks-h">
-  <h2 class="heading-5" id="checks-h">分开要过两道检查</h2>
+  <h2 class="heading-3" id="checks-h">分开要过两道检查</h2>
   <div class="prose body-3">
     <p>两份报告的深度净分要算“分开”，必须同时过两道检查。</p>
     <p><strong>换一种算分口径。</strong>三种权重各算一遍，都领先才行。</p>
@@ -753,7 +762,7 @@ def rank_page(data):
 </section>"""
 
     materials = sim_materials(data) if data.sim else f"""<section class="block" id="materials" aria-labelledby="materials-h">
-  <h2 class="heading-5" id="materials-h">复核材料</h2>
+  <h2 class="heading-3" id="materials-h">复核材料</h2>
   <p class="body-3 sum">每一个数都能追到评委的输出和计分程序。有异议，先看对应报告的复核页。</p>
   <ul class="links body-3">
     <li>六份报告的复核页：{"、".join(f'<a href="report-{r}.html">{esc(data.name(r))}</a>' for r in data.labels)}</li>
@@ -784,7 +793,7 @@ def sim_materials(data):
     record = (f'<li><a href="{data.review_page}">这次评审的记录</a>：用了哪些厂商和模型、调用了几次，以及每一次调用的提示词和回答原文</li>'
               if data.review_page else f'<li><a href="{data.to_src}calls.jsonl">调用记录文件</a>：每一次调用的提示词和回答原文</li>')
     return f"""<section class="block" id="materials" aria-labelledby="materials-h">
-  <h2 class="heading-5" id="materials-h">复核材料</h2>
+  <h2 class="heading-3" id="materials-h">复核材料</h2>
   <p class="body-3 sum">每一个数都能追到评委的回答和计分程序。有异议，先看对应报告的复核页。</p>
   <ul class="links body-3">
     <li>{count_cn(len(labels))}报告的复核页：{"、".join(f'<a href="report-{r}.html">{esc(data.name(r))}</a>' for r in labels)}</li>
@@ -927,7 +936,7 @@ def problems_section(data, r):
     ]
     summary = " 没有严重问题。" if not probs else f" 有严重问题：{join_cn(probs)}。有严重问题的报告排在所有没有严重问题的报告之后。"
     return f"""<section class="block" id="problems" aria-labelledby="problems-h">
-  <h2 class="heading-5" id="problems-h">有没有严重问题</h2>
+  <h2 class="heading-3" id="problems-h">有没有严重问题</h2>
   <p class="body-3 sum">{esc(data.name(r))}{esc(summary)}规则手册第八节列了四种严重问题（手册里叫“硬伤”），下面逐一列出判定和依据。从第 1.1 版起，第二种只看对题目的直接回答有没有被否定，其他结论写错在深度净分里扣分。</p>
   <ul class="cards grid-2">{"".join(items)}</ul>
 </section>"""
@@ -982,11 +991,11 @@ def claims_section(data, r):
         counts[c["correct"]] = counts.get(c["correct"], 0) + 1
     count_text = "，".join(f"{k} {v} 条" for k, v in counts.items())
     return f"""<section class="block" id="claims" aria-labelledby="claims-h">
-  <h2 class="heading-5" id="claims-h">主要结论的核验</h2>
+  <h2 class="heading-3" id="claims-h">主要结论的核验</h2>
   <p class="body-3 sum">{esc(sim_claims_sum(data, r, claims, count_text)) if data.sim else f"核验评委（{esc(verifier)}）从这份报告抽出 {len(claims)} 条主要结论，逐条打开所引来源核对，记下来源标签和对错标签（{esc(count_text)}）。对错以截至 {esc(data.question['cutoff'])} 已经存在的信息为准。"}</p>
   <p class="body-3 sum">来源标签有六种：支持、部分支持、不支持、失效但有存档、找不到、没有出处。“找不到”经第二次核查确认才算编造。所引来源不支持主要结论的，每处在深度净分里扣 {num(SCORE.UNSUPPORTED_W)}。对错标签有三种：正确、有误、无法判断。</p>
-  <div class="sub"><h3 class="heading-6">{data.verifier_word}的备注</h3><p class="body-6 prose">{esc(data.verify[r]["notes"])}</p></div>
-  <div class="sub"><h3 class="heading-6">时效：{num(tl["score"])} 档</h3><p class="body-6 prose">{esc(tl["reason"])}</p></div>
+  <div class="sub"><h3 class="heading-5">{data.verifier_word}的备注</h3><p class="body-6 prose">{esc(data.verify[r]["notes"])}</p></div>
+  <div class="sub"><h3 class="heading-5">时效：{num(tl["score"])} 档</h3><p class="body-6 prose">{esc(tl["reason"])}</p></div>
   <ol class="cards">{"".join(cards)}</ol>
 </section>"""
 
@@ -1036,7 +1045,7 @@ def points_section(data, r):
              "不计分的要点": "对错无法判断、不切题，或者写的是一条有误要点的反面，这些都不加分也不扣分。"}
     for key, items in groups.items():
         if items:
-            subs.append(f'<div class="sub"><h3 class="heading-6">{key}（{len(items)} 条）</h3><p class="body-6 muted prose">{notes[key]}</p>'
+            subs.append(f'<div class="sub"><h3 class="heading-5">{key}（{len(items)} 条）</h3><p class="body-6 muted prose">{notes[key]}</p>'
                         f'<ul class="cards">{"".join(card(p, sc) for p, sc in items)}</ul></div>')
     agree = sum(1 for p in reached if p["reach"][r] == "符合")
     tot = table(["", *[f"{w}种权重" for w in WEIGHTS]],
@@ -1045,7 +1054,7 @@ def points_section(data, r):
                  ["深度净分"] + [f"<strong>{num(nets[w])}</strong>" for w in WEIGHTS]],
                 numeric=(1, 2, 3))
     return f"""<section class="block" id="points" aria-labelledby="points-h">
-  <h2 class="heading-5" id="points-h">写到的要点</h2>
+  <h2 class="heading-3" id="points-h">写到的要点</h2>
   <p class="body-3 sum">要点池共 {len(data.pool)} 条要点，这份报告写到其中 {len(reached)} 条：说法一致的 {agree} 条，说法相反的 {len(reached) - agree} 条。每条标出深到哪一层（现象、全体、内部联系、本质）、是核心还是一般、对不对、切不切题，以及在三种权重下给这份报告的分数。逐条相加，再减去来源不支持的扣分，就是名次页上的深度净分。</p>
   {tot}
   {"".join(subs)}
@@ -1079,11 +1088,11 @@ def grades_section(data, r):
             f'{not_found_note(data.ratings[key][r]["ratings"][k])}</li>'
             for key, jn, _ in judges)
         final = rep["writing"] if k == "写作" else rep["element_grades"][k]
-        blocks.append(f'<div class="sub" id="grade-{len(blocks) + 1}"><h3 class="heading-6">{esc(name)}：{num(final)} 档</h3>'
+        blocks.append(f'<div class="sub" id="grade-{len(blocks) + 1}"><h3 class="heading-5">{esc(name)}：{num(final)} 档</h3>'
                       f'<ul class="cards grid-2">{cards}</ul></div>')
-    blocks.append(f'<div class="sub"><h3 class="heading-6">时效：{num(rep["timeliness"])} 档</h3><p class="body-6 prose">{"" if data.sim else "核验评委评。"}{esc(tl["reason"])}</p></div>')
+    blocks.append(f'<div class="sub"><h3 class="heading-5">时效：{num(rep["timeliness"])} 档</h3><p class="body-6 prose">{"" if data.sim else "核验评委评。"}{esc(tl["reason"])}</p></div>')
     return f"""<section class="block" id="grades" aria-labelledby="grades-h">
-  <h2 class="heading-5" id="grades-h">环节评级</h2>
+  <h2 class="heading-3" id="grades-h">环节评级</h2>
   <p class="body-3 sum">五个环节由{count_cn(len(judges), "次")}独立的评级各评 0、1、2 三档，每一档都引报告原文为证；用于名次的是{count_cn(len(judges), "次")}的中位数。{data.timeliness_by}，不进入名次。只有深度净分分不开时，才比较五个环节的评级。写作只记录，不进入名次。</p>
   {summary}
   {"".join(blocks)}
@@ -1108,7 +1117,7 @@ def pairwise_section(data, r):
         if lines:
             rows.append(f'<li><p class="who body-3">与<a href="report-{o}.html">{esc(data.name(o))}</a> 比较</p>{"".join(lines)}</li>')
     return f"""<section class="block" id="pairwise" aria-labelledby="pairwise-h">
-  <h2 class="heading-5" id="pairwise-h">两两比较</h2>
+  <h2 class="heading-3" id="pairwise-h">两两比较</h2>
   <p class="body-3 sum">{esc(veto_rule_text(data))}</p>
   <ul class="pairs">{"".join(rows)}</ul>
 </section>"""
@@ -1131,7 +1140,7 @@ def sim_prompts_section(data, r):
     where = (f'<a href="{data.review_page}#calls">这次评审的记录</a>' if data.review_page
              else f'<a href="{data.to_src}calls.jsonl">调用记录文件</a>')
     return f"""<section class="block" id="prompts" aria-labelledby="prompts-h">
-  <h2 class="heading-5" id="prompts-h">评委收到的提示词</h2>
+  <h2 class="heading-3" id="prompts-h">评委收到的提示词</h2>
   <p class="body-3 sum">这一页用到的每一次模型调用，提示词和回答的原文都可以点开看：下面是涉及这份报告的 {len(items)} 次调用。全部调用见{where}。</p>
   <ul class="links body-6">{"".join(items)}</ul>
 </section>"""
@@ -1146,7 +1155,7 @@ def prompts_section(data, r):
         files.append("verify-sonnet-subset.json")
     links = "".join(run_link(data, f) for f in files if f in data.runs)
     return f"""<section class="block" id="prompts" aria-labelledby="prompts-h">
-  <h2 class="heading-5" id="prompts-h">评委收到的提示词</h2>
+  <h2 class="heading-3" id="prompts-h">评委收到的提示词</h2>
   <p class="body-3 sum">这一页用到的每一次评委运行，评委收到的提示词原文都存了档。全部清单和存档说明见<a href="{data.to_src}judges/README.md">评委提示词存档</a>。</p>
   <ul class="links body-6">{links}</ul>
 </section>"""
@@ -1169,11 +1178,11 @@ def review_page(data, r):
                    [("problems", "严重问题"), ("claims", "主要结论"), ("points", "写到的要点"), ("grades", "环节评级"),
                     ("pairwise", "两两比较"), ("prompts", "提示词")])
     summary = f"""<section class="block" id="summary" aria-labelledby="summary-h">
-  <h2 class="heading-5" id="summary-h">名次从哪里来</h2>
+  <h2 class="heading-3" id="summary-h">名次从哪里来</h2>
   <p class="body-3 sum">与另外{count_cn(len(data.labels) - 1)}报告逐一相比，下面写明先后是按哪一步定的。</p>
   {stats}
   <nav aria-label="本页各节"><ul class="pages">{jump}</ul></nav>
-  <div class="sub"><h3 class="heading-6">与其他报告的先后</h3>{relation_items(data, r)}</div>
+  <div class="sub"><h3 class="heading-5">与其他报告的先后</h3>{relation_items(data, r)}</div>
 </section>"""
     body = "\n".join([head, '<main id="main"><div class="wrap">', summary, problems_section(data, r), claims_section(data, r),
                       points_section(data, r), grades_section(data, r), pairwise_section(data, r), prompts_section(data, r),
@@ -1262,11 +1271,11 @@ def points_page(data):
                     num(len(reached) - agree), num(core)])
     t_reports = table(["报告", "产品", "写到", "说法一致", "说法相反", "其中写对的核心要点"], per, numeric=(2, 3, 4, 5))
     summary = f"""<section class="block" id="summary" aria-labelledby="summary-h">
-  <h2 class="heading-5" id="summary-h">要点池一览</h2>
+  <h2 class="heading-3" id="summary-h">要点池一览</h2>
   <p class="body-3 sum">层级的定义取自<a href="{data.to_notes}plan-stage4-rubric.html#_1">评审细则</a>第一节。抽象的套话不算本质；一条要点只有说出了具体的性质或联系，才能定为内部联系或本质。</p>
   {t_levels}
   <p class="body-3 sum" style="margin-top: 16px;">对错：{esc("，".join(f"{k} {v} 条" for k, v in correct.items()))}；不切题的 {irrelevant} 条。只有正确、切题的要点写对了才加分。</p>
-  <div class="sub"><h3 class="heading-6">每份报告写到多少</h3>{t_reports}
+  <div class="sub"><h3 class="heading-5">每份报告写到多少</h3>{t_reports}
   <p class="legend caption-2">“说法相反”指报告写了与这条要点相反的说法。{n}报告都没有写到的有 {len(nobody)} 条（{esc(join_cn(nobody))}），它们不参与重抽样。{"" if data.sim else "试评还用了四份为检验评法故意改动过的扰动版本，它们不进名次，这里不列出。"}</p></div>
 </section>"""
 
@@ -1287,7 +1296,7 @@ def points_page(data):
             f'<td data-label="对错">{esc(p["correct"])}</td><td data-label="切题">{"是" if p.get("relevant", True) else "否"}</td>'
             f'<td data-label="写到的报告" class="who"><span class="chips">{who}</span></td></tr>')
     listing = f"""<section class="block" id="all" aria-labelledby="all-h">
-  <h2 class="heading-5" id="all-h">全部要点</h2>
+  <h2 class="heading-3" id="all-h">全部要点</h2>
   <p class="body-3 sum">按要点池的编号排列。点开“依据和出处”可以看判定对错的依据，以及这条要点由哪些条目合并而来。</p>
   <div class="pool-table"><table>
     <thead><tr><th scope="col">编号</th><th scope="col">要点</th><th scope="col">层级</th><th scope="col">重要性</th><th scope="col">对错</th><th scope="col">切题</th><th scope="col">写到的报告</th></tr></thead>

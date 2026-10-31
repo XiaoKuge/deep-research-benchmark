@@ -9,100 +9,106 @@
 <link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  /* 样式乙：浅灰的布纹纸面（纸纹图片在页面里另外指定，因为路径随页面深浅不同），Inter 字体，白色玻璃卡片，玫红作强调色。
+     字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
   :root {
-    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
-    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
-    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --paper: #ececeb; --raised: rgba(255, 255, 255, .62); --surface: rgba(255, 255, 255, .45); --glass-line: rgba(255, 255, 255, .86); --line: rgba(34, 34, 34, .12);
+    --ink: #202020; --ink-2: #4a4a4a; --ink-3: #78777b;
+    --accent: #a2264a; --rose: #ad314d; --ok: #2f7a4f; --warn: #a8501f; --bad: #b42318;
+    --shadow: 0 1px 2px rgba(50, 28, 39, .08), 0 12px 32px rgba(50, 28, 39, .06);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
-      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
-      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
-      color-scheme: dark;
-    }
-  }
-  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
-  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
-  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
-  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
-  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
-  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .heading-1 { font-size: 48px; line-height: 1.22; font-weight: 400; letter-spacing: .01em; }
+  .heading-3 { font-size: 36px; line-height: 1.28; font-weight: 400; letter-spacing: .01em; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 500; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 500; }
+  .title-3 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-4 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-3 { font-size: 18px; line-height: 32px; font-weight: 400; }
+  .body-5 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-6 { font-size: 16px; line-height: 28px; font-weight: 400; }
   .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-2 { font-size: 14px; line-height: 24px; font-weight: 400; }
   .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
   .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+  @media (max-width: 767px) {
+    .heading-1 { font-size: 30px; }
+    .heading-3 { font-size: 24px; }
+    .body-3 { font-size: 16px; line-height: 28px; }
+  }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
-    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--paper) center top / cover fixed; }
+  body { margin: 0; background: transparent; color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 28px;
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; overflow-wrap: anywhere; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: rgba(240, 240, 238, .5); pointer-events: none; }
+  ::selection { background: rgba(173, 49, 77, .2); }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { text-wrap: balance; }
   p, li, td, blockquote { text-wrap: pretty; }
-  a { color: var(--accent); text-underline-offset: 4px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
-  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
-  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  a { color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1336px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 48px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
   .skip:focus { top: 16px; }
   .muted { color: var(--ink-2); }
   .faint { color: var(--ink-3); }
 
-  header.top { padding-block: 32px 24px; }
-  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
-  .back:hover { color: var(--ink); text-decoration: underline; }
-  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
-  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+  /* 页首 */
+  header.top { padding-bottom: 48px; }
+  header.top .wrap > .back { display: flex; align-items: center; min-height: 80px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: .02em; }
+  header.top .wrap > .back:hover { color: var(--accent); }
+  .eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 48px; margin-bottom: 16px; color: var(--rose); letter-spacing: 0.08em; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--rose); flex: none; }
+  .lede { max-width: 860px; margin-top: 24px; color: var(--ink-2); }
 
-  /* 演示声明：每页都有，名次页上最醒目 */
-  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
-    border: 1px solid var(--warn); background: var(--surface); }
-  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
-  .demo strong { display: block; font-weight: 600; color: var(--ink); }
-  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+  /* 演示声明：每页都有，玫红的玻璃卡片 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 960px; margin-top: 32px; padding: 24px 32px; border-radius: 16px;
+    color: rgba(255, 255, 255, .92); background: var(--rose) center / cover no-repeat; border: 1px solid rgba(255, 255, 255, .36);
+    box-shadow: 0 2px 4px rgba(50, 28, 39, .30), inset 0 1px 0 rgba(255, 255, 255, .24); text-shadow: 0 1px 2px rgba(60, 21, 35, .16); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: #fff; margin-top: 4px; }
+  .demo strong { display: block; font-weight: 600; color: #fff; }
+  .demo p + p { margin-top: 8px; color: rgba(255, 255, 255, .88); }
+  .demo a { color: #fff; text-decoration-color: rgba(255, 255, 255, .6); }
 
   /* 页面之间的跳转 */
-  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
-  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-    background: var(--raised); transition: background-color 300ms var(--ease); }
-  .pages a:hover { background: var(--surface); }
-  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 8px 16px; border-radius: 9999px; color: var(--ink); text-decoration: none;
+    background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); transition: transform 300ms var(--ease), background-color 300ms var(--ease); }
+  .pages a:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .86); }
+  .pages a[aria-current="page"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 
   main { padding-bottom: 96px; }
-  .block { padding-block: 48px; border-top: 1px solid var(--line); }
-  .block > h2 { margin-bottom: 8px; }
-  .block > .sum { max-width: 760px; color: var(--ink-2); }
-  .block > .sum + .sum { margin-top: 8px; }
-  .sub { margin-top: 32px; }
-  .sub > h3 { margin-bottom: 8px; }
-  .prose { max-width: 760px; }
-  .prose p + p { margin-top: 8px; }
-  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
-  .prose li + li { margin-top: 4px; }
+  .block { padding-block: 64px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 16px; }
+  .block > .sum { max-width: 860px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 12px; }
+  .sub { margin-top: 40px; }
+  .sub > h3 { margin-bottom: 12px; }
+  .prose { max-width: 860px; }
+  .prose p + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 12px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
 
   /* 名次区间横条 */
-  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .ranks { margin-top: 32px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .rank-row { display: grid; grid-template-columns: 192px minmax(0, 1fr) 128px; gap: 24px; align-items: center; padding: 12px 0; }
   .rank-axis { color: var(--ink-3); padding: 0; }
-  .rank-who a { color: var(--ink); text-decoration: none; }
-  .rank-who a:hover { text-decoration: underline; }
+  .rank-who a { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 500; }
+  .rank-who a:hover { color: var(--accent); }
   .rank-who .faint { display: block; }
-  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 32px; }
   .track .slot { border-left: 1px solid var(--line); }
   .track .slot:last-child { border-right: 1px solid var(--line); }
-  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .track .bar { position: absolute; top: 4px; height: 24px; border-radius: 9999px; background: var(--rose); box-shadow: 0 2px 4px rgba(50, 28, 39, .25), inset 0 1px 0 rgba(255, 255, 255, .3); }
   .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .axis-labels span { text-align: center; }
-  .rank-text { white-space: nowrap; }
+  .rank-text { white-space: nowrap; font-weight: 500; }
   @media (max-width: 639px) {
     .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
     .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
@@ -111,33 +117,34 @@
   }
 
   /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
-  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
-  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
-  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; line-height: 24px; background: var(--raised); }
+  th, td { border-bottom: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-weight: 600; color: var(--ink-2); background: rgba(255, 255, 255, .5); white-space: nowrap; }
   td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
   td a { white-space: nowrap; }
-  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+  .legend { margin-top: 12px; color: var(--ink-3); max-width: 860px; }
 
   /* 分开的对 */
-  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .pairs li { padding: 16px 24px; border-radius: 16px; background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pairs .who { font-weight: 600; }
   .pairs p + p { margin-top: 4px; color: var(--ink-2); }
 
   /* 卡片：主要结论、评级、比较 */
-  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
-  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
-  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cards { margin-top: 24px; display: grid; gap: 16px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   .card-head .title-3 { margin-right: 4px; }
-  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
-  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card h4 { margin: 16px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; }
+  .card blockquote { margin: 0; padding-left: 16px; border-left: 2px solid var(--rose); color: var(--ink-2); }
   .card p + p { margin-top: 4px; }
-  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
   @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
 
   /* 标签：文字用正文颜色，前面的小圆点表示状态 */
-  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .5); color: var(--ink); white-space: nowrap; }
   .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
   .tag.ok::before { background: var(--ok); }
   .tag.warn::before { background: var(--warn); }
@@ -145,25 +152,26 @@
   .tag.plain::before { display: none; }
 
   /* 数字小格 */
-  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
-  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+  .stats { margin-top: 32px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .stat { padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .stat .heading-6 { margin-top: 8px; font-size: 24px; line-height: 32px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 8px; color: var(--ink-2); }
 
   /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
-  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table { margin-top: 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
   .pool-table td.content { min-width: 320px; }
   .pool-table td.content p + details { margin-top: 4px; }
   .pool-table td.who { min-width: 160px; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
-  a.tag:hover { background: var(--surface); }
-  .pool-table tr:target td { background: var(--surface); }
+  a.tag:hover { background: rgba(255, 255, 255, .86); }
+  .pool-table tr:target td { background: rgba(173, 49, 77, .08); }
   @media (max-width: 767px) {
+    .pool-table { border: 0; border-radius: 0; box-shadow: none; }
     .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
     .pool-table thead { display: none; }
-    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table tr { border: 1px solid var(--glass-line); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px; background: var(--raised); }
     .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
     .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
     .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
@@ -173,14 +181,14 @@
   summary { cursor: pointer; color: var(--ink-2); }
   details[open] summary { margin-bottom: 4px; }
 
-  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 860px; }
   .links li { padding-left: 16px; position: relative; }
-  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+  .links li::before { content: ""; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 9999px; background: var(--rose); }
 
-  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer { border-top: 1px solid var(--line); padding-block: 40px; color: var(--ink-3); }
   footer a { color: var(--ink-2); }
   code { font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pages a:hover { transform: none; } }
 
   /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
   .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
@@ -201,6 +209,7 @@
   .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
   .alert strong { color: var(--bad); }
 </style>
+<style>html { background-image: url("../../../../assets/paper.webp"); }</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -208,19 +217,19 @@
   <div class="wrap">
     <a class="back caption-1" href="../index.html">← 回到这次评审</a>
     <p class="eyebrow caption-1">模拟评审 试评重评 1 · 第 26 次调用</p>
-    <h1 class="heading-3">评审 · 断言核验：报告 E，只读网页，评委 2</h1>
+    <h1 class="heading-1">评审 · 断言核验：报告 E，只读网页，评委 2</h1>
     <p class="body-3 lede">Anthropic（claude），Claude Opus 5.5，只读网页，成功。</p>
     <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
   </div>
 </header>
 <main id="main"><div class="wrap">
 <section class="block" id="info" aria-labelledby="info-h">
-  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <h2 class="heading-3" id="info-h">这次调用</h2>
   <p class="body-3 sum">模拟评审 试评重评 1的第 26 次调用，共 54 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
   <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-断言核验：报告 E，只读网页，评委 2</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">Anthropic（claude）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">Claude Opus 5.5（<code>claude-opus-5-5</code>）</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6"><code>[&quot;WebFetch&quot;, &quot;WebSearch&quot;]</code></dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只读网页</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 20:29:09.302（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 20:35:07.269（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">357.935 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>2c46f521c217f6a7c5a9648752776eb101e5c90d47289ad873d13c572e0bedf7</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>8598a17ccbc227b5432e34e7539237bf87d1ba43665a1155a49bb12e4987992a</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/Users/zonghuanwu/.local/bin/claude -p --output-format stream-json --verbose --no-session-persistence --safe-mode --strict-mcp-config --disable-slash-commands --permission-mode dontAsk --tools WebSearch,WebFetch --allowedTools WebSearch,WebFetch</code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/calls.jsonl">调用记录文件</a>的第 26 行，记录里的序号是 26</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="25.html">上一次调用</a></li><li><a class="caption-1" href="27.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
 </section>
 <section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
-  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <h2 class="heading-3" id="prompt-text-h">提示词全文</h2>
   <p class="body-3 sum">共 9596 字，从标准输入交给命令行，一字不改。</p>
   <details><summary class="caption-2">提示词共 9596 字，点开看全文</summary><pre class="raw" id="prompt">
 你在一项深度研究报告评测的模拟评审中担任核验员，负责&quot;断言核验&quot;。
@@ -493,13 +502,13 @@
 </pre></details>
 </section>
 <section class="block" id="answer-text" aria-labelledby="answer-text-h">
-  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <h2 class="heading-3" id="answer-text-h">回答全文</h2>
   <p class="body-3 sum">共 5479 字，一字不改。</p>
   <details><summary class="caption-2">回答共 5479 字，点开看全文</summary><pre class="raw" id="answer">
 {&quot;claims&quot;:[{&quot;id&quot;:&quot;c5&quot;,&quot;source_label&quot;:&quot;部分支持&quot;,&quot;source_note&quot;:&quot;页面可打开（作者 Peter Yang，2025-03-12 发布，2025-04-04 更新）。原文称 Deep Research「is ChatGPT&#x27;s best product」「outperforms similar offerings from Grok, Perplexity, and Gemini」，列在「Deep research on a market or technical topic」条目下。来源支持总体优于三家，但没有单独比较技术研究。这是作者的个人使用意见，没有写明标准、样本或任务，称为「第三方测评」说重了。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;这条意见确实存在，但写于截止时间约一年前，不足以支撑「目前」。ChatGPT 深度研究到 2026-02-10 才换用 GPT-5.2（https://winbuzzer.com/2026/02/11/chatgpt-deep-research-gpt-52-upgrade-xcxwbn/）。未查到截止时间前按技术研究比较这四家的可靠评测。ResearchRubrics 摘要只说 Gemini 和 OpenAI 的 DR 平均符合率都低于 68%，不涉及 Grok、Perplexity，页面也未标日期（https://proceedings.iclr.cc/paper_files/paper/2026/hash/92808d4b229345ae40fce84b4bf038d0-Abstract-Conference.html）。&quot;},{&quot;id&quot;:&quot;c6&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;页面可打开。原文有「OpenAI is also not entirely accurate, but it is vastly more reliable for now」，并称专业、高风险研究中 OpenAI 更深入、通常更准确，技术和学术工作可能值得付费。报告略去了「for now」，也略去了来源的提醒：两者都需人工核实，法律类报告不建议依赖任何一个。时间存疑：现存页面标注发布于 2026-04-13，晚于截止时间。Wayback 接口显示有 2026-01-13 的快照，但工具无法读取 web.archive.org，未能比对当时的文字。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;只在归因层面判为正确：该文确有此评价，且报告生成于 2026-03-03 时已引用此文，说明相关内容早于截止时间。实质比较未获独立证实：「显著更可靠」在该文中没有量化数据。检索结果中的二手资料提到 Humanity&#x27;s Last Exam 上 OpenAI 26.6%、Perplexity 21.1%，方向一致，但这是准确率，不等于可靠性，且未见独立复现。&quot;},{&quot;id&quot;:&quot;c7&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;原文：「now ChatGPT Plus users get 10 Deep Research queries per month (and free users get 2)」。来源确实这样写，但数字已过时。页面日期问题同 c6。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;OpenAI 2025-04-24 更新后，Plus 每月 25 次（10 次完整版加 15 次轻量版），Free 每月 5 次轻量版，Pro 250 次（https://www.eweek.com/news/openai-o4-mini-lightweight-reasoning/ ，https://en.wikipedia.org/wiki/ChatGPT_Deep_Research）。「免费约 2 次」与此不符，「Plus 约 10 次」漏算了轻量版。另据第三方对 FAQ 存档的比对，2025-08 起 OpenAI 不再公布具体次数，改为按套餐而异（https://whizi.io/resources/chatgpt-deep-research-limit/ ，该页 2026-10 更新，所述存档早于截止时间）。help.openai.com 和 openai.com 均返回 403，未能直接核对官方页面。&quot;},{&quot;id&quot;:&quot;c10&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;官方博客（2025-02-14）原文：「performs dozens of searches, reads hundreds of sources」，并「synthesizes all the research into a clear and comprehensive report」。「结构化」是报告的概括，与原意相符。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;结论说的是官方说法，官方博客即一手依据：https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research 。这是产品自述，不代表每次任务的实测次数。&quot;},{&quot;id&quot;:&quot;c11&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;官方博客原文：「attains a 21.1% accuracy score on Humanity&#x27;s Last Exam」，「significantly higher than Gemini Thinking, o3-mini, o1, DeepSeek-R1」及其他模型。博客未给出这些对比模型的分数。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;官方博客如此发布，检索到的二手报道沿用同一数字（https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research）。但这是厂商自报，未查到独立复现。二手资料还提到它低于 OpenAI Deep Research 的 26.6%，这条结论没有提及。&quot;},{&quot;id&quot;:&quot;c19&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;原网址 PDF 可下载，但读取工具提取不出文字，两个镜像同样如此。内容依据是搜索索引对同一文件的文字摘录，不是逐页通读，以下为摘录的转述：Kimi k1.5 在长文本上比短文本更突出，提取准确、维度更全面；在分类与关联挖掘任务中表现最为出色，能从多维度挖掘关联性。该文件是何静（北航、清华沈阳团队）的讲义，「行业评测」的称呼不够准确。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;归因成立，依据同上述讲义摘录。这只是 2025 年初旧模型的小样本测试，据摘录讲义自注结果受样本、环境、提示词影响，仅供参考。结论针对 Kimi k1.5 模型，不是 Kimi 的深度研究产品，也不能代表截止时间时的表现。&quot;},{&quot;id&quot;:&quot;c20&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;原网址 302 跳转到 https://www.zhiding.cn/zd-ai-lab/2025/0723/3169361.shtml （2025-07-23，Kimi K2 技术报告解读）。直接读取时中文乱码，只能看出一句以「Kimi」开头、句式相符的文字。站内限定检索对该页的索引显示：Kimi 的深度研究功能已能高质量地检索、研究，并通过精美的前端页面呈现成果。这是作者的一句评价，不是测试结果。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;归因成立。Kimi 官方页面也说明深度研究可生成可交互、可分享的可视化报告（https://www.kimi.com/zh-cn/features/deep-research），但属厂商自述。「高质量」「精美」是主观评价，未查到独立评测。&quot;},{&quot;id&quot;:&quot;c26&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;PDF 读取限制同 c19。摘录显示：讲义称 DeepSeek R1 与 o3-mini 的数据分析能力相当，且领先其他两个模型；R1 分析逻辑更严谨，o3-mini 更高效；Titanic 数据测试中 R1 察觉了数据异常，o3-mini 没有。报告原文另加的「适合数据相关性挖掘」超出了来源，摘录中另有对 R1 数据挖掘深度偏浅的评价，但出自另一测试场景。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;归因成立，依据同上述讲义摘录。这是作者团队 2025 年初针对当时模型版本的少量测试，讲义自注仅供参考，不能推广为两个模型的稳定优劣。&quot;},{&quot;id&quot;:&quot;c29&quot;,&quot;source_label&quot;:&quot;不支持&quot;,&quot;source_note&quot;:&quot;PDF 无法通读，以下判断有此局限。多次定向检索，摘录中只见 R1 和 Kimi 各自的测试表现，未见推荐二者组合，也未见组合优于单一模型的内容。第三方转载的目录列有「1.7 数据可视化与多模型协作」，其正文未能读到，不能完全排除相关内容。时间上，讲义发布于 2025-02（https://www.4mf.net/2053.html），Kimi-Researcher 到 2025-06 才开启内测（https://ai-bot.cn/ai-tutorials-2025062602/），讲义不可能推荐这项「Kimi 深度研究」功能；讲义里的 DeepResearch 是团队自研软件。这一组合更像报告自己的推断。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;检索「DeepSeek R1 + Kimi 深度研究」组合，只得到规格和价格对比页，没有找到机构或实践者的此类推荐，也没有组合效果优于单一模型的数据。「部分机构和实践者」的说法范围太宽，查不到不足以证伪。&quot;},{&quot;id&quot;:&quot;c30&quot;,&quot;source_label&quot;:&quot;部分支持&quot;,&quot;source_note&quot;:&quot;来源有：Claude 适合「Long-form writing, coding, ethical content」，「ideal for writing contracts, long reports, and debugging code safely」，「Focuses on safe and responsible outputs」。没有提到代码审阅，最接近的是调试。企业用途只有 Business 套餐和 Rakuten 案例，不等于「企业助手」的评价，也没有「稳重」的说法。「多方评价」实际只对应这一篇未标日期的公司博客。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;把握一般。检索到的多篇评测大体认可 Claude 擅长长篇写作和代码审阅（如 https://www.orcarouter.ai/blog/claude-vs-chatgpt ，https://www.joinleland.com/library/a/claude-vs-chatgpt），但多为营销性质的博客，部分日期不明。合约写作和企业安全两点未查到独立评测，只有所引来源和产品定位，也未见相反证据。&quot;},{&quot;id&quot;:&quot;c31&quot;,&quot;source_label&quot;:&quot;部分支持&quot;,&quot;source_note&quot;:&quot;PDF 读取限制同 c19，这条受影响最大。关键句在一次摘录中为：「综合来看，Open AI o3mini响应最快效率最高，但在数据集成维度上稍显不足，同时与Claude 3.5 sonnet所输出的表格更为工整、简洁」。另一次摘录多出「相比，后者」，文字不一致。按前一种文字，意思是 o3-mini 与 Claude 的表格都更工整，不能说 Claude 优于 o3；按后一种文字，则是 Claude 优于 o3-mini。对象也是 o3-mini 而非 o3。优于国产模型未见明确表述：摘录称 R1 与 Claude 都能完成文件读取、表格清晰，Kimi k1.5 的文件数据提取有明显空缺。「部分机构」实际只见这一份讲义。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;决定对错的那句原文有两种文字，无法直接读 PDF 确认，所以不判。未查到其他机构的同类对比。即使按有利的读法，也只是 2025 年初旧模型的小样本主观测评。&quot;}]}</pre></details>
 </section>
 <section class="block" id="output" aria-labelledby="output-h">
-  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <h2 class="heading-3" id="output-h">命令行的原始输出</h2>
   <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
   <details><summary class="caption-2">标准输出原文，共 401415 字</summary><pre class="raw" id="raw-output">
 {&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;init&quot;,&quot;cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpd02aahz6/work&quot;,&quot;session_id&quot;:&quot;0679c43a-d027-402a-8072-a222c1124f67&quot;,&quot;tools&quot;:[&quot;WebFetch&quot;,&quot;WebSearch&quot;],&quot;mcp_servers&quot;:[],&quot;model&quot;:&quot;claude-opus-5-5&quot;,&quot;permissionMode&quot;:&quot;dontAsk&quot;,&quot;slash_commands&quot;:[],&quot;apiKeySource&quot;:&quot;none&quot;,&quot;claude_code_version&quot;:&quot;2.1.314&quot;,&quot;output_style&quot;:&quot;default&quot;,&quot;agents&quot;:[&quot;claude&quot;,&quot;Explore&quot;,&quot;general-purpose&quot;,&quot;Plan&quot;],&quot;skills&quot;:[],&quot;plugins&quot;:[{&quot;name&quot;:&quot;pyright-lsp&quot;,&quot;path&quot;:&quot;/Users/zonghuanwu/.claude/plugins/cache/claude-plugins-official/pyright-lsp/1.0.0&quot;,&quot;source&quot;:&quot;pyright-lsp@claude-plugins-official&quot;,&quot;version&quot;:&quot;1.0.0&quot;},{&quot;name&quot;:&quot;cc-plugin-agents-md&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-agents-md@builtin&quot;},{&quot;name&quot;:&quot;cc-plugin-telemetry&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-telemetry@builtin&quot;},{&quot;name&quot;:&quot;cc-plugin-plugin-authoring&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-plugin-authoring@builtin&quot;}],&quot;capabilities&quot;:[&quot;interrupt_receipt_v1&quot;,&quot;interrupt_cancel_queued_v1&quot;,&quot;interrupt_send_now_v1&quot;,&quot;interrupt_requeue_taken_v1&quot;,&quot;msg_lifecycle_v1&quot;,&quot;request_marker_lists_v1&quot;,&quot;ask_user_question_unanswered_v1&quot;,&quot;lifecycle_wakeup_source_v1&quot;,&quot;sdk_mcp_tools_list_changed&quot;,&quot;sdk_mcp_manifests&quot;,&quot;mcp_read_resource_v1&quot;,&quot;mcp_tool_ui_meta_v1&quot;,&quot;ui_surface_v1&quot;,&quot;mcp_call_result_not_for_model_v1&quot;],&quot;analytics_disabled&quot;:false,&quot;product_feedback_disabled&quot;:false,&quot;uuid&quot;:&quot;ffdff98a-1b66-408d-be11-42d36c268789&quot;,&quot;original_cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpd02aahz6/work&quot;,&quot;additional_directories&quot;:[],&quot;messaging_socket_path&quot;:&quot;/tmp/cc-socks/16654.sock&quot;,&quot;fast_mode_state&quot;:&quot;off&quot;,&quot;fast_mode_disabled_reason&quot;:&quot;sdk_opt_in_required&quot;,&quot;per_turn_effort_active&quot;:true,&quot;view_mode&quot;:&quot;default&quot;}

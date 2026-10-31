@@ -4,59 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DeepResearch-9K 精读</title>
-<style>
-  :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
-    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
-    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
-  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
-  a{color:var(--accent2)} a:hover{color:#fff}
-  .back{font-size:13px;text-decoration:none;color:var(--dim)}
-  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
-  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
-  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
-  .meta b{color:var(--dim);font-weight:500}
-  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
-  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
-  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
-  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
-  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
-  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
-  p{margin:10px 0}
-  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
-  strong{color:#fff;font-weight:620}
-  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
-    border-radius:10px;padding:12px 18px;margin:20px 0}
-  .lead li{margin:6px 0}
-  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
-  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
-    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
-  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
-  .tbl{overflow-x:auto;margin:12px 0}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
-  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
-  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
-  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
-  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
-  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
-  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
-  dl.gl dt{color:var(--accent2);font-weight:600}
-  dl.gl dd{margin:0;color:#cfd5df}
-  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
-  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
-  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
-  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../site/doc.css">
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="../papers.html">← 文献索引</a>
+<nav class="docnav"><a class="back" href="../papers.html">← 文献索引</a><a href="../site/index.html">资料站首页</a></nav>
 <header>
   <h1>DeepResearch-9K 精读：一座"谜题工厂"，和它没人检查的出厂质量</h1>
   <p class="dek">9,000 道合成的多跳搜索题，主要用来训练，顺带当考题</p>
@@ -71,7 +26,7 @@
   </div>
 </header>
 <!-- errata-start -->
-<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 7 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>基本信息"GitHub（训练框架 Apache-2.0）"<br><span class="note">应改为：</span>〔更正〕仓库顶层没有许可证；Apache-2.0 只在 <code>DeepResearch-R1/</code> 子目录下，继承自 verl 框架 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 4 节"训练时的奖励：也是 DeepSeek-V3 给的"；第 7.5 节把"训练时给奖励"列为 DeepSeek-V3 的六个角色之一<br><span class="note">应改为：</span>〔更正〕注明"论文如此说，代码不同"：公开代码对本数据集用的是精确匹配奖励 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 2 节"论文怎么说 / 脚本里实际是什么"对照表<br><span class="note">应改为：</span>〔补充〕漏了两级兜底路径：重试失败后改用简化提示，最后一级题目直接写成"Search for specific details about …"，答案取原数据集的答案，两级都不经过质检和去重 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.4 节只提到 BrowseComp-Plus 表 4 中的 24.94% 和 22.50%<br><span class="note">应改为：</span>〔补充〕同表下一行的准确率是 23.73%，恰为本文 L3 的教师正确率，但可由 712/3,000 算出，可能纯属巧合；另可补充：图 4 中 7 个数字不能写成"答对题数除以 1,774" <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 0 节"由 DeepSeek-V3 改写成 L1/L2/L3"<br><span class="note">应改为：</span>〔更正〕这是推断，不是原文：论文只明确说抽实体用 DeepSeek-V3；另外论文对"DeepSeek-V3"引用了两篇不同的文献（[35] 和 [36]） <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 3 节"标题叫'Benchmark Dataset'，但实际上主要是训练数据"<br><span class="note">应改为：</span>〔更正〕就设计重心而言成立，但论文第 1、3、4.2、4.3、6 节有明确的评测声称，应当按评测基准审视 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"SIGIR 2026 短文（6 页）"<br><span class="note">应改为：</span>〔更正〕"6 页"与 arXiv 备注一致，但 PDF 含参考文献共 8 页；"短文"在论文中没有找到依据；不影响结论 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li></ol></section>
+<section class="lead" style="border-left-color:#a8501f"><p><strong>勘误（2026-10-29，第二阶段核对，共 7 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>基本信息"GitHub（训练框架 Apache-2.0）"<br><span class="note">应改为：</span>〔更正〕仓库顶层没有许可证；Apache-2.0 只在 <code>DeepResearch-R1/</code> 子目录下，继承自 verl 框架 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 4 节"训练时的奖励：也是 DeepSeek-V3 给的"；第 7.5 节把"训练时给奖励"列为 DeepSeek-V3 的六个角色之一<br><span class="note">应改为：</span>〔更正〕注明"论文如此说，代码不同"：公开代码对本数据集用的是精确匹配奖励 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 2 节"论文怎么说 / 脚本里实际是什么"对照表<br><span class="note">应改为：</span>〔补充〕漏了两级兜底路径：重试失败后改用简化提示，最后一级题目直接写成"Search for specific details about …"，答案取原数据集的答案，两级都不经过质检和去重 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.4 节只提到 BrowseComp-Plus 表 4 中的 24.94% 和 22.50%<br><span class="note">应改为：</span>〔补充〕同表下一行的准确率是 23.73%，恰为本文 L3 的教师正确率，但可由 712/3,000 算出，可能纯属巧合；另可补充：图 4 中 7 个数字不能写成"答对题数除以 1,774" <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 0 节"由 DeepSeek-V3 改写成 L1/L2/L3"<br><span class="note">应改为：</span>〔更正〕这是推断，不是原文：论文只明确说抽实体用 DeepSeek-V3；另外论文对"DeepSeek-V3"引用了两篇不同的文献（[35] 和 [36]） <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 3 节"标题叫'Benchmark Dataset'，但实际上主要是训练数据"<br><span class="note">应改为：</span>〔更正〕就设计重心而言成立，但论文第 1、3、4.2、4.3、6 节有明确的评测声称，应当按评测基准审视 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"SIGIR 2026 短文（6 页）"<br><span class="note">应改为：</span>〔更正〕"6 页"与 arXiv 备注一致，但 PDF 含参考文献共 8 页；"短文"在论文中没有找到依据；不影响结论 <a href="record-2603.01152_DeepResearch-9K.html" target="_blank">依据</a></li></ol></section>
 <!-- errata-end -->
 
 <div class="aside"><strong>关于例题：</strong>这份数据是明文公开的，没有加密，也没有 canary 标记。本文的数字是把两个 parquet 文件（共 12,974 行）全部读出来统计的。引用的题目有两类：论文图 1 的例题，以及我从公开数据里随机抽的样本。</div>

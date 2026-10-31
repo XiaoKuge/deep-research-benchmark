@@ -9,100 +9,106 @@
 <link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  /* 样式乙：浅灰的布纹纸面（纸纹图片在页面里另外指定，因为路径随页面深浅不同），Inter 字体，白色玻璃卡片，玫红作强调色。
+     字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
   :root {
-    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
-    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
-    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --paper: #ececeb; --raised: rgba(255, 255, 255, .62); --surface: rgba(255, 255, 255, .45); --glass-line: rgba(255, 255, 255, .86); --line: rgba(34, 34, 34, .12);
+    --ink: #202020; --ink-2: #4a4a4a; --ink-3: #78777b;
+    --accent: #a2264a; --rose: #ad314d; --ok: #2f7a4f; --warn: #a8501f; --bad: #b42318;
+    --shadow: 0 1px 2px rgba(50, 28, 39, .08), 0 12px 32px rgba(50, 28, 39, .06);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
-      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
-      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
-      color-scheme: dark;
-    }
-  }
-  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
-  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
-  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
-  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
-  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
-  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .heading-1 { font-size: 48px; line-height: 1.22; font-weight: 400; letter-spacing: .01em; }
+  .heading-3 { font-size: 36px; line-height: 1.28; font-weight: 400; letter-spacing: .01em; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 500; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 500; }
+  .title-3 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-4 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-3 { font-size: 18px; line-height: 32px; font-weight: 400; }
+  .body-5 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-6 { font-size: 16px; line-height: 28px; font-weight: 400; }
   .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-2 { font-size: 14px; line-height: 24px; font-weight: 400; }
   .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
   .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+  @media (max-width: 767px) {
+    .heading-1 { font-size: 30px; }
+    .heading-3 { font-size: 24px; }
+    .body-3 { font-size: 16px; line-height: 28px; }
+  }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
-    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--paper) center top / cover fixed; }
+  body { margin: 0; background: transparent; color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 28px;
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; overflow-wrap: anywhere; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: rgba(240, 240, 238, .5); pointer-events: none; }
+  ::selection { background: rgba(173, 49, 77, .2); }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { text-wrap: balance; }
   p, li, td, blockquote { text-wrap: pretty; }
-  a { color: var(--accent); text-underline-offset: 4px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
-  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
-  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  a { color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1336px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 48px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
   .skip:focus { top: 16px; }
   .muted { color: var(--ink-2); }
   .faint { color: var(--ink-3); }
 
-  header.top { padding-block: 32px 24px; }
-  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
-  .back:hover { color: var(--ink); text-decoration: underline; }
-  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
-  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+  /* 页首 */
+  header.top { padding-bottom: 48px; }
+  header.top .wrap > .back { display: flex; align-items: center; min-height: 80px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: .02em; }
+  header.top .wrap > .back:hover { color: var(--accent); }
+  .eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 48px; margin-bottom: 16px; color: var(--rose); letter-spacing: 0.08em; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--rose); flex: none; }
+  .lede { max-width: 860px; margin-top: 24px; color: var(--ink-2); }
 
-  /* 演示声明：每页都有，名次页上最醒目 */
-  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
-    border: 1px solid var(--warn); background: var(--surface); }
-  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
-  .demo strong { display: block; font-weight: 600; color: var(--ink); }
-  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+  /* 演示声明：每页都有，玫红的玻璃卡片 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 960px; margin-top: 32px; padding: 24px 32px; border-radius: 16px;
+    color: rgba(255, 255, 255, .92); background: var(--rose) center / cover no-repeat; border: 1px solid rgba(255, 255, 255, .36);
+    box-shadow: 0 2px 4px rgba(50, 28, 39, .30), inset 0 1px 0 rgba(255, 255, 255, .24); text-shadow: 0 1px 2px rgba(60, 21, 35, .16); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: #fff; margin-top: 4px; }
+  .demo strong { display: block; font-weight: 600; color: #fff; }
+  .demo p + p { margin-top: 8px; color: rgba(255, 255, 255, .88); }
+  .demo a { color: #fff; text-decoration-color: rgba(255, 255, 255, .6); }
 
   /* 页面之间的跳转 */
-  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
-  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-    background: var(--raised); transition: background-color 300ms var(--ease); }
-  .pages a:hover { background: var(--surface); }
-  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 8px 16px; border-radius: 9999px; color: var(--ink); text-decoration: none;
+    background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); transition: transform 300ms var(--ease), background-color 300ms var(--ease); }
+  .pages a:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .86); }
+  .pages a[aria-current="page"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 
   main { padding-bottom: 96px; }
-  .block { padding-block: 48px; border-top: 1px solid var(--line); }
-  .block > h2 { margin-bottom: 8px; }
-  .block > .sum { max-width: 760px; color: var(--ink-2); }
-  .block > .sum + .sum { margin-top: 8px; }
-  .sub { margin-top: 32px; }
-  .sub > h3 { margin-bottom: 8px; }
-  .prose { max-width: 760px; }
-  .prose p + p { margin-top: 8px; }
-  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
-  .prose li + li { margin-top: 4px; }
+  .block { padding-block: 64px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 16px; }
+  .block > .sum { max-width: 860px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 12px; }
+  .sub { margin-top: 40px; }
+  .sub > h3 { margin-bottom: 12px; }
+  .prose { max-width: 860px; }
+  .prose p + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 12px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
 
   /* 名次区间横条 */
-  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .ranks { margin-top: 32px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .rank-row { display: grid; grid-template-columns: 192px minmax(0, 1fr) 128px; gap: 24px; align-items: center; padding: 12px 0; }
   .rank-axis { color: var(--ink-3); padding: 0; }
-  .rank-who a { color: var(--ink); text-decoration: none; }
-  .rank-who a:hover { text-decoration: underline; }
+  .rank-who a { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 500; }
+  .rank-who a:hover { color: var(--accent); }
   .rank-who .faint { display: block; }
-  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 32px; }
   .track .slot { border-left: 1px solid var(--line); }
   .track .slot:last-child { border-right: 1px solid var(--line); }
-  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .track .bar { position: absolute; top: 4px; height: 24px; border-radius: 9999px; background: var(--rose); box-shadow: 0 2px 4px rgba(50, 28, 39, .25), inset 0 1px 0 rgba(255, 255, 255, .3); }
   .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .axis-labels span { text-align: center; }
-  .rank-text { white-space: nowrap; }
+  .rank-text { white-space: nowrap; font-weight: 500; }
   @media (max-width: 639px) {
     .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
     .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
@@ -111,33 +117,34 @@
   }
 
   /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
-  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
-  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
-  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; line-height: 24px; background: var(--raised); }
+  th, td { border-bottom: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-weight: 600; color: var(--ink-2); background: rgba(255, 255, 255, .5); white-space: nowrap; }
   td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
   td a { white-space: nowrap; }
-  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+  .legend { margin-top: 12px; color: var(--ink-3); max-width: 860px; }
 
   /* 分开的对 */
-  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .pairs li { padding: 16px 24px; border-radius: 16px; background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pairs .who { font-weight: 600; }
   .pairs p + p { margin-top: 4px; color: var(--ink-2); }
 
   /* 卡片：主要结论、评级、比较 */
-  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
-  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
-  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cards { margin-top: 24px; display: grid; gap: 16px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   .card-head .title-3 { margin-right: 4px; }
-  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
-  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card h4 { margin: 16px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; }
+  .card blockquote { margin: 0; padding-left: 16px; border-left: 2px solid var(--rose); color: var(--ink-2); }
   .card p + p { margin-top: 4px; }
-  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
   @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
 
   /* 标签：文字用正文颜色，前面的小圆点表示状态 */
-  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .5); color: var(--ink); white-space: nowrap; }
   .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
   .tag.ok::before { background: var(--ok); }
   .tag.warn::before { background: var(--warn); }
@@ -145,25 +152,26 @@
   .tag.plain::before { display: none; }
 
   /* 数字小格 */
-  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
-  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+  .stats { margin-top: 32px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .stat { padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .stat .heading-6 { margin-top: 8px; font-size: 24px; line-height: 32px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 8px; color: var(--ink-2); }
 
   /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
-  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table { margin-top: 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
   .pool-table td.content { min-width: 320px; }
   .pool-table td.content p + details { margin-top: 4px; }
   .pool-table td.who { min-width: 160px; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
-  a.tag:hover { background: var(--surface); }
-  .pool-table tr:target td { background: var(--surface); }
+  a.tag:hover { background: rgba(255, 255, 255, .86); }
+  .pool-table tr:target td { background: rgba(173, 49, 77, .08); }
   @media (max-width: 767px) {
+    .pool-table { border: 0; border-radius: 0; box-shadow: none; }
     .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
     .pool-table thead { display: none; }
-    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table tr { border: 1px solid var(--glass-line); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px; background: var(--raised); }
     .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
     .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
     .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
@@ -173,14 +181,14 @@
   summary { cursor: pointer; color: var(--ink-2); }
   details[open] summary { margin-bottom: 4px; }
 
-  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 860px; }
   .links li { padding-left: 16px; position: relative; }
-  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+  .links li::before { content: ""; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 9999px; background: var(--rose); }
 
-  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer { border-top: 1px solid var(--line); padding-block: 40px; color: var(--ink-3); }
   footer a { color: var(--ink-2); }
   code { font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pages a:hover { transform: none; } }
 
   /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
   .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
@@ -201,6 +209,7 @@
   .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
   .alert strong { color: var(--bad); }
 </style>
+<style>html { background-image: url("../../../../assets/paper.webp"); }</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -208,19 +217,19 @@
   <div class="wrap">
     <a class="back caption-1" href="../index.html">← 回到这次评审</a>
     <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 7 次调用</p>
-    <h1 class="heading-3">评审 · 断言核验：报告 A，只给材料，评委 2</h1>
+    <h1 class="heading-1">评审 · 断言核验：报告 A，只给材料，评委 2</h1>
     <p class="body-3 lede">OpenAI（codex），命令行默认模型，只给材料，成功。</p>
     <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
   </div>
 </header>
 <main id="main"><div class="wrap">
 <section class="block" id="info" aria-labelledby="info-h">
-  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <h2 class="heading-3" id="info-h">这次调用</h2>
   <p class="body-3 sum">模拟评审 试评重评 三家的第 7 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
   <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-断言核验：报告 A，只给材料，评委 2</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">OpenAI（codex）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 23:43:52.461（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 23:45:11.737（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">79.276 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>ed26a43030aeb079b8afc4a0e545ffd4122ae492dae07db15a4233146f4f1501</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>4836f65996efa9791b76236d2b54e77c35df4cebe8fd7853355232bf2eacaa5b</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/codex exec --json --output-last-message /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmppbds5b9m/last-message.txt --cd /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmppbds5b9m/work --ephemeral --skip-git-repo-check --ignore-user-config --ignore-rules --sandbox read-only -c approval_policy=&quot;never&quot; --disable shell_tool --disable unified_exec -c web_search=&quot;disabled&quot; -</code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 7 行，记录里的序号是 7</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="6.html">上一次调用</a></li><li><a class="caption-1" href="8.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
 </section>
 <section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
-  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <h2 class="heading-3" id="prompt-text-h">提示词全文</h2>
   <p class="body-3 sum">共 32955 字，从标准输入交给命令行，一字不改。</p>
   <details><summary class="caption-2">提示词共 32955 字，点开看全文</summary><pre class="raw" id="prompt">
 你在一项深度研究报告评测的模拟评审中担任核验员，负责&quot;断言核验&quot;。
@@ -992,13 +1001,13 @@
 </pre></details>
 </section>
 <section class="block" id="answer-text" aria-labelledby="answer-text-h">
-  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <h2 class="heading-3" id="answer-text-h">回答全文</h2>
   <p class="body-3 sum">共 11571 字，一字不改。</p>
   <details><summary class="caption-2">回答共 11571 字，点开看全文</summary><pre class="raw" id="answer">
 {&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;网页研究及引用报告符合已知功能，但材料没有提供截至截止日支持 Gmail、Drive、Chat 全部集成的可核对证据。&quot;},{&quot;id&quot;:&quot;c2&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;2024年发布的 ChatGPT Search 基于 GPT-4o 的微调版本，支持搜索最新网页并提供来源链接；这是发布时的模型描述。&quot;},{&quot;id&quot;:&quot;c3&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Claude Research 于2025年推出，其公开功能包括迭代搜索和便于核查的引用。&quot;},{&quot;id&quot;:&quot;c4&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;实时检索网页、综合答案并标注来源，是 Perplexity 已有的核心功能。&quot;},{&quot;id&quot;:&quot;c5&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Kimi 探索版于2024年10月推出，公开介绍包括一次搜索阅读数百个页面；此判定针对清单结论，不包含原文另述的256K上下文。&quot;},{&quot;id&quot;:&quot;c6&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;开放模型、上下文和推理能力可以分别核对，但材料不足以确认全部型号及其研究使用主要通过 API 的使用分布。&quot;},{&quot;id&quot;:&quot;c7&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;适合企业研究属于综合评价；没有比较测试，也无法从所给材料核对全部集成范围及功能边界。&quot;},{&quot;id&quot;:&quot;c8&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 插件测试版已于2024年停止服务；截至截止日用庞大插件生态描述现行优势已经过时，GPTs及连接器不能直接等同于原插件生态。&quot;},{&quot;id&quot;:&quot;c9&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;迭代探索、扩展思考及网页工具是已有能力，但其企业复杂研究适用性缺少所给材料中的独立验证。&quot;},{&quot;id&quot;:&quot;c10&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 提供网页检索、引用答案和 Google Drive 等文件连接功能；专为研究打造属于产品定位概括。&quot;},{&quot;id&quot;:&quot;c11&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;断言混合了探索版产品与不同代模型规格；没有存档能够核对万亿参数和256K上下文分别适用的版本。&quot;},{&quot;id&quot;:&quot;c12&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 开放模型及 R1 推理模型可供开发者构建智能体工作流；这不意味着其用户仅限开发者。&quot;},{&quot;id&quot;:&quot;c13&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;自主规划、搜索、阅读网页以生成研究报告，是 Gemini Deep Research 已公开的基本工作方式。&quot;},{&quot;id&quot;:&quot;c14&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;OpenAI 的2024年 ChatGPT Search 发布说明介绍了合成数据后训练，并明确提到第三方搜索服务和合作伙伴内容。&quot;},{&quot;id&quot;:&quot;c15&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Claude Research 的2025年发布介绍包括迭代搜索网页及已连接的 Gmail、Calendar、Docs；内部数据访问以授权连接为前提。&quot;},{&quot;id&quot;:&quot;c16&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Anthropic 于2025年提供 API 网页搜索工具，用于检索模型知识截止时间之后的网页信息。&quot;},{&quot;id&quot;:&quot;c17&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;实时搜索能力不能保证回答始终基于最新内容；索引、网页本身和生成过程均可能包含过时信息，始终这一保证不成立。&quot;},{&quot;id&quot;:&quot;c18&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;截至2025年，Perplexity 已受到出版商有关抓取、版权及内容使用的诉讼和公开质疑。&quot;},{&quot;id&quot;:&quot;c19&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 已提供 Google Drive 等连接器，可在取得授权后检索用户文件。&quot;},{&quot;id&quot;:&quot;c20&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;探索版阅读数百网页与已知介绍相符，但数千次并行搜索、十倍查询和约500页的精确组合无法由所给材料核对。&quot;},{&quot;id&quot;:&quot;c21&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 Kimi-Researcher 技术材料，无法核对23步和200多个URL的统计口径，尤其是否为平均值。&quot;},{&quot;id&quot;:&quot;c22&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek R1 是强化复杂推理的模型，数学、编程及多步推理是其明确展示的能力领域。&quot;},{&quot;id&quot;:&quot;c23&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;规划、搜索、阅读并迭代是 Gemini Deep Research 已公开的工作流程。&quot;},{&quot;id&quot;:&quot;c24&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;公开权重和强化学习训练符合 DeepSeek 部分模型的已知情况，但未提供材料核对 V3-0324 更新与强化学习的具体对应关系。&quot;},{&quot;id&quot;:&quot;c25&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT Search 提供可点击引用和 Sources 来源侧栏；来源具体显示位置可能随界面版本变化。&quot;},{&quot;id&quot;:&quot;c26&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;这是对特定图片的描述，所给材料未包含图片或网页存档，无法确认 AccuWeather 标识及面板内容。&quot;},{&quot;id&quot;:&quot;c27&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Anthropic API 网页搜索工具会在回答中提供搜索结果的来源引用。&quot;},{&quot;id&quot;:&quot;c28&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有提供论文全文，不能核对其主要讨论内容或确认全文没有详细介绍引用格式。&quot;},{&quot;id&quot;:&quot;c29&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;裸模型输出不天然包含可追溯来源，但 DeepSeek 消费者产品可使用联网搜索；通常这一范围及 BentoML 指南的内容均无法据所给材料核定。&quot;},{&quot;id&quot;:&quot;c30&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料没有可核对的 Gemini 3.1 Pro 截止日前规格存档，无法确认上下文上限及 beta 限定。&quot;},{&quot;id&quot;:&quot;c31&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料没有 Claude Opus 4.6 的截止日前公告或规格存档，无法确认发布日期及上下文分档。&quot;},{&quot;id&quot;:&quot;c32&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有提供对应版本的文档，无法核对 compaction 的发布时间、适用模型及具体实现。&quot;},{&quot;id&quot;:&quot;c33&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;GPT-4o、GPT-4 Turbo API 的128K窗口不能直接当作 ChatGPT 产品的上下文规格；ChatGPT 的可用窗口取决于计划和模式。&quot;},{&quot;id&quot;:&quot;c34&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Kimi 早期长文本宣传涉及20万汉字，不能直接等同128K tokens；GPT-4 Turbo 已于2023年11月6日公开128K上下文，因此率先的表述缺乏成立依据。&quot;},{&quot;id&quot;:&quot;c35&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 OK Computer 的产品说明或测试；数百万数据点的计量含义和并发摄入能力无法核对。&quot;},{&quot;id&quot;:&quot;c36&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有提供截止日前 Perplexity Computer 的模型说明；没有公布官方窗口也是需要限定产品和计划的否定性断言。&quot;},{&quot;id&quot;:&quot;c37&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 与 Moonshot（月之暗面）是不同公司，DeepSeek 模型不属于 Moonshot。&quot;},{&quot;id&quot;:&quot;c38&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini 的多模态模型在截止日前已支持文本、图像、音频和视频输入，具体开放方式取决于型号和接口。&quot;},{&quot;id&quot;:&quot;c39&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 在截止日前已支持图像上传及 Advanced Voice 音频对话。&quot;},{&quot;id&quot;:&quot;c40&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;2024年 ChatGPT Search 发布时已展示天气、股票等专门的可视化结果。&quot;},{&quot;id&quot;:&quot;c41&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;原始 Kimi K2 是文本模型；不能将后续视觉型号的能力泛化为 K2 本身具备图文多模态能力。&quot;},{&quot;id&quot;:&quot;c42&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;所给材料没有有关 Moonshot 视频生成测试的独立证据，不能从其图像理解能力推定视频生成计划。&quot;},{&quot;id&quot;:&quot;c43&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini Deep Research 的公开交互包含研究进展展示，说明已发现的信息和后续研究行动；这不等同于完整内部思维链。&quot;},{&quot;id&quot;:&quot;c44&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;迭代研究符合已知流程，但迭代自我批评是更具体的内部机制，未提供材料加以核对。&quot;},{&quot;id&quot;:&quot;c45&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有技术文档核对逐步输出定义；原文另将技术模型的输出结构推及用户界面，也没有足够证据。&quot;},{&quot;id&quot;:&quot;c46&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;R1 的推理内容主要由模型及接口机制产生；官方使用建议通常避免系统提示，不能把添加 think 标签或系统指令概括为通用、可靠的展示机制。&quot;},{&quot;id&quot;:&quot;c47&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 V3.1 的截止日前发布或接口文档，无法在本材料范围内独立确认模式切换细节。&quot;},{&quot;id&quot;:&quot;c48&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;Gemini 提供开发者 API 是已知事实，但所述3.1 Pro版本及 Google Cloud Generative AI API 的具体对应关系没有可核对材料。&quot;},{&quot;id&quot;:&quot;c49&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有 Interactions API 的截止日前文档，无法核对 Deep Research 的访问方式和自定义工具限制。&quot;},{&quot;id&quot;:&quot;c50&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Anthropic 在2025年已向 API 开发者提供网页搜索和代码执行工具；使用受支持模型及相应工具配置为前提。&quot;},{&quot;id&quot;:&quot;c51&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 Max 与 Computer 的截止日前功能说明，无法核对多模型编排属于哪项产品及其模型名单。&quot;},{&quot;id&quot;:&quot;c52&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;许可证与推理兼容性是不同问题；没有许可证原文及兼容性文档，不能确认 MIT-like 的具体条件或 DeepSeek-compatible 的含义。&quot;},{&quot;id&quot;:&quot;c53&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 提供 API 并公开 V3、R1 权重是已知事实，但材料没有足够证据逐项核对 V3.1 的发布及仓库状态。&quot;},{&quot;id&quot;:&quot;c54&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 BentoML 指南内容，无法确认其中是否展示了对应的智能体集成代码。&quot;},{&quot;id&quot;:&quot;c55&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;作为发布历史概括成立：2024年10月先向付费用户开放，随后扩展至免费用户；不能理解为截至2026年仍在等待开放。&quot;},{&quot;id&quot;:&quot;c56&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini 应用提供 Deep Research 入口，并会依据研究主题提出及执行分解后的研究计划；入口位置可能随版本变化。&quot;},{&quot;id&quot;:&quot;c57&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;Research 开关存在，但网页和桌面应用在截止日的具体按钮位置无法由所给材料核对。&quot;},{&quot;id&quot;:&quot;c58&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 在截止日前已有文件上传和应用连接功能，可以结合网页与授权的私有资料回答问题。&quot;},{&quot;id&quot;:&quot;c59&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;来源链接便于核查是事实，但是否减少幻觉需要比较证据；可点击引用本身不能证明答案更准确。&quot;},{&quot;id&quot;:&quot;c60&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;这是对特定公告措辞的归属断言，材料没有公告存档，无法确认；即使公告如此声称，也不等于比较结论已获独立验证。&quot;},{&quot;id&quot;:&quot;c61&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有相应版本文档，无法确认动态过滤、代码执行的发布时间及其准确性效果。&quot;},{&quot;id&quot;:&quot;c62&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有 Perplexity Pro 定价或功能页存档，无法核对十倍引用密度这一宣传措辞及其比较基准。&quot;},{&quot;id&quot;:&quot;c63&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;需要区分应用功能与 API 智能体的预览状态；未提供对应文档，无法核对截止日状态及警告原文。&quot;},{&quot;id&quot;:&quot;c64&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 Moonshot 团队的对应声明，无法核对所指模型、基准及匹敌 GPT-4 的具体比较口径。&quot;},{&quot;id&quot;:&quot;c65&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供新闻内容，无法确认媒体确实作出基本消除幻觉的表述；报告保留质疑不能替代对该归属事实的核验。&quot;},{&quot;id&quot;:&quot;c66&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有 BentoML 文章及原始评测，无法核对45%—50%的数字、基准和比较对象。&quot;},{&quot;id&quot;:&quot;c67&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;出版商内容合作并不能推出向 Vox Media 记录用户查询；也没有材料核对数据隔离的具体范围。&quot;},{&quot;id&quot;:&quot;c68&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供安全文档原文，无法确认其具体要求是禁止上传不可信文件、审查网页，还是一般性的提示注入防范建议。&quot;},{&quot;id&quot;:&quot;c69&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;符合零数据保留资格不等于所有调用自动零保留；仍取决于客户是否适用并启用相应协议及配置。&quot;},{&quot;id&quot;:&quot;c70&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 企业产品在截止日前已宣传 SOC 2 Type II、加密及不使用企业客户数据训练的承诺；这是对企业条款的概括。&quot;},{&quot;id&quot;:&quot;c71&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;授权连接器应依照 Google 文件访问权限检索和同步资料，不能据此理解为公开共享文件。&quot;},{&quot;id&quot;:&quot;c72&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供对应企业计划说明，无法核对审计日志和数据保留控制是否同时包含、适用哪些套餐。&quot;},{&quot;id&quot;:&quot;c73&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;截至截止日这已是过时的推广状态：2024年12月已向免费登录用户开放，2025年2月进一步向无需登录用户开放。&quot;},{&quot;id&quot;:&quot;c74&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 API 计费文档，无法确认模型 token、搜索工具和智能体费用的具体关系。&quot;},{&quot;id&quot;:&quot;c75&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有价格表、输入规模、搜索次数及缓存等计费条件，无法验证数美元的估算，也不能确认60K输出是否典型。&quot;},{&quot;id&quot;:&quot;c76&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Claude API 按模型分别定价，不能把某一型号的5美元输入、25美元输出价格概括为整个 Claude API 的统一价格。&quot;},{&quot;id&quot;:&quot;c77&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;20美元月付及200美元年付是已知价位，但截至截止日是否提供无限 Pro 查询，需要套餐存档和限额条款核对。&quot;},{&quot;id&quot;:&quot;c78&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前企业套餐价目表，无法核对40—325美元范围、计费周期及套餐对应关系。&quot;},{&quot;id&quot;:&quot;c79&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;每天五次的历史额度对应 Kimi 探索版等特定功能，不能泛化为 Kimi 应用每天仅有五次免费搜索；截止日额度也未得到核对。&quot;},{&quot;id&quot;:&quot;c80&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有订阅页存档，无法核对套餐名称、截止日权益及 Kimi-Researcher 的开放范围。&quot;},{&quot;id&quot;:&quot;c81&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;DeepSeek API 是按 token 收费的商业服务；开放权重不能推出 API 大多免费，不同模型许可证也不能一概而论。&quot;},{&quot;id&quot;:&quot;c82&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;OpenAI 于2024年10月31日发布 ChatGPT Search，发布说明称其基于 GPT-4o 微调并提供网页来源引用。&quot;},{&quot;id&quot;:&quot;c83&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;2024年12月 ChatGPT Search 扩大至免费登录用户；OpenAI 也确有 Le Monde 等出版商合作，但该合作不应据此定年为2024年12月才开始。&quot;},{&quot;id&quot;:&quot;c84&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;2024年12月首次发布的 Gemini Deep Research 基于 Gemini 1.5 Pro，并非 Gemini 3。&quot;},{&quot;id&quot;:&quot;c85&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;2025年初的已知产品演进不包括所述 Gemini 3.0 Ultra；该型号、发布时间与256K规格的组合错误，不能由后续3.1声明补正。&quot;},{&quot;id&quot;:&quot;c86&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 Gemini 3.1 Pro 发布存档；还需区分继承既有百万上下文能力与首次增加该能力。&quot;},{&quot;id&quot;:&quot;c87&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前 Claude Opus 4.6 公告或评测，无法核对发布日期、上下文和更强能力的比较对象。&quot;},{&quot;id&quot;:&quot;c88&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前 Perplexity Computer 发布存档，无法核对月份、19个模型及 Max 开放条件。&quot;},{&quot;id&quot;:&quot;c89&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Kimi K2 的公开发布及开放权重发生在2025年7月，不能与2025年6月的 Kimi-Researcher 合并写为六月发布。&quot;},{&quot;id&quot;:&quot;c90&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;所给材料没有 Kimi K2.5 的截止日前发布说明，无法核对发布日期、参数及模式。&quot;},{&quot;id&quot;:&quot;c91&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek-V3-0324 于2025年3月发布，是 V3 的更新版本，公开结果显示推理能力有所提升。&quot;},{&quot;id&quot;:&quot;c92&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek-R1-0528 于2025年5月发布，公开介绍包括推理能力提升和幻觉减少；不据此确认清单其他条目的精确降幅。&quot;},{&quot;id&quot;:&quot;c93&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;所给材料没有 V3.1 的发布文档，无法在本任务限制下核对2025年8月及混合模式的具体声明。&quot;},{&quot;id&quot;:&quot;c94&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini Deep Research 通常运行多步、持续数分钟的研究任务，其时延不适合需要即时回复的查询。&quot;},{&quot;id&quot;:&quot;c95&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有具体授权条款，无法确认限制来自 Google 搜索许可、内容访问权限还是结果使用规则。&quot;},{&quot;id&quot;:&quot;c96&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;这些用途与其多步检索、读取资料并形成引用报告的能力相符；适合作为研究辅助并不意味着可以取代专业核验。&quot;},{&quot;id&quot;:&quot;c97&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 DeepSearch 基准的定义、成绩和比较日期，无法核对领先的范围。&quot;},{&quot;id&quot;:&quot;c98&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;支持中文和技术问题符合已知能力，但3600万月活的时间、统计口径及免费使用的因果解释没有证据。&quot;},{&quot;id&quot;:&quot;c99&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 已有视觉语言模型系列，开发者也能将其模型接入工具和智能体流程；不意味着 V3、R1 自身均为多模态模型。&quot;},{&quot;id&quot;:&quot;c100&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Positano 位于意大利阿马尔菲海岸，不在巴黎附近；材料也没有实际回答记录支持将此示例归为 ChatGPT 对巴黎天气的回答。&quot;},{&quot;id&quot;:&quot;c101&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;按常用 BloombergNEF 全球电池包均价口径，2025年约为108美元/kWh，2010年超过1000美元/kWh；约120美元更接近2024年115美元的水平，所述年份及数值不准确。&quot;},{&quot;id&quot;:&quot;c102&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;历史 ChatGPT Search 确有地球图标入口，但未提供报告图片，无法确认图中查询文字和日期。&quot;},{&quot;id&quot;:&quot;c103&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;检索和引用不能确保生成内容正确对应来源，也不能保证来源可靠；确保这一绝对结论不成立。&quot;},{&quot;id&quot;:&quot;c104&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 已于2025年推出 Deep Research，可自主规划和执行多步研究；截至截止日不能只凭聊天界面否定这项能力。&quot;},{&quot;id&quot;:&quot;c105&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 免费用户自2024年起已能限额使用 GPT-4o 等功能，免费版仅限 GPT-3.5 的说法早已过时。&quot;},{&quot;id&quot;:&quot;c106&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 在截止日前已有面向消费者的网页聊天界面和手机应用，并非只能通过 API 或 Python 使用。&quot;},{&quot;id&quot;:&quot;c107&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 消费者产品在截止日前已有聊天界面和联网搜索功能；纯模型/API、没有集成搜索的描述错误。&quot;},{&quot;id&quot;:&quot;c108&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Kimi 的联网搜索及探索功能会展示网页来源，不能笼统认定其没有正式来源链接；完整性优先于可追溯性的比较也无证据。&quot;},{&quot;id&quot;:&quot;c109&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Perplexity 在截止日前已支持图像上传和图像相关查询，不能称其不能原生摄入图像。&quot;},{&quot;id&quot;:&quot;c110&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Claude 自2024年 Claude 3 起就支持用户在聊天界面上传并分析图像，并非只有 Claude-in-Excel 提供图像界面。&quot;},{&quot;id&quot;:&quot;c111&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Claude 扩展思考提供可见思考内容或思考摘要，具体形式依模型而异；用户只能看到最终答案的断言错误。&quot;},{&quot;id&quot;:&quot;c112&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;o1 与 GPT-5 不是同一系列，o1 已于2024年正式进入 ChatGPT；仅这一事实已否定两者仍只是传闻、未进入应用的表述。&quot;},{&quot;id&quot;:&quot;c113&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Enterprise、Edu及API数据默认不用于训练，但消费者 ChatGPT 数据可能用于训练，用户可通过设置退出；不能将企业政策泛化为全部 OpenAI 数据。&quot;}]}</pre></details>
 </section>
 <section class="block" id="output" aria-labelledby="output-h">
-  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <h2 class="heading-3" id="output-h">命令行的原始输出</h2>
   <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
   <details><summary class="caption-2">标准输出原文，共 13275 字</summary><pre class="raw" id="raw-output">
 {&quot;type&quot;:&quot;thread.started&quot;,&quot;thread_id&quot;:&quot;01a190b3-4ff0-7120-9b63-4995f8ec5607&quot;}

@@ -9,100 +9,106 @@
 <link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  /* 样式乙：浅灰的布纹纸面（纸纹图片在页面里另外指定，因为路径随页面深浅不同），Inter 字体，白色玻璃卡片，玫红作强调色。
+     字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
   :root {
-    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
-    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
-    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --paper: #ececeb; --raised: rgba(255, 255, 255, .62); --surface: rgba(255, 255, 255, .45); --glass-line: rgba(255, 255, 255, .86); --line: rgba(34, 34, 34, .12);
+    --ink: #202020; --ink-2: #4a4a4a; --ink-3: #78777b;
+    --accent: #a2264a; --rose: #ad314d; --ok: #2f7a4f; --warn: #a8501f; --bad: #b42318;
+    --shadow: 0 1px 2px rgba(50, 28, 39, .08), 0 12px 32px rgba(50, 28, 39, .06);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
-      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
-      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
-      color-scheme: dark;
-    }
-  }
-  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
-  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
-  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
-  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
-  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
-  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .heading-1 { font-size: 48px; line-height: 1.22; font-weight: 400; letter-spacing: .01em; }
+  .heading-3 { font-size: 36px; line-height: 1.28; font-weight: 400; letter-spacing: .01em; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 500; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 500; }
+  .title-3 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-4 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-3 { font-size: 18px; line-height: 32px; font-weight: 400; }
+  .body-5 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-6 { font-size: 16px; line-height: 28px; font-weight: 400; }
   .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-2 { font-size: 14px; line-height: 24px; font-weight: 400; }
   .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
   .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+  @media (max-width: 767px) {
+    .heading-1 { font-size: 30px; }
+    .heading-3 { font-size: 24px; }
+    .body-3 { font-size: 16px; line-height: 28px; }
+  }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
-    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--paper) center top / cover fixed; }
+  body { margin: 0; background: transparent; color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 28px;
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; overflow-wrap: anywhere; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: rgba(240, 240, 238, .5); pointer-events: none; }
+  ::selection { background: rgba(173, 49, 77, .2); }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { text-wrap: balance; }
   p, li, td, blockquote { text-wrap: pretty; }
-  a { color: var(--accent); text-underline-offset: 4px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
-  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
-  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  a { color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1336px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 48px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
   .skip:focus { top: 16px; }
   .muted { color: var(--ink-2); }
   .faint { color: var(--ink-3); }
 
-  header.top { padding-block: 32px 24px; }
-  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
-  .back:hover { color: var(--ink); text-decoration: underline; }
-  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
-  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+  /* 页首 */
+  header.top { padding-bottom: 48px; }
+  header.top .wrap > .back { display: flex; align-items: center; min-height: 80px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: .02em; }
+  header.top .wrap > .back:hover { color: var(--accent); }
+  .eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 48px; margin-bottom: 16px; color: var(--rose); letter-spacing: 0.08em; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--rose); flex: none; }
+  .lede { max-width: 860px; margin-top: 24px; color: var(--ink-2); }
 
-  /* 演示声明：每页都有，名次页上最醒目 */
-  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
-    border: 1px solid var(--warn); background: var(--surface); }
-  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
-  .demo strong { display: block; font-weight: 600; color: var(--ink); }
-  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+  /* 演示声明：每页都有，玫红的玻璃卡片 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 960px; margin-top: 32px; padding: 24px 32px; border-radius: 16px;
+    color: rgba(255, 255, 255, .92); background: var(--rose) center / cover no-repeat; border: 1px solid rgba(255, 255, 255, .36);
+    box-shadow: 0 2px 4px rgba(50, 28, 39, .30), inset 0 1px 0 rgba(255, 255, 255, .24); text-shadow: 0 1px 2px rgba(60, 21, 35, .16); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: #fff; margin-top: 4px; }
+  .demo strong { display: block; font-weight: 600; color: #fff; }
+  .demo p + p { margin-top: 8px; color: rgba(255, 255, 255, .88); }
+  .demo a { color: #fff; text-decoration-color: rgba(255, 255, 255, .6); }
 
   /* 页面之间的跳转 */
-  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
-  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-    background: var(--raised); transition: background-color 300ms var(--ease); }
-  .pages a:hover { background: var(--surface); }
-  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 8px 16px; border-radius: 9999px; color: var(--ink); text-decoration: none;
+    background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); transition: transform 300ms var(--ease), background-color 300ms var(--ease); }
+  .pages a:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .86); }
+  .pages a[aria-current="page"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 
   main { padding-bottom: 96px; }
-  .block { padding-block: 48px; border-top: 1px solid var(--line); }
-  .block > h2 { margin-bottom: 8px; }
-  .block > .sum { max-width: 760px; color: var(--ink-2); }
-  .block > .sum + .sum { margin-top: 8px; }
-  .sub { margin-top: 32px; }
-  .sub > h3 { margin-bottom: 8px; }
-  .prose { max-width: 760px; }
-  .prose p + p { margin-top: 8px; }
-  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
-  .prose li + li { margin-top: 4px; }
+  .block { padding-block: 64px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 16px; }
+  .block > .sum { max-width: 860px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 12px; }
+  .sub { margin-top: 40px; }
+  .sub > h3 { margin-bottom: 12px; }
+  .prose { max-width: 860px; }
+  .prose p + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 12px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
 
   /* 名次区间横条 */
-  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .ranks { margin-top: 32px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .rank-row { display: grid; grid-template-columns: 192px minmax(0, 1fr) 128px; gap: 24px; align-items: center; padding: 12px 0; }
   .rank-axis { color: var(--ink-3); padding: 0; }
-  .rank-who a { color: var(--ink); text-decoration: none; }
-  .rank-who a:hover { text-decoration: underline; }
+  .rank-who a { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 500; }
+  .rank-who a:hover { color: var(--accent); }
   .rank-who .faint { display: block; }
-  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 32px; }
   .track .slot { border-left: 1px solid var(--line); }
   .track .slot:last-child { border-right: 1px solid var(--line); }
-  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .track .bar { position: absolute; top: 4px; height: 24px; border-radius: 9999px; background: var(--rose); box-shadow: 0 2px 4px rgba(50, 28, 39, .25), inset 0 1px 0 rgba(255, 255, 255, .3); }
   .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .axis-labels span { text-align: center; }
-  .rank-text { white-space: nowrap; }
+  .rank-text { white-space: nowrap; font-weight: 500; }
   @media (max-width: 639px) {
     .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
     .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
@@ -111,33 +117,34 @@
   }
 
   /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
-  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
-  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
-  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; line-height: 24px; background: var(--raised); }
+  th, td { border-bottom: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-weight: 600; color: var(--ink-2); background: rgba(255, 255, 255, .5); white-space: nowrap; }
   td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
   td a { white-space: nowrap; }
-  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+  .legend { margin-top: 12px; color: var(--ink-3); max-width: 860px; }
 
   /* 分开的对 */
-  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .pairs li { padding: 16px 24px; border-radius: 16px; background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pairs .who { font-weight: 600; }
   .pairs p + p { margin-top: 4px; color: var(--ink-2); }
 
   /* 卡片：主要结论、评级、比较 */
-  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
-  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
-  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cards { margin-top: 24px; display: grid; gap: 16px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   .card-head .title-3 { margin-right: 4px; }
-  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
-  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card h4 { margin: 16px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; }
+  .card blockquote { margin: 0; padding-left: 16px; border-left: 2px solid var(--rose); color: var(--ink-2); }
   .card p + p { margin-top: 4px; }
-  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
   @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
 
   /* 标签：文字用正文颜色，前面的小圆点表示状态 */
-  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .5); color: var(--ink); white-space: nowrap; }
   .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
   .tag.ok::before { background: var(--ok); }
   .tag.warn::before { background: var(--warn); }
@@ -145,25 +152,26 @@
   .tag.plain::before { display: none; }
 
   /* 数字小格 */
-  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
-  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+  .stats { margin-top: 32px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .stat { padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .stat .heading-6 { margin-top: 8px; font-size: 24px; line-height: 32px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 8px; color: var(--ink-2); }
 
   /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
-  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table { margin-top: 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
   .pool-table td.content { min-width: 320px; }
   .pool-table td.content p + details { margin-top: 4px; }
   .pool-table td.who { min-width: 160px; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
-  a.tag:hover { background: var(--surface); }
-  .pool-table tr:target td { background: var(--surface); }
+  a.tag:hover { background: rgba(255, 255, 255, .86); }
+  .pool-table tr:target td { background: rgba(173, 49, 77, .08); }
   @media (max-width: 767px) {
+    .pool-table { border: 0; border-radius: 0; box-shadow: none; }
     .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
     .pool-table thead { display: none; }
-    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table tr { border: 1px solid var(--glass-line); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px; background: var(--raised); }
     .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
     .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
     .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
@@ -173,14 +181,14 @@
   summary { cursor: pointer; color: var(--ink-2); }
   details[open] summary { margin-bottom: 4px; }
 
-  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 860px; }
   .links li { padding-left: 16px; position: relative; }
-  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+  .links li::before { content: ""; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 9999px; background: var(--rose); }
 
-  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer { border-top: 1px solid var(--line); padding-block: 40px; color: var(--ink-3); }
   footer a { color: var(--ink-2); }
   code { font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pages a:hover { transform: none; } }
 
   /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
   .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
@@ -201,6 +209,7 @@
   .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
   .alert strong { color: var(--bad); }
 </style>
+<style>html { background-image: url("../../../../assets/paper.webp"); }</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -208,19 +217,19 @@
   <div class="wrap">
     <a class="back caption-1" href="../index.html">← 回到这次评审</a>
     <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 33 次调用</p>
-    <h1 class="heading-3">评审 · 要点抽取：报告 C，评委 2</h1>
+    <h1 class="heading-1">评审 · 要点抽取：报告 C，评委 2</h1>
     <p class="body-3 lede">Google（google），Gemini Argon Medium 4，只给材料，成功。</p>
     <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
   </div>
 </header>
 <main id="main"><div class="wrap">
 <section class="block" id="info" aria-labelledby="info-h">
-  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <h2 class="heading-3" id="info-h">这次调用</h2>
   <p class="body-3 sum">模拟评审 试评重评 三家的第 33 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
   <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-要点抽取：报告 C，评委 2</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">Google（google）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 31 日 00:04:42.169（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 31 日 00:05:08.233（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">26.064 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>2dae3e00bd06a6a665f213f75fb6a4df37c238dcc413b82fe84bffa134b3bbae</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>04d3832b404f967ac0e1acbe5baca8f9182bcb2950a03d7e993c021279734a72</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/agy --input-format stream-json --output-format stream-json --agent materials-only --sandbox --disable-slash-commands --model gemini-4-argon-medium -p </code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 33 行，记录里的序号是 33</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="32.html">上一次调用</a></li><li><a class="caption-1" href="34.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
 </section>
 <section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
-  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <h2 class="heading-3" id="prompt-text-h">提示词全文</h2>
   <p class="body-3 sum">共 36830 字，从标准输入交给命令行，一字不改。</p>
   <details><summary class="caption-2">提示词共 36830 字，点开看全文</summary><pre class="raw" id="prompt">
 你在一项深度研究报告评测的模拟评审中担任评委，负责&quot;要点抽取&quot;。
@@ -1186,14 +1195,14 @@ Deep Research系统的共同风险：
 </pre></details>
 </section>
 <section class="block" id="answer-text" aria-labelledby="answer-text-h">
-  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <h2 class="heading-3" id="answer-text-h">回答全文</h2>
   <p class="body-3 sum">共 4192 字，一字不改。</p>
   <details><summary class="caption-2">回答共 4192 字，点开看全文</summary><pre class="raw" id="answer">
 {&quot;points&quot;:[{&quot;content&quot;:&quot;Deep Research 的本质是推理能力、检索策略、工具使用与报告生成的深度融合，通过自主分解研究目标、动态调整检索策略和交叉验证信息，将大语言模型从被动响应工具转变为主动研究智能体。&quot;,&quot;level&quot;:&quot;本质&quot;,&quot;quote&quot;:&quot;技术实现上，Deep Research并非单一模块的扩展，而是**推理能力、检索策略、工具使用、报告生成**的深度融合。&quot;},{&quot;content&quot;:&quot;当前各家 Deep Research 的技术实现可分为三类主流路径：以 ChatGPT 和 Gemini 为代表的端到端强化学习训练、以 Claude 为代表的多智能体协作架构、以及以 DeepSeek-R1 为代表的开源推理引擎加外部检索松耦合集成。&quot;,&quot;level&quot;:&quot;本质&quot;,&quot;quote&quot;:&quot;当前Deep Research功能的技术架构可归纳为三种主流路径，分别对应不同的设计哲学和适用场景。&quot;},{&quot;content&quot;:&quot;端到端强化学习方案（如 ChatGPT 的 o3 和 Gemini）将研究能力内化为模型固有功能，优势是推理、检索与生成协同流畅，代价是训练成本极高、迭代周期长且系统行为可解释性较弱。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;端到端方案的主要代价在于**训练成本极高、模型迭代周期长、系统行为可解释性较弱**。&quot;},{&quot;content&quot;:&quot;Claude 采用“指挥家-演奏家”多智能体并行架构，由主智能体分解任务、多个子智能体并行搜索并交叉验证，在复杂任务上比单智能体性能高出 90.2%，但代价是 token 消耗约为普通聊天的 15 倍。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;内部评估显示，该架构在处理需要分解任务的复杂查询时，性能比单智能体高出**90.2%**。&quot;},{&quot;content&quot;:&quot;DeepSeek-R1 本身是不内置联网检索功能的纯推理模型，必须由开发者外接搜索服务（如 Tavily AI）才能构成完整的 Deep Research 能力，若外部检索配置不当容易基于过时或缺失信息产生误导性输出。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;然而，**关键设计决策是R1不内置联网检索功能**，这意味着其\&quot;知识\&quot;完全局限于训练数据截止时间（约2024年初）。&quot;},{&quot;content&quot;:&quot;ChatGPT Deep Research 单次任务可扫描上百个来源、耗时 8 至 20 分钟（复杂任务达 30 分钟），以高昂的时间与计算成本换取了更高的信息覆盖率、分析深度和精确到句子/段落的内联引用。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;**ChatGPT**的迭代最为激进：单任务可扫描上百个来源，研究周期长达8-20分钟。&quot;},{&quot;content&quot;:&quot;ChatGPT Deep Research 集成了 Python 代码执行验证机制，在涉及数值计算时通过实际运行代码而非依赖内部参数推断来获得精确结果，从而降低了幻觉风险。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;当研究涉及数值计算时，系统不再依赖内部参数推断，而是通过实际代码执行获得精确结果，并将代码和结果一并纳入报告。&quot;},{&quot;content&quot;:&quot;ChatGPT Deep Research 存在过程黑箱的局限，系统仅引用最终采信的来源，不会全部列出检索过但未采信的资料，导致检索路径不完全可追溯。&quot;,&quot;level&quot;:&quot;全体&quot;,&quot;quote&quot;:&quot;关键局限在于过程不可完全复现——系统仅引用实际采用的来源，对于检索过但未采信的资料不会全部列出。&quot;},{&quot;content&quot;:&quot;Gemini Deep Research 在正式执行前增加了“研究大纲预确认”环节，允许用户审核和调整研究计划，在保留模型自主性的同时减少了方向性偏差风险。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;**Gemini Deep Research**增加了**研究大纲预确认**环节——正式执行前，系统生成多步骤研究计划供用户审核，确保研究方向与意图对齐。&quot;},{&quot;content&quot;:&quot;Gemini Deep Research 依托 Google 基础设施与简化的迭代深度，将研究耗时压缩至 1-2 分钟，但这种速度优先策略导致验证深度被压缩，在特定专业主题上会出现概念混淆或偏重广泛摘要而非深度分析的问题。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;实测案例揭示了具体问题：在\&quot;脂肪因子与痴呆症\&quot;研究中，Gemini的表格总结出现主题理解偏差，将\&quot;所有炎症相关脂肪因子\&quot;而非\&quot;与痴呆相关的脂肪因子\&quot;纳入总结。&quot;},{&quot;content&quot;:&quot;Gemini Deep Research 自 2025 年 3 月起向免费用户开放（付费版约 20 美元/月），并无缝串连 Google 搜索、Google Scholar、Google Books、Google Finance 和 NotebookLM 等自有生态。&quot;,&quot;level&quot;:&quot;现象&quot;,&quot;quote&quot;:&quot;Deep Research功能自动串连Google搜索、Google Scholar、Google Books、Google Finance等服务，在学术文献、金融数据、图书资料等场景中具有信息质量优势。&quot;},{&quot;content&quot;:&quot;Perplexity Deep Research 定位为“快速信息综合工具”而非“深度原创研究平台”，采用轻量级迭代策略在不到 1 分钟内完成扫描与聚合，换取了极速响应和来源透明，但牺牲了因果机制分析与复杂推理能力。&quot;,&quot;level&quot;:&quot;本质&quot;,&quot;quote&quot;:&quot;Perplexity的自我定位清晰：**\&quot;信息综合工具\&quot;而非\&quot;深度原创研究平台\&quot;**。&quot;},{&quot;content&quot;:&quot;DeepSeek-R1 采用 MIT 开源许可证且 API 成本极低（输入与输出合计约 2.74 美元/百万 tokens，仅为 o1 的 3.7%），适合对数据主权敏感的本地化部署和垂直领域定制，但对普通用户存在较高集成门槛。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;对于需要完全控制、高度定制或敏感数据处理的场景，DeepSeek的开源特性具有不可替代的价值。但对于追求开箱即用体验的普通用户，其技术门槛和集成负担构成显著障碍。&quot;},{&quot;content&quot;:&quot;Claude 深度研究包含专门的“引用智能体”与智能体间交叉验证机制，擅长法律跨法域判例分析与医疗证据整合等高风险垂直专业场景，但对日常简单查询属于“过度设计”。&quot;,&quot;level&quot;:&quot;内部联系&quot;,&quot;quote&quot;:&quot;多智能体架构的优势在复杂分解任务中显现，但对于简单查询可能消耗大量资源却未带来相应价值。&quot;},{&quot;content&quot;:&quot;Kimi 深度研究针对中文语境进行了原生优化，支持数百万字长文本和 300 步工具调用，且定价低廉（25 元人民币/月），但在报告逻辑专业性上与 ChatGPT、Gemini 仍有明显差距，且耗时较长（约 15 分钟）、不支持直接导出 PDF。&quot;,&quot;level&quot;:&quot;全体&quot;,&quot;quote&quot;:&quot;综合评测显示，Kimi\&quot;生成报告质量还过得去，但是要和前面的Gemini和ChatGPT比较，Kimi还是存在较为明显的差距\&quot;。&quot;},{&quot;content&quot;:&quot;量化基准测试显示，2025 年底增强版 Gemini 在 Humanity&#x27;s Last Exam (HLE) 上达到 46.4%、DeepSearchQA 达到 66.1%，而此前 ChatGPT Deep Research 在 HLE 上为 26.6%、Perplexity 为 21.1%。&quot;,&quot;level&quot;:&quot;现象&quot;,&quot;quote&quot;:&quot;2025年底增强版在权威基准测试中表现优异：Humanity&#x27;s Last Exam达**46.4%**，DeepSearchQA达**66.1%**，BrowseComp达**59.2%**。&quot;},{&quot;content&quot;:&quot;各家产品在定价与使用门槛上分化显著：ChatGPT Pro 高达 200 美元/月（限 100 次），Claude 采取高价的企业级/Max 订阅，而 Gemini 和 Perplexity 均提供免费层及 20 美元/月的订阅方案。&quot;,&quot;level&quot;:&quot;现象&quot;,&quot;quote&quot;:&quot;ChatGPT Deep Research单次查询可能消耗大量云端资源，目前仅对Pro订阅用户（$200/月，限100次）开放，高门槛限制了大规模应用。&quot;},{&quot;content&quot;:&quot;头部 Deep Research 产品正呈现速度与深度双向收敛的演进趋势：原本速度优先的 Gemini 通过强化迭代推理向深度延伸，而原本深度优先的 ChatGPT 正计划推出更快、成本更低的小型模型版本。&quot;,&quot;level&quot;:&quot;全体&quot;,&quot;quote&quot;:&quot;当前市场的明显趋势：**速度优先者增强深度，深度优先者提升速度**。&quot;},{&quot;content&quot;:&quot;即便表现最优的 Deep Research 系统仍存在约 10% 左右的幻觉率（独立评测中 Perplexity 为 7.7%，ChatGPT 为 9.7%），且面临内容农场混入与 AI 循环引用等信源污染风险，高风险决策必须配合人工复核。&quot;,&quot;level&quot;:&quot;全体&quot;,&quot;quote&quot;:&quot;更可靠的解读是：即使表现最优的系统，仍有约1/10的概率生成不可信内容，关键决策场景必须人工复核。&quot;},{&quot;content&quot;:&quot;各平台因架构与定位差异没有单一最优解，选型需按任务复杂度分级匹配：简单快速核查宜用 Perplexity 或 Gemini，中文长文档宜用 Kimi，本地私有化定制宜用 DeepSeek，而复杂文献综述、战略分析与高风险专业研究应选 ChatGPT 或 Claude。&quot;,&quot;level&quot;:&quot;本质&quot;,&quot;quote&quot;:&quot;两者总分相同，但优势维度迥异。ChatGPT在研究质量维度领先，Kimi则在成本和本土化维度占优。选型取决于用户的核心优先级。&quot;}]}
 </pre></details>
 </section>
 <section class="block" id="config" aria-labelledby="config-h">
-  <h2 class="heading-5" id="config-h">调用前写进临时目录的设置文件</h2>
+  <h2 class="heading-3" id="config-h">调用前写进临时目录的设置文件</h2>
   
   <div class="file"><h3 class="title-3"><code>work/.agents/agents/materials-only/agent.md</code></h3><pre class="raw" id="config-1">
 ---
@@ -1213,7 +1222,7 @@ tools: []
 </pre></div>
 </section>
 <section class="block" id="output" aria-labelledby="output-h">
-  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <h2 class="heading-3" id="output-h">命令行的原始输出</h2>
   <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
   <details><summary class="caption-2">标准输出原文，共 76333 字</summary><pre class="raw" id="raw-output">
 {&quot;event&quot;:&quot;init&quot;,&quot;conversation_id&quot;:&quot;d601122f-4293-42a1-aea3-1270d116ff35&quot;,&quot;init&quot;:{&quot;model&quot;:&quot;gemini-4-argon-medium&quot;,&quot;cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpio3jymj6/work&quot;,&quot;agent&quot;:&quot;materials-only&quot;,&quot;tools&quot;:[&quot;ask_custom_permission&quot;,&quot;ask_permission&quot;,&quot;ask_question&quot;,&quot;browser_click_element&quot;,&quot;browser_drag_pixel_to_pixel&quot;,&quot;browser_get_dom&quot;,&quot;browser_get_network_request&quot;,&quot;browser_input&quot;,&quot;browser_list_network_requests&quot;,&quot;browser_mouse_down&quot;,&quot;browser_mouse_up&quot;,&quot;browser_move_mouse&quot;,&quot;browser_press_key&quot;,&quot;browser_refresh_page&quot;,&quot;browser_resize_window&quot;,&quot;browser_scroll&quot;,&quot;browser_scroll_dom&quot;,&quot;browser_select_option&quot;,&quot;browser_subagent&quot;,&quot;call_mcp_tool&quot;,&quot;capture_browser_console_logs&quot;,&quot;capture_browser_screenshot&quot;,&quot;click_browser_pixel&quot;,&quot;command_status&quot;,&quot;define_subagent&quot;,&quot;delete_knowledge&quot;,&quot;execute_browser_javascript&quot;,&quot;find_by_name&quot;,&quot;finish&quot;,&quot;generate_image&quot;,&quot;grep_search&quot;,&quot;invoke_subagent&quot;,&quot;list_browser_pages&quot;,&quot;list_dir&quot;,&quot;list_permissions&quot;,&quot;list_plugin_accounts&quot;,&quot;list_resources&quot;,&quot;manage_inbox&quot;,&quot;manage_subagents&quot;,&quot;manage_task&quot;,&quot;multi_replace_file_content&quot;,&quot;notebook_edit&quot;,&quot;notebook_execution&quot;,&quot;open_browser_url&quot;,&quot;read_browser_page&quot;,&quot;read_resource&quot;,&quot;read_url_content&quot;,&quot;replace_file_content&quot;,&quot;run_command&quot;,&quot;run_workflow&quot;,&quot;schedule&quot;,&quot;search_marketplace&quot;,&quot;search_web&quot;,&quot;sed_file&quot;,&quot;send_command_input&quot;,&quot;send_message&quot;,&quot;view_file&quot;,&quot;wait&quot;,&quot;wait_5_seconds&quot;,&quot;write_to_file&quot;],&quot;permission_mode&quot;:&quot;request-review&quot;}}

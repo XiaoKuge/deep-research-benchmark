@@ -9,100 +9,106 @@
 <link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <style>
-  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  /* 样式乙：浅灰的布纹纸面（纸纹图片在页面里另外指定，因为路径随页面深浅不同），Inter 字体，白色玻璃卡片，玫红作强调色。
+     字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
   :root {
-    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
-    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
-    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --paper: #ececeb; --raised: rgba(255, 255, 255, .62); --surface: rgba(255, 255, 255, .45); --glass-line: rgba(255, 255, 255, .86); --line: rgba(34, 34, 34, .12);
+    --ink: #202020; --ink-2: #4a4a4a; --ink-3: #78777b;
+    --accent: #a2264a; --rose: #ad314d; --ok: #2f7a4f; --warn: #a8501f; --bad: #b42318;
+    --shadow: 0 1px 2px rgba(50, 28, 39, .08), 0 12px 32px rgba(50, 28, 39, .06);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --font: "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
     color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
-      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
-      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
-      color-scheme: dark;
-    }
-  }
-  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
-  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
-  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
-  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
-  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
-  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .heading-1 { font-size: 48px; line-height: 1.22; font-weight: 400; letter-spacing: .01em; }
+  .heading-3 { font-size: 36px; line-height: 1.28; font-weight: 400; letter-spacing: .01em; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 500; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 500; }
+  .title-3 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-4 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-3 { font-size: 18px; line-height: 32px; font-weight: 400; }
+  .body-5 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .body-6 { font-size: 16px; line-height: 28px; font-weight: 400; }
   .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
-  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-2 { font-size: 14px; line-height: 24px; font-weight: 400; }
   .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
   .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+  @media (max-width: 767px) {
+    .heading-1 { font-size: 30px; }
+    .heading-3 { font-size: 24px; }
+    .body-3 { font-size: 16px; line-height: 28px; }
+  }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
-    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; background: var(--paper) center top / cover fixed; }
+  body { margin: 0; background: transparent; color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 28px;
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; overflow-wrap: anywhere; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: rgba(240, 240, 238, .5); pointer-events: none; }
+  ::selection { background: rgba(173, 49, 77, .2); }
   h1, h2, h3, p { margin: 0; }
   h1, h2 { text-wrap: balance; }
   p, li, td, blockquote { text-wrap: pretty; }
-  a { color: var(--accent); text-underline-offset: 4px; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
-  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
-  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
-  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  a { color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1336px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 48px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
   .skip:focus { top: 16px; }
   .muted { color: var(--ink-2); }
   .faint { color: var(--ink-3); }
 
-  header.top { padding-block: 32px 24px; }
-  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
-  .back:hover { color: var(--ink); text-decoration: underline; }
-  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
-  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+  /* 页首 */
+  header.top { padding-bottom: 48px; }
+  header.top .wrap > .back { display: flex; align-items: center; min-height: 80px; color: var(--ink); font-weight: 600; text-decoration: none; letter-spacing: .02em; }
+  header.top .wrap > .back:hover { color: var(--accent); }
+  .eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 48px; margin-bottom: 16px; color: var(--rose); letter-spacing: 0.08em; }
+  .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--rose); flex: none; }
+  .lede { max-width: 860px; margin-top: 24px; color: var(--ink-2); }
 
-  /* 演示声明：每页都有，名次页上最醒目 */
-  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
-    border: 1px solid var(--warn); background: var(--surface); }
-  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
-  .demo strong { display: block; font-weight: 600; color: var(--ink); }
-  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+  /* 演示声明：每页都有，玫红的玻璃卡片 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 960px; margin-top: 32px; padding: 24px 32px; border-radius: 16px;
+    color: rgba(255, 255, 255, .92); background: var(--rose) center / cover no-repeat; border: 1px solid rgba(255, 255, 255, .36);
+    box-shadow: 0 2px 4px rgba(50, 28, 39, .30), inset 0 1px 0 rgba(255, 255, 255, .24); text-shadow: 0 1px 2px rgba(60, 21, 35, .16); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: #fff; margin-top: 4px; }
+  .demo strong { display: block; font-weight: 600; color: #fff; }
+  .demo p + p { margin-top: 8px; color: rgba(255, 255, 255, .88); }
+  .demo a { color: #fff; text-decoration-color: rgba(255, 255, 255, .6); }
 
   /* 页面之间的跳转 */
-  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
-  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
-    background: var(--raised); transition: background-color 300ms var(--ease); }
-  .pages a:hover { background: var(--surface); }
-  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 8px 16px; border-radius: 9999px; color: var(--ink); text-decoration: none;
+    background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); transition: transform 300ms var(--ease), background-color 300ms var(--ease); }
+  .pages a:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .86); }
+  .pages a[aria-current="page"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 
   main { padding-bottom: 96px; }
-  .block { padding-block: 48px; border-top: 1px solid var(--line); }
-  .block > h2 { margin-bottom: 8px; }
-  .block > .sum { max-width: 760px; color: var(--ink-2); }
-  .block > .sum + .sum { margin-top: 8px; }
-  .sub { margin-top: 32px; }
-  .sub > h3 { margin-bottom: 8px; }
-  .prose { max-width: 760px; }
-  .prose p + p { margin-top: 8px; }
-  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
-  .prose li + li { margin-top: 4px; }
+  .block { padding-block: 64px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 16px; }
+  .block > .sum { max-width: 860px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 12px; }
+  .sub { margin-top: 40px; }
+  .sub > h3 { margin-bottom: 12px; }
+  .prose { max-width: 860px; }
+  .prose p + p { margin-top: 12px; }
+  .prose ul, .prose ol { margin: 12px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 8px; }
 
   /* 名次区间横条 */
-  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .ranks { margin-top: 32px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .rank-row { display: grid; grid-template-columns: 192px minmax(0, 1fr) 128px; gap: 24px; align-items: center; padding: 12px 0; }
   .rank-axis { color: var(--ink-3); padding: 0; }
-  .rank-who a { color: var(--ink); text-decoration: none; }
-  .rank-who a:hover { text-decoration: underline; }
+  .rank-who a { color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 500; }
+  .rank-who a:hover { color: var(--accent); }
   .rank-who .faint { display: block; }
-  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 32px; }
   .track .slot { border-left: 1px solid var(--line); }
   .track .slot:last-child { border-right: 1px solid var(--line); }
-  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .track .bar { position: absolute; top: 4px; height: 24px; border-radius: 9999px; background: var(--rose); box-shadow: 0 2px 4px rgba(50, 28, 39, .25), inset 0 1px 0 rgba(255, 255, 255, .3); }
   .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .axis-labels span { text-align: center; }
-  .rank-text { white-space: nowrap; }
+  .rank-text { white-space: nowrap; font-weight: 500; }
   @media (max-width: 639px) {
     .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
     .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
@@ -111,33 +117,34 @@
   }
 
   /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
-  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
-  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
-  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  .scroll { overflow-x: auto; margin-top: 24px; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; line-height: 24px; background: var(--raised); }
+  th, td { border-bottom: 1px solid var(--line); padding: 12px 16px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-weight: 600; color: var(--ink-2); background: rgba(255, 255, 255, .5); white-space: nowrap; }
   td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
   td a { white-space: nowrap; }
-  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+  .legend { margin-top: 12px; color: var(--ink-3); max-width: 860px; }
 
   /* 分开的对 */
-  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
-  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 1040px; }
+  .pairs li { padding: 16px 24px; border-radius: 16px; background: var(--raised); border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pairs .who { font-weight: 600; }
   .pairs p + p { margin-top: 4px; color: var(--ink-2); }
 
   /* 卡片：主要结论、评级、比较 */
-  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
-  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
-  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .cards { margin-top: 24px; display: grid; gap: 16px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   .card-head .title-3 { margin-right: 4px; }
-  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
-  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card h4 { margin: 16px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; }
+  .card blockquote { margin: 0; padding-left: 16px; border-left: 2px solid var(--rose); color: var(--ink-2); }
   .card p + p { margin-top: 4px; }
-  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-2 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
   @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
 
   /* 标签：文字用正文颜色，前面的小圆点表示状态 */
-  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); background: rgba(255, 255, 255, .5); color: var(--ink); white-space: nowrap; }
   .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
   .tag.ok::before { background: var(--ok); }
   .tag.warn::before { background: var(--warn); }
@@ -145,25 +152,26 @@
   .tag.plain::before { display: none; }
 
   /* 数字小格 */
-  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
-  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+  .stats { margin-top: 32px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .stat { padding: 24px; border-radius: 16px; border: 1px solid var(--glass-line); background: var(--raised); box-shadow: var(--shadow); }
+  .stat .heading-6 { margin-top: 8px; font-size: 24px; line-height: 32px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 8px; color: var(--ink-2); }
 
   /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
-  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table { margin-top: 24px; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--glass-line); box-shadow: var(--shadow); }
   .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
   .pool-table td.content { min-width: 320px; }
   .pool-table td.content p + details { margin-top: 4px; }
   .pool-table td.who { min-width: 160px; }
   .chips { display: flex; flex-wrap: wrap; gap: 4px; }
   a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
-  a.tag:hover { background: var(--surface); }
-  .pool-table tr:target td { background: var(--surface); }
+  a.tag:hover { background: rgba(255, 255, 255, .86); }
+  .pool-table tr:target td { background: rgba(173, 49, 77, .08); }
   @media (max-width: 767px) {
+    .pool-table { border: 0; border-radius: 0; box-shadow: none; }
     .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
     .pool-table thead { display: none; }
-    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table tr { border: 1px solid var(--glass-line); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px; background: var(--raised); }
     .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
     .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
     .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
@@ -173,14 +181,14 @@
   summary { cursor: pointer; color: var(--ink-2); }
   details[open] summary { margin-bottom: 4px; }
 
-  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 860px; }
   .links li { padding-left: 16px; position: relative; }
-  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+  .links li::before { content: ""; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 9999px; background: var(--rose); }
 
-  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer { border-top: 1px solid var(--line); padding-block: 40px; color: var(--ink-3); }
   footer a { color: var(--ink-2); }
   code { font-size: 14px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pages a:hover { transform: none; } }
 
   /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
   .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
@@ -201,6 +209,7 @@
   .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
   .alert strong { color: var(--bad); }
 </style>
+<style>html { background-image: url("../../../assets/paper.webp"); }</style>
 </head>
 <body>
 <a class="skip caption-1" href="#main">跳到正文</a>
@@ -208,7 +217,7 @@
   <div class="wrap">
     <a class="back caption-1" href="../../reviews.html">← 回到评审记录</a>
     <p class="eyebrow caption-1">模拟评审</p>
-    <h1 class="heading-3">模拟评审 试评重评 1</h1>
+    <h1 class="heading-1">模拟评审 试评重评 1</h1>
     <p class="body-3 lede">方式：真实调用；状态：中止。这次评审用了哪些厂商和模型、每一步调用了几次、结果，以及每一次调用的原文。</p>
     <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../questions.html">题库</a></li><li><a class="caption-1" href="../../reviews.html">评审记录</a></li></ul></nav>
   </div>
@@ -216,37 +225,37 @@
 <main id="main"><div class="wrap">
 
 <section class="block" id="summary" aria-labelledby="summary-h">
-  <h2 class="heading-5" id="summary-h">这次评审</h2>
+  <h2 class="heading-3" id="summary-h">这次评审</h2>
   
   <dl class="fields"><div><dt class="caption-1">运行标识</dt><dd class="body-6"><code>试评重评-1</code></dd></div><div><dt class="caption-1">题目</dt><dd class="body-6"><a href="../../questions/%E7%AC%AC%E4%BA%94%E9%98%B6%E6%AE%B5%E8%AF%95%E8%AF%84%E9%A2%98/index.html">第五阶段试评题</a>（练习题）</dd></div><div><dt class="caption-1">报告</dt><dd class="body-6">6 份：A（ChatGPT）、B（Claude）、C（Kimi）、D（Gemini）、E（Perplexity）、F（DeepSeek）</dd></div><div><dt class="caption-1">时间</dt><dd class="body-6">2026 年 10 月 30 日 20:05:49（协调世界时减 7 小时） 至 2026 年 10 月 30 日 21:02:15（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">调用次数</dt><dd class="body-6">共 54 次：claude 32 次、codex 22 次</dd></div><div><dt class="caption-1">厂商和模型</dt><dd class="body-6">Anthropic（claude，Claude Opus 5.5）、OpenAI（codex，命令行默认模型）</dd></div><div><dt class="caption-1">开始前估算的调用次数</dt><dd class="body-6">133 次</dd></div><div><dt class="caption-1">不可用的厂商</dt><dd class="body-6">claude（Anthropic）、codex（OpenAI）</dd></div><div><dt class="caption-1">替代</dt><dd class="body-6">5 次</dd></div><div><dt class="caption-1">结果</dt><dd class="body-6">评审中止，没有结果。原因：<code>没有可用的厂商了：claude、codex 都不可用</code></dd></div><div><dt class="caption-1">中止的原因</dt><dd class="body-6"><code>没有可用的厂商了：claude、codex 都不可用</code></dd></div><div><dt class="caption-1">截止日期</dt><dd class="body-6">2026 年 3 月 3 日</dd></div><div><dt class="caption-1">题目卡校验值</dt><dd class="body-6"><code>fb9df09ca57bf5ea48487f9cb0f85c18cfc528b806cf90d17ababa28b0d9443f</code></dd></div><div><dt class="caption-1">深度地图校验值</dt><dd class="body-6"><code>10c7b5c2a599b81595d6c62f6bd594e9b0ab246ac39bc7230f3ba44a74b5021e</code>，和校验值文件一致</dd></div><div><dt class="caption-1">输出目录</dt><dd class="body-6"><a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/run.json">run.json</a>、<a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/calls.jsonl">calls.jsonl</a>，目录 <code>simulation/reviews/试评重评-1</code></dd></div></dl>
 </section>
 <section class="block" id="results" aria-labelledby="results-h">
-  <h2 class="heading-5" id="results-h">结果</h2>
+  <h2 class="heading-3" id="results-h">结果</h2>
   <p class="body-3 sum">评审中止，没有结果。原因：<code>没有可用的厂商了：claude、codex 都不可用</code></p>
   
 </section>
 <section class="block" id="reports" aria-labelledby="reports-h">
-  <h2 class="heading-5" id="reports-h">报告</h2>
+  <h2 class="heading-3" id="reports-h">报告</h2>
   <p class="body-3 sum">评委看不到报告的原名；点编号看交给评委的报告副本。</p>
   <div class="scroll"><table><thead><tr><th scope="col">编号</th><th scope="col">名称</th><th class="n" scope="col">字数</th><th class="n" scope="col">网址个数</th><th scope="col">校验值</th></tr></thead><tbody><tr><td><a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/reports/A.md">报告 A</a></td><td>ChatGPT</td><td class="n">41389</td><td class="n">0</td><td><code>748146b3855888124ef1c7e85025f01da6840fa68b79d524e8dd950e89bb8078</code></td></tr><tr><td><a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/reports/B.md">报告 B</a></td><td>Claude</td><td class="n">1237</td><td class="n">0</td><td><code>1c32ceb9edd2f2f29baa5aeb4791752b0713fbee2279b459f60117794dbb6dd9</code></td></tr><tr><td><a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/reports/C.md">报告 C</a></td><td>Kimi</td><td class="n">31709</td><td class="n">0</td><td><code>0873e55a719d0c033adac5931f9d379f2f8f73a15552bd0c7e0cc86e1b70951b</code></td></tr><tr><td><a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/reports/D.md">报告 D</a></td><td>Gemini</td><td class="n">84529</td><td class="n">0</td><td><code>05696a02ba30199739059e73770147c5f3582e7770e34d7d985efa9efe36c3cd</code></td></tr><tr><td><a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/reports/E.md">报告 E</a></td><td>Perplexity</td><td class="n">6251</td><td class="n">6</td><td><code>8c1f2f86da09877801ea20ce60c2c96db8032665c1fe1e22874dfc8f7a21fa97</code></td></tr><tr><td><a href="../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/reports/F.md">报告 F</a></td><td>DeepSeek</td><td class="n">1849</td><td class="n">0</td><td><code>9b1d68c6045784bdf318db42f8ed830a2ee206debe1bd73663ebd25921d5867d</code></td></tr></tbody></table></div>
 </section>
 <section class="block" id="vendors" aria-labelledby="vendors-h">
-  <h2 class="heading-5" id="vendors-h">厂商和模型</h2>
+  <h2 class="heading-3" id="vendors-h">厂商和模型</h2>
   <p class="body-3 sum">按调用记录统计：每一家调用了几次、成功几次、用的是什么模型（命令行报告的模型优先，其次是指定的模型）。</p>
-  <div class="scroll"><table><thead><tr><th scope="col">公司</th><th scope="col">厂商</th><th class="n" scope="col">调用次数</th><th class="n" scope="col">成功</th><th scope="col">模型</th></tr></thead><tbody><tr><td>Anthropic</td><td>claude</td><td class="n">32</td><td class="n">30</td><td>Claude Opus 5.5</td></tr><tr><td>OpenAI</td><td>codex</td><td class="n">22</td><td class="n">19</td><td>命令行默认模型</td></tr></tbody></table></div><div class="sub"><h3 class="heading-6">不可用的厂商</h3><div class="scroll"><table><thead><tr><th scope="col">厂商</th><th scope="col">公司</th><th scope="col">第一次失败的任务</th><th scope="col">原因</th><th scope="col">发现的时间</th></tr></thead><tbody><tr><td>claude</td><td>Anthropic</td><td>评审 · 写到核对：报告 D，评委 1</td><td><code>命令行报告出错：You&#x27;ve hit your 5-hour limit · resets 9pm (America/Los_Angeles)</code></td><td>2026 年 10 月 30 日 20:55:47（协调世界时减 7 小时）</td></tr><tr><td>codex</td><td>OpenAI</td><td>评审 · 环节评级：报告 A，评委 1</td><td><code>退出状态 1；没有拿到回答</code></td><td>2026 年 10 月 30 日 21:02:14（协调世界时减 7 小时）</td></tr></tbody></table></div></div><div class="sub"><h3 class="heading-6">替代</h3><div class="scroll"><table><thead><tr><th scope="col">步骤</th><th scope="col">任务</th><th scope="col">原来的厂商</th><th scope="col">改用的厂商</th><th scope="col">原因</th></tr></thead><tbody><tr><td>写到核对</td><td>评审 · 写到核对：报告 D，评委 1</td><td>claude</td><td>codex</td><td>claude：调用失败：命令行报告出错：You&#x27;ve hit your 5-hour limit · resets 9pm (America/Los_Angeles)</td></tr><tr><td>写到核对</td><td>评审 · 写到核对：报告 E，评委 1</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr><tr><td>写到核对</td><td>评审 · 写到核对：报告 F，评委 1</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr><tr><td>要点判定</td><td>评审 · 要点判定：评委 1</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr><tr><td>要点判定</td><td>评审 · 要点判定：评委 2</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr></tbody></table></div></div>
+  <div class="scroll"><table><thead><tr><th scope="col">公司</th><th scope="col">厂商</th><th class="n" scope="col">调用次数</th><th class="n" scope="col">成功</th><th scope="col">模型</th></tr></thead><tbody><tr><td>Anthropic</td><td>claude</td><td class="n">32</td><td class="n">30</td><td>Claude Opus 5.5</td></tr><tr><td>OpenAI</td><td>codex</td><td class="n">22</td><td class="n">19</td><td>命令行默认模型</td></tr></tbody></table></div><div class="sub"><h3 class="heading-5">不可用的厂商</h3><div class="scroll"><table><thead><tr><th scope="col">厂商</th><th scope="col">公司</th><th scope="col">第一次失败的任务</th><th scope="col">原因</th><th scope="col">发现的时间</th></tr></thead><tbody><tr><td>claude</td><td>Anthropic</td><td>评审 · 写到核对：报告 D，评委 1</td><td><code>命令行报告出错：You&#x27;ve hit your 5-hour limit · resets 9pm (America/Los_Angeles)</code></td><td>2026 年 10 月 30 日 20:55:47（协调世界时减 7 小时）</td></tr><tr><td>codex</td><td>OpenAI</td><td>评审 · 环节评级：报告 A，评委 1</td><td><code>退出状态 1；没有拿到回答</code></td><td>2026 年 10 月 30 日 21:02:14（协调世界时减 7 小时）</td></tr></tbody></table></div></div><div class="sub"><h3 class="heading-5">替代</h3><div class="scroll"><table><thead><tr><th scope="col">步骤</th><th scope="col">任务</th><th scope="col">原来的厂商</th><th scope="col">改用的厂商</th><th scope="col">原因</th></tr></thead><tbody><tr><td>写到核对</td><td>评审 · 写到核对：报告 D，评委 1</td><td>claude</td><td>codex</td><td>claude：调用失败：命令行报告出错：You&#x27;ve hit your 5-hour limit · resets 9pm (America/Los_Angeles)</td></tr><tr><td>写到核对</td><td>评审 · 写到核对：报告 E，评委 1</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr><tr><td>写到核对</td><td>评审 · 写到核对：报告 F，评委 1</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr><tr><td>要点判定</td><td>评审 · 要点判定：评委 1</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr><tr><td>要点判定</td><td>评审 · 要点判定：评委 2</td><td>claude</td><td>codex</td><td>claude：在本次运行前面的调用里已经不可用</td></tr></tbody></table></div></div>
 </section>
 <section class="block" id="steps" aria-labelledby="steps-h">
-  <h2 class="heading-5" id="steps-h">每一步的调用</h2>
+  <h2 class="heading-3" id="steps-h">每一步的调用</h2>
   <p class="body-3 sum">实际调用 54 次，开始前估算 133 次，上限 133 次。</p>
   <div class="scroll"><table><thead><tr><th scope="col">步骤</th><th scope="col">配置的评委</th><th class="n" scope="col">调用次数</th><th scope="col">按厂商</th><th scope="col">模型</th></tr></thead><tbody><tr><td>结论清单</td><td>评委 1 claude</td><td class="n">6</td><td>claude 6 次</td><td>claude：Claude Opus 5.5</td></tr><tr><td>断言核验</td><td>评委 1 claude、评委 2 claude、评委 3 codex</td><td class="n">21</td><td>claude 14 次、codex 7 次</td><td>claude：Claude Opus 5.5；codex：命令行默认模型</td></tr><tr><td>要点抽取</td><td>评委 1 claude、评委 2 codex</td><td class="n">12</td><td>claude 6 次、codex 6 次</td><td>claude：Claude Opus 5.5；codex：命令行默认模型</td></tr><tr><td>要点池合并</td><td>评委 1 claude</td><td class="n">1</td><td>claude 1 次</td><td>claude：Claude Opus 5.5</td></tr><tr><td>写到核对</td><td>评委 1 claude</td><td class="n">8</td><td>claude 5 次、codex 3 次</td><td>claude：Claude Opus 5.5、命令行默认模型；codex：命令行默认模型</td></tr><tr><td>要点判定</td><td>评委 1 claude、评委 2 claude、评委 3 codex</td><td class="n">3</td><td>codex 3 次</td><td>codex：命令行默认模型</td></tr><tr><td>环节评级</td><td>评委 1 claude、评委 2 claude、评委 3 codex</td><td class="n">3</td><td>codex 3 次</td><td>codex：命令行默认模型</td></tr><tr><td>两两比较</td><td>评委 1 claude、评委 2 codex</td><td class="n">0</td><td>没有调用</td><td></td></tr><tr><td>直接回答</td><td>评委 1 claude</td><td class="n">0</td><td>没有调用</td><td></td></tr></tbody></table></div>
 </section>
 <section class="block" id="notes" aria-labelledby="notes-h">
-  <h2 class="heading-5" id="notes-h">要人核对的事</h2>
+  <h2 class="heading-3" id="notes-h">要人核对的事</h2>
   <p class="body-3 sum">程序如实记下、没有自动处理的地方，含义见模拟评审使用说明的运行元数据一节。</p>
   <dl class="fields"><div><dt class="caption-1">列入人工审计的要点</dt><dd class="body-6">Q11</dd></div><div><dt class="caption-1">引文在报告里找不到的环节评级</dt><dd class="body-6">0 条</dd></div><div><dt class="caption-1">合并时漏收的条目</dt><dd class="body-6">0 条</dd></div><div><dt class="caption-1">来源编号不认识的条目</dt><dd class="body-6">0 条</dd></div><div><dt class="caption-1">程序补进要点池的地图要点</dt><dd class="body-6">0 条</dd></div><div><dt class="caption-1">合在一起的地图要点</dt><dd class="body-6">0 条</dd></div><div><dt class="caption-1">没有评委判定的要点</dt><dd class="body-6">0 条</dd></div><div><dt class="caption-1">没有核验意见的结论</dt><dd class="body-6">0 条</dd></div><div><dt class="caption-1">没写理由、按登记值计的改动次数</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">写到核对补记的条数</dt><dd class="body-6">126</dd></div></dl>
 </section>
 <section class="block" id="calls" aria-labelledby="calls-h">
-  <h2 class="heading-5" id="calls-h">全部调用</h2>
+  <h2 class="heading-3" id="calls-h">全部调用</h2>
   <p class="body-3 sum">这次评审的 54 次模型调用，点序号看提示词和回答的原文。</p>
   <div class="scroll"><table><thead><tr><th class="n" scope="col">序号</th><th scope="col">任务</th><th scope="col">厂商</th><th scope="col">模型</th><th scope="col">工具限定</th><th scope="col">状态</th><th scope="col">耗时</th></tr></thead><tbody><tr><td class="n"><a href="calls/1.html">1</a></td><td>评审 · 结论清单：报告 A，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>273.166 秒</td></tr><tr><td class="n"><a href="calls/2.html">2</a></td><td>评审 · 结论清单：报告 B，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>45.196 秒</td></tr><tr><td class="n"><a href="calls/3.html">3</a></td><td>评审 · 结论清单：报告 C，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>58.752 秒</td></tr><tr><td class="n"><a href="calls/4.html">4</a></td><td>评审 · 结论清单：报告 E，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>117.179 秒</td></tr><tr><td class="n"><a href="calls/5.html">5</a></td><td>评审 · 结论清单：报告 F，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>72.54 秒</td></tr><tr><td class="n"><a href="calls/6.html">6</a></td><td>评审 · 结论清单：报告 D，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>330.676 秒</td></tr><tr><td class="n"><a href="calls/7.html">7</a></td><td>评审 · 断言核验：报告 A，只给材料，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>110.784 秒</td></tr><tr><td class="n"><a href="calls/8.html">8</a></td><td>评审 · 断言核验：报告 B，只给材料，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>98.759 秒</td></tr><tr><td class="n"><a href="calls/9.html">9</a></td><td>评审 · 断言核验：报告 A，只给材料，评委 2</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>303.693 秒</td></tr><tr><td class="n"><a href="calls/10.html">10</a></td><td>评审 · 断言核验：报告 B，只给材料，评委 2</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>111.487 秒</td></tr><tr><td class="n"><a href="calls/11.html">11</a></td><td>评审 · 断言核验：报告 B，只给材料，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>22.797 秒</td></tr><tr><td class="n"><a href="calls/12.html">12</a></td><td>评审 · 断言核验：报告 A，只给材料，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>344.382 秒</td></tr><tr><td class="n"><a href="calls/13.html">13</a></td><td>评审 · 断言核验：报告 C，只给材料，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>29.169 秒</td></tr><tr><td class="n"><a href="calls/14.html">14</a></td><td>评审 · 断言核验：报告 C，只给材料，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>67.997 秒</td></tr><tr><td class="n"><a href="calls/15.html">15</a></td><td>评审 · 断言核验：报告 C，只给材料，评委 2</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>63.729 秒</td></tr><tr><td class="n"><a href="calls/16.html">16</a></td><td>评审 · 断言核验：报告 D，只给材料，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>91.28 秒</td></tr><tr><td class="n"><a href="calls/17.html">17</a></td><td>评审 · 断言核验：报告 E，只给材料，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>175.806 秒</td></tr><tr><td class="n"><a href="calls/18.html">18</a></td><td>评审 · 断言核验：报告 D，只给材料，评委 2</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>366.957 秒</td></tr><tr><td class="n"><a href="calls/19.html">19</a></td><td>评审 · 断言核验：报告 D，只给材料，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>391.49 秒</td></tr><tr><td class="n"><a href="calls/20.html">20</a></td><td>评审 · 断言核验：报告 E，只给材料，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>40.13 秒</td></tr><tr><td class="n"><a href="calls/21.html">21</a></td><td>评审 · 断言核验：报告 E，只给材料，评委 2</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>170.671 秒</td></tr><tr><td class="n"><a href="calls/22.html">22</a></td><td>评审 · 断言核验：报告 E，只读网页，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只读网页</td><td>成功</td><td>71.763 秒</td></tr><tr><td class="n"><a href="calls/23.html">23</a></td><td>评审 · 断言核验：报告 F，只给材料，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>77.979 秒</td></tr><tr><td class="n"><a href="calls/24.html">24</a></td><td>评审 · 断言核验：报告 F，只给材料，评委 2</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>111.97 秒</td></tr><tr><td class="n"><a href="calls/25.html">25</a></td><td>评审 · 断言核验：报告 F，只给材料，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>18.256 秒</td></tr><tr><td class="n"><a href="calls/26.html">26</a></td><td>评审 · 断言核验：报告 E，只读网页，评委 2</td><td>claude</td><td>Claude Opus 5.5</td><td>只读网页</td><td>成功</td><td>357.935 秒</td></tr><tr><td class="n"><a href="calls/27.html">27</a></td><td>评审 · 断言核验：报告 E，只读网页，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只读网页</td><td>成功</td><td>692.684 秒</td></tr><tr><td class="n"><a href="calls/28.html">28</a></td><td>评审 · 要点抽取：报告 A，评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>23.116 秒</td></tr><tr><td class="n"><a href="calls/29.html">29</a></td><td>评审 · 要点抽取：报告 B，评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>13.939 秒</td></tr><tr><td class="n"><a href="calls/30.html">30</a></td><td>评审 · 要点抽取：报告 B，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>54.061 秒</td></tr><tr><td class="n"><a href="calls/31.html">31</a></td><td>评审 · 要点抽取：报告 C，评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>23.446 秒</td></tr><tr><td class="n"><a href="calls/32.html">32</a></td><td>评审 · 要点抽取：报告 A，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>100.052 秒</td></tr><tr><td class="n"><a href="calls/33.html">33</a></td><td>评审 · 要点抽取：报告 D，评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>24.423 秒</td></tr><tr><td class="n"><a href="calls/34.html">34</a></td><td>评审 · 要点抽取：报告 C，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>116.242 秒</td></tr><tr><td class="n"><a href="calls/35.html">35</a></td><td>评审 · 要点抽取：报告 E，评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>22.775 秒</td></tr><tr><td class="n"><a href="calls/36.html">36</a></td><td>评审 · 要点抽取：报告 D，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>105.615 秒</td></tr><tr><td class="n"><a href="calls/37.html">37</a></td><td>评审 · 要点抽取：报告 F，评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>10.443 秒</td></tr><tr><td class="n"><a href="calls/38.html">38</a></td><td>评审 · 要点抽取：报告 E，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>89.3 秒</td></tr><tr><td class="n"><a href="calls/39.html">39</a></td><td>评审 · 要点抽取：报告 F，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>60.111 秒</td></tr><tr><td class="n"><a href="calls/40.html">40</a></td><td>评审 · 要点池合并：评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>591.859 秒</td></tr><tr><td class="n"><a href="calls/41.html">41</a></td><td>评审 · 写到核对：报告 A，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>106.864 秒</td></tr><tr><td class="n"><a href="calls/42.html">42</a></td><td>评审 · 写到核对：报告 B，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>107.088 秒</td></tr><tr><td class="n"><a href="calls/43.html">43</a></td><td>评审 · 写到核对：报告 D，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>失败</td><td>1.119 秒</td></tr><tr><td class="n"><a href="calls/44.html">44</a></td><td>评审 · 写到核对：报告 E，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>失败</td><td>1.281 秒</td></tr><tr><td class="n"><a href="calls/45.html">45</a></td><td>评审 · 写到核对：报告 D，评委 1</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>25.133 秒</td></tr><tr><td class="n"><a href="calls/46.html">46</a></td><td>评审 · 写到核对：报告 E，评委 1</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>32.637 秒</td></tr><tr><td class="n"><a href="calls/47.html">47</a></td><td>评审 · 写到核对：报告 F，评委 1</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>15.444 秒</td></tr><tr><td class="n"><a href="calls/48.html">48</a></td><td>评审 · 写到核对：报告 C，评委 1</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>245.334 秒</td></tr><tr><td class="n"><a href="calls/49.html">49</a></td><td>评审 · 要点判定：评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>228.577 秒</td></tr><tr><td class="n"><a href="calls/50.html">50</a></td><td>评审 · 要点判定：评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>247.229 秒</td></tr><tr><td class="n"><a href="calls/51.html">51</a></td><td>评审 · 要点判定：评委 1</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>248.278 秒</td></tr><tr><td class="n"><a href="calls/52.html">52</a></td><td>评审 · 环节评级：报告 A，评委 1</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>失败</td><td>1.995 秒</td></tr><tr><td class="n"><a href="calls/53.html">53</a></td><td>评审 · 环节评级：报告 A，评委 3</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>失败</td><td>2.312 秒</td></tr><tr><td class="n"><a href="calls/54.html">54</a></td><td>评审 · 环节评级：报告 A，评委 2</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>失败</td><td>2.572 秒</td></tr></tbody></table></div>
 </section>

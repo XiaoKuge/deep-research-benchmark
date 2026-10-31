@@ -4,59 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Simple QA→DR 精读</title>
-<style>
-  :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
-    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
-    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
-  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
-  a{color:var(--accent2)} a:hover{color:#fff}
-  .back{font-size:13px;text-decoration:none;color:var(--dim)}
-  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
-  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
-  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
-  .meta b{color:var(--dim);font-weight:500}
-  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
-  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
-  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
-  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
-  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
-  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
-  p{margin:10px 0}
-  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
-  strong{color:#fff;font-weight:620}
-  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
-    border-radius:10px;padding:12px 18px;margin:20px 0}
-  .lead li{margin:6px 0}
-  .aside{font-size:13px;color:var(--dim);background:var(--panel2);border-radius:8px;padding:8px 14px;margin:14px 0}
-  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
-    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
-  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
-  .tbl{overflow-x:auto;margin:12px 0}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
-  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
-  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
-  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
-  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
-  .ex ul,.ex ol{font-size:13.5px;color:#cfd5df}
-  dl.gl{margin:8px 0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
-  dl.gl dt{color:var(--accent2);font-weight:600}
-  dl.gl dd{margin:0;color:#cfd5df}
-  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
-  pre{font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:8px;overflow-x:auto;color:#d8dce4}
-  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
-  @media (max-width:640px){ nav.toc ol{columns:1} header h1{font-size:22px} dl.gl{grid-template-columns:1fr} dl.gl dd{margin-bottom:6px} }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../site/doc.css">
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="../papers.html">← 文献索引</a>
+<nav class="docnav"><a class="back" href="../papers.html">← 文献索引</a><a href="../site/index.html">资料站首页</a></nav>
 <header>
   <h1>From Simple QA to Deep Research 精读：把一道小问答"滚雪球"滚成研究题</h1>
   <p class="dek">全自动出题、按"研究步骤图"打分；想法新，但标准答案全是一个 AI 自己探出来的</p>
@@ -69,7 +24,7 @@
   </div>
 </header>
 <!-- errata-start -->
-<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 6 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 9 节对照表"标准答案谁定"一栏写作"GPT-5.5 一次探路的结果"<br><span class="note">应改为：</span>〔更正〕是 GPT-5.5 在一次构建中多轮探路的累积结果（平均 14.19 轮），再由整理者（也是 GPT-5.5）合并删改；"只来自一个模型"的批评仍然成立 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.6 节说论文"在结语里说'有潜力把这套流程推广到专业领域'"<br><span class="note">应改为：</span>〔更正〕这句话在"Baseline Performance"一节讨论闭卷结果的段落中（第 7 页），不在结语里；"承认现在的题还不在专业领域里"是推断 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.8 节说"图 5 的说明先说'每轮随机抽 20 道题'，紧接着又说……10 道题"<br><span class="note">应改为：</span>〔更正〕两句都在正文"Construction Analysis"一节，不在图注里；另外，图 5 只画了 8 个模型（没有 Claude Sonnet 5 和 Gemini 3.5 Flash），精读页没有提到 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.2 节"排第一的 GPT-5.6 Terra"，没有限定<br><span class="note">应改为：</span>〔更正〕它只在带提示问法（有工具和无工具）以及无工具的无提示问法中排第一；有工具的无提示问法是 GLM-5.2 和 DeepSeek-V4-Pro 并列第一，有工具的只给标题问法是 DeepSeek-V4-Pro 第一 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 11 节把仓库的训练用途列为推断<br><span class="note">应改为：</span>〔补充〕仓库简介写着"the Agentic RL Training Stack to Train on It"，属于仓库的自述；会不会造成训练和测试重叠，仍是推断 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>仓库状态<br><span class="note">应改为：</span>〔补充〕最后一次提交确是 2026-08-03；2026-10-25 有一次删除分支的操作，没有新增文件，不影响"只有代码、没有数据"的结论 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li></ol></section>
+<section class="lead" style="border-left-color:#a8501f"><p><strong>勘误（2026-10-29，第二阶段核对，共 6 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>第 9 节对照表"标准答案谁定"一栏写作"GPT-5.5 一次探路的结果"<br><span class="note">应改为：</span>〔更正〕是 GPT-5.5 在一次构建中多轮探路的累积结果（平均 14.19 轮），再由整理者（也是 GPT-5.5）合并删改；"只来自一个模型"的批评仍然成立 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.6 节说论文"在结语里说'有潜力把这套流程推广到专业领域'"<br><span class="note">应改为：</span>〔更正〕这句话在"Baseline Performance"一节讨论闭卷结果的段落中（第 7 页），不在结语里；"承认现在的题还不在专业领域里"是推断 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.8 节说"图 5 的说明先说'每轮随机抽 20 道题'，紧接着又说……10 道题"<br><span class="note">应改为：</span>〔更正〕两句都在正文"Construction Analysis"一节，不在图注里；另外，图 5 只画了 8 个模型（没有 Claude Sonnet 5 和 Gemini 3.5 Flash），精读页没有提到 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7.2 节"排第一的 GPT-5.6 Terra"，没有限定<br><span class="note">应改为：</span>〔更正〕它只在带提示问法（有工具和无工具）以及无工具的无提示问法中排第一；有工具的无提示问法是 GLM-5.2 和 DeepSeek-V4-Pro 并列第一，有工具的只给标题问法是 DeepSeek-V4-Pro 第一 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 11 节把仓库的训练用途列为推断<br><span class="note">应改为：</span>〔补充〕仓库简介写着"the Agentic RL Training Stack to Train on It"，属于仓库的自述；会不会造成训练和测试重叠，仍是推断 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>仓库状态<br><span class="note">应改为：</span>〔补充〕最后一次提交确是 2026-08-03；2026-10-25 有一次删除分支的操作，没有新增文件，不影响"只有代码、没有数据"的结论 <a href="record-2608.02163_From-Simple-QA-to-Deep-Research.html" target="_blank">依据</a></li></ol></section>
 <!-- errata-end -->
 
 <div class="aside"><strong>关于例题：</strong>这个 benchmark 的题目和评分表没有公开，所以本文的例子全部来自论文附录已经印出的那道题（美国投票年龄降到 18 岁），以及论文表 8 列出的几条种子问题。</div>

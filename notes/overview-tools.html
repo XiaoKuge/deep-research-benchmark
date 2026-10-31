@@ -4,47 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>评测工具一览</title>
-<style>
-  :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
-    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
-    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
-  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
-  a{color:var(--accent2)} a:hover{color:#fff}
-  .back{font-size:13px;text-decoration:none;color:var(--dim)}
-  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
-  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
-  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
-  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff}
-  h2 .no{color:var(--accent);margin-right:8px}
-  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
-  p{margin:10px 0}
-  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
-  strong{color:#fff;font-weight:620}
-  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
-    border-radius:10px;padding:12px 18px;margin:20px 0}
-  .lead li{margin:6px 0}
-  .tbl{overflow-x:auto;margin:12px 0}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
-  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
-  .cat{display:inline-block;min-width:22px;text-align:center;font-weight:700;border-radius:5px;padding:0 6px;font-size:12.5px}
-  .cA{background:rgba(52,211,153,.18);color:#6ee7b7} .cB{background:rgba(96,165,250,.18);color:#93c5fd}
-  .cC{background:rgba(245,158,11,.16);color:#fcd34d} .cD{background:rgba(248,113,113,.14);color:#fca5a5}
-  .cE{background:rgba(107,114,128,.25);color:#9aa3b2}
-  .note{font-size:13px;color:var(--muted)}
-  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
-  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
-  @media (max-width:640px){ header h1{font-size:22px} }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../site/doc.css">
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="../papers.html">← 文献索引</a>
+<nav class="docnav"><a class="back" href="../papers.html">← 文献索引</a><a href="../site/index.html">资料站首页</a></nav>
 <header>
   <h1>评测工具一览：哪些能"喂报告、出分数"</h1>
   <p class="dek">回答索引页留言："在这么多篇文章里，软件可以直接用的有几个，即输入是一堆 DeepResearch 报告，输出是分数或者名次"</p>

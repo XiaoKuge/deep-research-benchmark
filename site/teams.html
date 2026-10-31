@@ -9,7 +9,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="pages.css">
 <style>
   /* 本页的样式；各页共用的在 pages.css */
@@ -47,7 +47,7 @@
       <a href="teams.html" aria-current="page">技术文档</a>
     </nav>
     <p class="eyebrow caption-1">深度研究赛项 · 写给参赛队伍</p>
-    <h1 class="heading-3">参赛队伍技术文档</h1>
+    <h1 class="heading-1">参赛队伍技术文档</h1>
     <p class="body-3 lede">智能体怎样申报、主办方怎样调用它、运行环境、时长上限和统一答复。这里的约定就是主办方统一运行程序的约定，程序是 <a href="../tools/run_agents.py"><code>tools/run_agents.py</code></a>，完整的使用说明见<a href="../tools/run_agents.md">统一运行程序使用说明</a>。<a href="#starter-kit">新手包</a>里有申报表模板、练习题和一个示例智能体，在本机几秒钟就能跑通一次。</p>
     <p class="body-6 notice"><strong>依据：</strong><a href="../notes/rules.html">规则手册</a>草案第 3 版。标“〔默认〕，以主办方确认为准”的，是主办方尚未最终确认的默认做法；标“〔待定〕”的，还没有定。本页与规则手册不一致的，以规则手册为准。</p>
     <nav class="toc caption-1" aria-label="本页目录">
@@ -70,7 +70,7 @@
 <div class="wrap">
 
 <section class="block" id="flow" aria-labelledby="flow-title">
-  <h2 class="heading-5" id="flow-title">一次运行的经过</h2>
+  <h2 class="heading-3" id="flow-title">一次运行的经过</h2>
   <p class="body-3 sum">你交出冻结的智能体，主办方在运行日按同一套办法调用每一个智能体。每个智能体跑 2 道题 × 2 个版本，共 4 次。</p>
   <ol class="steps body-3">
     <li><strong>冻结并申报。</strong>题目公布前，提交冻结申报表，以及供主办方调用的程序或接口地址。此后到比赛结束不得修改。见<a href="#declare">申报智能体</a>。</li>
@@ -86,7 +86,7 @@
 </section>
 
 <section class="block" id="declare" aria-labelledby="declare-title">
-  <h2 class="heading-5" id="declare-title">申报智能体</h2>
+  <h2 class="heading-3" id="declare-title">申报智能体</h2>
   <p class="body-3 sum">冻结截止是运行日前 7 天〔默认〕，以主办方确认为准；具体日期〔待定〕。截止前提交冻结申报表（附录三），此后到比赛结束不得修改智能体。</p>
   <div class="prose body-3">
     <p>申报交两样东西：一份申报文件，和系统提示词全文的文件。申报文件是 JSON 文件（一种纯文本的数据格式），每一项对应附录三的一项，另加“调用方式”一项供统一运行程序调用。主办方保存申报材料，算出申报文件和系统提示词文件的校验值，写进每次运行的日志，赛后随复核包公开。涉及商业秘密的部分，可以申请只向复核人公开。</p>
@@ -127,7 +127,7 @@
   "申报人": "张三"
 }</code></pre>
   <p class="code-note caption-2">新手包里的<a href="starter-kit/申报表模板.json">申报表模板</a>，填的是示例智能体的情况。</p>
-  <h3 class="heading-6">冻结之后，什么能做、什么不能做</h3>
+  <h3 class="heading-5">冻结之后，什么能做、什么不能做</h3>
   <div class="prose body-3">
     <ul>
       <li><strong>允许：</strong>冻结前设计系统提示词、检索策略和工作流程；让智能体专门利用题面中提问者的身份和用途；机械的格式转换，例如把题目文本放进接口的某个字段，须在冻结前申报，对所有题目相同。</li>
@@ -138,10 +138,10 @@
 </section>
 
 <section class="block" id="call" aria-labelledby="call-title">
-  <h2 class="heading-5" id="call-title">主办方怎样调用你的智能体</h2>
+  <h2 class="heading-3" id="call-title">主办方怎样调用你的智能体</h2>
   <p class="body-3 sum">两种方式选一种，写在申报文件的“调用方式”里。每次运行都是全新的进程或请求，不带其他运行的记忆，特别是同一道题的另一个版本。</p>
 
-  <h3 class="heading-6" id="call-command">命令行方式</h3>
+  <h3 class="heading-5" id="call-command">命令行方式</h3>
   <pre class="code"><code>{"方式": "命令行", "命令": ["python3", "agent.py"], "工作目录": "."}</code></pre>
   <ol class="steps body-3">
     <li>每次运行，程序在工作目录里启动一次申报的命令，是一个全新的进程。命令推荐写成列表，一项一个词；也可以写成一行文字。不经过命令解释器，所以不能用管道符号和重定向，需要的话自己写一个脚本。工作目录可以不写，默认是申报文件所在的目录。</li>
@@ -152,7 +152,7 @@
     <li>退出状态记进日志。退出状态不是 0，已经写出的报告照样算交付。</li>
   </ol>
 
-  <h3 class="heading-6" id="call-network">网络接口方式</h3>
+  <h3 class="heading-5" id="call-network">网络接口方式</h3>
   <pre class="code"><code>{"方式": "网络接口", "地址": "http://127.0.0.1:8000/run"}</code></pre>
   <ol class="steps body-3">
     <li>每次运行，程序向申报的地址发一个请求，方法是 POST，类型是 <code>application/json</code>，字符编码 <code>UTF-8</code>，内容是：
@@ -163,12 +163,12 @@
     <li>请求里没有会话编号。一次运行里因为反问可能有几个请求，都属于同一次运行；不同运行之间不要共享记忆。</li>
   </ol>
 
-  <h3 class="heading-6" id="report-type">报告存成哪种文件</h3>
+  <h3 class="heading-5" id="report-type">报告存成哪种文件</h3>
   <div class="prose body-3">
     <p>按报告内容的开头判断，不看你怎样称呼它：以 <code>%PDF</code> 开头的存为 <code>报告.pdf</code>；以 <code>&lt;!doctype html</code> 或 <code>&lt;html</code> 开头的存为 <code>报告.html</code>；其余存为 <code>报告.md</code>。所以网页报告要以这两种写法之一开头，PDF 报告交文件本身。</p>
   </div>
 
-  <h3 class="heading-6" id="input">题目原样交出，逐字核对</h3>
+  <h3 class="heading-5" id="input">题目原样交出，逐字核对</h3>
   <div class="prose body-3">
     <ul>
       <li>交给智能体的是题目文件的全文：提问版或裸题版的文字，后面接附录一的交付要求和说明。程序一个字节不加、不减、不改，换行也照原样。</li>
@@ -184,11 +184,11 @@
 </section>
 
 <section class="block" id="ask" aria-labelledby="ask-title">
-  <h2 class="heading-5" id="ask-title">反问和统一答复</h2>
+  <h2 class="heading-3" id="ask-title">反问和统一答复</h2>
   <p class="body-3 sum">运行中不交互。智能体提问或要求确认研究计划时，一律回复附录二的统一答复，并记下它问了什么：</p>
   <blockquote class="quote body-3" id="unified-reply"><p>题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。</p></blockquote>
 
-  <h3 class="heading-6">命令行方式怎样反问</h3>
+  <h3 class="heading-5">命令行方式怎样反问</h3>
   <ol class="steps body-3">
     <li>在标准输出单独写一行：以 <code>[[反问]]</code> 开头，后面接问题，问题写在同一行；行尾要换行，写完立即刷新输出。</li>
     <li>然后打开环境变量 <code>REPLY_PIPE</code> 给出的文件，读到结束，就得到统一答复（一行文字）。这个文件是一个命名管道，答复送到之前读会一直等着。</li>
@@ -207,7 +207,7 @@ print("# 主要结论")
 print("按面积理解：……")</code></pre>
   <p class="code-note caption-2">完整的例子见新手包里的 <a href="starter-kit/agent.py"><code>agent.py</code></a>。不经过统一运行程序直接启动时，没有 <code>REPLY_PIPE</code>，它就不反问。</p>
 
-  <h3 class="heading-6">网络接口方式怎样反问</h3>
+  <h3 class="heading-5">网络接口方式怎样反问</h3>
   <ol class="steps body-3">
     <li>回应 <code>{"反问": "问题"}</code>，类型 <code>application/json</code>。</li>
     <li>程序向同一个地址再发一个请求，内容带上前面的全部往来：
@@ -216,7 +216,7 @@ print("按面积理解：……")</code></pre>
     <li>照常回应报告；也可以再反问，“往来”会一项一项加长。智能体看“往来”就知道自己问过什么、得到了什么答复。</li>
   </ol>
 
-  <h3 class="heading-6">两种方式共同的规矩</h3>
+  <h3 class="heading-5">两种方式共同的规矩</h3>
   <div class="prose body-3">
     <ul>
       <li>每次反问回复一次统一答复，每次都是同一句话。问题全部记进运行记录“智能体是否提问，问了什么”一列和运行日志。</li>
@@ -230,7 +230,7 @@ print("按面积理解：……")</code></pre>
 </section>
 
 <section class="block" id="environment" aria-labelledby="environment-title">
-  <h2 class="heading-5" id="environment-title">运行环境</h2>
+  <h2 class="heading-3" id="environment-title">运行环境</h2>
   <p class="body-3 sum">全部运行由主办方统一进行〔默认〕，以主办方确认为准。参赛队伍在运行前看不到题目，运行中也不接触智能体。</p>
   <div class="prose body-3">
     <ul>
@@ -246,7 +246,7 @@ print("按面积理解：……")</code></pre>
 </section>
 
 <section class="block" id="time-limit" aria-labelledby="time-limit-title">
-  <h2 class="heading-5" id="time-limit-title">时长上限</h2>
+  <h2 class="heading-3" id="time-limit-title">时长上限</h2>
   <p class="body-3 sum">每次运行最长 120 分钟〔默认〕，以主办方确认为准。</p>
   <div class="prose body-3">
     <ul>
@@ -261,7 +261,7 @@ print("按面积理解：……")</code></pre>
 </section>
 
 <section class="block" id="delivery" aria-labelledby="delivery-title">
-  <h2 class="heading-5" id="delivery-title">交付要求</h2>
+  <h2 class="heading-3" id="delivery-title">交付要求</h2>
   <p class="body-3 sum">每次运行交付一份书面报告，必须包含五个部分。下面是原文，附在每道题的提问版和裸题版之后，一字不改。</p>
   <div class="quote body-3" id="delivery-text">
     <p>交付要求：请交付一份书面报告。版式不限，但必须包含以下五个部分：</p>
@@ -286,7 +286,7 @@ print("按面积理解：……")</code></pre>
 </section>
 
 <section class="block" id="groups" aria-labelledby="groups-title">
-  <h2 class="heading-5" id="groups-title">封闭组和开放组 <span class="tag caption-3">〔默认〕</span></h2>
+  <h2 class="heading-3" id="groups-title">封闭组和开放组 <span class="tag caption-3">〔默认〕</span></h2>
   <p class="body-3 sum">参赛分两组〔默认〕，以主办方确认为准。每支队伍在冻结截止前选定参加哪一组，也可以两组都参加，两组分别申报、分别运行。</p>
   <div class="prose body-3">
     <ul>
@@ -300,7 +300,7 @@ print("按面积理解：……")</code></pre>
 </section>
 
 <section class="block" id="spot-check" aria-labelledby="spot-check-title">
-  <h2 class="heading-5" id="spot-check-title">随机抽查 <span class="tag caption-3">〔默认〕</span></h2>
+  <h2 class="heading-3" id="spot-check-title">随机抽查 <span class="tag caption-3">〔默认〕</span></h2>
   <p class="body-3 sum">每届随机抽一支队伍〔默认〕，以主办方确认为准，核对它的运行方式和输入与冻结申报一致。</p>
   <div class="prose body-3">
     <ul>
@@ -313,7 +313,7 @@ print("按面积理解：……")</code></pre>
 </section>
 
 <section class="block" id="starter-kit" aria-labelledby="starter-kit-title">
-  <h2 class="heading-5" id="starter-kit-title">新手包</h2>
+  <h2 class="heading-3" id="starter-kit-title">新手包</h2>
   <p class="body-3 sum">新手包是 <a href="starter-kit/README.md"><code>starter-kit</code></a> 文件夹，里面每个文件都能单独打开、下载。先读它的<a href="starter-kit/README.md">说明</a>。</p>
   <div class="scroll">
     <table>
@@ -339,7 +339,7 @@ print("按面积理解：……")</code></pre>
 </section>
 
 <section class="block" id="self-check" aria-labelledby="self-check-title">
-  <h2 class="heading-5" id="self-check-title">用练习题自查</h2>
+  <h2 class="heading-3" id="self-check-title">用练习题自查</h2>
   <p class="body-3 sum">在本机按主办方的办法跑一遍，看运行记录和报告，再检查报告的五个部分。</p>
   <ol class="steps body-3">
     <li><strong>原样跑一遍示例。</strong>在仓库根目录运行下面的命令，一两秒就跑完。运行记录里有两行，“输入校验值是否一致”都是“一致”，示例智能体各反问了一次。

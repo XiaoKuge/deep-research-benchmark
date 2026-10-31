@@ -4,66 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DRB II 精读</title>
-<style>
-  :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
-    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
-    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
-  .wrap{max-width:780px;margin:0 auto;padding:28px 16px 96px;}
-  a{color:var(--accent2)} a:hover{color:#fff}
-  .back{font-size:13px;text-decoration:none;color:var(--dim)}
-  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
-  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
-  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
-  .meta b{color:var(--dim);font-weight:500}
-  nav.toc{margin:22px 0 8px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:13.5px}
-  nav.toc ol{margin:4px 0 0;padding-left:22px;columns:2;column-gap:28px}
-  nav.toc a{color:var(--dim);text-decoration:none} nav.toc a:hover{color:var(--accent2)}
-  h2{font-size:19px;font-weight:650;margin:42px 0 10px;padding-top:6px;color:#fff}
-  h2 .no{color:var(--accent);margin-right:8px;font-variant-numeric:tabular-nums}
-  h3{font-size:15.5px;font-weight:650;margin:26px 0 6px;color:var(--accent2)}
-  p{margin:10px 0}
-  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
-  strong{color:#fff;font-weight:620}
-  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
-    border-radius:10px;padding:12px 18px;margin:20px 0}
-  .lead li{margin:6px 0}
-  blockquote{margin:12px 0;padding:8px 16px;border-left:2px solid var(--accent);background:var(--panel2);
-    border-radius:0 8px 8px 0;color:#cfd5df;font-size:14.5px}
-  blockquote .src{display:block;color:var(--muted);font-size:12px;margin-top:4px}
-  .tbl{overflow-x:auto;margin:12px 0}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
-  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
-  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .strong{color:var(--ok);font-weight:600} .mid{color:var(--warn);font-weight:600} .weak{color:var(--bad);font-weight:600}
-  .note{font-size:13px;color:var(--muted)}
-  .ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0;font-size:14px}
-  .ex .h{color:var(--accent2);font-size:12.5px;font-weight:600;letter-spacing:.3px}
-  .ex ul{font-size:13.5px;color:#cfd5df}
-  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
-  details.tasks{margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
-  details.tasks>summary{cursor:pointer;padding:9px 16px;color:var(--accent2);font-size:14px}
-  .dom{padding:2px 16px 10px}
-  .dom h4{margin:12px 0 4px;font-size:13.5px;color:#fff;font-weight:600}
-  .dom h4 span{color:var(--muted);font-weight:400;margin-left:4px}
-  .dom ul{list-style:none;padding:0;margin:0;font-size:13px;columns:2;column-gap:20px}
-  .dom li{break-inside:avoid;margin:2px 0;color:#cfd5df}
-  .ix{display:inline-block;min-width:28px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .lg{display:inline-block;font-size:11px;padding:0 5px;border-radius:4px;margin-right:6px;background:var(--panel2);color:var(--dim)}
-  .rc{color:var(--muted);font-size:11.5px;margin-left:4px;font-variant-numeric:tabular-nums}
-  .mis{color:var(--warn)}
-  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
-  @media (max-width:640px){ nav.toc ol,.dom ul{columns:1} header h1{font-size:22px} }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../site/doc.css">
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="../papers.html">← 文献索引</a>
+<nav class="docnav"><a class="back" href="../papers.html">← 文献索引</a><a href="../site/index.html">资料站首页</a></nav>
 <header>
   <h1>DeepResearch Bench II 精读：从一篇综述"反编译"出标准答案</h1>
   <p class="dek">这套机制测到了什么，没测到什么</p>
@@ -76,7 +24,7 @@
   </div>
 </header>
 <!-- errata-start -->
-<section class="lead" style="border-left-color:#fcd34d"><p><strong>勘误（2026-10-29，第二阶段核对，共 7 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>"22 个领域里 15 个只有 2–6 题"<br><span class="note">应改为：</span>〔更正〕17 个领域只有 2 至 6 道题 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.6 节"每个领域只有 2–6 题（科技 23 题除外）"<br><span class="note">应改为：</span>〔更正〕有 5 个领域在 10 道以上（科学与技术 23、金融与商业 15、软件开发 13、健康 12、教育与就业 10）；"检验效力很低"的理由改为"17 个小领域各只有 2 至 6 道" <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.6 节"排名相邻的系统差距在 0.02–2.6 分之间"<br><span class="note">应改为：</span>〔更正〕"前七名相邻差距 0.02 至 2.62 分"；第七名与第八名之间是 8.69 分 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 8 节"数据、评分脚本和提示词全部公开。本文的每个数字都能复核"<br><span class="note">应改为：</span>〔更正〕说过头了：评委逐条输出、人工标注、通义的报告都没有公开，表 4、表 5、表 10 和方差分析不能复核 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"引用了原文的句子记 −1，不计入得分"；"泄漏率 0.24% 到 13.2%，平均 3.64%"<br><span class="note">应改为：</span>〔更正〕−1 留在分母中，等于按未通过计；泄漏率是按评分项计的比例，不是按报告计；3.64% 是 7 个系统的平均，不含 Gemini-3 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"评委是 Gemini-2.5-Pro"<br><span class="note">应改为：</span>〔补充〕对论文而言正确，但已过时：仓库自 2026 年 8 月起官方评委换成 GPT-5.5，2026 年 10 月起第 112、114 题从排行榜计分中剔除 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7 节"2026-02-24：加了 license 字段；2026-05-14：重写了文件，没有实质改动"<br><span class="note">应改为：</span>〔存疑〕哪一次提交加了 license 字段不确定，可能写反了；不影响"题目和评分项自 2025 年 11 月以来没有改动"的结论 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li></ol></section>
+<section class="lead" style="border-left-color:#a8501f"><p><strong>勘误（2026-10-29，第二阶段核对，共 7 条）</strong>：本页正文未改动，以下列出核对后需要更正、补充或存疑之处。类型标注：〔更正〕说法错误或不准确；〔补充〕有遗漏或需更新；〔存疑〕未能确定；〔确认〕核对后确认。汇总见 <a href="plan-stage2-summary.html" target="_blank">第二阶段汇总</a> 第六节。</p><ol><li><span class="note">原说法：</span>"22 个领域里 15 个只有 2–6 题"<br><span class="note">应改为：</span>〔更正〕17 个领域只有 2 至 6 道题 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.6 节"每个领域只有 2–6 题（科技 23 题除外）"<br><span class="note">应改为：</span>〔更正〕有 5 个领域在 10 道以上（科学与技术 23、金融与商业 15、软件开发 13、健康 12、教育与就业 10）；"检验效力很低"的理由改为"17 个小领域各只有 2 至 6 道" <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 6.6 节"排名相邻的系统差距在 0.02–2.6 分之间"<br><span class="note">应改为：</span>〔更正〕"前七名相邻差距 0.02 至 2.62 分"；第七名与第八名之间是 8.69 分 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 8 节"数据、评分脚本和提示词全部公开。本文的每个数字都能复核"<br><span class="note">应改为：</span>〔更正〕说过头了：评委逐条输出、人工标注、通义的报告都没有公开，表 4、表 5、表 10 和方差分析不能复核 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"引用了原文的句子记 −1，不计入得分"；"泄漏率 0.24% 到 13.2%，平均 3.64%"<br><span class="note">应改为：</span>〔更正〕−1 留在分母中，等于按未通过计；泄漏率是按评分项计的比例，不是按报告计；3.64% 是 7 个系统的平均，不含 Gemini-3 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>"评委是 Gemini-2.5-Pro"<br><span class="note">应改为：</span>〔补充〕对论文而言正确，但已过时：仓库自 2026 年 8 月起官方评委换成 GPT-5.5，2026 年 10 月起第 112、114 题从排行榜计分中剔除 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li><li><span class="note">原说法：</span>第 7 节"2026-02-24：加了 license 字段；2026-05-14：重写了文件，没有实质改动"<br><span class="note">应改为：</span>〔存疑〕哪一次提交加了 license 字段不确定，可能写反了；不影响"题目和评分项自 2025 年 11 月以来没有改动"的结论 <a href="record-2601.08536_DeepResearch-Bench-II.html" target="_blank">依据</a></li></ol></section>
 <!-- errata-end -->
 
 <nav class="toc">目录
