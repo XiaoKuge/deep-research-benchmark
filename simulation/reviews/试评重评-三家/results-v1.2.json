@@ -1,0 +1,666 @@
+{
+ "main": {
+  "A": {
+   "product": "ChatGPT",
+   "interval": [
+    5,
+    6
+   ],
+   "hard": [
+    "主要结论与证据相反"
+   ],
+   "net": {
+    "甲": 22.0,
+    "乙": 45.0,
+    "丙": 57.5
+   },
+   "profile": {
+    "①": 0,
+    "③": 1,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 0
+   },
+   "writing": 1
+  },
+  "B": {
+   "product": "Claude",
+   "interval": [
+    5,
+    6
+   ],
+   "hard": [
+    "全篇没有可追溯的出处"
+   ],
+   "net": {
+    "甲": 13.0,
+    "乙": 23.0,
+    "丙": 23.5
+   },
+   "profile": {
+    "①": 1,
+    "③": 1,
+    "④": 0,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "writing": 2
+  },
+  "C": {
+   "product": "Kimi",
+   "interval": [
+    1,
+    2
+   ],
+   "hard": [],
+   "net": {
+    "甲": 35.0,
+    "乙": 68.0,
+    "丙": 61.5
+   },
+   "profile": {
+    "①": 2,
+    "③": 0,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "writing": 1
+  },
+  "D": {
+   "product": "Gemini",
+   "interval": [
+    1,
+    2
+   ],
+   "hard": [],
+   "net": {
+    "甲": 44.0,
+    "乙": 80.0,
+    "丙": 78.5
+   },
+   "profile": {
+    "①": 2,
+    "③": 1,
+    "④": 1,
+    "⑤": 0,
+    "⑦": 1
+   },
+   "writing": 1
+  },
+  "E": {
+   "product": "Perplexity",
+   "interval": [
+    3,
+    3
+   ],
+   "hard": [],
+   "net": {
+    "甲": 20.0,
+    "乙": 32.0,
+    "丙": 33.0
+   },
+   "profile": {
+    "①": 2,
+    "③": 1,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "writing": 2
+  },
+  "F": {
+   "product": "DeepSeek",
+   "interval": [
+    4,
+    4
+   ],
+   "hard": [],
+   "net": {
+    "甲": 10.0,
+    "乙": 19.0,
+    "丙": 18.5
+   },
+   "profile": {
+    "①": 2,
+    "③": 1,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "writing": 2
+  }
+ },
+ "acceptance": {
+  "1 复算一致": true
+ },
+ "separated": [
+  "C>A（硬伤分档）",
+  "C>B（硬伤分档）",
+  "C>E（深度净分）",
+  "C>F（深度净分）",
+  "D>A（硬伤分档）",
+  "D>B（硬伤分档）",
+  "D>E（深度净分）",
+  "D>F（深度净分）",
+  "E>A（硬伤分档）",
+  "E>B（硬伤分档）",
+  "E>F（深度净分）",
+  "F>A（硬伤分档）",
+  "F>B（硬伤分档）"
+ ],
+ "vetoed": [],
+ "version": "1.2",
+ "reports": [
+  {
+   "label": "A",
+   "product": "ChatGPT",
+   "rank_best": 5,
+   "rank_worst": 6,
+   "net_scores": {
+    "甲": 22.0,
+    "乙": 45.0,
+    "丙": 57.5
+   },
+   "severe_problems": [
+    "主要结论与证据相反"
+   ],
+   "element_grades": {
+    "①": 0,
+    "③": 1,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 0
+   },
+   "timeliness": 1,
+   "writing": 1
+  },
+  {
+   "label": "B",
+   "product": "Claude",
+   "rank_best": 5,
+   "rank_worst": 6,
+   "net_scores": {
+    "甲": 13.0,
+    "乙": 23.0,
+    "丙": 23.5
+   },
+   "severe_problems": [
+    "全篇没有可追溯的出处"
+   ],
+   "element_grades": {
+    "①": 1,
+    "③": 1,
+    "④": 0,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "timeliness": 1,
+   "writing": 2
+  },
+  {
+   "label": "C",
+   "product": "Kimi",
+   "rank_best": 1,
+   "rank_worst": 2,
+   "net_scores": {
+    "甲": 35.0,
+    "乙": 68.0,
+    "丙": 61.5
+   },
+   "severe_problems": [],
+   "element_grades": {
+    "①": 2,
+    "③": 0,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "timeliness": 0,
+   "writing": 1
+  },
+  {
+   "label": "D",
+   "product": "Gemini",
+   "rank_best": 1,
+   "rank_worst": 2,
+   "net_scores": {
+    "甲": 44.0,
+    "乙": 80.0,
+    "丙": 78.5
+   },
+   "severe_problems": [],
+   "element_grades": {
+    "①": 2,
+    "③": 1,
+    "④": 1,
+    "⑤": 0,
+    "⑦": 1
+   },
+   "timeliness": 1,
+   "writing": 1
+  },
+  {
+   "label": "E",
+   "product": "Perplexity",
+   "rank_best": 3,
+   "rank_worst": 3,
+   "net_scores": {
+    "甲": 20.0,
+    "乙": 32.0,
+    "丙": 33.0
+   },
+   "severe_problems": [],
+   "element_grades": {
+    "①": 2,
+    "③": 1,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "timeliness": 0,
+   "writing": 2
+  },
+  {
+   "label": "F",
+   "product": "DeepSeek",
+   "rank_best": 4,
+   "rank_worst": 4,
+   "net_scores": {
+    "甲": 10.0,
+    "乙": 19.0,
+    "丙": 18.5
+   },
+   "severe_problems": [],
+   "element_grades": {
+    "①": 2,
+    "③": 1,
+    "④": 1,
+    "⑤": 1,
+    "⑦": 1
+   },
+   "timeliness": 2,
+   "writing": 2
+  }
+ ],
+ "separated_pairs": [
+  {
+   "higher": "C",
+   "lower": "A",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  },
+  {
+   "higher": "C",
+   "lower": "B",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  },
+  {
+   "higher": "C",
+   "lower": "E",
+   "basis": "深度净分",
+   "bootstrap_share": {
+    "甲": 0.958,
+    "乙": 0.995,
+    "丙": 0.991
+   },
+   "disputed_labels": {
+    "Q40": {
+     "甲": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "全体",
+      "importance": "核心"
+     }
+    },
+    "Q42": {
+     "甲": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "核心"
+     }
+    },
+    "Q68": {
+     "甲": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "核心"
+     }
+    },
+    "Q274": {
+     "甲": {
+      "level": "全体",
+      "importance": "一般"
+     },
+     "乙": {
+      "level": "内部联系",
+      "importance": "一般"
+     },
+     "丙": {
+      "level": "内部联系",
+      "importance": "一般"
+     }
+    }
+   }
+  },
+  {
+   "higher": "C",
+   "lower": "F",
+   "basis": "深度净分",
+   "bootstrap_share": {
+    "甲": 0.998,
+    "乙": 1.0,
+    "丙": 1.0
+   },
+   "disputed_labels": {
+    "Q40": {
+     "甲": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "全体",
+      "importance": "核心"
+     }
+    },
+    "Q42": {
+     "甲": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "核心"
+     }
+    },
+    "Q68": {
+     "甲": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "核心"
+     }
+    }
+   }
+  },
+  {
+   "higher": "D",
+   "lower": "A",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  },
+  {
+   "higher": "D",
+   "lower": "B",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  },
+  {
+   "higher": "D",
+   "lower": "E",
+   "basis": "深度净分",
+   "bootstrap_share": {
+    "甲": 0.996,
+    "乙": 1.0,
+    "丙": 1.0
+   },
+   "disputed_labels": {
+    "Q40": {
+     "甲": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "全体",
+      "importance": "核心"
+     }
+    },
+    "Q42": {
+     "甲": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "核心"
+     }
+    },
+    "Q248": {
+     "甲": {
+      "level": "现象",
+      "importance": "一般"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "一般"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "一般"
+     }
+    },
+    "Q274": {
+     "甲": {
+      "level": "全体",
+      "importance": "一般"
+     },
+     "乙": {
+      "level": "内部联系",
+      "importance": "一般"
+     },
+     "丙": {
+      "level": "内部联系",
+      "importance": "一般"
+     }
+    }
+   }
+  },
+  {
+   "higher": "D",
+   "lower": "F",
+   "basis": "深度净分",
+   "bootstrap_share": {
+    "甲": 1.0,
+    "乙": 1.0,
+    "丙": 1.0
+   },
+   "disputed_labels": {
+    "Q40": {
+     "甲": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "全体",
+      "importance": "核心"
+     }
+    },
+    "Q42": {
+     "甲": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "核心"
+     }
+    },
+    "Q248": {
+     "甲": {
+      "level": "现象",
+      "importance": "一般"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "一般"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "一般"
+     }
+    }
+   }
+  },
+  {
+   "higher": "E",
+   "lower": "A",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  },
+  {
+   "higher": "E",
+   "lower": "B",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  },
+  {
+   "higher": "E",
+   "lower": "F",
+   "basis": "深度净分",
+   "bootstrap_share": {
+    "甲": 0.961,
+    "乙": 0.943,
+    "丙": 0.984
+   },
+   "disputed_labels": {
+    "Q40": {
+     "甲": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "全体",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "全体",
+      "importance": "核心"
+     }
+    },
+    "Q42": {
+     "甲": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "核心"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "核心"
+     }
+    },
+    "Q274": {
+     "甲": {
+      "level": "现象",
+      "importance": "一般"
+     },
+     "乙": {
+      "level": "现象",
+      "importance": "一般"
+     },
+     "丙": {
+      "level": "现象",
+      "importance": "一般"
+     }
+    }
+   }
+  },
+  {
+   "higher": "F",
+   "lower": "A",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  },
+  {
+   "higher": "F",
+   "lower": "B",
+   "basis": "硬伤分档",
+   "bootstrap_share": null,
+   "disputed_labels": {}
+  }
+ ],
+ "vetoed_pairs": [],
+ "element_names": {
+  "①": "切题与真实需要",
+  "②": "时效",
+  "③": "查找过程的交代",
+  "④": "甄别来源与处理矛盾",
+  "⑤": "分析",
+  "⑦": "结论与把握"
+ },
+ "resampling": {
+  "rounds": 1000,
+  "seed": 0,
+  "separation_share": 0.9,
+  "pool_points": 283,
+  "resampled_points": 281,
+  "disputed_points": [
+   "Q36",
+   "Q40",
+   "Q42",
+   "Q68",
+   "Q248",
+   "Q274"
+  ]
+ }
+}

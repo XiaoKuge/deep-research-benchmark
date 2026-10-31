@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟评审 试评重评 三家 第 23 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟评审 试评重评 三家第 23 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这次评审</a>
+    <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 23 次调用</p>
+    <h1 class="heading-3">评审 · 断言核验：报告 E，只读网页，评委 3</h1>
+    <p class="body-3 lede">OpenAI（codex），命令行默认模型，只读网页，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟评审 试评重评 三家的第 23 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-断言核验：报告 E，只读网页，评委 3</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">OpenAI（codex）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只读网页</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 23:56:46.690（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 23:58:05.220（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">78.529 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>2bfcb16cc5c4f5edaddc08ffc758629b1d0f13e389d4ff6a5c5e8a042051ebd4</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>3351938c1bd8d74f19b45b030f4403a80941c7803fd98b369c56164344d6a839</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/codex exec --json --output-last-message /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpeqq8rfr8/last-message.txt --cd /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpeqq8rfr8/work --ephemeral --skip-git-repo-check --ignore-user-config --ignore-rules --sandbox read-only -c approval_policy=&quot;never&quot; --disable shell_tool --disable unified_exec -c web_search=&quot;live&quot; -</code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 23 行，记录里的序号是 23</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="22.html">上一次调用</a></li><li><a class="caption-1" href="24.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 9954 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 9954 字，点开看全文</summary><pre class="raw" id="prompt">
+你在一项深度研究报告评测的模拟评审中担任核验员，负责&quot;断言核验&quot;。
+
+下面先给出材料：评审细则、题目卡，以及从一份报告中列出的几条主要结论。结论清单由另一位清单员按细则第五节的规则列出，所有核验员共用。本任务只允许检索网页和读网页：不能运行命令，不能读写文件。下面这几条结论所引的网页没有可用的存档，请打开所引网址核对；打不开时，可以读第三方网页存档，例如 https://archive.org/wayback/available?url=&lt;网址&gt;，只读，不提交任何表单。截止时间是 2026-03-03，判断对错和时效，以截至这一天已经存在的信息为准。
+
+===== 评审细则（开始） =====
+# 评审细则（第 1.2 版）
+
+2026-10-29。这是第四阶段方案（`stage4-design.md`）的操作版本，写给评委看，评委按它判定。第五阶段的小规模检验用的是第一版；检验之后改了两处，即第五节的结论清单和第七节第 2 条，改动的原因见 `stage5-report.md` 第三节。
+
+2026-10-30 第 1.2 版：第四节加了深度地图标注的用法和判定时隐去出处；有争议标注的计分规则见第四节末尾。起因是出题手册审阅时提出的问题：深度地图的定位不清，出题人不知道写到什么程度为止。第 1.2 版的改动还没有检验。
+
+---
+
+## 一、评委需要知道的定义
+
+**调研。** 为了回答提问者的一个具体问题，以截至某一时间点已经存在的信息为材料，系统地查找、甄别、分析和整合，得出有理有据的结论。结论可以是描述、解释、预测或建议，但都要讲得出道理、拿得出依据。
+
+**深。** 指调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。全体，是事情的历史和全部现状；本质，是事情的性质，以及这件事与其他事情之间的内在联系。材料的丰富是深的基础，但材料多本身不等于深。
+
+**不看的东西。** 篇幅、格式、标题层级、表格多少、引用条数、文笔，都不进入名次。写作只在第六节单独评。
+
+---
+
+## 二、环节评级（每个环节三档：0、1、2）
+
+每个评级都必须引用报告原文一到两句作为依据。原文中找不到依据时，按较低的一档评。
+
+**① 切题与真实需要**
+
+- 0：答的是另一个问题；或者只按字面回答，没有交代自己怎样理解问题和提问者的需要。
+- 1：回答了所问的问题，并写明了自己的理解或假设。
+- 2：在 1 的基础上，审视了问题的前提或其中概念的边界，例如&quot;最好&quot;按什么标准、某个概念包括哪些范围，并据此组织回答。
+
+**③ 查找过程的交代**
+
+- 0：没有交代查了什么、怎么查的。
+- 1：交代了来源的大致范围或类型。
+- 2：交代了查找的范围、方法和局限：查了哪些，没查到什么，为什么。
+
+**④ 甄别来源与处理矛盾**
+
+- 0：不加区分地使用来源；遇到相互矛盾的信息，不处理或没有发现。
+- 1：对来源有所区分，例如区分官方材料和二手评论，但对矛盾的处理不足。
+- 2：说明来源的可靠程度，主动指出相互矛盾的信息，并给出取舍的理由。
+
+**⑤ 分析**（区分事实和判断、考虑其他解释、不迎合）
+
+- 0：事实和判断混在一起；只有一种解释；结论迎合提问者或某一方。
+- 1：大体分开了事实和判断，推理基本清楚。
+- 2：明确区分事实和判断；考虑过其他解释或反例，并说明取舍；没有为了迎合而扭曲结论。
+
+**⑦ 结论与把握**
+
+- 0：结论含糊或回避判断，例如只说&quot;各有所长&quot;而不给出可用的判断；或者下了判断，但完全不说明把握。
+- 1：给出了明确的结论，但没有说明把握程度，或者把握说明流于形式。
+- 2：结论具体、明确，并如实说明各个结论有多大把握、依据是什么。
+
+**关于&quot;查不到&quot;。** 报告说&quot;查不到&quot;&quot;无法确定&quot;时，交代了查了什么、缺什么，并且仍然给出带把握说明的判断，算诚实；只说&quot;无法确定&quot;而不给可用的判断，算回避，在 ⑦ 中按 0 评。
+
+---
+
+## 三、要点抽取
+
+**要点**是报告中一条独立的、有实质内容的认识，例如一个事实、一个解释、一个判断、一条建议。
+
+- 同一个意思写了几遍，只算一条。
+- 只是罗列名字、没有说出任何认识的，不算要点。
+
+每条要点记下：
+
+- **内容**：一句话概括；
+- **层级**：现象、全体、内部联系、本质，四选一，定义见下；
+- **原文**：报告中的一句原话。
+
+**层级的定义：**
+
+- **现象**：事情本身的事实和表面特征。例如&quot;某产品于某日发布&quot;&quot;某产品支持上传文件&quot;。
+- **全体**：事情的历史，即怎样演变而来；或者全部现状，特别是容易被忽略的方面、例外和反例。例如&quot;这类功能从 2024 年底的首个产品发展到 2025 年各家跟进，期间定义发生了什么变化&quot;&quot;某产品在中文资料上的表现与英文不同&quot;。
+- **内部联系**：这件事与其他事情之间的因果、制约、依赖关系。例如&quot;某产品报告质量高，是因为它把检索和写作交给不同的子智能体，代价是用时更长&quot;。
+- **本质**：事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。例如&quot;&#x27;哪家最好&#x27;没有脱离用途的答案，因为各产品优化的目标不同：有的优化引用透明度，有的优化报告的完整性&quot;。
+
+**判定层级时的提醒。** 抽象的套话不算&quot;本质&quot;，例如&quot;技术在不断进步&quot;&quot;各有所长&quot;。一条要点只有说出了具体的性质或联系，并且能在报告中找到支撑，才能定为内部联系或本质。
+
+---
+
+## 四、要点池的判定
+
+把所有报告和出题人深度地图中的要点合并，意思相同的合成一条，再对每条池中要点判定四件事：
+
+1. **对不对。** 截至题目卡规定的截止时间，这条认识是否正确。标为正确、有误或无法判断，并附依据：来源网址或理由。
+2. **切不切题。** 它是否有助于回答提问者的问题。标为切题或不切题。不切题的要点不计分。
+3. **层级。** 现象、全体、内部联系、本质，四选一。以池中判定为准，不受抽取时所标层级的约束。
+4. **重要性。** 核心或一般。核心，指回答这个问题不能缺少的认识。
+
+然后记下每份报告写到了哪些池中要点，写对了还是写错了。
+
+**深度地图的标注（第 1.2 版）。** 深度地图是出题人在看到任何报告之前预先登记的浅答案、转折点和核心要点。它不是标准答案：地图上没有、但正确又切题的要点同样计分；要点的对错一律按来源判定。
+
+1. 地图上已有的要点，以地图登记的层级和重要性为默认值。评委组改动，必须依据来源或第三节的定义写明理由。
+2. 地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告。判为核心的，列入人工审计。
+3. **有争议的标注**，指评委组判定时没有一种意见达到三分之二的层级或重要性判定，以及评委组改动过的地图标注。计分时，比较一对报告，每条有争议的要点都按对领先一方最不利的那种标注计分，再做分开检验。有争议的判定只能让一对报告并列，不能把它们拉开。
+4. 估计名次把握的重抽样，只在至少一份报告写到的要点中进行。这样，地图上写了而没有一份报告写到的要点，对名次的影响为零。
+
+在第五阶段的试评数据上核对过两件事（2026-10-30）：去掉地图上 2 条没有一份报告写到的要点，6 份报告的净分和名次完全不变；把地图上 8 条要点的重要性全部反过来，名次不变。把全部 122 条要点的重要性抹平，原来分开的 12 对中有 1 对变成分不开。
+
+---
+
+## 五、断言核验
+
+**主要结论**，指报告摘要或结论部分中的判断，以及正文中支撑这些判断的关键事实。
+
+**结论清单（第 1.1 版）。** 凡是带来源的结论全部列入，另加至多 10 条不带来源的主要结论，优先抽对提问者影响最大的。清单由一人按这条规则抽出，所有核验员使用同一份清单。另外，在清单中标出至多 3 条&quot;对题目的直接回答&quot;，即报告对所问问题的总体判断。
+
+（第一版是每份报告由核验员自己抽出至多 10 条。不同核验员抽的不同，会带来噪声。）
+
+每条主要结论记两类标签。
+
+**来源标签：**
+
+- **支持**：打开所引来源（或它的存档），来源确实支持这条结论；
+- **部分支持**：来源支持其中一部分，或者结论说得比来源更强；
+- **不支持**：来源存在，但不支持这条结论；
+- **失效但有存档**：链接打不开，但网页存档中能找到，并据存档判断支持与否（另外记下支持与否）；
+- **找不到（疑似编造）**：链接打不开，存档中也没有，按标题检索也找不到；
+- **没有出处**：这条结论没有给出来源，或者导出时来源丢失。
+
+**对错标签：** 不管有没有来源，都独立检索核对，截至截止时间这条结论是否正确：
+
+- **正确**
+- **有误**：附依据
+- **无法判断**
+
+**来源只列在文末的情况。** 报告只在文末列出来源，没有对应到具体结论时，核验者在所列来源中查找支持：找到的，记为相应的来源标签，并注明&quot;文末来源&quot;；找不到的，记为没有出处。
+
+**&quot;疑似编造&quot;要经第二次核查才算确认。** 第二次核查可以换一种检索方式，或者查同一网站的其他页面。
+
+**时效（②）**，三档：
+
+- 0：主要结论依赖已经过时的信息，截止时间之前已有更新的信息被忽略；
+- 1：大体是新的，但有个别重要信息过时；
+- 2：材料截至规定的时间点，并且足够新。
+
+---
+
+## 六、写作（二级，单独报告，不进入名次）
+
+- 0：难以读懂，或结构混乱；
+- 1：能读懂，结构基本清楚；
+- 2：清楚、简洁，主要结论在前。
+
+---
+
+## 七、硬伤
+
+下列四种，有任何一种，报告就排在所有没有硬伤的报告之后：
+
+1. **编造来源**：经第二次核查确认，至少一个来源是编造的；
+2. **直接回答与证据相反**：报告对题目的直接回答（结论清单中标出的至多 3 条），至少一条被截止时间之前可靠的证据明确否定。支撑性事实的错误不算硬伤，在深度净分中扣分（第一版是&quot;至少一条核心的主要结论&quot;，结果长报告几乎都被判了硬伤）；
+3. **答非所问**：报告回答的是另一个问题；
+4. **全篇没有可追溯的出处**：经过补救，仍然没有一个可以追溯的来源。
+
+格式、篇幅、文笔，永远不算硬伤。
+===== 评审细则（结束） =====
+
+===== 题目卡（开始） =====
+一、评委版（只给评委）
+【提问者】原题没有写明。按&quot;一位想选用深度研究产品的普通用户&quot;理解。
+【用途】原题没有写明。按&quot;帮助决定用哪一家&quot;理解。
+【问题】各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+【截止时间】只使用截至 2026-03-03 已经公开的信息。这一天是试评报告的生成日期，判断对错和时效以截至这一天已经存在的信息为准。
+
+二、提问版（交给智能体）
+（原题没有提问版。试评的六份报告当时收到的只有问题本身，见裸题版。）
+
+三、裸题版（交给智能体）
+各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+
+四、附在提问版和裸题版之后，一字不改
+
+（原题没有附交付要求和说明：试评的六份报告生成在交付要求定稿之前。）
+
+说明：这道题取自第五阶段小规模检验，原件是 research-plan/stage5-pilot/question-card.md。原始题目文本没有保存，上面的问题是根据六份报告的标题和开头还原的，所以不是按基础级规则写的题目卡：提问者和用途是评委的理解，裸题版也是还原的文字，不一定与当时交给各个产品的逐字相同。这里按出题手册第八节模板的四个部分重写，内容与原件相同，供模拟评审程序读取。
+===== 题目卡（结束） =====
+
+===== 主要结论（要打开网址核对）（开始） =====
+[c5] 结论：第三方测评认为 ChatGPT Deep Research 是最好的深度研究产品之一，在技术研究上优于 Grok、Perplexity 和 Gemini。
+原文：“第三方测评认为 ChatGPT 的 Deep Research 是目前最好的深度研究产品之一，在技术研究上比 Grok、Perplexity、Gemini 表现更好。”
+报告标的来源：[[creatoreconomy](https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025)]
+网址：https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c6] 结论：ChatGPT Deep Research 被评为显著比 Perplexity 更可靠，适合严肃技术研究。
+原文：“深度研究版本在可靠性上被评为“显著比 Perplexity 更可靠”，适合严肃技术场景。”
+报告标的来源：[[clickittech](https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/)]
+网址：https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c7] 结论：ChatGPT Deep Research 的配额约为 Plus 用户每月 10 次、免费用户每月 2 次，限制了重度使用。
+原文：“深度研究配额有限（Plus 用户每月约 10 次，免费用户约 2 次），大规模重度使用的门槛较高。”
+报告标的来源：[[clickittech](https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/)]
+网址：https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c9] 结论：Perplexity 官方称其 Deep Research 会执行数十次搜索、阅读上百个来源并自动生成结构化研究报告。
+原文：“官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；”
+报告标的来源：[[perplexity](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research)]
+网址：https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c10] 结论：Perplexity Deep Research 在 Humanity’s Last Exam 上取得 21.1% 准确率，超过 Gemini Thinking、o3-mini、o1 和 DeepSeek-R1 等模型。
+原文：“在 Humanity’s Last Exam 上达到 21.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。”
+报告标的来源：[[perplexity](https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research)]
+网址：https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c16] 结论：Kimi k1.5 在长文本任务中比短文本任务表现更好，兼具提取准确性和更全面的数据维度。
+原文：“行业评测指出，Kimi k1.5 在长文本处理任务中，相比短文本更出色，既能保证提取准确，又能给出更全面的数据维度；”
+报告标的来源：[[lib.szu.edu](https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf)]
+网址：https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c17] 结论：Kimi k1.5 在特征分类和多维度关联挖掘任务中表现最佳。
+原文：“在特征分类与多维度关联挖掘任务中表现最佳。”
+报告标的来源：[[lib.szu.edu](https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf)]
+网址：https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c18] 结论：Kimi 深度研究能够高质量搜索、研究，并通过精美前端页面展示结果。
+原文：“另一篇技术解读也强调 Kimi 的「深度研究功能」已经可以高质量搜索、研究并通过精美前端页面展示结果。”
+报告标的来源：[[m.zhiding](https://m.zhiding.cn/article/3169361.htm)]
+网址：https://m.zhiding.cn/article/3169361.htm
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c22] 结论：对比实验认为 DeepSeek R1 的数据分析能力与 OpenAI o3-mini 相当且领先其他模型，逻辑更清晰严谨，适合异常检测和数据关联挖掘。
+原文：“清华等机构的对比实验认为，R1 在数据分析任务上与 OpenAI o3-mini 相当且领先其他模型，分析逻辑更清晰严谨，适合做异常检测、数据相关性挖掘等深度分析场景。”
+报告标的来源：[[lib.szu.edu](https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf)]
+网址：https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c25] 结论：Claude 在长篇写作、合约和报告撰写、代码审阅方面表现突出，适合作为安全稳重的写作和企业助手。
+原文：“多方评价中，Claude 在长篇写作、合约/报告撰写、代码审阅等方面表现突出，适合作为“安全、稳重”的写作和企业助手。”
+报告标的来源：[[laksn](https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more)]
+网址：https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c26] 结论：部分机构对比认为 Claude 3.5 sonnet 的表格结构化输出和格式工整度优于 o3 及部分国产模型。
+原文：“在部分机构的对比中，Claude 3.5 sonnet 在表格结构化输出、格式工整度上表现优于 o3 和部分国产模型。”
+报告标的来源：[[lib.szu.edu](https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf)]
+网址：https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf
+这个网址没有可用的存档（没有存档），请打开核对。
+
+[c38] 结论：部分研究机构和实践者推荐组合使用 DeepSeek R1 与 Kimi，由 R1 负责深度分析和异常检测、Kimi 负责长文本整理和多维挖掘，以取得优于单一模型的中文场景效果。
+原文：“一个值得注意的趋势是：部分研究机构和实践者已经开始推荐 “DeepSeek R1 + Kimi 深度研究” 的组合使用——R1 负责深度分析和异常检测，Kimi 负责长文本整理和多维度挖掘，从而在中文场景下取得比单一模型更好的效果。”
+报告标的来源：[[lib.szu.edu](https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf)]
+网址：https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf
+这个网址没有可用的存档（没有存档），请打开核对。
+===== 主要结论（要打开网址核对）（结束） =====
+
+要做的事：按细则第五节，对上面每一条结论判定两类标签。
+
+1. 来源标签 source_label：只能是&quot;支持&quot;&quot;部分支持&quot;&quot;不支持&quot;&quot;失效但有存档&quot;&quot;找不到（疑似编造）&quot;&quot;没有出处&quot;之一。
+   - 给了存档内容的，按存档判断所引来源是否支持这条结论。存档只附了前面一部分的，在没附的部分里找不到，不能据此判为不支持，要在 source_note 中写明。
+   - 写明&quot;没有网址&quot;的结论，来源标签已经定为&quot;没有出处&quot;，你只判定对错，source_label 不用写。
+   - 判为&quot;找不到（疑似编造）&quot;的，必须换一种方式再查一次，例如按标题检索、查同一网站的其他页面，结果写进 second_check。second_check 为空的&quot;找不到&quot;不算数。
+2. 对错标签 correct：只能是&quot;正确&quot;&quot;有误&quot;&quot;无法判断&quot;之一。不管有没有来源，都独立核对：截至截止时间，这条结论是否正确。要注意排除截止时间之后才出现的信息。依据写进 correct_basis，包括网址或理由。没有把握的，标&quot;无法判断&quot;，不要猜。
+
+规则：
+- 不要猜测报告出自哪个产品。
+- 网络请求只做读取和检索，不提交任何表单。
+
+只回答一个 JSON 对象，不要写任何别的文字，也不要用代码块。每条结论一项，id 用上面方括号里的编号。格式如下：
+
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;source_label&quot;:&quot;…&quot;,&quot;source_note&quot;:&quot;…&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;…&quot;,&quot;correct_basis&quot;:&quot;…&quot;}]}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 4449 字，一字不改。</p>
+  <details><summary class="caption-2">回答共 4449 字，点开看全文</summary><pre class="raw" id="answer">
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c5&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;网页可打开，发表于2025-03-12、更新于2025-04-04。作者在市场或技术主题研究一项中明确评价 ChatGPT Deep Research 优于 Grok、Perplexity 和 Gemini；这是个人体验评价，并非系统性对照测评。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025 确实存在截止日前的上述第三方评价。正确的是“有人如此评价”，不能据此证明截至2026-03-03仍全面领先。&quot;},{&quot;id&quot;:&quot;c6&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;当前网页明确称 OpenAI 的产品可靠性显著更高，并推荐用于技术分析。但页面标注2026-04-13，晚于截止日，当前内容不能直接证明截止日前已有这项评价。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/ 当前版本支持该评价，但无法确认相关文字的截止日前版本。另据 https://www.perplexity.ai/changelog/what-we-shipped---february-6th-2026 ，Perplexity在截止日前已升级研究功能；缺少同期独立对照证据，不能确定这一可靠性比较仍成立。&quot;},{&quot;id&quot;:&quot;c7&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;当前网页确实列出 Plus 每月10次、免费用户每月2次；但网页保留了过时配额，且当前版本日期晚于截止日。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;https://openai.com/index/introducing-deep-research/ 的2025-04-24更新已明确：Plus等套餐每月总额度25次、免费用户5次，并引入轻量版本。因此截至2026-03-03不能仍以10次和2次作为总体配额。&quot;},{&quot;id&quot;:&quot;c9&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;英文原网址多次打开失败，但同站同篇日文版可直接读取：https://www.perplexity.ai/ja/hub/blog/introducing-perplexity-deep-research 。其开头及报告生成部分明确描述数十次搜索、读取数百个来源、整合生成清晰完整报告；此为官方语言版本，并非网页存档。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;官方同篇日文版支持该宣传内容；2025-03-03的公司新闻稿 https://prtimes.jp/main/html/rd/p/000000001.000157647.html 也确认发布与自动研究流程。这里核实的是官方确曾如此表述，不代表每次任务都实际读取数百个来源。&quot;},{&quot;id&quot;:&quot;c10&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;英文原网址打不开，但官方同篇日文版明确列出21.1%，以及超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1的比较：https://www.perplexity.ai/ja/hub/blog/introducing-perplexity-deep-research 。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;2025-03-03的公司新闻稿 https://prtimes.jp/main/html/rd/p/000000001.000157647.html 确认21.1%；官方同篇日文版确认所列比较对象。该数字应理解为2025年发布时官方报告的历史成绩，而非截止日最新排行榜。&quot;},{&quot;id&quot;:&quot;c16&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;所引深圳大学PDF成功打开。“文本数据集成”实验比较约7000与15000 token文本，确实报告 Kimi k1.5 在较长文本中提取准确、数据维度更全面。材料同时声明测试受样本、环境和提示词等影响。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;另一高校公开的同份材料 https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 也记录这一结果。正确范围是该实验的观察，不能推广为所有长文本任务的普遍规律。&quot;},{&quot;id&quot;:&quot;c17&quot;,&quot;source_label&quot;:&quot;部分支持&quot;,&quot;source_note&quot;:&quot;所引PDF仅称 Kimi k1.5 在指定的2025年电影数据挖掘任务中表现最出色；比较对象为 DeepSeek R1、Claude 3.5 Sonnet和受附件限制未完成任务的o3-mini。结论省略了样本、参评范围与条件。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 可交叉核对该实验，但单一数据集的演示不足以确认 Kimi k1.5 在整个特征分类及多维关联挖掘任务类别中最佳。&quot;},{&quot;id&quot;:&quot;c18&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;网址可打开并重定向至2025-07-23的至顶文章。正文末尾明确作出高质量搜索、研究及精美前端展示的评价。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;https://www.zhiding.cn/zd-ai-lab/2025/0723/3169361.shtml 确有该评价；2025-06-30的实践记录 https://www.woshipm.com/evaluating/6236141.html 也展示了研究来源核对、带目录和图表的可视化报告。质量描述属于体验评价，不是普遍质量保证。&quot;},{&quot;id&quot;:&quot;c22&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;所引PDF的Titanic数据分析实验明确认为R1与o3-mini相当、优于另外两个参评模型，并评价R1逻辑更严谨；后面的协同应用建议也安排R1负责深入分析和异常检测。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 同样记录这些实验评价。这里仅确认特定对比实验及应用建议确实存在；“领先其他模型”限于该实验的参评模型，不能扩展至所有模型。&quot;},{&quot;id&quot;:&quot;c25&quot;,&quot;source_label&quot;:&quot;支持&quot;,&quot;source_note&quot;:&quot;原网址首次超时，添加末尾斜杠后成功读取。文章将Claude定位于长篇写作、合同和报告、编程及安全取向的专业应用，与结论基本一致。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more/ 明确作出上述推荐；截止日前的 https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025 也肯定Claude写作和编程表现，https://www.anthropic.com/customers 列有2024—2025年的法律、文档与代码审阅案例。作为用途推荐基本成立，“安全稳重”是评价而非无错误保证。&quot;},{&quot;id&quot;:&quot;c26&quot;,&quot;source_label&quot;:&quot;部分支持&quot;,&quot;source_note&quot;:&quot;PDF支持Claude表格较工整简洁，但原文将o3-mini与Claude并列评价，没有说Claude优于o3；实验比较的也不是完整o3模型。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;所引PDF及另一公开副本 https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 都把o3-mini与Claude并列为表格工整简洁的模型。报告把并列评价改成Claude胜出，并将o3-mini写成o3，改变了原实验结论。&quot;},{&quot;id&quot;:&quot;c38&quot;,&quot;source_label&quot;:&quot;部分支持&quot;,&quot;source_note&quot;:&quot;PDF确实建议DeepSeek与Kimi协同，由R1深入分析和异常检测、Kimi提供挖掘思路。但指的是Kimi k1.5模型，未称“Kimi深度研究”；也没有组合与单模型的中文场景效果对照实验。&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;所引PDF“新思路：优势互补，协同应用”明确写的是R1与Kimi k1.5；另一材料页面 https://knowledge.raodaor.com/ai-navigation/tutorial/deepseek/53-deepseek-deepresearch-makes-research-as-simple-as-chatting.html 可交叉核对。报告混淆基础模型与深度研究产品，并把协同建议写成已取得优于单模型的效果；后者缺乏验证。&quot;}]}</pre></details>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 51863 字</summary><pre class="raw" id="raw-output">
+{&quot;type&quot;:&quot;thread.started&quot;,&quot;thread_id&quot;:&quot;01a190bf-206d-7fe1-a6b9-dcb792578c8f&quot;}
+{&quot;type&quot;:&quot;turn.started&quot;}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_0&quot;,&quot;type&quot;:&quot;agent_message&quot;,&quot;text&quot;:&quot;我会逐一打开所引网页，并检索截至 2026-03-03 的独立依据，分别判断来源支持程度和结论对错。\n&quot;}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_1&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-fd629382-3007-4afb-8087-509a138c0104&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_1&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-fd629382-3007-4afb-8087-509a138c0104&quot;,&quot;query&quot;:&quot;https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;open_page&quot;,&quot;url&quot;:&quot;https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025&quot;},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;creatoreconomy.so&quot;,&quot;ref_id&quot;:&quot;turn0view0&quot;,&quot;snippet&quot;:&quot;Total lines: 209&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/rTJJF42PN1kvmjgKURXNsrdpfeC2TOaqWnUVubPxMA6LTHUBCero-yHT4AQqZOHRvILkeqnSAS5OLRyJd8cztPjRwIOf53jwkcSy3A3xcs7IGtK3ko0TLARWRVdclIZq-krUdbeNQwrZLP7NBYPeckwMTeD9-rePACWoPhcFXqQXYB0chNYA83wkh1Vwpj1ulQsflZ5JDRuO4e1N4i8X12fnlUknDkUqsLaK5734ExBSWPcQaGLn0eo-rsbv6sF8469hysVf5h8IjVKMNVEsrPuWnzDOz_pWC08ECWycMRS5yi5tOSnfCoG8zBSg6ULEyepmTQ_VBSBeNrlRJO2GDA&quot;,&quot;title&quot;:&quot;An Opinionated Guide on Which AI Model to Use in 2025&quot;,&quot;url&quot;:&quot;https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.clickittech.com&quot;,&quot;ref_id&quot;:&quot;turn0view1&quot;,&quot;snippet&quot;:&quot;Total lines: 473&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/hOhxBdQKZDjnWnh4quWe8wd9lNicp2roCNFIYtNsx5-m2l_szzol_79Wc6d0MWEw4JSg-OX3548jB7Ln59W9UdsaKMpeaDl9xio08i485P3c9B-mdtJJ4fTtQCsXqlkomqreRZugw22vu4gi6vLLt7zw7wKfqeqeNn92vf1MDBU&quot;,&quot;title&quot;:&quot;Perplexity vs OpenAI Deep Research: Which One Should You Use?&quot;,&quot;url&quot;:&quot;https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn0view2&quot;,&quot;title&quot;:&quot;Internal Error&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn0view3&quot;,&quot;title&quot;:&quot;Internal Error&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;m.zhiding.cn&quot;,&quot;ref_id&quot;:&quot;turn0view4&quot;,&quot;snippet&quot;:&quot;Total lines: 207&quot;,&quot;title&quot;:&quot;月之暗面Kimi K2技术报告：解读万亿参数的智能体模型（含K2与DeepSeek R1对比）-至顶AI实验室-至顶网&quot;,&quot;url&quot;:&quot;https://m.zhiding.cn/article/3169361.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn0view5&quot;,&quot;title&quot;:&quot;Internal Error&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_2&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-251b4acc-1c55-4ab3-a527-63f9ec6cff63&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_2&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-251b4acc-1c55-4ab3-a527-63f9ec6cff63&quot;,&quot;query&quot;:&quot;site:perplexity.ai \&quot;Introducing Perplexity Deep Research\&quot; \&quot;21.1\&quot; ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;site:perplexity.ai \&quot;Introducing Perplexity Deep Research\&quot; \&quot;21.1\&quot;&quot;,&quot;\&quot;清华大学第四弹\&quot; \&quot;特征分类\&quot;&quot;,&quot;site:laksn.com \&quot;top-generative-ai-models-comparison\&quot;&quot;,&quot;site:openai.com \&quot;April 24, 2025\&quot; \&quot;25\&quot; \&quot;deep research\&quot;&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;openai.com&quot;,&quot;ref_id&quot;:&quot;turn1search0&quot;,&quot;snippet&quot;:&quot;April 24, 2025 update: We’re significantly increasing how often you can use deep research—Plus, Team, Enterprise, and Edu users now get 25 queries per month,&quot;,&quot;title&quot;:&quot;Introducing deep research | OpenAI&quot;,&quot;url&quot;:&quot;https://openai.com/index/introducing-deep-research/?region=united-states&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;openai.com&quot;,&quot;ref_id&quot;:&quot;turn1search1&quot;,&quot;snippet&quot;:&quot;April 24, 2025 update: We’re significantly increasing how often you can use deep research—Plus, Team, Enterprise, and Edu users now get 25 queries per month,&quot;,&quot;title&quot;:&quot;מציגים את מחקר מעמיק | OpenAI&quot;,&quot;url&quot;:&quot;https://openai.com/he-IL/index/introducing-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;help.openai.com&quot;,&quot;ref_id&quot;:&quot;turn1search2&quot;,&quot;snippet&quot;:&quot;## Deep research in Compliance API ChatGPT ... # February 25, 2025&quot;,&quot;title&quot;:&quot;ChatGPT Enterprise &amp; Edu - Release Notes | OpenAI Help Center&quot;,&quot;url&quot;:&quot;https://help.openai.com/en/articles/10128477-chatgpt-enterprise-edu-release-notes%3F.flac&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.laksn.com&quot;,&quot;ref_id&quot;:&quot;turn1search3&quot;,&quot;snippet&quot;:&quot;ChatGPT, developed by OpenAI, remains a top AI model in 2025. ... Open-Source Models | Free | R1 model is open-source and can be downloaded&quot;,&quot;title&quot;:&quot;Top Generative AI Models Compared (2025): ChatGPT, Claude &amp; More | GreyBath Technology Pvt Ltd (LAKSN Technologies)&quot;,&quot;url&quot;:&quot;https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;community.openai.com&quot;,&quot;ref_id&quot;:&quot;turn1search4&quot;,&quot;snippet&quot;:&quot;jochenschultz April 24, 2025, 5:51pm 45 ... inga.krim April 25, 2025, 7:21am 47 ... So I asked ChatGPT, but actually used Deep Research and let&quot;,&quot;title&quot;:&quot;Paid credits expired wth? - Page 3 - API - OpenAI Developer Community&quot;,&quot;url&quot;:&quot;https://community.openai.com/t/paid-credits-expired-wth/1041718?page=3&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;openai.com&quot;,&quot;ref_id&quot;:&quot;turn1search5&quot;,&quot;snippet&quot;:&quot;## Research Leads&quot;,&quot;title&quot;:&quot;Introducing deep research | OpenAI&quot;,&quot;url&quot;:&quot;https://openai.com/gu-IN/index/introducing-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;community.openai.com&quot;,&quot;ref_id&quot;:&quot;turn1search6&quot;,&quot;snippet&quot;:&quot;ChatGPT gpt-4 | | 23 | 14503 | June 4, 2024 ... Phasm - Macro Assembler of User Concepts Community chatgpt , project , macros&quot;,&quot;title&quot;:&quot;Latest topics - OpenAI Developer Community&quot;,&quot;url&quot;:&quot;https://community.openai.com/latest?no_definitions=true&amp;order=likes&amp;page=41&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.cideg.tsinghua.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn1search7&quot;,&quot;snippet&quot;:&quot;支持在京高校院所、新型研发机构和科技服务机构与国外知名大学合作培养科技复合型人才。 ... 全面推行职称分类评价标准和代表作评审制度，对科技人才进行差别化分类评价，突出评价科研成果的质量和原创价值。突出以理论贡献、学术贡献为主评价基础理论研究人才，加强同行评价、国际评价。 ... 在各类人才项目中建立公开透明、平等竞争的培育机制，探索推行人才“推荐制”。 ... 实行科研项目分类管理，加大对科研人&quot;,&quot;title&quot;:&quot;清华大学产业发展与环境治理研究中心&quot;,&quot;url&quot;:&quot;https://www.cideg.tsinghua.edu.cn/info/kjzcck/4630&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;sxyx.orgcc.net&quot;,&quot;ref_id&quot;:&quot;turn1search8&quot;,&quot;snippet&quot;:&quot;请共同维护校园治安秩序，践行低碳、文明参观理念： （1）爱护校园环境，不损坏公物与景观，减少垃圾产生并做好分类投放； （2）恪守社会公德，不大声喧哗、不随意躺卧，保持公共秩序； （3）抵制“黑导”揽客、游商兜售等非法经营行为，谨防财产损失； （4）做好个人及随行家人的安全防护，谨防走失、溺水等安全意外。 ... 温馨提示 清华大学为教学科研单位，非旅游景点，不向任何机构或个人收取参观费用。&quot;,&quot;title&quot;:&quot;研学资讯-行读·全域研学服务平台&quot;,&quot;url&quot;:&quot;https://sxyx.orgcc.net/index/article.html?page=15&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.scribd.com&quot;,&quot;ref_id&quot;:&quot;turn1search9&quot;,&quot;snippet&quot;:&quot;课程主要包括人工智能概述、基于机器学习的材料设计、机器学习方法、特征筛选和 超参数优化方法、材料的分类、半导体材料、电介质材料、磁性材料、基于机器学习钙钛 ... 北京：清华大学出版社，2024&quot;,&quot;title&quot;:&quot;通识选修课程选课指南（2025学年秋季学期版） | PDF&quot;,&quot;url&quot;:&quot;https://www.scribd.com/document/896437351/%25E9%2580%259A%25E8%25AF%2586%25E9%2580%2589%25E4%25BF%25AE%25E8%25AF%25BE%25E7%25A8%258B%25E9%2580%2589%25E8%25AF%25BE%25E6%258C%2587%25E5%258D%2597-2025%25E5%25AD%25A6%25E5%25B9%25B4%25E7%25A7%258B%25E5%25AD%25A3%25E5%25AD%25A6%25E6%259C%259F%25E7%2589%2588&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn1view0&quot;,&quot;title&quot;:&quot;Internal Error&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_3&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-2ae18d28-65dc-4893-a49c-b074bc8680cd&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_3&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-2ae18d28-65dc-4893-a49c-b074bc8680cd&quot;,&quot;query&quot;:&quot;\&quot;Introducing Perplexity Deep Research\&quot; \&quot;hundreds\&quot; ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;\&quot;Introducing Perplexity Deep Research\&quot; \&quot;hundreds\&quot;&quot;,&quot;\&quot;DeepResearch\&quot; \&quot;特征分类\&quot; Kimi&quot;,&quot;\&quot;让科研像聊天一样简单\&quot; pdf&quot;,&quot;\&quot;Kimi\&quot; \&quot;长文本\&quot; \&quot;数据维度\&quot;&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.cdut.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn2search11&quot;,&quot;snippet&quot;:&quot;《让科研像聊天一样简单》 ... 该报告仅用于科普，面向对象为科研小白。）&quot;,&quot;title&quot;:&quot;《让科研像聊天一样简单》&quot;,&quot;url&quot;:&quot;https://www.cdut.edu.cn/__local/D/38/1F/2221ED202DC62E15B59B53BD2CD_299A4A6D_F5BE42.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.cdut.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn2search12&quot;,&quot;snippet&quot;:&quot;《让科研像聊天一样简单系列》 Gemini科研手册指南&quot;,&quot;title&quot;:&quot;《让科研像聊天一样简单系列》&quot;,&quot;url&quot;:&quot;https://www.cdut.edu.cn/__local/1/B1/7A/7BBD093BDEB1E3C47E09196F5F0_A79A68C9_C2C61E.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;its.hainanu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn2search13&quot;,&quot;snippet&quot;:&quot;长文本粘贴后会自动形成文件，能够准确集成文本数据表格，但数据维度有限。 ... □ 长文本处理任务中，Kimi k1.5相较短文本处理表现更加突出，提取准确的同时数据维度更加全面；由于文本过长DeepSeek R1无法完成任务；&quot;,&quot;title&quot;:&quot;文本数据集成\n\nClaude 3.5 sonnet\n\n一般文本（7000token）：\n能够准确提取&quot;,&quot;url&quot;:&quot;https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn2search14&quot;,&quot;snippet&quot;:&quot;让科研像聊天一样简单&quot;,&quot;title&quot;:&quot;DeepSeek+DeepResearch&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.4mf.net&quot;,&quot;ref_id&quot;:&quot;turn2search15&quot;,&quot;snippet&quot;:&quot;让科研像聊天一样简单&quot;,&quot;title&quot;:&quot;DeepSeek+DeepResearch&quot;,&quot;url&quot;:&quot;https://www.4mf.net/wp-content/uploads/2025/02/20250220091059404665.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.douyin.com&quot;,&quot;ref_id&quot;:&quot;turn2search0&quot;,&quot;snippet&quot;:&quot;# #让科研像聊天一样简单 V20250417版保姆级教程 #科研工具 #研究综述 ... 本视频介绍了一款科研辅助软件的V20250417版本更新，该版本在界面设计和功能模块上有显著优化，核心目标是“让科研像聊天一样简单”，支持高质量研究综述的快速生成，且具备图文并茂的呈现效果。 ... 融合图谱：若需整合中英文研究，点击“融合图谱”，生成不分国内外研究的完整关键词共现聚类图谱。&quot;,&quot;title&quot;:&quot;#让科研像聊天一样简单 V20250417版保姆级教程 #科研工具 #研究综述 - 抖音&quot;,&quot;url&quot;:&quot;https://www.douyin.com/video/7499137512175848730?source=Baiduspider-sdc&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;tsight.io&quot;,&quot;ref_id&quot;:&quot;turn2search1&quot;,&quot;snippet&quot;:&quot;本文探讨如何利用 Kimi 的长上下文（Long Context）能力，将非结构化文本从低价值的字符堆砌转化为高价值的知识资产。 ... Kimi 引入的注意力残差等技术优化，在深度维度上通过动态检索替换机械累加，进一步降低了长序列处理中的信息衰减。 ... 通过这种架构，文本处理从“阅读-摘要”的低端模式，进化为“解构-对齐-合成”的知识工程模式，真正实现了将原始数据流转化为可沉淀的知识资产。&quot;,&quot;title&quot;:&quot;高维数据流重构：基于长上下文语义对齐的知识资产合成架构 | TrueSight&quot;,&quot;url&quot;:&quot;https://tsight.io/articles/17846584?lang=zh&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.flowasia.cn&quot;,&quot;ref_id&quot;:&quot;turn2search2&quot;,&quot;snippet&quot;:&quot;Kimi：长文档、研究和知识工作的代表性平台 ... 它的商业相关性不只来自用户覆盖，也来自其产品能力与长文档、研究、资料整理和复杂信息处理等知识工作场景的匹配度。 ... Kimi 已从早期以长文本处理见长的 AI 助手，扩展到联网搜索、深度研究、Agent、代码和多模态等更广泛的任务。&quot;,&quot;title&quot;:&quot;2026 年海外商业读者值得了解的 5 个中国 AI 平台：所属公司、主要用途与使用场景 - 北京唯吾科技&quot;,&quot;url&quot;:&quot;https://www.flowasia.cn/insight/top-chinese-ai-models-2026/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;tianqi.csdn.net&quot;,&quot;ref_id&quot;:&quot;turn2search3&quot;,&quot;snippet&quot;:&quot;Kimi是长文本解析能力突出的AI工具，核心适配财报、长篇研报深度阅读场景，是散户深度拆解专业财经文本的核心辅助工具。 它的核心优势是支持超大篇幅文档上传与全文解析，能够直接读取百页以上的年报、行业深度研报，精准提取营收、净利润、毛利率、业务布局、风险提示等核心关键信息，同时可根据使用者指令，梳理研报的核心逻辑、行业观点与数据支撑，省去人工逐页阅读、摘抄的繁琐流程。其次，Kimi的文本溯源能力较强&quot;,&quot;title&quot;:&quot;散户做信息整理与复盘研究，各类AI工具适配场景解析_人工智能_LLJ072-AtomGit AI 社区&quot;,&quot;url&quot;:&quot;https://tianqi.csdn.net/6a42482810ee7a33f283db42.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;finance.sina.com.cn&quot;,&quot;ref_id&quot;:&quot;turn2search4&quot;,&quot;snippet&quot;:&quot;岑峰：这说明模型的推理层基本没有问题，瓶颈在于模型很难在跨模态的数据大海中捞到那根“针”。玺谕，这是否说明行业过去过于迷信长文本推理，而忽视了跨模态检索才是真正的命门？ ... 首先，我们的实验结果显示，多模态跨会话推理（MSR）是目前所有系统共同的天花板，绝大多数系统得分低于 30%，即便表现最好的Kimi 也不过 40 分。 ... 为了精准诊断，我们在论文中将记忆系统拆解为五大能力维度：&quot;,&quot;title&quot;:&quot;万字解读：为何长上下文治不了多模态 AI 的「健忘症」？丨GAIR Live 031|AI_新浪财经_新浪网&quot;,&quot;url&quot;:&quot;https://finance.sina.com.cn/stock/t/2026-06-09/doc-iniavfsq3172385.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.quickrouter.ai&quot;,&quot;ref_id&quot;:&quot;turn2search5&quot;,&quot;snippet&quot;:&quot;厂商基准只适用于其公布的版本、数据集与条件；未提供可复核来源、原始值及换算方法的衍生评分已撤下。 ... 这篇横评不站队、不吹不黑，从价格、能力、长文本、中文、智能体几个维度把四家放在一起比一比，最后给明确的场景推荐。 ... 中文——中文表达自然度、本土语境理解 ... 超长文档 / 长对话 / 长输入抽取 | Kimi K2.5 | 256K + 长输入最稳&quot;,&quot;title&quot;:&quot;国产大模型对比：DeepSeek、GLM、Qwen 与 Kimi 对比 | QuickRouter&quot;,&quot;url&quot;:&quot;https://www.quickrouter.ai/blog/cn-models-shootout-review&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.53ai.com&quot;,&quot;ref_id&quot;:&quot;turn2search6&quot;,&quot;snippet&quot;:&quot;Kimi作为国产AI技术派的一股清流，长文本功能一直很不错。 ... 数据验证显示，三个平台在核心指标上基本一致，Kimi在数据维度和细节展示方面相对更全面，并且关键信息加粗高亮了出来。 ... Gemini的深度研究，倾向于生成大而全的报告，反而稀释了我想要的数据信息。&quot;,&quot;title&quot;:&quot;Kimi深度研究 vs. OpenAI / Gemini Deep Research：文献综述哪家强？（实测对比） - 53AI-AI知识库|企业AI知识库|大模型知识库|前线部署工程师|FDE|AIHub&quot;,&quot;url&quot;:&quot;https://www.53ai.com/news/OpenSourceLLM/2025070496385.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.scribd.com&quot;,&quot;ref_id&quot;:&quot;turn2search7&quot;,&quot;snippet&quot;:&quot;Ø 超长上下文支持：原生支持超长文本输入与理解，擅长处理复杂文档和深度对话。 ... Ø 多场景适配：覆盖写作、编程、数据分析等多种任务，兼顾通用性与垂直领域能力。 ... Ø Kimi 1.5的长思考模式能力效果不如DeepSeek ... Ø 语言表达流畅简洁，但超出150字的长度要求。&quot;,&quot;title&quot;:&quot;DeepSeek 内部研讨资料：AI 工具深度测评与选型指南 | PDF&quot;,&quot;url&quot;:&quot;https://www.scribd.com/document/861474074/DeepSeek-%E5%86%85%E9%83%A8%E7%A0%94%E8%AE%A8%E8%B5%84%E6%96%99-AI-%E5%B7%A5%E5%85%B7%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%84%E4%B8%8E%E9%80%89%E5%9E%8B%E6%8C%87%E5%8D%97&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.fxbaogao.com&quot;,&quot;ref_id&quot;:&quot;turn2search8&quot;,&quot;snippet&quot;:&quot;2 0 2 5年 预 测 调 整要 求 附 带 数 据 来 源 链 接 输出示例 小结 科研人员对三种模型的选择： 1. ... •给联网模型精确的时间/来源限制（如\&quot;2023年后+政府官网\&quot;） 输出特点 实时获取各国官方数据；自动标注信息可信度及来源&quot;,&quot;title&quot;:&quot;[北京航空航天大学&amp;清华大学]：《让科研像聊天一样简单》一站式科研指令手册 - 发现报告&quot;,&quot;url&quot;:&quot;https://www.fxbaogao.com/detail/5124961&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;link.springer.com&quot;,&quot;ref_id&quot;:&quot;turn2search9&quot;,&quot;snippet&quot;:&quot;For example, when the Deepseek R1 model gained prominence in early 2025, Perplexity temporarily integrated it into its system interface ), only to later remove&quot;,&quot;title&quot;:&quot;“Perplexity is BS machine:” from controversy to AI ethics as discourse? | AI and Ethics | Springer Nature Link&quot;,&quot;url&quot;:&quot;https://link.springer.com/article/10.1007/s43681-026-01174-4&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.scribd.com&quot;,&quot;ref_id&quot;:&quot;turn2search10&quot;,&quot;snippet&quot;:&quot;务目前在小范围灰度测试阶段，后续会 ... 上，主打 200 万字长文本的 Kimi 并未&quot;,&quot;title&quot;:&quot;《电脑报》2024年第22期 | PDF&quot;,&quot;url&quot;:&quot;https://www.scribd.com/document/857110000/%E7%94%B5%E8%84%91%E6%8A%A5-2024%E5%B9%B4%E7%AC%AC22%E6%9C%9F&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn2reddit16&quot;,&quot;snippet&quot;:&quot;However, I’ve tried a million times to use them to generate headlines and experienced the same issue you experienced. ... https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research ... Pe&quot;,&quot;title&quot;:&quot;74 downvotes in 2 hours for saying Perplexity served 3 week old news as &#x27;fresh&#x27;&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/ArtificialInteligence/comments/1nar1gr/74_downvotes_in_2_hours_for_saying_perplexity/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn2view0&quot;,&quot;title&quot;:&quot;Internal Error&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn2view1&quot;,&quot;title&quot;:&quot;Internal Error&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_4&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-a91c0e06-2f0b-4cc2-a887-2c3836e2b1c2&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_4&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-a91c0e06-2f0b-4cc2-a887-2c3836e2b1c2&quot;,&quot;query&quot;:&quot;site:perplexity.ai/hub/blog/introducing-perplexity-deep-research 21.1 ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;site:perplexity.ai/hub/blog/introducing-perplexity-deep-research 21.1&quot;,&quot;site:clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research \&quot;2025\&quot;&quot;,&quot;site:anthropic.com \&quot;Claude\&quot; \&quot;legal\&quot; \&quot;2025\&quot; contracts&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.clickittech.com&quot;,&quot;ref_id&quot;:&quot;turn3search0&quot;,&quot;snippet&quot;:&quot;Perplexity Deep Research is a relatively new entrant, launched on February 14, 2025, just two weeks after OpenAI’s release. ... In 2026, Perplexity is no&quot;,&quot;title&quot;:&quot;Perplexity vs OpenAI Deep Research: Which One Should You Use?&quot;,&quot;url&quot;:&quot;https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.perplexity.ai&quot;,&quot;ref_id&quot;:&quot;turn3search1&quot;,&quot;snippet&quot;:&quot;We&#x27;ve upgraded Deep Research to achieve state-of-the-art performance on leading external benchmarks (such as Google DeepMind Deep Search QA and Scale AI Research Rubric), outperforming&quot;,&quot;title&quot;:&quot;Upgraded Deep Research, Model Council&quot;,&quot;url&quot;:&quot;https://www.perplexity.ai/changelog/what-we-shipped---february-6th-2026&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn3search2&quot;,&quot;snippet&quot;:&quot;A session in which a lawyer builds a script to automatically flag missing clauses across a folder of contracts is mapped into Legal Occupations, even&quot;,&quot;title&quot;:&quot;How Claude Code is used in practice \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/research/claude-code-expertise?_bhlid=421eeaac314b67ed263b806c9f7769ac84136f11&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn3search3&quot;,&quot;snippet&quot;:&quot;Dec 18, 2025 ... One major change was the upgrade from an older model (phase one used Claude Sonnet 3.7) to newer, smarter ones (phase&quot;,&quot;title&quot;:&quot;Project Vend: Phase two \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/research/project-vend-2?trk=public_post_comment-text&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn3search4&quot;,&quot;snippet&quot;:&quot;In this case, a Russia-based actor used Claude to research and draft procurement documents for goods that can be used for both civilian and military&quot;,&quot;title&quot;:&quot;Countering misuse of AI: September 2026 / Anthropic \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/threat-intelligence-report-september-2026&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn3search5&quot;,&quot;snippet&quot;:&quot;# Legal center ... Find the documents that apply to how you use Claude. ... Oct 8, 2025&quot;,&quot;title&quot;:&quot;Legal Center \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/legal&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn3search6&quot;,&quot;snippet&quot;:&quot;In December 2025, Claude interviewed people about which of their personal belongings they might want to sell and what sorts of things they might be&quot;,&quot;title&quot;:&quot;Project Deal: our Claude-run marketplace experiment | Anthropic \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/features/project-deal&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn3search7&quot;,&quot;snippet&quot;:&quot;McGovern Foundation standardizes grant evaluation with ClaudeJun 23, 2025 Case StudyHarvey transforms legal work with ClaudeJun 20, 2025 Case StudyGrab scales personalized merchant support across&quot;,&quot;title&quot;:&quot;Customers \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/customers?marketingSource=DP_email_DPsignature2016&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn3search8&quot;,&quot;snippet&quot;:&quot;We scanned these transcripts and identified a fourth incident, from January 2026, involving an early version of Claude Opus 4.6. ... (This post does not&quot;,&quot;title&quot;:&quot;An alignment assessment of recent cybersecurity incidents \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;r2cdn.perplexity.ai&quot;,&quot;ref_id&quot;:&quot;turn3search9&quot;,&quot;snippet&quot;:&quot;Tasks are sampled from a deidentified dataset of Perplexity Deep Research requests, then filtered and augmented to ensure that the tasks are anonymized, open-ended and&quot;,&quot;title&quot;:&quot;DRACO: a Cross-Domain Benchmark for&quot;,&quot;url&quot;:&quot;https://r2cdn.perplexity.ai/pplx-draco.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn3view0&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn3view1&quot;,&quot;title&quot;:&quot;Internal Error&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;m.zhiding.cn&quot;,&quot;ref_id&quot;:&quot;turn3view2&quot;,&quot;snippet&quot;:&quot;Total lines: 207&quot;,&quot;title&quot;:&quot;月之暗面Kimi K2技术报告：解读万亿参数的智能体模型（含K2与DeepSeek R1对比）-至顶AI实验室-至顶网&quot;,&quot;url&quot;:&quot;https://m.zhiding.cn/article/3169361.htm&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_5&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-ee6dd71a-9dd6-4202-ba0f-33a25719a8a7&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_5&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-ee6dd71a-9dd6-4202-ba0f-33a25719a8a7&quot;,&quot;query&quot;:&quot;\&quot;Introducing Perplexity Deep Research\&quot; 21.1 2025 February ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;\&quot;Introducing Perplexity Deep Research\&quot; 21.1 2025 February&quot;,&quot;\&quot;Kimi\&quot; \&quot;高质量\&quot; \&quot;精美\&quot; \&quot;研究\&quot; 前端&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.plushcap.com&quot;,&quot;ref_id&quot;:&quot;turn4search0&quot;,&quot;snippet&quot;:&quot;# February 2025 Summaries ... Introducing Perplexity Deep Research ... Perplexity reports that the tool scored 21.1% on Humanity’s Last Exam and 93.9% on SimpleQA,&quot;,&quot;title&quot;:&quot;Perplexity Blog Summaries February 2025 - Plushcap&quot;,&quot;url&quot;:&quot;https://www.plushcap.com/companies/perplexity/blog/summaries/2025/02&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.changelog.gallery&quot;,&quot;ref_id&quot;:&quot;turn4search1&quot;,&quot;snippet&quot;:&quot;Introducing Perplexity Deep Research ... posted on 14 Feb 2025&quot;,&quot;title&quot;:&quot;Introducing Perplexity Deep Research • changelog.gallery&quot;,&quot;url&quot;:&quot;https://www.changelog.gallery/posts/introducing-perplexity-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.watch.impress.co.jp&quot;,&quot;ref_id&quot;:&quot;turn4search2&quot;,&quot;snippet&quot;:&quot;PerplexityのDeep Researchは、AIベンチマークの「Humanity’s Last Exam」(人類最後の試験)スコアが20.5%で、Gemini Thinking、o3-mini、o1、DeepSeek-R1などを上回っているという。 ... * Introducing Perplexity Deep Research&quot;,&quot;title&quot;:&quot;Perplexityも「Deep Research」対応　無料でも1日5回詳細に調査 - Impress Watch&quot;,&quot;url&quot;:&quot;https://www.watch.impress.co.jp/docs/news/1663152.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;prtimes.jp&quot;,&quot;ref_id&quot;:&quot;turn4search3&quot;,&quot;snippet&quot;:&quot;幅広い分野でAIの精度を試す「Humanity’s Last Exam（人類最後の試験）」*においては21.1%を記録し、事実性を評価するSimpleQA*においても93.9%のスコアをたたき出しました。 ... 誰もが強力なリサーチツールを利用できるべき」という考えのもと、Perplexityはすべてのユーザーに無料で「Deep Research」を提供しており、無料版のユーザーは1日5回まで、&quot;,&quot;title&quot;:&quot;AI回答エンジンPerplexity、誰もが利用可能なリサーチ機能「Deep Research」をリリース | PERPLEXITY AI, INC.のプレスリリース&quot;,&quot;url&quot;:&quot;https://prtimes.jp/main/html/rd/p/000000001.000157647.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.plushcap.com&quot;,&quot;ref_id&quot;:&quot;turn4search4&quot;,&quot;snippet&quot;:&quot;Introducing Perplexity Deep Research | Perplexity Team | 2025-02-14 | 529 | 5 ... Choice is the remedy | Perplexity Team | 2025-04-21 | 1,070&quot;,&quot;title&quot;:&quot;Perplexity Blog - Plushcap&quot;,&quot;url&quot;:&quot;https://www.plushcap.com/companies/perplexity/blog/2025&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;simonwillison.net&quot;,&quot;ref_id&quot;:&quot;turn4search5&quot;,&quot;snippet&quot;:&quot;* OpenAI&#x27;s ChatGPT Deep Research: Introducing deep research - February 2nd 2025 And now Perplexity Deep Research, announced on February 14th.&quot;,&quot;title&quot;:&quot;Introducing Perplexity Deep Research&quot;,&quot;url&quot;:&quot;https://simonwillison.net/2025/feb/16/introducing-perplexity-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;designcompass.org&quot;,&quot;ref_id&quot;:&quot;turn4search6&quot;,&quot;snippet&quot;:&quot;* February 17, 2025 ... Perplexity&#x27;s Deep Research achieved an accuracy of 21.1% on &#x27;Humanity&#x27;s Last Exam&#x27;, an AI system evaluation standard. ... * https://www.perplexity.ai/ko/hub/blog/introducing-pe&quot;,&quot;title&quot;:&quot;Perplexity Deep Research: Free, Professional-Level Research - Design Compass&quot;,&quot;url&quot;:&quot;https://designcompass.org/en/perplexity-deepresearch/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.perplexity.ai&quot;,&quot;ref_id&quot;:&quot;turn4search7&quot;,&quot;snippet&quot;:&quot;We&#x27;ve upgraded Deep Research to achieve state-of-the-art performance on leading external benchmarks (such as Google DeepMind Deep Search QA and Scale AI Research Rubric), outperforming&quot;,&quot;title&quot;:&quot;Upgraded Deep Research, Model Council&quot;,&quot;url&quot;:&quot;https://www.perplexity.ai/changelog/what-we-shipped---february-6th-2026&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;news.mynavi.jp&quot;,&quot;ref_id&quot;:&quot;turn4search8&quot;,&quot;snippet&quot;:&quot;Perplexityによると、Perplexity Deep Researchは、AIの性能を評価する「Humanity’s Last Exam」（幅広い学問分野にわたる専門的な質問を含むベンチマークテスト）において21.1%の精度スコアを達成した。 ... * Introducing Perplexity Deep Research&quot;,&quot;title&quot;:&quot;Perplexity、AIリサーチ・エージェント「Deep Research」、無料版でも利用可能 | マイナビニュース&quot;,&quot;url&quot;:&quot;https://news.mynavi.jp/article/20250217-3130806/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.infoq.com&quot;,&quot;ref_id&quot;:&quot;turn4search9&quot;,&quot;snippet&quot;:&quot;Source: https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research * 21.1% on Humanity’s Last Exam – A rigorous benchmark testing AI across 100+ subjects, from science and mathematics to &quot;,&quot;title&quot;:&quot;Perplexity Unveils Deep Research: AI-Powered Tool for Advanced Analysis - InfoQ&quot;,&quot;url&quot;:&quot;https://www.infoq.com/news/2025/02/perplexity-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;blog.melashri.net&quot;,&quot;ref_id&quot;:&quot;turn4search10&quot;,&quot;snippet&quot;:&quot;https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research 16 Feb 2025 ... * They also claim that It achieves a 21.1% accuracy score on Humanity Last Exam, outperforming several leading A&quot;,&quot;title&quot;:&quot;Introducing Perplexity Deep Research | Mohamed Elashri&quot;,&quot;url&quot;:&quot;https://blog.melashri.net/links/perplexity-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;bellwether.org&quot;,&quot;ref_id&quot;:&quot;turn4search11&quot;,&quot;snippet&quot;:&quot;- “Introducing Deep Research,” OpenAI, February 2, 2025, https://openai.com/index/introducing-deep-research/. - “Introducing Perplexity Deep Research,” Perplexity, February 14, 2025, https://www.perpl&quot;,&quot;title&quot;:&quot;PAGE 19\n\n- Juraj Gottweis and Vivek Natarajan, “Ac&quot;,&quot;url&quot;:&quot;https://bellwether.org/wp-content/uploads/2026/01/LearningSystems_2_Bellwether_Updated_January2026.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;bellwether.org&quot;,&quot;ref_id&quot;:&quot;turn4search12&quot;,&quot;snippet&quot;:&quot;gemini-deep-research/; “Introducing Deep Research,” OpenAI, February 2, ... Perplexity Deep Research,” Perplexity, February 14, 2025, https://www. ... 21&quot;,&quot;title&quot;:&quot;Productive Struggle&quot;,&quot;url&quot;:&quot;https://bellwether.org/wp-content/uploads/2025/06/ProductiveStruggle_Bellwether_June2025.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;openreview.net&quot;,&quot;ref_id&quot;:&quot;turn4search13&quot;,&quot;snippet&quot;:&quot;Introducing perplexity deep research. https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research, February 2025. ... R1-searcher: Incentivizing the search capability in llms via reinforce&quot;,&quot;title&quot;:&quot;Published as a conference paper at ICLR 2026&quot;,&quot;url&quot;:&quot;https://openreview.net/pdf/8199d9f81cf26c04caa4c5ea08369148fa692ceb.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;bellwether.org&quot;,&quot;ref_id&quot;:&quot;turn4search14&quot;,&quot;snippet&quot;:&quot;“Introducing Deep Research,” OpenAI, February 2, 2025, https://openai.com/ ... “Introducing Perplexity Deep Research,” Perplexity, February 14, 2025, https:// ... PAGE 21&quot;,&quot;title&quot;:&quot;CONSIDERATIONS&quot;,&quot;url&quot;:&quot;https://bellwether.org/wp-content/uploads/2025/06/LearningSystems_2_Bellwether_Updated_May2025-1.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;openreview.net&quot;,&quot;ref_id&quot;:&quot;turn4search15&quot;,&quot;snippet&quot;:&quot;Introducing perplexity deep research. https://www.perplexity.ai/hu 703 b/blog/introducing-perplexity-deep-research, February 2025.&quot;,&quot;title&quot;:&quot;Under review as a conference paper at ICLR 2026&quot;,&quot;url&quot;:&quot;https://openreview.net/pdf/0c50617d11cb6edce8e60fd1ba05fb0be4efbd31.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.nccu.edu.tw&quot;,&quot;ref_id&quot;:&quot;turn4search16&quot;,&quot;snippet&quot;:&quot;https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research&quot;,&quot;title&quot;:&quot;AI研究助理 Deep Research介紹&quot;,&quot;url&quot;:&quot;https://www.lib.nccu.edu.tw/var/file/0/1000/img/101/553514998.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;ru.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn4search17&quot;,&quot;snippet&quot;:&quot;В тестировании по бенчмарку Humanity’s Last Exam модель показала точность 21,1 %, превысив показатели Gemini Thinking (6,2 %), Grok (3,8 %) и GPT-4 (3,3 %),&quot;,&quot;title&quot;:&quot;Perplexity AI&quot;,&quot;url&quot;:&quot;https://ru.wikipedia.org/wiki/Perplexity_AI&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit18&quot;,&quot;snippet&quot;:&quot;https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research ... It also has a too salesy text (\&quot;Perplexity Deep Research has emerged as a groundbreaking tool ... .\&quot;) - I wonder if custom&quot;,&quot;title&quot;:&quot;Share your successful Deep Research results!&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/perplexity_ai/comments/1ipzjie&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit19&quot;,&quot;snippet&quot;:&quot;[Wednesday February 19 2025] [+1 votes] ... I don&#x27;t really see any numbers at all, their blog post here mentions something about some uses per&quot;,&quot;title&quot;:&quot;Perplexity gives me only 3 Free Deep Research in total, not by day&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/perplexity_ai/comments/1itab71&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit20&quot;,&quot;snippet&quot;:&quot;[Monday February 17 2025] [+4 votes] https://www.perplexity.ai/ko/hub/blog/introducing-perplexity-deep-research&quot;,&quot;title&quot;:&quot;Perplexity, Deep Research 서비스 발표&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/genAiDang/comments/1ir8ka9&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;de.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn4search21&quot;,&quot;snippet&quot;:&quot;* Introducing Perplexity Deep Research. ... * Perplexity Labs: Erstelle KI-Projekte, Test &amp; Anleitung 2025.&quot;,&quot;title&quot;:&quot;Perplexity.ai&quot;,&quot;url&quot;:&quot;https://de.wikipedia.org/wiki/Perplexity.ai&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;fr.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn4search22&quot;,&quot;snippet&quot;:&quot;Ce mode a été introduit par OpenAI sur son agent conversationnel ChatGPT début 2025 puis, des marques concurrentes ont lancé des fonctionnalités analogues : la&quot;,&quot;title&quot;:&quot;Recherche approfondie (intelligence artificielle)&quot;,&quot;url&quot;:&quot;https://fr.wikipedia.org/wiki/Recherche_approfondie_%28intelligence_artificielle%29&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit23&quot;,&quot;snippet&quot;:&quot;In addition, based on https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research, Deep Research is supposed to be unlimited and not limited. ... [Monday April 28 2025] [+1 votes]&quot;,&quot;title&quot;:&quot;Perplexity Pro has changed their Deep Research function, it works now with credits?&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/perplexity_ai/comments/1k9vxuy&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit24&quot;,&quot;snippet&quot;:&quot;[Friday March 28 2025] [+1 votes] ... This is what OpenAI deep research generated. ... here is one from perplexity https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research&quot;,&quot;title&quot;:&quot;Deep research&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/LocalLLaMA/comments/1jlpbge&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit25&quot;,&quot;snippet&quot;:&quot;Just tried posting in r/perplexity ai about serious issue I had with Perplexity’s Deep Research mode. ... https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research ... [Tuesday October 2&quot;,&quot;title&quot;:&quot;74 downvotes in 2 hours for saying Perplexity served 3 week old news as &#x27;fresh&#x27;&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/ArtificialInteligence/comments/1nar1gr/74_downvotes_in_2_hours_for_saying_perplexity/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn4search26&quot;,&quot;snippet&quot;:&quot;Deep research is an AI agent developed by OpenAI, unveiled on February 2, 2025. ... Retrieved 2025-03-21. ... * \&quot;OpenAI introduces cost-efficient, lightweight version of&quot;,&quot;title&quot;:&quot;Products and applications of OpenAI&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Products_and_applications_of_OpenAI&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit27&quot;,&quot;snippet&quot;:&quot;[Monday February 16 2026] [+1 votes] ... Should have kept research mode, even if limited to 200 or so a week or month (ugh) -&quot;,&quot;title&quot;:&quot;Deep Research&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/perplexity_ai/comments/1r6ahfi/deep_research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn4reddit28&quot;,&quot;snippet&quot;:&quot;**My system instructions** say: \&quot;You are an intelligent AI assistant developed by Perplexity AI\&quot; with knowledge cutoff \&quot;January 1, 2025\&quot; ... [3] Introducing Perplexity Deep&quot;,&quot;title&quot;:&quot;Model Selection is a Joke ??&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/perplexity_ai/comments/1ofom92&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn4view0&quot;,&quot;title&quot;:&quot;Internal Error&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.laksn.com&quot;,&quot;ref_id&quot;:&quot;turn4view1&quot;,&quot;snippet&quot;:&quot;Total lines: 457&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/4Yc3cGoHe2FihZXKdNPbPHPcrMNwx0hTAKyvbxPIduXNDBQIVhBvJibzbHtuRwQdOv-epv68cdQAjs4b-Qt0VnWo0T5JW5JPQl8SAXNirR101i-NKBprqbcuic9-wIXmNRWJdrHI9Y6WrTCEQPd1vT0vZrscRdkuhwEeFRGnrgoJhDsMDXX0qGIFqtKxoexkEfmszhokNSX-2RYTgUvCVw&quot;,&quot;title&quot;:&quot;Top Generative AI Models Compared (2025): ChatGPT, Claude &amp; More | GreyBath Technology Pvt Ltd (LAKSN Technologies)&quot;,&quot;url&quot;:&quot;https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn4view2&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn4view3&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn4view4&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;m.zhiding.cn&quot;,&quot;ref_id&quot;:&quot;turn4view5&quot;,&quot;snippet&quot;:&quot;Total lines: 207&quot;,&quot;title&quot;:&quot;月之暗面Kimi K2技术报告：解读万亿参数的智能体模型（含K2与DeepSeek R1对比）-至顶AI实验室-至顶网&quot;,&quot;url&quot;:&quot;https://m.zhiding.cn/article/3169361.htm&quot;}]}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_6&quot;,&quot;type&quot;:&quot;agent_message&quot;,&quot;text&quot;:&quot;已确认配额结论引用了过时数字：OpenAI 在 2025 年 4 月已将 Plus 和免费用户的总额度提高至每月 25 次和 5 次。另外，深圳大学所引 PDF 已成功打开；正在核对其中实验的适用范围和模型名称。\n&quot;}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_7&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-3ccec6fa-7906-4520-8ba5-a2ceb2d4d00d&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_7&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-3ccec6fa-7906-4520-8ba5-a2ceb2d4d00d&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn5view0&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn5view1&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn5view2&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.perplexity.ai&quot;,&quot;ref_id&quot;:&quot;turn5view3&quot;,&quot;snippet&quot;:&quot;Total lines: 93&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/luhGHtaF8e1ddhPeVuYbmZhLUY41wdON-E3eqGPYZGSFh4xjj2ycqa04mkDsScWs_Mv2Ijl30sYaNsBnW5fH49mSHnQhnMzvQx_eh2PY47RHhdgZkPTOuGsY3b_alu95JY09LzCf3LQoo4bynRhg2x5yQwE_DBcTCo_-gRhRV10XvFx8p24MaqbblFlFXmPiTbRFhxVk9v5XoQdq02x8eCAHIln82EQCfFWFKTOup1o&quot;,&quot;title&quot;:&quot;Perplexity Deep Research（深い研究）の紹介&quot;,&quot;url&quot;:&quot;https://www.perplexity.ai/ja/hub/blog/introducing-perplexity-deep-research&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn5view4&quot;,&quot;title&quot;:&quot;Internal Error&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_8&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-95c598b9-4384-4521-888d-9b896c097a27&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_8&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-95c598b9-4384-4521-888d-9b896c097a27&quot;,&quot;query&quot;:&quot;\&quot;Kimi\&quot; \&quot;深度研究\&quot; \&quot;精美\&quot; \&quot;前端\&quot; ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;\&quot;Kimi\&quot; \&quot;深度研究\&quot; \&quot;精美\&quot; \&quot;前端\&quot;&quot;,&quot;\&quot;DeepSeek R1\&quot; \&quot;Kimi\&quot; \&quot;组合\&quot; \&quot;何静\&quot;&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.kimi.ai&quot;,&quot;ref_id&quot;:&quot;turn6search0&quot;,&quot;snippet&quot;:&quot;Kimi K2.6 能将简单提示转化为 Awwwards 级别的前端界面。 ... 智能体现在能更有效地并行协调，结合广泛搜索、深度研究、大规模分析、长篇写作和多格式内容生成等优势。 ... Kimi K2.6 现在能够提供更强大的演示文稿生成功能，将简单的提示或多种格式的输入转化为精美、专业的幻灯片。&quot;,&quot;title&quot;:&quot;Kimi K2.6 | 编程与智能体领域的领先开源模型&quot;,&quot;url&quot;:&quot;https://www.kimi.ai/zh-hans/ai-models/kimi-k2-6&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sohu.com&quot;,&quot;ref_id&quot;:&quot;turn6search1&quot;,&quot;snippet&quot;:&quot;Kimi的深度研究功能也已经可以高质量地搜索、研究并通过精美的前端页面展示研究成果。&quot;,&quot;title&quot;:&quot;月之暗面Kimi K2技术报告：解读万亿参数的智能体模型_训练_MuonClip_注意力&quot;,&quot;url&quot;:&quot;https://www.sohu.com/a/916851039_122014422&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.woshipm.com&quot;,&quot;ref_id&quot;:&quot;turn6search2&quot;,&quot;snippet&quot;:&quot;上周五，朋友群里转发了一篇来自Kimi官方的公众号文章，就讲了一件事——他们发布了一款专门为了深度研究而生的Agent，并且现在开始了内测。 ... 而且对于有需要的地方，它能够帮你绘制表格，形状，而且样式还特别精美，保证你看了之后不会想打瞌睡。 ... 如果你是酷爱冲浪的选手，你也可以用Kimi，轻松得知一个梗的前世今生，就像我用它来分析为什么那艺娜会那么火的原因一样，让你轻松踩在浪潮前端，打破&quot;,&quot;title&quot;:&quot;Kimi-Researcher首秀：这一波“深度研究”，打出了王者归来的气势 | 人人都是产品经理&quot;,&quot;url&quot;:&quot;https://www.woshipm.com/evaluating/6236141.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;knowledge.raodaor.com&quot;,&quot;ref_id&quot;:&quot;turn6search3&quot;,&quot;snippet&quot;:&quot;何静 ... DeepSeek R1负责深入分析和异常检测，Kimi k1.5提供深度挖掘的思路，助于更精准发现数据规律。&quot;,&quot;title&quot;:&quot;清华大学-第四章-DeepSeek + DeepResearch 让科研像聊天一样简单 | 绕道儿知识&quot;,&quot;url&quot;:&quot;https://knowledge.raodaor.com/ai-navigation/tutorial/deepseek/53-deepseek-deepresearch-makes-research-as-simple-as-chatting.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;yxbwk.njournal.sdu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn6search4&quot;,&quot;snippet&quot;:&quot;由3位高年资白内障科医师,采用李克特量表对Kimi chat、豆包、DeepSeek-R1 3个LLM的答案进行盲法评价。&quot;,&quot;title&quot;:&quot;山东大学学报 (医学版)&quot;,&quot;url&quot;:&quot;https://yxbwk.njournal.sdu.edu.cn/CN/article/showDownloadTopList.do?year=2&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.podcasts-online.org&quot;,&quot;ref_id&quot;:&quot;turn6search5&quot;,&quot;snippet&quot;:&quot;何老师将带领大家从DeepSeek的第1篇论文开始，阅读经过挑选的这家公司历史上发布的9篇论文。 ... 逐句讲解DeepSeek-R1、Kimi K1.5、OpenAI o1技术报告——“最优美的算法最干净”&quot;,&quot;title&quot;:&quot;张小珺Jùn｜商业访谈录 - Podcasts-Online.org&quot;,&quot;url&quot;:&quot;https://www.podcasts-online.org/es/zhang-xiao-jun-jun-1634356920&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;doc.mbalib.com&quot;,&quot;ref_id&quot;:&quot;turn6search6&quot;,&quot;snippet&quot;:&quot;DeepSeek+DeepResearch 让科研像聊天一样简单 北京航空航天大学 高研院 助理教 授 清华大学新闻学院与人工智能学 院双聘教授 沈阳团队博士后 何静 DeepResearch：软件免费公测 通过百度网盘分享的文件：AI学术工具公测版.exe 链接: 提取码: 0417 能做什么？ ... DeepSeek R1 文件数据读取完整无缺失 数据分析全面、逻辑清晰严谨 网络爬虫任&quot;,&quot;title&quot;:&quot;DeepSeek+DeepResearch——让科研像聊天一样简单 - MBA智库文档&quot;,&quot;url&quot;:&quot;https://doc.mbalib.com/m/view/4339955385c6aac653b08f3aafb0eb3b.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sohu.com&quot;,&quot;ref_id&quot;:&quot;turn6search7&quot;,&quot;snippet&quot;:&quot;2）Kimi的深度研究。&quot;,&quot;title&quot;:&quot;最新AI产品推荐榜（2026.2）_模型_Agent_Qwen&quot;,&quot;url&quot;:&quot;https://www.sohu.com/a/986171175_122082871&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sohu.com&quot;,&quot;ref_id&quot;:&quot;turn6search8&quot;,&quot;snippet&quot;:&quot;* Agent 模式：擅长深度研究、PPT、Excel、Word、PDF和网页生成等任务； ... 仅凭一句自然语言描述，Kimi K2.5可以生成这样的前端页面： ... 嗯，效果看起来还不错，画面细节很精美，还原度也很高。&quot;,&quot;title&quot;:&quot;Kimi新作：K2.5开源发布，视觉理解新王！视觉、编程、智能体齐登顶开源SOTA，几分钟创建100个子智能体，一段视频即可复刻网站_Agent_Swarm_任务&quot;,&quot;url&quot;:&quot;https://www.sohu.com/a/980771333_121124377&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;github.com&quot;,&quot;ref_id&quot;:&quot;turn6search9&quot;,&quot;snippet&quot;:&quot;## 1.3 新Kimi K2.6 实测：AI 一键生成精美网页，媲美专业设计师 ... 它能实现从前端UI到后端服务的全流程开发，还支持部署上线，大幅降低网站开发的时间与成本，为中小商家、个体从业者提供高效的数字化解决方案。&quot;,&quot;title&quot;:&quot;AI-Compass/weeklyHighlights/36.md at main · tingaicompass/AI-Compass · GitHub&quot;,&quot;url&quot;:&quot;https://github.com/tingaicompass/AI-Compass/blob/main/weeklyHighlights/36.md&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;m.sohu.com&quot;,&quot;ref_id&quot;:&quot;turn6search10&quot;,&quot;snippet&quot;:&quot;这次更新有两个重点，一是 代码能力，包括硬核的软件工程能力和前端设计水准的提升，二是 多Agent协作的“Agent集群”能力升级。 ... K2.5时，Kimi提出了“Agent集群”这个概念，但那时候更像是一个方向：能调度不同专长的Agent互相补位，广度搜索、深度研究、文档分析、长文撰写一起上，并行处理。&quot;,&quot;title&quot;:&quot;单Agent时代结束，AI们开始组团上班_搜狐网&quot;,&quot;url&quot;:&quot;https://m.sohu.com/a/1012579118_610300&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.kimi.ai&quot;,&quot;ref_id&quot;:&quot;turn6search11&quot;,&quot;snippet&quot;:&quot;作為原生多模態模型，Kimi K2.5 可將文字、圖像和影片輸入轉化為可執行的前端程式碼。 ... 因此，Kimi K2.5 能輸出完整成果，如文件、Excel 試算表、PPT、網站和深度研究報告，並可以擴展到並行執行的大型多步驟專案。&quot;,&quot;title&quot;:&quot;Kimi K2.5 | 月之暗面 Kimi AI 開源多模態大模型與開放式視覺理解智慧體，助力真實工作&quot;,&quot;url&quot;:&quot;https://www.kimi.ai/zh-hant/ai-models/kimi-k2-5&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn6view0&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn6view1&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn6view2&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn6view3&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn6view4&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.laksn.com&quot;,&quot;ref_id&quot;:&quot;turn6view5&quot;,&quot;snippet&quot;:&quot;Total lines: 457&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/8rl3VaPgjC1w4Xrzp6hm1pH3-vxufA3ENkLb0yOyAuDlqtMNAWUXmmT3A03BSDrdbQy7I13qBwB-v6C3hNU2Q2QvxKNuc7z5_9sjKxAuHqnULN4hNUwuiDJ3uMFGb5HJqm-R42vfu0OwaY_GOMWbXtRzl8ckxs5MDTBPmHhHk15D4geOsUtfTRyvG88kaxacc6W56eLFAsrPki1OW6Kw7Q&quot;,&quot;title&quot;:&quot;Top Generative AI Models Compared (2025): ChatGPT, Claude &amp; More | GreyBath Technology Pvt Ltd (LAKSN Technologies)&quot;,&quot;url&quot;:&quot;https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more/&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_9&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-de75fd35-e222-40bb-8bc2-ec95782dfd39&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_9&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-de75fd35-e222-40bb-8bc2-ec95782dfd39&quot;,&quot;query&quot;:&quot;&#x27;慧眼&#x27;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;find_in_page&quot;,&quot;pattern&quot;:&quot;慧眼&quot;},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn7view0&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn7view1&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;m.zhiding.cn&quot;,&quot;ref_id&quot;:&quot;turn7view2&quot;,&quot;snippet&quot;:&quot;Total lines: 207&quot;,&quot;title&quot;:&quot;月之暗面Kimi K2技术报告：解读万亿参数的智能体模型（含K2与DeepSeek R1对比）-至顶AI实验室-至顶网&quot;,&quot;url&quot;:&quot;https://m.zhiding.cn/article/3169361.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.zhiding.cn&quot;,&quot;ref_id&quot;:&quot;turn7view3&quot;,&quot;snippet&quot;:&quot;Total lines: 207&quot;,&quot;title&quot;:&quot;月之暗面Kimi K2技术报告：解读万亿参数的智能体模型（含K2与DeepSeek R1对比）-至顶AI实验室-至顶网&quot;,&quot;url&quot;:&quot;https://www.zhiding.cn/zd-ai-lab/2025/0723/3169361.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sohu.com&quot;,&quot;ref_id&quot;:&quot;turn7view4&quot;,&quot;snippet&quot;:&quot;Total lines: 173&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/L_-GQdPpM7aT4FaldUu67h_yJHAJcFGIvGS2BzQ-1mXo4lKJAr7zvK-BNCp4Qea2_gvndjOVmVpr_U7_WMV5UyXWFJXr7J3dx1RQN4iiRAXm_vx2qUZ-2CsFq46p98YU&quot;,&quot;title&quot;:&quot;月之暗面Kimi K2技术报告：解读万亿参数的智能体模型_训练_MuonClip_注意力&quot;,&quot;url&quot;:&quot;https://www.sohu.com/a/916851039_122014422&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn7view5&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn7view6&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn7view7&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_10&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-a44d111b-6f0b-4ba2-a520-6881c74282a0&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_10&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-a44d111b-6f0b-4ba2-a520-6881c74282a0&quot;,&quot;query&quot;:&quot;site:anthropic.com/customers \&quot;CodeRabbit\&quot; \&quot;2024\&quot; ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;site:anthropic.com/customers \&quot;CodeRabbit\&quot; \&quot;2024\&quot;&quot;,&quot;site:moonshot.ai \&quot;Kimi-Researcher\&quot; \&quot;2025\&quot;&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.anthropic.com&quot;,&quot;ref_id&quot;:&quot;turn8search0&quot;,&quot;snippet&quot;:&quot;### Anthropic at AWS re:Invent 2026 ... Building Products on Claude Opus 4.7 — A Customer Success Story with Solve Intelligence and Blitzy ... Plan&quot;,&quot;title&quot;:&quot;Events \\ Anthropic&quot;,&quot;url&quot;:&quot;https://www.anthropic.com/events?939688b5_page=3&amp;e45d281a_page=9&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;forum.moonshot.ai&quot;,&quot;ref_id&quot;:&quot;turn8search1&quot;,&quot;snippet&quot;:&quot;spqrz October 5, 2025, 8:48am 1 ... I’m using Kimi K2 through the Kimi Android app to get the voice recognition and the Hume AI&quot;,&quot;title&quot;:&quot;Kimi K2 repeating itself in a loop after long context window discussing medical conditions and anxiety - Kimi K2 - Kimi Forum&quot;,&quot;url&quot;:&quot;https://forum.moonshot.ai/t/kimi-k2-repeating-itself-in-a-loop-after-long-context-window-discussing-medical-conditions-and-anxiety/95&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn8view0&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.lib.szu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn8view1&quot;,&quot;snippet&quot;:&quot;Total lines: 2448&quot;,&quot;url&quot;:&quot;https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E7%AC%AC%E5%9B%9B%E5%BC%B9%EF%BC%9ADeepSeek%2BDeepResearch%EF%BC%9A%E8%AE%A9%E7%A7%91%E7%A0%94%E5%83%8F%E8%81%8A%E5%A4%A9%E4%B8%80%E6%A0%B7%E7%AE%80%E5%8D%95-.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.clickittech.com&quot;,&quot;ref_id&quot;:&quot;turn8view2&quot;,&quot;snippet&quot;:&quot;Total lines: 473&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/QV-1rMIqgUXiNmiLWSEcCCLLOrI-eBLejAib6MUZtvrtKVHm5PmUTekB0muExp2PehS0H4Bsg7kxPjwyH4XIAubUXH4ZF-A7DsYjsy86_griMf9XWNYjgf2qDjnUlIHRMHneefhsCLPYj2B8rfGbgxtWQfdJcz281SMsN5jjcxs&quot;,&quot;title&quot;:&quot;Perplexity vs OpenAI Deep Research: Which One Should You Use?&quot;,&quot;url&quot;:&quot;https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;its.hainanu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn8view3&quot;,&quot;snippet&quot;:&quot;Total lines: 2906&quot;,&quot;url&quot;:&quot;https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf&quot;}]}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_11&quot;,&quot;type&quot;:&quot;agent_message&quot;,&quot;text&quot;:&quot;{\&quot;claims\&quot;:[{\&quot;id\&quot;:\&quot;c5\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;网页可打开，发表于2025-03-12、更新于2025-04-04。作者在市场或技术主题研究一项中明确评价 ChatGPT Deep Research 优于 Grok、Perplexity 和 Gemini；这是个人体验评价，并非系统性对照测评。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025 确实存在截止日前的上述第三方评价。正确的是“有人如此评价”，不能据此证明截至2026-03-03仍全面领先。\&quot;},{\&quot;id\&quot;:\&quot;c6\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;当前网页明确称 OpenAI 的产品可靠性显著更高，并推荐用于技术分析。但页面标注2026-04-13，晚于截止日，当前内容不能直接证明截止日前已有这项评价。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/ 当前版本支持该评价，但无法确认相关文字的截止日前版本。另据 https://www.perplexity.ai/changelog/what-we-shipped---february-6th-2026 ，Perplexity在截止日前已升级研究功能；缺少同期独立对照证据，不能确定这一可靠性比较仍成立。\&quot;},{\&quot;id\&quot;:\&quot;c7\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;当前网页确实列出 Plus 每月10次、免费用户每月2次；但网页保留了过时配额，且当前版本日期晚于截止日。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;https://openai.com/index/introducing-deep-research/ 的2025-04-24更新已明确：Plus等套餐每月总额度25次、免费用户5次，并引入轻量版本。因此截至2026-03-03不能仍以10次和2次作为总体配额。\&quot;},{\&quot;id\&quot;:\&quot;c9\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;英文原网址多次打开失败，但同站同篇日文版可直接读取：https://www.perplexity.ai/ja/hub/blog/introducing-perplexity-deep-research 。其开头及报告生成部分明确描述数十次搜索、读取数百个来源、整合生成清晰完整报告；此为官方语言版本，并非网页存档。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;官方同篇日文版支持该宣传内容；2025-03-03的公司新闻稿 https://prtimes.jp/main/html/rd/p/000000001.000157647.html 也确认发布与自动研究流程。这里核实的是官方确曾如此表述，不代表每次任务都实际读取数百个来源。\&quot;},{\&quot;id\&quot;:\&quot;c10\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;英文原网址打不开，但官方同篇日文版明确列出21.1%，以及超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1的比较：https://www.perplexity.ai/ja/hub/blog/introducing-perplexity-deep-research 。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;2025-03-03的公司新闻稿 https://prtimes.jp/main/html/rd/p/000000001.000157647.html 确认21.1%；官方同篇日文版确认所列比较对象。该数字应理解为2025年发布时官方报告的历史成绩，而非截止日最新排行榜。\&quot;},{\&quot;id\&quot;:\&quot;c16\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;所引深圳大学PDF成功打开。“文本数据集成”实验比较约7000与15000 token文本，确实报告 Kimi k1.5 在较长文本中提取准确、数据维度更全面。材料同时声明测试受样本、环境和提示词等影响。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;另一高校公开的同份材料 https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 也记录这一结果。正确范围是该实验的观察，不能推广为所有长文本任务的普遍规律。\&quot;},{\&quot;id\&quot;:\&quot;c17\&quot;,\&quot;source_label\&quot;:\&quot;部分支持\&quot;,\&quot;source_note\&quot;:\&quot;所引PDF仅称 Kimi k1.5 在指定的2025年电影数据挖掘任务中表现最出色；比较对象为 DeepSeek R1、Claude 3.5 Sonnet和受附件限制未完成任务的o3-mini。结论省略了样本、参评范围与条件。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 可交叉核对该实验，但单一数据集的演示不足以确认 Kimi k1.5 在整个特征分类及多维关联挖掘任务类别中最佳。\&quot;},{\&quot;id\&quot;:\&quot;c18\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;网址可打开并重定向至2025-07-23的至顶文章。正文末尾明确作出高质量搜索、研究及精美前端展示的评价。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;https://www.zhiding.cn/zd-ai-lab/2025/0723/3169361.shtml 确有该评价；2025-06-30的实践记录 https://www.woshipm.com/evaluating/6236141.html 也展示了研究来源核对、带目录和图表的可视化报告。质量描述属于体验评价，不是普遍质量保证。\&quot;},{\&quot;id\&quot;:\&quot;c22\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;所引PDF的Titanic数据分析实验明确认为R1与o3-mini相当、优于另外两个参评模型，并评价R1逻辑更严谨；后面的协同应用建议也安排R1负责深入分析和异常检测。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 同样记录这些实验评价。这里仅确认特定对比实验及应用建议确实存在；“领先其他模型”限于该实验的参评模型，不能扩展至所有模型。\&quot;},{\&quot;id\&quot;:\&quot;c25\&quot;,\&quot;source_label\&quot;:\&quot;支持\&quot;,\&quot;source_note\&quot;:\&quot;原网址首次超时，添加末尾斜杠后成功读取。文章将Claude定位于长篇写作、合同和报告、编程及安全取向的专业应用，与结论基本一致。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more/ 明确作出上述推荐；截止日前的 https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025 也肯定Claude写作和编程表现，https://www.anthropic.com/customers 列有2024—2025年的法律、文档与代码审阅案例。作为用途推荐基本成立，“安全稳重”是评价而非无错误保证。\&quot;},{\&quot;id\&quot;:\&quot;c26\&quot;,\&quot;source_label\&quot;:\&quot;部分支持\&quot;,\&quot;source_note\&quot;:\&quot;PDF支持Claude表格较工整简洁，但原文将o3-mini与Claude并列评价，没有说Claude优于o3；实验比较的也不是完整o3模型。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;所引PDF及另一公开副本 https://its.hainanu.edu.cn/__local/F/C1/2A/4B7455C80F7EEA27E3593335CDE_BC452C0E_12D4458.pdf 都把o3-mini与Claude并列为表格工整简洁的模型。报告把并列评价改成Claude胜出，并将o3-mini写成o3，改变了原实验结论。\&quot;},{\&quot;id\&quot;:\&quot;c38\&quot;,\&quot;source_label\&quot;:\&quot;部分支持\&quot;,\&quot;source_note\&quot;:\&quot;PDF确实建议DeepSeek与Kimi协同，由R1深入分析和异常检测、Kimi提供挖掘思路。但指的是Kimi k1.5模型，未称“Kimi深度研究”；也没有组合与单模型的中文场景效果对照实验。\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;所引PDF“新思路：优势互补，协同应用”明确写的是R1与Kimi k1.5；另一材料页面 https://knowledge.raodaor.com/ai-navigation/tutorial/deepseek/53-deepseek-deepresearch-makes-research-as-simple-as-chatting.html 可交叉核对。报告混淆基础模型与深度研究产品，并把协同建议写成已取得优于单模型的效果；后者缺乏验证。\&quot;}]}&quot;}}
+{&quot;type&quot;:&quot;turn.completed&quot;,&quot;usage&quot;:{&quot;input_tokens&quot;:573648,&quot;cached_input_tokens&quot;:442368,&quot;cache_write_input_tokens&quot;:0,&quot;output_tokens&quot;:3796,&quot;reasoning_output_tokens&quot;:269}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

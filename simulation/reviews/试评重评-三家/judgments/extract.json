@@ -1,0 +1,1840 @@
+{
+ "points": [
+  {
+   "id": "codex-1:A-1",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini Deep Research可结合实时网页与用户的Gmail、Drive和Chat等私有数据开展研究。",
+   "level": "现象",
+   "quote": "**Google Gemini (Deep Research)** draws on **real-time web search** (Google Search) plus optionally the user’s private data (Gmail, Drive, Chat)."
+  },
+  {
+   "id": "codex-1:A-2",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude Research通过对内部工作资料和网页进行迭代搜索来开展研究。",
+   "level": "现象",
+   "quote": "With Research on, “Claude will kick off the research process across your internal context (Gmail, Calendar, Docs) and the web,” conducting iterative searches【27†L59-L64】."
+  },
+  {
+   "id": "codex-1:A-3",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi-Researcher采用内部并行搜索工具，可完成约23步搜索并访问200多个网址。",
+   "level": "现象",
+   "quote": "Kimi also now has **Kimi-Researcher** (mid-2025), an autonomous agentic model that performs multi-turn search (around 23 steps, 200+ URLs) via an internal parallel search tool【22†L10-L18】【22†L45-L53】."
+  },
+  {
+   "id": "codex-1:A-4",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "各系统答案的新鲜度主要来自实时搜索，而非基础模型的预训练语料。",
+   "level": "内部联系",
+   "quote": "All base models are pre-trained on large text corpora (Common Crawl, etc.), but the freshness in answers comes from live search."
+  },
+  {
+   "id": "codex-1:A-5",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini的百万token上下文使其能够处理很长的文档乃至整本书。",
+   "level": "内部联系",
+   "quote": "This far exceeds other publicly-available models, enabling Gemini to ingest and reason over very long documents or even entire books."
+  },
+  {
+   "id": "codex-1:A-6",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude Opus 4.6于2026年2月提供百万token上下文测试版，常规上下文为200K。",
+   "level": "现象",
+   "quote": "Claude Opus 4.6 (Feb 2026) supports up to **1M tokens** (beta)【31†L22-L26】, with 200K normally."
+  },
+  {
+   "id": "codex-1:A-7",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity通过拆分浏览页面并聚合多次查询结果来处理大量内容。",
+   "level": "内部联系",
+   "quote": "For per-query research, Perplexity splits content across browsed pages and synthesizes, so it effectively handles large content by multi-query aggregation."
+  },
+  {
+   "id": "codex-1:A-8",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT Search提供可打开的来源侧栏，供用户查看完整参考资料。",
+   "level": "现象",
+   "quote": "Users can open a “Sources” sidebar for full references【25†L100-L107】."
+  },
+  {
+   "id": "codex-1:A-9",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为Kimi的输出偏重完整性和篇幅，通常缺少正式的来源链接。",
+   "level": "现象",
+   "quote": "It seems Kimi’s answers are delivered directly (like standard chatbots) without formal source links."
+  },
+  {
+   "id": "codex-1:A-10",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为DeepSeek需要开发者自行搭建检索管线才能原生输出带链接的引用。",
+   "level": "内部联系",
+   "quote": "They do not natively produce linked citations unless developers implement their own retrieval pipelines."
+  },
+  {
+   "id": "codex-1:A-11",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini的研究过程界面展示已获得的信息及下一步行动。",
+   "level": "现象",
+   "quote": "Google introduced a “thinking” panel so users see what Gemini learned so far and its next moves【14†L153-L156】."
+  },
+  {
+   "id": "codex-1:A-12",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek-V3.1允许在思考与非思考两种模式之间切换。",
+   "level": "现象",
+   "quote": "DeepSeek-V3.1 even has a hybrid mode where you can switch between “thinking” and “non-thinking” behavior【40†L284-L293】."
+  },
+  {
+   "id": "codex-1:A-13",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini Deep Research代理可通过Interactions API调用，但目前不接受用户自定义工具。",
+   "level": "现象",
+   "quote": "The Deep Research agent itself is accessed via the **Interactions API**【12†L860-L868】 and currently cannot take custom tools from users."
+  },
+  {
+   "id": "codex-1:A-14",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity于2026年2月推出调用19个模型的Computer多智能体研究助手，并向Max订阅用户开放。",
+   "level": "全体",
+   "quote": "*Feb 2026:* Launched **Perplexity Computer** (multi-agent research assistant using 19 models)【37†L109-L118】【37†L151-L160】, available to Max subscribers."
+  },
+  {
+   "id": "codex-1:A-15",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi从2023年11月的128K上下文扩展到2025年9月的256K。",
+   "level": "全体",
+   "quote": "**Kimi** was the first with **128K tokens** (Nov 2023) and has since moved to **256K tokens** (Sep 2025)【16†L204-L207】."
+  },
+  {
+   "id": "codex-1:A-16",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "提供来源链接并不能消除错误，ChatGPT仍可能误读来源或提问。",
+   "level": "内部联系",
+   "quote": "Nonetheless, ChatGPT can still make mistakes if it misinterprets sources or the prompt."
+  },
+  {
+   "id": "codex-1:A-17",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi的大规模网页扫描可能减少遗漏，但仍存在错误概括的风险。",
+   "level": "内部联系",
+   "quote": "Kimi’s Explore, by scanning 500 pages per query, may reduce omission errors but could still summarize incorrectly."
+  },
+  {
+   "id": "codex-1:A-18",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek的隐私保护取决于部署方式，自托管可将数据保留在本地。",
+   "level": "内部联系",
+   "quote": "If self-hosting the open models, data stays on-prem."
+  },
+  {
+   "id": "codex-1:A-19",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude的网页搜索工具具备零数据保留资格，所传数据在响应后不再存储。",
+   "level": "现象",
+   "quote": "The web search tool is “ZDR-eligible” – data passed through it is not stored after the response【29†L228-L230】."
+  },
+  {
+   "id": "codex-1:A-20",
+   "report": "A",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告将DeepSeek定位为需要开发者提供数据和检索能力的自建研究管线工具。",
+   "level": "内部联系",
+   "quote": "Best when you need a free/open LLM with strong reasoning for tasks like math, coding, or specialized queries, and can supply your own data/retrieval."
+  },
+  {
+   "id": "google-2:A-1",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Google Gemini 的 Deep Research 智能体能够自主规划并跨网页和用户私有数据（Gmail、Drive、Chat）执行多步搜索，生成带引用的多页报告。",
+   "level": "现象",
+   "quote": "For example, Google’s Gemini Deep Research agent autonomously plans and executes multi-step searches over the web and private data (Gmail, Drive, Chat), producing multi-page, cited reports【8†L183-L189】【14†L49-L57】."
+  },
+  {
+   "id": "google-2:A-2",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Gemini Deep Research 采用分钟级的异步工作流来梳理网页和内部文档，因此适合市场分析、文献综述等深度任务，而不适合即时查询。",
+   "level": "内部联系",
+   "quote": "Async workflow (minutes-long tasks)【12†L849-L857】 not suited to instant queries"
+  },
+  {
+   "id": "google-2:A-3",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT 推出了集成的 Search 模式（基于 GPT-4o），借助第三方搜索服务商和内容合作伙伴提供带实时来源链接的网络回答。",
+   "level": "现象",
+   "quote": "ChatGPT has introduced an integrated **Search** mode (GPT-4o) that fetches up-to-date web answers with live source links【25†L51-L59】."
+  },
+  {
+   "id": "google-2:A-4",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT 的搜索模式仍保持对话式形态，通常不会像智能体那样自主规划多步骤长程研究任务。",
+   "level": "全体",
+   "quote": "Still chat-style (may not plan multi-step tasks on its own)."
+  },
+  {
+   "id": "google-2:A-5",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Anthropic 的 Claude 提供 Research 模式，可跨内部上下文（Gmail、Calendar、Docs）和网页进行迭代搜索，并返回附带易核查引用的回答。",
+   "level": "现象",
+   "quote": "With Research on, “Claude will kick off the research process across your internal context (Gmail, Calendar, Docs) and the web,” conducting iterative searches【27†L59-L64】."
+  },
+  {
+   "id": "google-2:A-6",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Claude 的网页搜索工具结合了动态过滤和代码执行以剔除无关内容，从而提高回答的准确性。",
+   "level": "内部联系",
+   "quote": "The web search tool includes dynamic filtering and code execution to improve accuracy by weeding out irrelevant content【29†L270-L279】."
+  },
+  {
+   "id": "google-2:A-7",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity AI 维护自己持续更新的网页索引和爬虫，并支持通过连接器（如 Google Drive）检索个人文件，但受限于简短问答形态且其抓取行为面临法律审查。",
+   "level": "全体",
+   "quote": "Perplexity AI maintains its own continuously-refreshed web index and crawlers."
+  },
+  {
+   "id": "google-2:A-8",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity 在 2026 年 2 月推出了多智能体研究助手 Perplexity Computer，可在后台编排调用 19 个模型协同处理重度任务，向 Max 订阅用户开放。",
+   "level": "现象",
+   "quote": "Feb 2026: Launched **Perplexity Computer** (multi-agent research assistant using 19 models)【37†L109-L118】【37†L151-L160】, available to Max subscribers."
+  },
+  {
+   "id": "google-2:A-9",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Kimi 于 2024 年 10 月推出探索版（Explore），单次查询可分发大量并行搜索并深度阅读多达约 500 个网页，后于 2025 年中期推出可执行约 23 步多轮搜索的自主智能体模型 Kimi-Researcher。",
+   "level": "全体",
+   "quote": "In effect, one query dispatches thousands of parallel searches (Kimi claims 10× the queries of normal search) and reads up to ~500 pages per query【19†L104-L112】【19†L124-L130】."
+  },
+  {
+   "id": "google-2:A-10",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Kimi 的探索模式通过单次查询扫描多达 500 个页面可能减少遗漏错误，但由于侧重完整性与多页输出而非可追溯性，通常不提供正式的来源链接且仍可能总结出错。",
+   "level": "内部联系",
+   "quote": "Kimi’s Explore, by scanning 500 pages per query, may reduce omission errors but could still summarize incorrectly."
+  },
+  {
+   "id": "google-2:A-11",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "DeepSeek 提供具有 128K 上下文窗口和强推理模式（如 R1 和支持混合思考模式的 V3.1）的开源 MoE 模型，但它没有内置搜索和消费者端 UI，只是供开发者构建自定义检索与智能体工作流的工具包。",
+   "level": "本质",
+   "quote": "Not a turn-key “research assistant” product, but a toolkit for building one."
+  },
+  {
+   "id": "google-2:A-12",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "由于 DeepSeek 没有内置检索功能，其模型的幻觉主要源于基础大语言模型本身，而非对外部资料的错误引用，且 R1 和 V3.1-Think 以输出冗长为代价换取了更高的准确性。",
+   "level": "内部联系",
+   "quote": "DeepSeek is open-source, so accuracy depends on model choice: R1 and V3.1-Think are optimized for correctness at the cost of verbosity. Without a built-in retrieval, any hallucination likely comes from the base LLM rather than external mis-citation."
+  },
+  {
+   "id": "google-2:A-13",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在上下文窗口与长文档处理上，Gemini 3.1 Pro 和 Claude Opus 4.6 测试版均已扩展至 100 万 token，Kimi K2 支持 256K token，而 ChatGPT 和 DeepSeek 支持约 128K token。",
+   "level": "现象",
+   "quote": "As of Gemini 3.1 Pro, **1 million tokens** are supported in beta【7†L214-L222】."
+  },
+  {
+   "id": "google-2:A-14",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在推理过程透明度上，Gemini（通过思考面板）、Kimi 和 DeepSeek（通过思考模式或 `<think>` 标记）允许向用户展示中间推理步骤，而 ChatGPT、Claude 和 Perplexity 默认只展示最终回答而不公开内部思维链。",
+   "level": "全体",
+   "quote": "Google introduced a “thinking” panel so users see what Gemini learned so far and its next moves【14†L153-L156】."
+  },
+  {
+   "id": "google-2:A-15",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在企业隐私与数据控制方面，Claude 的网页搜索工具支持零数据保留（ZDR），ChatGPT、Gemini 和 Perplexity 均提供企业级合规控制并承诺不用客户数据训练模型，而 Kimi 缺乏公开的企业级数据保留控制说明，DeepSeek 的隐私性则取决于调用 API 还是私有化部署。",
+   "level": "全体",
+   "quote": "The web search tool is “ZDR-eligible” – data passed through it is not stored after the response【29†L228-L230】."
+  },
+  {
+   "id": "google-2:A-16",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在定价上，ChatGPT、Claude 和 Perplexity 的个人专业版订阅均在每月 20 美元左右（Perplexity Max 为每月 200 美元），Gemini API 按量计费（单次典型深度研究任务约数美元），DeepSeek 则开源了核心模型权重。",
+   "level": "现象",
+   "quote": "Example estimates: a typical Deep Research task (multiple searches and ~60K output tokens) costs a few dollars【12†L874-L881】."
+  },
+  {
+   "id": "google-2:A-17",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在过去 18 个月（2024 年 10 月至 2026 年初）中，各平台通过升级底层模型、扩展上下文窗口（达 256K 至 1M）以及上线多步搜索智能体功能，快速演进了各自的研究能力。",
+   "level": "全体",
+   "quote": "These timelines highlight that all platforms have aggressively advanced their research capabilities in the past 18 months, including model upgrades (4.x series), extended context, and new search/agent features."
+  },
+  {
+   "id": "google-2:A-18",
+   "report": "A",
+   "slot": 2,
+   "vendor": "google",
+   "content": "各平台的定位与适用场景因架构而异：Gemini 适合深耕 Google Workspace 的企业级深度分析，ChatGPT 适合通用问答，Claude 适合注重安全与可审计性的复杂分析，Perplexity 适合快速获取带出处的答案，Kimi 适合中文长文本研究，DeepSeek 适合开发者自建管线。",
+   "level": "全体",
+   "quote": "In short, **Gemini** shines in enterprise/Workspace-integrated research with Google search and user data (long context, multimodal, chain-of-thought via a “thinking” panel)【14†L69-L76】【8†L183-L189】."
+  },
+  {
+   "id": "codex-1:B-1",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告将 ChatGPT 和 Gemini 列为 Deep Research 产品的第一梯队。",
+   "level": "现象",
+   "quote": "第一梯队：ChatGPT 和 Gemini"
+  },
+  {
+   "id": "codex-1:B-2",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT Deep Research 的优势是深度分析与推理，能发现关联、进行推断并识别跨来源的不一致。",
+   "level": "现象",
+   "quote": "它的自主浏览和分析周期可以运行长达半小时，不仅善于收集事实，还擅长发现关联、推断和识别跨来源的不一致之处。"
+  },
+  {
+   "id": "codex-1:B-3",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "一位测评者认为 ChatGPT 报告中的具体建议与实际商业策略高度吻合。",
+   "level": "现象",
+   "quote": "一位测评者发现，ChatGPT 生成了长达 36 页、包含 25 个来源的报告，其中包含具体可操作的建议，与实际商业策略高度吻合。"
+  },
+  {
+   "id": "codex-1:B-4",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini Deep Research 借助 Google 搜索和反复细化的研究流程，实现广泛的信息覆盖并挖掘不常见的信息源。",
+   "level": "内部联系",
+   "quote": "Google Gemini Deep Research 则充分利用了 Google 搜索的优势，会制定多步骤研究计划，反复搜索并逐步细化，覆盖面非常广，还能挖掘到不常见的网站和信息源。"
+  },
+  {
+   "id": "codex-1:B-5",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini 在一次测试中生成的报告内容全面，但结论偏冗长。",
+   "level": "现象",
+   "quote": "Gemini 在一次测试中生成了 48 页、100 个来源的报告，内容全面但结论偏冗长。"
+  },
+  {
+   "id": "codex-1:B-6",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity Deep Research 的行业基准得分很高，多数研究任务可在三分钟内完成。",
+   "level": "现象",
+   "quote": "Perplexity 的 Deep Research 在行业基准上得分很高，且多数研究任务能在 3 分钟内完成。"
+  },
+  {
+   "id": "codex-1:B-7",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为，看重引用和事实报告的用户应首选 Perplexity。",
+   "level": "现象",
+   "quote": "如果你看重引用和事实报告，Perplexity 是最佳选择。"
+  },
+  {
+   "id": "codex-1:B-8",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity 适合快速获取有来源支撑的研究概览。",
+   "level": "现象",
+   "quote": "它特别适合需要快速获取有来源支撑的研究概览的场景。"
+  },
+  {
+   "id": "codex-1:B-9",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude Deep Research 擅长综合信息。",
+   "level": "现象",
+   "quote": "Claude 的 Deep Research 生成了 7 页、427 个来源的报告，在信息综合方面做得非常出色，而不是简单堆砌信息。"
+  },
+  {
+   "id": "codex-1:B-10",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "多位评测者认为 Claude 输出的可读性和结构感最强，但具体建议有时偏通用。",
+   "level": "现象",
+   "quote": "多位评测者认为 Claude 的输出最具\"可读性\"和结构感，但具体建议有时偏通用。"
+  },
+  {
+   "id": "codex-1:B-11",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek 和 Kimi 的底层模型各有能力优势，但其独立 Deep Research 产品功能的成熟度和完善程度落后于前述产品。",
+   "level": "全体",
+   "quote": "这两家目前主要以强大的底层模型能力著称（DeepSeek-R1 擅长推理和数学，Kimi K2 擅长超长上下文和 Agent 能力），但在\"Deep Research\"这个独立产品功能上，相比上述几家的成熟度和完善程度还有差距。"
+  },
+  {
+   "id": "codex-1:B-12",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告建议，有低成本和开源生态需求的用户可用 DeepSeek 或 Kimi 的搜索功能作为补充。",
+   "level": "现象",
+   "quote": "- 需要**低成本、开源生态** → DeepSeek / Kimi 的搜索功能可以作为补充"
+  },
+  {
+   "id": "codex-1:B-13",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "对于已因其他功能付费订阅某个平台的用户，报告建议直接使用该平台自带的 Deep Research。",
+   "level": "内部联系",
+   "quote": "如果你已经因为其他功能（比如 Claude Code 或 OpenAI Codex）而付费使用某个平台，那直接用它自带的 Deep Research 就很好。"
+  },
+  {
+   "id": "codex-1:B-14",
+   "report": "B",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告建议根据具体任务在不同平台之间灵活切换。",
+   "level": "现象",
+   "quote": "目前最务实的做法可能是根据具体任务在不同平台之间灵活切换。"
+  },
+  {
+   "id": "google-2:B-1",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT 和 Gemini 处于 Deep Research 功能的第一梯队。",
+   "level": "现象",
+   "quote": "第一梯队：ChatGPT 和 Gemini"
+  },
+  {
+   "id": "google-2:B-2",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT Deep Research 在分析深度和推理能力上领先，能识别跨来源的不一致并进行推断，适合需要最深度分析和推理的场景。",
+   "level": "现象",
+   "quote": "ChatGPT Deep Research 在深度和推理方面走在前列。"
+  },
+  {
+   "id": "google-2:B-3",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT Deep Research 的自主浏览和分析周期最长可达半小时。",
+   "level": "现象",
+   "quote": "它的自主浏览和分析周期可以运行长达半小时，不仅善于收集事实，还擅长发现关联、推断和识别跨来源的不一致之处。"
+  },
+  {
+   "id": "google-2:B-4",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在某次测评中，ChatGPT 生成了 36 页、含 25 个来源的报告，并给出了贴合实际商业策略的可操作建议。",
+   "level": "现象",
+   "quote": "一位测评者发现，ChatGPT 生成了长达 36 页、包含 25 个来源的报告，其中包含具体可操作的建议，与实际商业策略高度吻合。"
+  },
+  {
+   "id": "google-2:B-5",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Google Gemini Deep Research 依托 Google 搜索优势并采用多步骤迭代搜索机制，因此信息覆盖面广且能挖掘冷门信源。",
+   "level": "内部联系",
+   "quote": "Google Gemini Deep Research 则充分利用了 Google 搜索的优势，会制定多步骤研究计划，反复搜索并逐步细化，覆盖面非常广，还能挖掘到不常见的网站和信息源。"
+  },
+  {
+   "id": "google-2:B-6",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在某次测试中，Gemini 生成了 48 页、100 个来源的报告，特点是内容全面但结论偏冗长。",
+   "level": "现象",
+   "quote": "Gemini 在一次测试中生成了 48 页、100 个来源的报告，内容全面但结论偏冗长。"
+  },
+  {
+   "id": "google-2:B-7",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity 的 Deep Research 在行业基准测试中得分高，且多数任务可在 3 分钟内完成。",
+   "level": "现象",
+   "quote": "Perplexity 的 Deep Research 在行业基准上得分很高，且多数研究任务能在 3 分钟内完成。"
+  },
+  {
+   "id": "google-2:B-8",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity 适合看重引用清晰、需要快速获取有来源支撑的事实报告概览的场景。",
+   "level": "现象",
+   "quote": "如果你看重引用和事实报告，Perplexity 是最佳选择。"
+  },
+  {
+   "id": "google-2:B-9",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Claude 的 Deep Research 在某次测试中生成了 7 页、427 个来源的报告，擅长信息综合而非简单堆砌。",
+   "level": "现象",
+   "quote": "Claude 的 Deep Research 生成了 7 页、427 个来源的报告，在信息综合方面做得非常出色，而不是简单堆砌信息。"
+  },
+  {
+   "id": "google-2:B-10",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Claude 的输出可读性和结构感最强，但具体建议有时偏通用。",
+   "level": "现象",
+   "quote": "多位评测者认为 Claude 的输出最具\"可读性\"和结构感，但具体建议有时偏通用。"
+  },
+  {
+   "id": "google-2:B-11",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "DeepSeek-R1 擅长推理和数学，Kimi K2 擅长超长上下文和 Agent 能力，但两家在 Deep Research 独立产品功能上的成熟度不如前述几家，适合作为低成本和开源生态的补充。",
+   "level": "全体",
+   "quote": "这两家目前主要以强大的底层模型能力著称（DeepSeek-R1 擅长推理和数学，Kimi K2 擅长超长上下文和 Agent 能力），但在\"Deep Research\"这个独立产品功能上，相比上述几家的成熟度和完善程度还有差距。"
+  },
+  {
+   "id": "google-2:B-12",
+   "report": "B",
+   "slot": 2,
+   "vendor": "google",
+   "content": "如果用户已因其他功能付费订阅了某平台，直接使用其自带的 Deep Research 并根据具体任务在不同平台间切换是最务实的做法。",
+   "level": "现象",
+   "quote": "如果你已经因为其他功能（比如 Claude Code 或 OpenAI Codex）而付费使用某个平台，那直接用它自带的 Deep Research 就很好。"
+  },
+  {
+   "id": "codex-1:C-1",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Deep Research是推理、检索、工具使用和报告生成的融合系统，而非单一模块扩展。",
+   "level": "本质",
+   "quote": "技术实现上，Deep Research并非单一模块的扩展，而是**推理能力、检索策略、工具使用、报告生成**的深度融合。"
+  },
+  {
+   "id": "codex-1:C-2",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "自主多步骤推理是Deep Research区别于标准聊天机器人的核心特征。",
+   "level": "本质",
+   "quote": "自主多步骤推理是Deep Research区别于标准聊天机器人的核心特征。"
+  },
+  {
+   "id": "codex-1:C-3",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini允许用户在执行前审核研究计划，以减少研究方向偏离用户意图的风险。",
+   "level": "内部联系",
+   "quote": "**Gemini Deep Research**增加了**研究大纲预确认**环节——正式执行前，系统生成多步骤研究计划供用户审核，确保研究方向与意图对齐。"
+  },
+  {
+   "id": "codex-1:C-4",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "迭代检索通过根据中间发现调整搜索策略来保障研究质量。",
+   "level": "内部联系",
+   "quote": "与一次性搜索不同，优质系统能够根据中间发现持续优化检索策略，形成\"搜索-评估-再搜索\"的良性循环。"
+  },
+  {
+   "id": "codex-1:C-5",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT较深的检索带来更广的信息覆盖和更多交叉验证机会，同时增加时间与计算成本。",
+   "level": "内部联系",
+   "quote": "这种深度带来了更高的信息覆盖率和交叉验证机会，但也以显著的时间和计算成本为代价。"
+  },
+  {
+   "id": "codex-1:C-6",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT只列出实际采用的来源，未完整公开检索过但未采信的资料，因此研究过程难以完全复现。",
+   "level": "内部联系",
+   "quote": "关键局限在于过程不可完全复现——系统仅引用实际采用的来源，对于检索过但未采信的资料不会全部列出。"
+  },
+  {
+   "id": "codex-1:C-7",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT通过执行Python代码进行数值计算，为研究提供可重复的验证路径。",
+   "level": "内部联系",
+   "quote": "**ChatGPT**的Python代码执行验证则提供了可重复的数值分析路径——模型不再依赖内部参数进行计算，而是通过实际代码执行获得精确结果。"
+  },
+  {
+   "id": "codex-1:C-8",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude使用主智能体协调、多个子智能体并行探索的研究架构。",
+   "level": "现象",
+   "quote": "其\"指挥家-演奏家\"（Orchestrator-Worker）模式中，主智能体负责任务分解和策略制定，多个子智能体并行探索问题的不同方面。"
+  },
+  {
+   "id": "codex-1:C-9",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude通过不同智能体结果之间的比对降低单一检索路径造成偏见或遗漏的风险。",
+   "level": "内部联系",
+   "quote": "**Claude**的多智能体验证通过冗余设计和智能体间比对，有效降低单一检索路径的偏见或遗漏风险。"
+  },
+  {
+   "id": "codex-1:C-10",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude多智能体研究消耗约为普通聊天十五倍的token，因此更适合能产生高价值的复杂专业任务。",
+   "level": "内部联系",
+   "quote": "这种资源 intensity 决定了其最适合能够通过卓越性能创造足够高价值的任务，如法律案例研究、医疗证据整合、金融风险管理等专业场景。"
+  },
+  {
+   "id": "codex-1:C-11",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek-R1是需与外部检索集成的推理引擎，其价值主要在灵活性和成本，而非开箱即用。",
+   "level": "本质",
+   "quote": "这一模式的核心优势在于灵活性和成本效益，而非开箱即用的完整体验。"
+  },
+  {
+   "id": "codex-1:C-12",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "外部检索配置不当可能使DeepSeek用较强推理能力包装过时或缺失的信息，产生误导。",
+   "level": "内部联系",
+   "quote": "如果外部检索服务配置不当，推理引擎可能基于过时或缺失的信息进行\"精致包装\"，产生更具误导性的输出。"
+  },
+  {
+   "id": "codex-1:C-13",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini与Google服务的整合能降低既有Google用户切换工具的成本。",
+   "level": "内部联系",
+   "quote": "对于已深度使用Google服务的用户，这种集成显著降低了工具切换成本，实现了从日常搜索到深度研究的无缝过渡。"
+  },
+  {
+   "id": "codex-1:C-14",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini在脂肪因子与痴呆症研究案例中扩大了纳入范围，体现专业任务中的主题理解偏差。",
+   "level": "全体",
+   "quote": "实测案例揭示了具体问题：在\"脂肪因子与痴呆症\"研究中，Gemini的表格总结出现主题理解偏差，将\"所有炎症相关脂肪因子\"而非\"与痴呆相关的脂肪因子\"纳入总结。"
+  },
+  {
+   "id": "codex-1:C-15",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity偏向快速综合已有信息，在所举医学研究案例中只列相关性而未深入讨论作用机制。",
+   "level": "全体",
+   "quote": "实测对比揭示了定位差异：在\"脂肪因子与痴呆症\"任务中，Perplexity\"并没有深入讨论作用机制，只列举了相关性\"。"
+  },
+  {
+   "id": "codex-1:C-16",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi的中文和成本优势未消除其与Gemini、ChatGPT在整体报告能力上的差距。",
+   "level": "全体",
+   "quote": "这一评价提示，虽然Kimi在特定维度具有优势，但整体能力仍处于追赶状态。"
+  },
+  {
+   "id": "codex-1:C-17",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告将Gemini判断为面向大众用户、兼顾成本和速度的最优选择。",
+   "level": "现象",
+   "quote": "Gemini则以成本效益和速度的满分表现，成为大众市场的最优解。"
+  },
+  {
+   "id": "codex-1:C-18",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告建议将Perplexity的快速检索与ChatGPT的深度分析结合使用。",
+   "level": "内部联系",
+   "quote": "评测建议的\"组合策略\"具有参考价值：用Perplexity进行快速事实核查和初步扫描，用ChatGPT进行深度分析和报告撰写。"
+  },
+  {
+   "id": "codex-1:C-19",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "不同评测对幻觉的定义、测试集和标准不同，因此幻觉率不能直接作简单比较。",
+   "level": "内部联系",
+   "quote": "需要强调的是，**幻觉率测量方法存在显著差异**，不同评测的定义、测试集、评估标准可能不同，直接比较需谨慎。"
+  },
+  {
+   "id": "codex-1:C-20",
+   "report": "C",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "用户应持续用代表性任务测试产品，以适应产品演进并支持长期选型。",
+   "level": "内部联系",
+   "quote": "建议用户建立**持续评估机制**：定期用代表性任务测试各平台表现，跟踪其演进轨迹，而非依赖一次性排名做出长期工具选择。"
+  },
+  {
+   "id": "google-2:C-1",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Deep Research 的本质是推理能力、检索策略、工具使用与报告生成的深度融合，通过自主分解研究目标、动态调整检索策略和交叉验证信息，将大语言模型从被动响应工具转变为主动研究智能体。",
+   "level": "本质",
+   "quote": "技术实现上，Deep Research并非单一模块的扩展，而是**推理能力、检索策略、工具使用、报告生成**的深度融合。"
+  },
+  {
+   "id": "google-2:C-2",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "当前各家 Deep Research 的技术实现可分为三类主流路径：以 ChatGPT 和 Gemini 为代表的端到端强化学习训练、以 Claude 为代表的多智能体协作架构、以及以 DeepSeek-R1 为代表的开源推理引擎加外部检索松耦合集成。",
+   "level": "本质",
+   "quote": "当前Deep Research功能的技术架构可归纳为三种主流路径，分别对应不同的设计哲学和适用场景。"
+  },
+  {
+   "id": "google-2:C-3",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "端到端强化学习方案（如 ChatGPT 的 o3 和 Gemini）将研究能力内化为模型固有功能，优势是推理、检索与生成协同流畅，代价是训练成本极高、迭代周期长且系统行为可解释性较弱。",
+   "level": "内部联系",
+   "quote": "端到端方案的主要代价在于**训练成本极高、模型迭代周期长、系统行为可解释性较弱**。"
+  },
+  {
+   "id": "google-2:C-4",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Claude 采用“指挥家-演奏家”多智能体并行架构，由主智能体分解任务、多个子智能体并行搜索并交叉验证，在复杂任务上比单智能体性能高出 90.2%，但代价是 token 消耗约为普通聊天的 15 倍。",
+   "level": "内部联系",
+   "quote": "内部评估显示，该架构在处理需要分解任务的复杂查询时，性能比单智能体高出**90.2%**。"
+  },
+  {
+   "id": "google-2:C-5",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "DeepSeek-R1 本身是不内置联网检索功能的纯推理模型，必须由开发者外接搜索服务（如 Tavily AI）才能构成完整的 Deep Research 能力，若外部检索配置不当容易基于过时或缺失信息产生误导性输出。",
+   "level": "内部联系",
+   "quote": "然而，**关键设计决策是R1不内置联网检索功能**，这意味着其\"知识\"完全局限于训练数据截止时间（约2024年初）。"
+  },
+  {
+   "id": "google-2:C-6",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT Deep Research 单次任务可扫描上百个来源、耗时 8 至 20 分钟（复杂任务达 30 分钟），以高昂的时间与计算成本换取了更高的信息覆盖率、分析深度和精确到句子/段落的内联引用。",
+   "level": "内部联系",
+   "quote": "**ChatGPT**的迭代最为激进：单任务可扫描上百个来源，研究周期长达8-20分钟。"
+  },
+  {
+   "id": "google-2:C-7",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT Deep Research 集成了 Python 代码执行验证机制，在涉及数值计算时通过实际运行代码而非依赖内部参数推断来获得精确结果，从而降低了幻觉风险。",
+   "level": "内部联系",
+   "quote": "当研究涉及数值计算时，系统不再依赖内部参数推断，而是通过实际代码执行获得精确结果，并将代码和结果一并纳入报告。"
+  },
+  {
+   "id": "google-2:C-8",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT Deep Research 存在过程黑箱的局限，系统仅引用最终采信的来源，不会全部列出检索过但未采信的资料，导致检索路径不完全可追溯。",
+   "level": "全体",
+   "quote": "关键局限在于过程不可完全复现——系统仅引用实际采用的来源，对于检索过但未采信的资料不会全部列出。"
+  },
+  {
+   "id": "google-2:C-9",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Gemini Deep Research 在正式执行前增加了“研究大纲预确认”环节，允许用户审核和调整研究计划，在保留模型自主性的同时减少了方向性偏差风险。",
+   "level": "内部联系",
+   "quote": "**Gemini Deep Research**增加了**研究大纲预确认**环节——正式执行前，系统生成多步骤研究计划供用户审核，确保研究方向与意图对齐。"
+  },
+  {
+   "id": "google-2:C-10",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Gemini Deep Research 依托 Google 基础设施与简化的迭代深度，将研究耗时压缩至 1-2 分钟，但这种速度优先策略导致验证深度被压缩，在特定专业主题上会出现概念混淆或偏重广泛摘要而非深度分析的问题。",
+   "level": "内部联系",
+   "quote": "实测案例揭示了具体问题：在\"脂肪因子与痴呆症\"研究中，Gemini的表格总结出现主题理解偏差，将\"所有炎症相关脂肪因子\"而非\"与痴呆相关的脂肪因子\"纳入总结。"
+  },
+  {
+   "id": "google-2:C-11",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Gemini Deep Research 自 2025 年 3 月起向免费用户开放（付费版约 20 美元/月），并无缝串连 Google 搜索、Google Scholar、Google Books、Google Finance 和 NotebookLM 等自有生态。",
+   "level": "现象",
+   "quote": "Deep Research功能自动串连Google搜索、Google Scholar、Google Books、Google Finance等服务，在学术文献、金融数据、图书资料等场景中具有信息质量优势。"
+  },
+  {
+   "id": "google-2:C-12",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity Deep Research 定位为“快速信息综合工具”而非“深度原创研究平台”，采用轻量级迭代策略在不到 1 分钟内完成扫描与聚合，换取了极速响应和来源透明，但牺牲了因果机制分析与复杂推理能力。",
+   "level": "本质",
+   "quote": "Perplexity的自我定位清晰：**\"信息综合工具\"而非\"深度原创研究平台\"**。"
+  },
+  {
+   "id": "google-2:C-13",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "DeepSeek-R1 采用 MIT 开源许可证且 API 成本极低（输入与输出合计约 2.74 美元/百万 tokens，仅为 o1 的 3.7%），适合对数据主权敏感的本地化部署和垂直领域定制，但对普通用户存在较高集成门槛。",
+   "level": "内部联系",
+   "quote": "对于需要完全控制、高度定制或敏感数据处理的场景，DeepSeek的开源特性具有不可替代的价值。但对于追求开箱即用体验的普通用户，其技术门槛和集成负担构成显著障碍。"
+  },
+  {
+   "id": "google-2:C-14",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Claude 深度研究包含专门的“引用智能体”与智能体间交叉验证机制，擅长法律跨法域判例分析与医疗证据整合等高风险垂直专业场景，但对日常简单查询属于“过度设计”。",
+   "level": "内部联系",
+   "quote": "多智能体架构的优势在复杂分解任务中显现，但对于简单查询可能消耗大量资源却未带来相应价值。"
+  },
+  {
+   "id": "google-2:C-15",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Kimi 深度研究针对中文语境进行了原生优化，支持数百万字长文本和 300 步工具调用，且定价低廉（25 元人民币/月），但在报告逻辑专业性上与 ChatGPT、Gemini 仍有明显差距，且耗时较长（约 15 分钟）、不支持直接导出 PDF。",
+   "level": "全体",
+   "quote": "综合评测显示，Kimi\"生成报告质量还过得去，但是要和前面的Gemini和ChatGPT比较，Kimi还是存在较为明显的差距\"。"
+  },
+  {
+   "id": "google-2:C-16",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "量化基准测试显示，2025 年底增强版 Gemini 在 Humanity's Last Exam (HLE) 上达到 46.4%、DeepSearchQA 达到 66.1%，而此前 ChatGPT Deep Research 在 HLE 上为 26.6%、Perplexity 为 21.1%。",
+   "level": "现象",
+   "quote": "2025年底增强版在权威基准测试中表现优异：Humanity's Last Exam达**46.4%**，DeepSearchQA达**66.1%**，BrowseComp达**59.2%**。"
+  },
+  {
+   "id": "google-2:C-17",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "各家产品在定价与使用门槛上分化显著：ChatGPT Pro 高达 200 美元/月（限 100 次），Claude 采取高价的企业级/Max 订阅，而 Gemini 和 Perplexity 均提供免费层及 20 美元/月的订阅方案。",
+   "level": "现象",
+   "quote": "ChatGPT Deep Research单次查询可能消耗大量云端资源，目前仅对Pro订阅用户（$200/月，限100次）开放，高门槛限制了大规模应用。"
+  },
+  {
+   "id": "google-2:C-18",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "头部 Deep Research 产品正呈现速度与深度双向收敛的演进趋势：原本速度优先的 Gemini 通过强化迭代推理向深度延伸，而原本深度优先的 ChatGPT 正计划推出更快、成本更低的小型模型版本。",
+   "level": "全体",
+   "quote": "当前市场的明显趋势：**速度优先者增强深度，深度优先者提升速度**。"
+  },
+  {
+   "id": "google-2:C-19",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "即便表现最优的 Deep Research 系统仍存在约 10% 左右的幻觉率（独立评测中 Perplexity 为 7.7%，ChatGPT 为 9.7%），且面临内容农场混入与 AI 循环引用等信源污染风险，高风险决策必须配合人工复核。",
+   "level": "全体",
+   "quote": "更可靠的解读是：即使表现最优的系统，仍有约1/10的概率生成不可信内容，关键决策场景必须人工复核。"
+  },
+  {
+   "id": "google-2:C-20",
+   "report": "C",
+   "slot": 2,
+   "vendor": "google",
+   "content": "各平台因架构与定位差异没有单一最优解，选型需按任务复杂度分级匹配：简单快速核查宜用 Perplexity 或 Gemini，中文长文档宜用 Kimi，本地私有化定制宜用 DeepSeek，而复杂文献综述、战略分析与高风险专业研究应选 ChatGPT 或 Claude。",
+   "level": "本质",
+   "quote": "两者总分相同，但优势维度迥异。ChatGPT在研究质量维度领先，Kimi则在成本和本土化维度占优。选型取决于用户的核心优先级。"
+  },
+  {
+   "id": "codex-1:D-1",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "深度研究的核心是自主规划、迭代检索与推演，并将碎片信息综合为有引文支持的报告。",
+   "level": "本质",
+   "quote": "深度研究的核心机制在于其复杂的多步工作流：系统首先将用户的模糊提示词转化为多节点的个性化研究计划，随后通过自主调用工具在广袤的公共互联网或企业私有数据库中进行迭代式搜索、阅读、自我反思与逻辑推演，最终将海量碎片化信息合成为具备严密引文支持的长篇专业报告 。"
+  },
+  {
+   "id": "codex-1:D-2",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "各平台无法同时兼顾速度、准确性、逻辑深度、生态融合和成本，因此选择取决于具体需求与约束。",
+   "level": "本质",
+   "quote": "随着大语言模型技术栈的严重分化，没有任何一个单一的平台能够同时在执行极速、绝对的准确性、长程逻辑深度、生态系统融合与计算成本控制上达到完美的统一。"
+  },
+  {
+   "id": "codex-1:D-3",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT通过执行前的澄清提问和可编辑研究计划，使报告贴合用户约束。",
+   "level": "内部联系",
+   "quote": "其最显著的变化在于引入了高度交互的研究计划阶段，模型在执行长程任务前会主动向用户提出澄清性问题，并生成一份可视化的、可动态编辑的研究大纲，确保最终报告不偏离用户的核心约束条件 。"
+  },
+  {
+   "id": "codex-1:D-4",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT的深度反思机制使其在高频实时数据抓取方面不及专用搜索智能体敏捷。",
+   "level": "内部联系",
+   "quote": "然而，这种深度反思机制也导致其在面对海量高频的实时数据抓取时，敏捷度不及专用的搜索智能体。"
+  },
+  {
+   "id": "codex-1:D-5",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告推荐ChatGPT Pro用于跨界知识综合和前瞻性报告写作。",
+   "level": "现象",
+   "quote": "然而，在面对需要**横向发散思维、跨界知识综合碰撞以及撰写最具启发性前瞻报告**的场景时，**OpenAI ChatGPT Pro (结合GPT-5.2与o系列推理)**依然提供了最为平滑和深邃的合成体验 。"
+  },
+  {
+   "id": "codex-1:D-6",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini的超长上下文减少了对分块检索的依赖，从而降低跨文档逻辑关联丢失的风险。",
+   "level": "内部联系",
+   "quote": "在深度研究场景下，这意味着Gemini不需要像其他模型那样频繁依赖检索增强生成（RAG）中的向量分块与截断，从而避免了跨文档逻辑关联的丢失。"
+  },
+  {
+   "id": "codex-1:D-7",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini可以在同一研究任务中交叉分析公共网页、Gmail和Google Drive中的资料。",
+   "level": "现象",
+   "quote": "模型可以在一次研究任务中，同时检索公共网页的行业动态、用户Gmail中的历史沟通记录以及Google Drive中的内部财务报表，进行交叉比对与综合分析 。"
+  },
+  {
+   "id": "codex-1:D-8",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini的异步任务管理通过共享状态支持子查询失败后的恢复，避免重启整个研究任务。",
+   "level": "内部联系",
+   "quote": "由于单次深度研究可能包含成百上千次模型调用并耗时数十分钟，该管理器在规划模型与任务执行模型之间维护了一个共享状态；一旦某个子查询失败，系统能够优雅地进行错误恢复，而无需重启整个长达数十分钟的进程 。"
+  },
+  {
+   "id": "codex-1:D-9",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude通过多角色智能体在同一代码库或文档库中并行工作与交叉审查。",
+   "level": "现象",
+   "quote": "其核心功能通过“智能体团队（Agent Teams）”和Cowork协作空间展现，允许用户实例化多个具备特定角色的AI实例（如前端开发智能体、后端逻辑验证智能体、测试编写智能体）在同一代码库或文档库中并行工作、交叉审查 。"
+  },
+  {
+   "id": "codex-1:D-10",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude通过压缩早期执行步骤和决策来避免上下文溢出，并维持长期任务的目标记忆。",
+   "level": "内部联系",
+   "quote": "在长达数小时的单一任务流中，模型会自动总结和浓缩早期的执行步骤与设计决策，从而避免上下文窗口溢出，并保持对全局目标的清晰记忆 。"
+  },
+  {
+   "id": "codex-1:D-11",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为Claude Opus 4.6能够连续自主执行14.5小时任务，并保持逻辑连贯性。",
+   "level": "现象",
+   "quote": "测试表明，Claude Opus 4.6能够维持长达14.5小时的自主任务执行而不丢失逻辑连贯性，这是截至2026年初行业内已知运行时间最长的自主智能体记录 。"
+  },
+  {
+   "id": "codex-1:D-12",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity的Comet能够通过浏览器交互抓取动态网页数据并执行用户流程走查。",
+   "level": "现象",
+   "quote": "它能够自主登录动态仪表盘、抓取嵌套在复杂JavaScript框架下的数据、甚至模拟用户走查竞争对手的注册入网流程以评估摩擦点 。"
+  },
+  {
+   "id": "codex-1:D-13",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为Perplexity Spaces通过限定研究信息源来排除外部无关数据。",
+   "level": "内部联系",
+   "quote": "此外，Perplexity的Spaces功能允许用户将特定的PDF文件、网页链接和本地数据圈定在一个独立的研究空间内，模型在进行深度研究时将严格受限于这些可信信息源，从而彻底排除了外部无关数据的污染 。"
+  },
+  {
+   "id": "codex-1:D-14",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告将Perplexity Max列为优先追求事实准确性和可验证性的用户的最佳选择。",
+   "level": "现象",
+   "quote": "首先，对于那些将**“事实的准确性”与“数据的可验证性”置于最高优先级**的用户（如金融量化分析师、法律合规审核员、硬新闻记者），**Perplexity Max**是当前无可争议的王者 。"
+  },
+  {
+   "id": "codex-1:D-15",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi的并行智能体机制被认为能避免串行崩溃，并显著缩短复杂研究的执行时间。",
+   "level": "内部联系",
+   "quote": "这种并行机制不仅避免了“串行崩溃（Serial Collapse）”，还将极端复杂研究任务的端到端执行时间缩减了百分之八十，整体执行速度相比单智能体模型提升了4.5倍 。"
+  },
+  {
+   "id": "codex-1:D-16",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi的多模态研究能力覆盖网页设计图、财务图表和视频工作流。",
+   "level": "现象",
+   "quote": "这意味着Kimi的深度研究智能体不仅能阅读文本，还能直接解析网页的UI设计图、复杂的财务数据图表甚至视频工作流，实现了真正意义上的跨模态信息合成 。"
+  },
+  {
+   "id": "codex-1:D-17",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek在调用工具前规划推理路径，并在获得反馈后检验结果是否符合研究目标。",
+   "level": "现象",
+   "quote": "模型在调用外部数据接口或执行代码前，会先生成详细的内部推理路径，并在获取外部反馈后，运用严密的逻辑来验证结果是否与研究目标一致 。"
+  },
+  {
+   "id": "codex-1:D-18",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为DeepSeek的开放权重和低价使其适合作为本地部署及定制研究管道的底座。",
+   "level": "内部联系",
+   "quote": "更重要的是，DeepSeek采用了开源策略（基于MIT协议发布权重），并彻底击穿了高端推理模型的定价底线，使其成为无数企业和开发者在本地部署或构建定制化深度研究数据管道时的首选底座 。"
+  },
+  {
+   "id": "codex-1:D-19",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "二元评分机制会奖励猜测而惩罚承认无知，从而诱发模型幻觉。",
+   "level": "内部联系",
+   "quote": "这种机制变相鼓励了模型在遇到知识盲区时进行“猜测”，因为猜测有一定概率得分，而坦诚回答“我不知道”则必定得零分。"
+  },
+  {
+   "id": "codex-1:D-20",
+   "report": "D",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "将关键词查询转换为自然语言问题，可以改善检索管道的召回率和事实准确性。",
+   "level": "内部联系",
+   "quote": "通过引入“查询到问题（Query-to-Question, Q2Q）”转换技术，将生硬的关键词转化为自然语言问题，可以显著提高包含BM25和monoT5架构的检索管道的信息召回率与事实准确性 。"
+  },
+  {
+   "id": "google-2:D-1",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "深度研究功能已从基础RAG的对话式问答演进为包含计划制定、自主调用工具、迭代搜索与逻辑推演的多步智能体工作流。",
+   "level": "本质",
+   "quote": "深度研究的核心机制在于其复杂的多步工作流：系统首先将用户的模糊提示词转化为多节点的个性化研究计划，随后通过自主调用工具在广袤的公共互联网或企业私有数据库中进行迭代式搜索、阅读、自我反思与逻辑推演，最终将海量碎片化信息合成为具备严密引文支持的长篇专业报告 。"
+  },
+  {
+   "id": "google-2:D-2",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "为了在准确性、速度与计算成本间取得平衡，各家深度研究系统分化出了四种不同的底层架构路线：连续思维链推理、并行智能体集群、超长上下文与生态穿透、以及原生答案引擎与精准事实核查。",
+   "level": "全体",
+   "quote": "为了在准确性、速度与计算成本之间取得平衡，当前市场上的顶级提供商——包括OpenAI（ChatGPT）、Google（Gemini）、Anthropic（Claude）、Perplexity、Moonshot AI（Kimi）以及DeepSeek——在系统架构上探索出了截然不同的技术路线。"
+  },
+  {
+   "id": "google-2:D-3",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "由于大模型技术栈分化，没有单一平台能同时兼顾极速、绝对准确、长程逻辑、生态融合与低成本，“哪家最好”取决于具体业务场景、容错率与预算。",
+   "level": "本质",
+   "quote": "随着大语言模型技术栈的严重分化，没有任何一个单一的平台能够同时在执行极速、绝对的准确性、长程逻辑深度、生态系统融合与计算成本控制上达到完美的统一。"
+  },
+  {
+   "id": "google-2:D-4",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "OpenAI的ChatGPT深度研究引入了交互式研究计划阶段，支持执行前向用户提问澄清并动态编辑研究大纲，并提供耗时近30分钟的完整版和数分钟的轻量版两种模式。",
+   "level": "现象",
+   "quote": "其最显著的变化在于引入了高度交互的研究计划阶段，模型在执行长程任务前会主动向用户提出澄清性问题，并生成一份可视化的、可动态编辑的研究大纲，确保最终报告不偏离用户的核心约束条件 。"
+  },
+  {
+   "id": "google-2:D-5",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT的深度反思机制使其在跨学科概念解释与长文撰写上逻辑连贯性极佳，但代价是面对海量高频实时数据抓取时敏捷度不如专用搜索智能体。",
+   "level": "内部联系",
+   "quote": "然而，这种深度反思机制也导致其在面对海量高频的实时数据抓取时，敏捷度不及专用的搜索智能体。"
+  },
+  {
+   "id": "google-2:D-6",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Google Gemini依托百万级Token的超长上下文窗口，在深度研究中无需频繁依赖RAG的向量分块与截断，从而避免了跨文档逻辑关联的丢失。",
+   "level": "内部联系",
+   "quote": "在深度研究场景下，这意味着Gemini不需要像其他模型那样频繁依赖检索增强生成（RAG）中的向量分块与截断，从而避免了跨文档逻辑关联的丢失。"
+  },
+  {
+   "id": "google-2:D-7",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Gemini Deep Research打通了Google Workspace生态，支持同时检索公共网页与用户Gmail、Google Drive中的私有文件，并可通过异步任务管理器在子查询失败时恢复状态及输出至Canvas或音频概述。",
+   "level": "现象",
+   "quote": "模型可以在一次研究任务中，同时检索公共网页的行业动态、用户Gmail中的历史沟通记录以及Google Drive中的内部财务报表，进行交叉比对与综合分析 。"
+  },
+  {
+   "id": "google-2:D-8",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Anthropic的Claude Opus 4.6通过“上下文压缩”技术自动浓缩早期执行步骤以避免窗口溢出，结合多角色智能体团队（Agent Teams）协作，可维持长达14.5小时的自主任务执行。",
+   "level": "内部联系",
+   "quote": "在长达数小时的单一任务流中，模型会自动总结和浓缩早期的执行步骤与设计决策，从而避免上下文窗口溢出，并保持对全局目标的清晰记忆 。"
+  },
+  {
+   "id": "google-2:D-9",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity在Max层级推出Comet浏览器智能体以解析复杂DOM和动态网页，并通过Spaces功能将研究严格限制在用户指定的可信信源内以排除外部污染。",
+   "level": "现象",
+   "quote": "此外，Perplexity的Spaces功能允许用户将特定的PDF文件、网页链接和本地数据圈定在一个独立的研究空间内，模型在进行深度研究时将严格受限于这些可信信息源，从而彻底排除了外部无关数据的污染 。"
+  },
+  {
+   "id": "google-2:D-10",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Moonshot AI的Kimi K2.5采用并行智能体强化学习（PARL）构建智能体集群架构，动态生成多达100个子智能体并发执行超过1500次调用，将复杂研究端到端时间缩减80%、速度提升4.5倍。",
+   "level": "内部联系",
+   "quote": "这种并行机制不仅避免了“串行崩溃（Serial Collapse）”，还将极端复杂研究任务的端到端执行时间缩减了百分之八十，整体执行速度相比单智能体模型提升了4.5倍 。"
+  },
+  {
+   "id": "google-2:D-11",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Kimi K2.5具备原生多模态架构，其深度研究智能体不仅能阅读文本，还能直接解析网页UI设计图、财务图表和视频工作流。",
+   "level": "现象",
+   "quote": "这意味着Kimi的深度研究智能体不仅能阅读文本，还能直接解析网页的UI设计图、复杂的财务数据图表甚至视频工作流，实现了真正意义上的跨模态信息合成 。"
+  },
+  {
+   "id": "google-2:D-12",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "DeepSeek V3.2通过流形约束超连接（mHC）与稀疏注意力（DSA）机制优化内部信息流转效率，结合“工具使用中的思考”机制，在极低算力成本与MIT开源策略下实现了顶级逻辑推演能力。",
+   "level": "内部联系",
+   "quote": "其技术突破源于一种被称为“流形约束超连接（mHC）”的新型训练方法，结合DeepSeek稀疏注意力（DSA）机制，彻底重构了万亿参数模型内部信息流转的效率 。"
+  },
+  {
+   "id": "google-2:D-13",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在评估深度网络搜索与隐蔽信息定位的BrowseComp-Plus基准测试中，结合多智能体框架的Claude Opus 4.6（86.8%）与并行集群的Kimi K2.5（78.4%）显著领先于单体模型架构的GPT-5.2与Gemini 3 Pro。",
+   "level": "现象",
+   "quote": "证明了在长程复杂检索中，基于Context Compaction的记忆保持与多角色Agent交叉验证能有效过滤网页噪音。"
+  },
+  {
+   "id": "google-2:D-14",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "截至2026年，大模型在解决传统单一路径问题上已趋于饱和（如GAIA突破90%），但在SWE-bench（Claude Opus 4.6达80.8%）等容错率极低的硬核代码与系统操作研究上能力分野明显。",
+   "level": "全体",
+   "quote": "然而，在诸如Terminal-Bench和SWE-bench等容错率极低、需要对系统环境进行持续探索与精确修改的“硬核研究”上，模型的能力分野极为明显。"
+  },
+  {
+   "id": "google-2:D-15",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "大模型产生幻觉的系统性根源在于二元评分的训练激励机制：遇到知识盲区时猜测有一定概率得分，而坦诚回答“不知道”必得零分，迫使模型生成看似合理的虚构事实。",
+   "level": "本质",
+   "quote": "在标准的评估基准下，系统往往通过二元评分（对或错）来衡量性能。这种机制变相鼓励了模型在遇到知识盲区时进行“猜测”，因为猜测有一定概率得分，而坦诚回答“我不知道”则必定得零分。"
+  },
+  {
+   "id": "google-2:D-16",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在摘要与事实一致性评测中，Claude Opus与GPT-5系列在应对极度复杂的开放式长文档分析时，为了维持推理逻辑的连贯性，反而比轻量或受强约束的模型（如Gemini 2.5 Flash-Lite幻觉率3.3%）更容易出现事实细节偏差（幻觉率约20%-27%）。",
+   "level": "内部联系",
+   "quote": "在应对极其复杂的、开放式的长文档分析任务时，顶尖模型为了维持推理逻辑的连贯性，反而更容易出现事实细节的偏差。"
+  },
+  {
+   "id": "google-2:D-17",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在基于Agent的搜索中，模型生成的关键词查询与底层神经排序器的训练分布不匹配，引入“查询到问题（Q2Q）”转换技术将关键词转为自然语言问题可显著提高信息召回率与事实准确性。",
+   "level": "内部联系",
+   "quote": "通过引入“查询到问题（Query-to-Question, Q2Q）”转换技术，将生硬的关键词转化为自然语言问题，可以显著提高包含BM25和monoT5架构的检索管道的信息召回率与事实准确性 。"
+  },
+  {
+   "id": "google-2:D-18",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "商业定价分化为基础订阅（$20/月，次数或模型受限）与高昂的高级专业订阅（如ChatGPT Pro $200/月、Perplexity Max $200/月、Google AI Ultra $249.99/月），后者解锁无限制深度研究或专属智能体权限。",
+   "level": "现象",
+   "quote": "基础的每月20美元订阅在各大平台中已成为标配，但它们通常只包含受限的深度研究查询次数或轻量级的推理模型 。为了满足无限制、大负荷的专业研究需求，各家推出了极其昂贵的“高级专业”层级。"
+  },
+  {
+   "id": "google-2:D-19",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "底层API调用成本呈现两极分化，Kimi K2.5（输入$0.60/M、输出$2.50/M）与DeepSeek V3.2 Exp（输入$0.27/M、输出$0.41/M）通过算法架构优化将推理成本降至北美巨头（如Claude Opus 4.6输入$5/M、输出$25/M）的几十分之一。",
+   "level": "全体",
+   "quote": "以OpenAI和Anthropic为代表的北美巨头维持了相对高昂的溢价，而以Moonshot AI（Kimi）和DeepSeek为代表的中国军团则通过算法架构优化（如稀疏注意力机制和混合专家模型），在2026年实现了成本的指数级坍塌。"
+  },
+  {
+   "id": "google-2:D-20",
+   "report": "D",
+   "slot": 2,
+   "vendor": "google",
+   "content": "专业深度研究的最佳实践是采用混合技术栈策略：用Kimi广域并发粗筛、Perplexity做零幻觉事实核查、Gemini融合企业私有数据、最后交由Claude做代码级验证或ChatGPT撰写终极报告。",
+   "level": "全体",
+   "quote": "一个具备工业级强度的现代深度研究工作流应当是：在信息发现阶段，利用Kimi K2.5的Agent Swarm进行低成本的广域网页并发扫掠与粗筛；随后，将目标锁定并交由Perplexity Max进行深度的动态数据抓取与绝对的零幻觉事实核查；接着，将经过清洗和验证的纯净语料库输入到拥有超长上下文的Gemini 3.1 Pro中，与企业私有数据库进行穿透式对撞；最终，将核心分析框架交托给Claude 4.6进行严密的逻辑溯源和代码级验证，或由ChatGPT Pro的深度推理模型完成那份极具洞察力与战略高度的终极执行报告。"
+  },
+  {
+   "id": "codex-1:E-1",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT Deep Research 在英文严肃技术和学术研究中，被报告所引评测认为在推理严谨性和可靠性上略优于竞品。",
+   "level": "现象",
+   "quote": "从多篇 2025–2026 年的评测来看，ChatGPT 的 Deep Research 在“严肃技术/学术研究”场景里普遍被认为略胜一筹，尤其是在推理严谨性和整体可靠性上更受信任。"
+  },
+  {
+   "id": "codex-1:E-2",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "ChatGPT Deep Research 的使用配额限制提高了重度使用的门槛。",
+   "level": "内部联系",
+   "quote": "深度研究配额有限（Plus 用户每月约 10 次，免费用户约 2 次），大规模重度使用的门槛较高。"
+  },
+  {
+   "id": "codex-1:E-3",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity Deep Research 能在几分钟内通过大量搜索和来源阅读生成结构化报告，并取得较高的基准成绩。",
+   "level": "现象",
+   "quote": "另一方面，Perplexity 的 Deep Research 更像“超级版学术/情报搜索引擎”：它会自动执行大量搜索、阅读上百个来源，然后生成结构化报告，在 Humanity’s Last Exam 和 SimpleQA 等基准上都给出了非常亮眼的准确率成绩，同时保持在几分钟内完成任务。"
+  },
+  {
+   "id": "codex-1:E-4",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity 在 Humanity’s Last Exam 上的官方准确率为 21.1%，超过报告列举的若干推理模型。",
+   "level": "现象",
+   "quote": "官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；在 Humanity’s Last Exam 上达到 21.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。"
+  },
+  {
+   "id": "codex-1:E-5",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity 虽然速度快，但仍存在幻觉，研究深度和通用研究助手的全面性被部分评测认为不如 ChatGPT。",
+   "level": "全体",
+   "quote": "第三方评测指出 Deep Research 虽然快，但仍存在一定幻觉，深度有时不如 OpenAI Deep Research；PCMag 也认为其 Deep Research 工具尚不如 ChatGPT 作为“通用深度聊天/研究助手”那样全面。"
+  },
+  {
+   "id": "codex-1:E-6",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi k1.5 在长文本任务中提取准确、分析维度较全面，其结构化表格和多维分类适合后续分析。",
+   "level": "现象",
+   "quote": "针对中文长文档、本土网站（政策、报告、新闻、公众号等）的“深度研究”，Kimi 的深度研究功能目前是产品化程度最高的一批：评测显示 Kimi k1.5 在长文本任务里不但提取准确，而且维度更全面，生成的结构化表格和多维分类非常适合直接拿去做分析。"
+  },
+  {
+   "id": "codex-1:E-7",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Kimi 在纯推理和高难数学任务中的严谨性被报告认为弱于最新一代 OpenAI 模型和 DeepSeek R1。",
+   "level": "全体",
+   "quote": "推理链条和数学严谨性整体弱于最新一代 OpenAI / DeepSeek R1，在纯推理解题和高难数学方面仍有差距。"
+  },
+  {
+   "id": "codex-1:E-8",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek R1 在数据分析、异常检测和关联挖掘任务中的逻辑严谨性，被所引实验认为与 o3-mini 同档且领先多数比较模型。",
+   "level": "现象",
+   "quote": "DeepSeek R1 的优势更偏向“推理和分析深度”：清华等机构的对比实验显示，R1 在数据分析、异常检测、特征–指标关联挖掘等任务上，分析逻辑比其他模型更清晰严谨，整体与 OpenAI o3-mini 处于同一档位，明显领先包括 Kimi 在内的多数模型。"
+  },
+  {
+   "id": "codex-1:E-9",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek R1 在内容总结中会补充数据和产品案例，其综合表现被所引横评认为超过 Kimi 等国产模型。",
+   "level": "现象",
+   "quote": "媒体横评也发现，在内容总结类任务中，R1 会主动引入数据和产品案例来支撑结论，使得文章更有“证据感”，综合表现超越 Kimi 等主流国产大模型。"
+  },
+  {
+   "id": "codex-1:E-10",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepSeek R1 受长文本上下文和早期联网、多语种稳定性的限制，需要外部工具或代理补全深度研究体验。",
+   "level": "内部联系",
+   "quote": "对极长文本任务容易超出上下文限制；早期版本联网搜索和多语种输出上存在不稳定问题，需要结合其他工具或代理封装来获得更完整的“深度研究”体验。"
+  },
+  {
+   "id": "codex-1:E-11",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "通过让 R1 负责分析、Kimi 负责长文本整理和多维挖掘，可以利用两者分工改善中文研究效果。",
+   "level": "内部联系",
+   "quote": "一个值得注意的趋势是：部分研究机构和实践者已经开始推荐 “DeepSeek R1 + Kimi 深度研究” 的组合使用——R1 负责深度分析和异常检测，Kimi 负责长文本整理和多维度挖掘，从而在中文场景下取得比单一模型更好的效果。"
+  },
+  {
+   "id": "codex-1:E-12",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Claude 擅长合约、政策和技术文档的撰写与重写，适合作为企业写作助手。",
+   "level": "现象",
+   "quote": "Claude 在多个独立对比中被认为是“长文写作和安全合规”上的标杆：它擅长合约、政策、技术文档的撰写与重写，输出风格稳妥、有条理，非常适合作为企业写作助手。"
+  },
+  {
+   "id": "codex-1:E-13",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "部分实验认为 Claude 3.5 sonnet 的结构化表格输出和排版整洁度优于 o3-mini 等竞品。",
+   "level": "现象",
+   "quote": "另外有实验表明，在结构化表格输出和排版整洁度上，Claude 3.5 sonnet 的表现优于一些竞品，包括 OpenAI o3-mini 和部分国产模型。"
+  },
+  {
+   "id": "codex-1:E-14",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为 Claude 3.5 sonnet 缺少内置联网搜索，使其深度研究体验依赖外部工具集成。",
+   "level": "内部联系",
+   "quote": "但从“Deep Research”这一垂直能力看，至少在 2025 年的对比报告里，Claude 3.5 sonnet 本身并不直接支持像 Perplexity/ChatGPT 那样的内置联网搜索，需要额外接工具，这意味着其深度研究体验更依赖开发者集成，而非开箱即用。"
+  },
+  {
+   "id": "codex-1:E-15",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Gemini 的多模态能力和 Google 办公生态联动，使其适合办公自动化与创意任务。",
+   "level": "内部联系",
+   "quote": "Gemini 则在多模态和 Google 生态集成方面有明显优势，例如与 Gmail、Docs、Drive 的联动，以及对图像/视频的理解和生成能力，被认为更适合办公自动化与创意场景。"
+  },
+  {
+   "id": "codex-1:E-16",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "报告认为 Gemini 在纯文本深度研究和引用管理上的口碑落后于 Perplexity 和 ChatGPT。",
+   "level": "现象",
+   "quote": "但在“纯文本深度研究 + 引用管理”这条赛道上，主流测评大多把“研究首选”位置留给了 Perplexity 和 ChatGPT，而非 Gemini。"
+  },
+  {
+   "id": "codex-1:E-17",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "英文技术、学术或严肃商业研究可采用 ChatGPT 为主力、Perplexity 补充搜索广度和引用的组合。",
+   "level": "内部联系",
+   "quote": "如果你主要做的是英文技术、学术或严肃商业研究，而且可以接受订阅费用，可以优先把 ChatGPT Deep Research 作为主力，配合 Perplexity 做“广度搜索 + 引用补充”。"
+  },
+  {
+   "id": "codex-1:E-18",
+   "report": "E",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "大量依赖网页、报告和引用的市场、行业及政策调研，可先用 Perplexity 搜索综述，再用其他模型润色或深化推理。",
+   "level": "内部联系",
+   "quote": "如果你更多是做市场竞品、行业趋势、政策解读一类的调研，尤其需要大量网页和报告、一键拉出引用，那么 Perplexity Deep Research 会给你最省时间的“搜索+综述”体验，再用自己常用的大模型（不论是 ChatGPT、Claude 还是 DeepSeek）去润色或做进一步推理即可。"
+  },
+  {
+   "id": "google-2:E-1",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "目前没有绝对第一的 Deep Research 产品，需根据英文综合研究、搜索资料综述、中文本土内容等不同场景来评价优劣。",
+   "level": "本质",
+   "quote": "从公开评测和用户口碑来看，目前没有一个“绝对第一”的 Deep Research，但趋势比较清晰："
+  },
+  {
+   "id": "google-2:E-2",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT Deep Research 在英文严肃技术和学术研究场景中综合实力最强，推理严谨性和可靠性高于 Perplexity、Gemini 和 Grok。",
+   "level": "现象",
+   "quote": "第三方测评认为 ChatGPT 的 Deep Research 是目前最好的深度研究产品之一，在技术研究上比 Grok、Perplexity、Gemini 表现更好。"
+  },
+  {
+   "id": "google-2:E-3",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "ChatGPT Deep Research 的使用配额有限（Plus 用户每月约 10 次，免费用户约 2 次），导致大规模重度使用门槛较高。",
+   "level": "内部联系",
+   "quote": "深度研究配额有限（Plus 用户每月约 10 次，免费用户约 2 次），大规模重度使用的门槛较高。"
+  },
+  {
+   "id": "google-2:E-4",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity Deep Research 会自动执行数十次搜索、阅读上百个来源，并在几分钟内生成带清晰引用的结构化研究报告。",
+   "level": "现象",
+   "quote": "官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；在 Humanity’s Last Exam 上达到 21.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。"
+  },
+  {
+   "id": "google-2:E-5",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity Deep Research 在 Humanity's Last Exam 上达到 21.1% 准确率，在 SimpleQA 基准上达到 93.9%。",
+   "level": "现象",
+   "quote": "在 SimpleQA factuality 基准上达到 93.9%，并对每条结论给出清晰引用，被多方视为“研究与事实核查”的首选工具之一。"
+  },
+  {
+   "id": "google-2:E-6",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Perplexity Deep Research 虽然检索速度快、引用透明，但仍存在一定幻觉，研究深度和全面性不及 ChatGPT Deep Research。",
+   "level": "全体",
+   "quote": "第三方评测指出 Deep Research 虽然快，但仍存在一定幻觉，深度有时不如 OpenAI Deep Research；PCMag 也认为其 Deep Research 工具尚不如 ChatGPT 作为“通用深度聊天/研究助手”那样全面。"
+  },
+  {
+   "id": "google-2:E-7",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Kimi（k1.5）在中文长文本处理、本土网站搜索以及特征分类与多维度关联挖掘任务中表现突出，并提供前端页面展示结果。",
+   "level": "全体",
+   "quote": "行业评测指出，Kimi k1.5 在长文本处理任务中，相比短文本更出色，既能保证提取准确，又能给出更全面的数据维度；在特征分类与多维度关联挖掘任务中表现最佳。"
+  },
+  {
+   "id": "google-2:E-8",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Kimi 的推理链条和数学严谨性整体弱于最新一代 OpenAI 模型和 DeepSeek R1。",
+   "level": "现象",
+   "quote": "推理链条和数学严谨性整体弱于最新一代 OpenAI / DeepSeek R1，在纯推理解题和高难数学方面仍有差距。"
+  },
+  {
+   "id": "google-2:E-9",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "DeepSeek R1 在数据分析、异常检测、关联挖掘上逻辑清晰严谨，与 OpenAI o3-mini 相当，且总结时会主动补充数据和案例佐证观点。",
+   "level": "现象",
+   "quote": "清华等机构的对比实验认为，R1 在数据分析任务上与 OpenAI o3-mini 相当且领先其他模型，分析逻辑更清晰严谨，适合做异常检测、数据相关性挖掘等深度分析场景。"
+  },
+  {
+   "id": "google-2:E-10",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "DeepSeek R1 存在极长文本易超上下文限制、早期版本联网搜索和多语种输出不稳定的短板，需结合其他工具封装来获得完整深度研究体验。",
+   "level": "内部联系",
+   "quote": "对极长文本任务容易超出上下文限制；早期版本联网搜索和多语种输出上存在不稳定问题，需要结合其他工具或代理封装来获得更完整的“深度研究”体验。"
+  },
+  {
+   "id": "google-2:E-11",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在中文场景下，将 Kimi 深度研究（负责长文本整理与多维挖掘）与 DeepSeek R1（负责深度分析与异常检测）组合使用，效果优于单一模型。",
+   "level": "内部联系",
+   "quote": "一个值得注意的趋势是：部分研究机构和实践者已经开始推荐 “DeepSeek R1 + Kimi 深度研究” 的组合使用——R1 负责深度分析和异常检测，Kimi 负责长文本整理和多维度挖掘，从而在中文场景下取得比单一模型更好的效果。"
+  },
+  {
+   "id": "google-2:E-12",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Claude 擅长长篇写作、合约报告撰写、代码审阅与安全合规，其中 Claude 3.5 Sonnet 在表格结构化输出和格式工整度上优于 o3-mini 等模型。",
+   "level": "现象",
+   "quote": "在部分机构的对比中，Claude 3.5 sonnet 在表格结构化输出、格式工整度上表现优于 o3 和部分国产模型。"
+  },
+  {
+   "id": "google-2:E-13",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "截至 2025 年中期测试，Claude 3.5 Sonnet 不支持模型内部直接联网查询，需通过外部工具集成，因此在一体化深度研究体验上天然弱于 Perplexity 和 ChatGPT。",
+   "level": "内部联系",
+   "quote": "至少在 2025 年中期的测试中，Claude 3.5 sonnet 尚不支持直接在模型内部进行联网网页查询，需要通过外部工具集成，天然弱于 Perplexity/ChatGPT 这种一体化 Deep Research 体验。"
+  },
+  {
+   "id": "google-2:E-14",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Gemini 的优势在于多模态能力以及与 Gmail、Docs、Drive 等 Google 生态的深度集成，适合办公自动化场景。",
+   "level": "现象",
+   "quote": "Gemini 在文字、图片、音频和视频上的多模态能力较强，并且深度集成 Gmail、Docs、Drive 等 Google 产品，适合办公自动化场景。"
+  },
+  {
+   "id": "google-2:E-15",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "Gemini 的深度研究能力更多依赖 Google 搜索与文档生态的组合，缺乏像 Perplexity 或 ChatGPT 那样专门化的深度调研模式，在高度专业科学领域的准确度和长篇综述引用管理上略逊于顶级竞品。",
+   "level": "内部联系",
+   "quote": "Deep Research 能力更多依赖 Google 搜索 + 文档生态的组合，而不是像 Perplexity/ChatGPT 那样提供高度专门化的“深度调研模式”，在纯“长篇综述+引用管理”上口碑略逊。"
+  },
+  {
+   "id": "google-2:E-16",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "针对英文技术、学术或严肃商业研究，建议以 ChatGPT Deep Research 为主力，配合 Perplexity 进行广度搜索与引用补充。",
+   "level": "内部联系",
+   "quote": "如果你主要做的是英文技术、学术或严肃商业研究，而且可以接受订阅费用，可以优先把 ChatGPT Deep Research 作为主力，配合 Perplexity 做“广度搜索 + 引用补充”。"
+  },
+  {
+   "id": "google-2:E-17",
+   "report": "E",
+   "slot": 2,
+   "vendor": "google",
+   "content": "针对需要大量网页报告与快速引用的市场竞品、行业趋势、政策解读调研，建议先用 Perplexity 完成搜索与综述，再用其他常用大模型润色或进一步推理。",
+   "level": "内部联系",
+   "quote": "如果你更多是做市场竞品、行业趋势、政策解读一类的调研，尤其需要大量网页和报告、一键拉出引用，那么 Perplexity Deep Research 会给你最省时间的“搜索+综述”体验，再用自己常用的大模型（不论是 ChatGPT、Claude 还是 DeepSeek）去润色或做进一步推理即可。"
+  },
+  {
+   "id": "codex-1:F-1",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "不同评测的胜者不同，Deep Research产品的选择取决于具体任务。",
+   "level": "全体",
+   "quote": "关于哪家Deep Research功能做得最好，目前并没有一个绝对的答案，因为各大模型在不同维度的评测中各有胜负，表现优异的场景也各不相同。"
+  },
+  {
+   "id": "codex-1:F-2",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "百度千帆深度研究Agent在DeepResearch Bench中排名第一，超过OpenAI和Gemini等。",
+   "level": "现象",
+   "quote": "**百度千帆深度研究Agent**排名第一，超越OpenAI、Gemini等。"
+  },
+  {
+   "id": "codex-1:F-3",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DeepResearch Bench覆盖100个博士级研究任务和22个学科，重点评估报告全面性与洞察力。",
+   "level": "现象",
+   "quote": "评测包含100个博士级研究任务，覆盖22个学科，重点考察报告的全面性、洞察力等。"
+  },
+  {
+   "id": "codex-1:F-4",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity在DRACO评测中得分67.15%，高于Gemini和OpenAI。",
+   "level": "现象",
+   "quote": "**Perplexity Deep Research**得分**67.15%**，领先Gemini (58.97%) 和 OpenAI (52.06%)。"
+  },
+  {
+   "id": "codex-1:F-5",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "DRACO包含覆盖10个领域的100个真实世界任务，评估准确性、完整性和客观性。",
+   "level": "现象",
+   "quote": "基准测试包含100个真实世界任务，覆盖10个领域，评估准确性、完整性和客观性。"
+  },
+  {
+   "id": "codex-1:F-6",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "OpenAI在LiveDRBench中表现最佳，综合F1分数为0.55。",
+   "level": "现象",
+   "quote": "**OpenAI**的模型表现最佳，综合**F1分数为0.55**。"
+  },
+  {
+   "id": "codex-1:F-7",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "LiveDRBench发现各模型平均仅覆盖约一半的必要搜索查询，研究深度仍有不足。",
+   "level": "全体",
+   "quote": "评测聚焦科学话题和公共利益事件，分析发现各模型平均只能覆盖约一半的必要搜索查询，表明研究深度仍有提升空间。"
+  },
+  {
+   "id": "codex-1:F-8",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "MMDR-Bench中Gemini在综合性任务中最优，GPT-5.2在计算机科学等高度专业化领域胜出。",
+   "level": "全体",
+   "quote": "**谷歌Gemini Deep Research**在**综合性任务**中表现最优；**GPT-5.2**在计算机科学等**高度专业化领域**胜出。"
+  },
+  {
+   "id": "codex-1:F-9",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "MMDR-Bench强调问题分解、跨文档证据链构建与结论可追溯性。",
+   "level": "现象",
+   "quote": "评测强调问题分解、跨文档证据链构建、结论可追溯性等能力。"
+  },
+  {
+   "id": "codex-1:F-10",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "百度千帆整合百度搜索及接入中文互联网信息孤岛的能力，可能是其研究表现突出的原因。",
+   "level": "内部联系",
+   "quote": "它在专门的博士级研究任务评测中夺冠，并且深度整合了百度搜索，对中文互联网生态的“信息孤岛”有独家的接入能力，这可能是其脱颖而出的关键护城河。"
+  },
+  {
+   "id": "codex-1:F-11",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "OpenAI的GPT系列在需要精确逻辑、符号推理和算法细节的任务上表现出专家级精度。",
+   "level": "现象",
+   "quote": "它在处理需要精确逻辑、符号推理和算法细节的任务上表现出了专家级的精度。"
+  },
+  {
+   "id": "codex-1:F-12",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "OpenAI近期升级允许用户指定搜索来源，有助于提高研究专业性。",
+   "level": "内部联系",
+   "quote": "近期升级也允许用户指定搜索来源，进一步提升了专业性。"
+  },
+  {
+   "id": "codex-1:F-13",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "Perplexity在其自行发布的DRACO评测中，尤其在医学、通用知识和技术领域领先明显。",
+   "level": "全体",
+   "quote": "它在自己发布的DRACO评测中，特别是在医学、通用知识和技术领域，领先优势明显。"
+  },
+  {
+   "id": "codex-1:F-14",
+   "report": "F",
+   "slot": 1,
+   "vendor": "codex",
+   "content": "据真实用户反馈，Kimi深度研究在编程任务上表现出色，甚至优于部分付费方案。",
+   "level": "现象",
+   "quote": "根据真实用户的反馈，**Kimi的深度研究功能在编程相关任务上表现出色，甚至优于一些付费方案**。"
+  },
+  {
+   "id": "google-2:F-1",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "当前的Deep Research功能正在快速演进并走向专业化分工，因此哪家最好没有绝对答案，取决于具体任务场景。",
+   "level": "本质",
+   "quote": "不同评测结果“打架”，恰恰说明了当前的Deep Research功能正在快速演进，并且开始走向**专业化分工**。"
+  },
+  {
+   "id": "google-2:F-2",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "百度千帆深度研究Agent在包含100个博士级研究任务、覆盖22个学科的DeepResearch Bench评测中排名第一，超越OpenAI和Gemini等。",
+   "level": "现象",
+   "quote": "**百度千帆深度研究Agent**排名第一，超越OpenAI、Gemini等。"
+  },
+  {
+   "id": "google-2:F-3",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "百度千帆在中文深度研究中脱颖而出，是因为它深度整合了百度搜索，对中文互联网生态的“信息孤岛”具有独家接入能力。",
+   "level": "内部联系",
+   "quote": "它在专门的博士级研究任务评测中夺冠，并且深度整合了百度搜索，对中文互联网生态的“信息孤岛”有独家的接入能力，这可能是其脱颖而出的关键护城河。"
+  },
+  {
+   "id": "google-2:F-4",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在Perplexity AI发布的包含100个真实世界任务的DRACO基准测试中，Perplexity Deep Research以67.15%的得分领先于Gemini（58.97%）和OpenAI（52.06%），尤其在医学、通用知识和技术领域优势明显。",
+   "level": "现象",
+   "quote": "**Perplexity Deep Research**得分**67.15%**，领先Gemini (58.97%) 和 OpenAI (52.06%)。"
+  },
+  {
+   "id": "google-2:F-5",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在ICLR 2026聚焦科学话题和公共利益事件的LiveDRBench评测中，OpenAI的模型表现最佳，综合F1分数为0.55。",
+   "level": "现象",
+   "quote": "**OpenAI**的模型表现最佳，综合**F1分数为0.55**。"
+  },
+  {
+   "id": "google-2:F-6",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "LiveDRBench评测分析显示，各模型平均只能覆盖约一半的必要搜索查询，表明当前各家模型的研究深度仍有提升空间。",
+   "level": "全体",
+   "quote": "评测聚焦科学话题和公共利益事件，分析发现各模型平均只能覆盖约一半的必要搜索查询，表明研究深度仍有提升空间。"
+  },
+  {
+   "id": "google-2:F-7",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "在强调问题分解、跨文档证据链构建与结论可追溯性的MMDR-Bench评测中，谷歌Gemini Deep Research在横跨人文、社科等多领域的综合性任务中表现最优。",
+   "level": "现象",
+   "quote": "**谷歌Gemini Deep Research**在**综合性任务**中表现最优；**GPT-5.2**在计算机科学等**高度专业化领域**胜出。"
+  },
+  {
+   "id": "google-2:F-8",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "OpenAI的GPT-5.2在计算机科学等需要精确逻辑、符号推理和算法细节的高度专业化任务上表现出专家级精度。",
+   "level": "现象",
+   "quote": "它在处理需要精确逻辑、符号推理和算法细节的任务上表现出了专家级的精度。"
+  },
+  {
+   "id": "google-2:F-9",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "OpenAI近期对Deep Research功能进行了升级，允许用户指定搜索来源，进一步提升了专业性。",
+   "level": "现象",
+   "quote": "近期升级也允许用户指定搜索来源，进一步提升了专业性。"
+  },
+  {
+   "id": "google-2:F-10",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "根据真实用户反馈，Kimi的深度研究功能在编程相关任务上表现出色，甚至优于一些付费方案，适合预算有限但有编程需求的用户。",
+   "level": "现象",
+   "quote": "根据真实用户的反馈，**Kimi的深度研究功能在编程相关任务上表现出色，甚至优于一些付费方案**。"
+  },
+  {
+   "id": "google-2:F-11",
+   "report": "F",
+   "slot": 2,
+   "vendor": "google",
+   "content": "针对不同场景的选型建议：追求中文深度研究选百度千帆，需要综合性多领域研究选Gemini，高度专业化（如计算机科学）选OpenAI GPT系列，关注准确性和客观性选Perplexity，预算有限且处理代码选Kimi。",
+   "level": "现象",
+   "quote": "因此，你可以根据自己的具体需求来“对号入座”："
+  }
+ ]
+}

@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟评审 试评重评 三家 第 98 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟评审 试评重评 三家第 98 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这次评审</a>
+    <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 98 次调用</p>
+    <h1 class="heading-3">评审 · 两两比较：C 在前，A 在后，评委 2</h1>
+    <p class="body-3 lede">Google（google），Gemini Argon Medium 4，只给材料，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟评审 试评重评 三家的第 98 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-两两比较：C 在前，A 在后，评委 2</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">Google（google）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 31 日 00:25:47.888（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 31 日 00:26:01.591（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">13.703 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>2c6193d02db982a67c6cb01fca02a9b2d0570be52ceae45374d6fb21eb1d3047</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>86e5bb70352341b87d591f32d34d152d660f8084e287ae1286d17e473d8a0289</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/agy --input-format stream-json --output-format stream-json --agent materials-only --sandbox --disable-slash-commands --model gemini-4-argon-medium -p </code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 98 行，记录里的序号是 98</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="97.html">上一次调用</a></li><li><a class="caption-1" href="99.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 78264 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 78264 字，点开看全文</summary><pre class="raw" id="prompt">
+你在一项深度研究报告评测的模拟评审中担任评委，负责&quot;两两比较&quot;。
+
+下面先给出材料：评审细则、题目卡和两份报告的全文，分别叫&quot;第一份&quot;和&quot;第二份&quot;。本任务只用这些材料：不能上网，不能运行命令，不能读写文件。两份都要完整读完，长报告不要只读开头。
+
+===== 评审细则（开始） =====
+# 评审细则（第 1.2 版）
+
+2026-10-29。这是第四阶段方案（`stage4-design.md`）的操作版本，写给评委看，评委按它判定。第五阶段的小规模检验用的是第一版；检验之后改了两处，即第五节的结论清单和第七节第 2 条，改动的原因见 `stage5-report.md` 第三节。
+
+2026-10-30 第 1.2 版：第四节加了深度地图标注的用法和判定时隐去出处；有争议标注的计分规则见第四节末尾。起因是出题手册审阅时提出的问题：深度地图的定位不清，出题人不知道写到什么程度为止。第 1.2 版的改动还没有检验。
+
+---
+
+## 一、评委需要知道的定义
+
+**调研。** 为了回答提问者的一个具体问题，以截至某一时间点已经存在的信息为材料，系统地查找、甄别、分析和整合，得出有理有据的结论。结论可以是描述、解释、预测或建议，但都要讲得出道理、拿得出依据。
+
+**深。** 指调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。全体，是事情的历史和全部现状；本质，是事情的性质，以及这件事与其他事情之间的内在联系。材料的丰富是深的基础，但材料多本身不等于深。
+
+**不看的东西。** 篇幅、格式、标题层级、表格多少、引用条数、文笔，都不进入名次。写作只在第六节单独评。
+
+---
+
+## 二、环节评级（每个环节三档：0、1、2）
+
+每个评级都必须引用报告原文一到两句作为依据。原文中找不到依据时，按较低的一档评。
+
+**① 切题与真实需要**
+
+- 0：答的是另一个问题；或者只按字面回答，没有交代自己怎样理解问题和提问者的需要。
+- 1：回答了所问的问题，并写明了自己的理解或假设。
+- 2：在 1 的基础上，审视了问题的前提或其中概念的边界，例如&quot;最好&quot;按什么标准、某个概念包括哪些范围，并据此组织回答。
+
+**③ 查找过程的交代**
+
+- 0：没有交代查了什么、怎么查的。
+- 1：交代了来源的大致范围或类型。
+- 2：交代了查找的范围、方法和局限：查了哪些，没查到什么，为什么。
+
+**④ 甄别来源与处理矛盾**
+
+- 0：不加区分地使用来源；遇到相互矛盾的信息，不处理或没有发现。
+- 1：对来源有所区分，例如区分官方材料和二手评论，但对矛盾的处理不足。
+- 2：说明来源的可靠程度，主动指出相互矛盾的信息，并给出取舍的理由。
+
+**⑤ 分析**（区分事实和判断、考虑其他解释、不迎合）
+
+- 0：事实和判断混在一起；只有一种解释；结论迎合提问者或某一方。
+- 1：大体分开了事实和判断，推理基本清楚。
+- 2：明确区分事实和判断；考虑过其他解释或反例，并说明取舍；没有为了迎合而扭曲结论。
+
+**⑦ 结论与把握**
+
+- 0：结论含糊或回避判断，例如只说&quot;各有所长&quot;而不给出可用的判断；或者下了判断，但完全不说明把握。
+- 1：给出了明确的结论，但没有说明把握程度，或者把握说明流于形式。
+- 2：结论具体、明确，并如实说明各个结论有多大把握、依据是什么。
+
+**关于&quot;查不到&quot;。** 报告说&quot;查不到&quot;&quot;无法确定&quot;时，交代了查了什么、缺什么，并且仍然给出带把握说明的判断，算诚实；只说&quot;无法确定&quot;而不给可用的判断，算回避，在 ⑦ 中按 0 评。
+
+---
+
+## 三、要点抽取
+
+**要点**是报告中一条独立的、有实质内容的认识，例如一个事实、一个解释、一个判断、一条建议。
+
+- 同一个意思写了几遍，只算一条。
+- 只是罗列名字、没有说出任何认识的，不算要点。
+
+每条要点记下：
+
+- **内容**：一句话概括；
+- **层级**：现象、全体、内部联系、本质，四选一，定义见下；
+- **原文**：报告中的一句原话。
+
+**层级的定义：**
+
+- **现象**：事情本身的事实和表面特征。例如&quot;某产品于某日发布&quot;&quot;某产品支持上传文件&quot;。
+- **全体**：事情的历史，即怎样演变而来；或者全部现状，特别是容易被忽略的方面、例外和反例。例如&quot;这类功能从 2024 年底的首个产品发展到 2025 年各家跟进，期间定义发生了什么变化&quot;&quot;某产品在中文资料上的表现与英文不同&quot;。
+- **内部联系**：这件事与其他事情之间的因果、制约、依赖关系。例如&quot;某产品报告质量高，是因为它把检索和写作交给不同的子智能体，代价是用时更长&quot;。
+- **本质**：事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。例如&quot;&#x27;哪家最好&#x27;没有脱离用途的答案，因为各产品优化的目标不同：有的优化引用透明度，有的优化报告的完整性&quot;。
+
+**判定层级时的提醒。** 抽象的套话不算&quot;本质&quot;，例如&quot;技术在不断进步&quot;&quot;各有所长&quot;。一条要点只有说出了具体的性质或联系，并且能在报告中找到支撑，才能定为内部联系或本质。
+
+---
+
+## 四、要点池的判定
+
+把所有报告和出题人深度地图中的要点合并，意思相同的合成一条，再对每条池中要点判定四件事：
+
+1. **对不对。** 截至题目卡规定的截止时间，这条认识是否正确。标为正确、有误或无法判断，并附依据：来源网址或理由。
+2. **切不切题。** 它是否有助于回答提问者的问题。标为切题或不切题。不切题的要点不计分。
+3. **层级。** 现象、全体、内部联系、本质，四选一。以池中判定为准，不受抽取时所标层级的约束。
+4. **重要性。** 核心或一般。核心，指回答这个问题不能缺少的认识。
+
+然后记下每份报告写到了哪些池中要点，写对了还是写错了。
+
+**深度地图的标注（第 1.2 版）。** 深度地图是出题人在看到任何报告之前预先登记的浅答案、转折点和核心要点。它不是标准答案：地图上没有、但正确又切题的要点同样计分；要点的对错一律按来源判定。
+
+1. 地图上已有的要点，以地图登记的层级和重要性为默认值。评委组改动，必须依据来源或第三节的定义写明理由。
+2. 地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告。判为核心的，列入人工审计。
+3. **有争议的标注**，指评委组判定时没有一种意见达到三分之二的层级或重要性判定，以及评委组改动过的地图标注。计分时，比较一对报告，每条有争议的要点都按对领先一方最不利的那种标注计分，再做分开检验。有争议的判定只能让一对报告并列，不能把它们拉开。
+4. 估计名次把握的重抽样，只在至少一份报告写到的要点中进行。这样，地图上写了而没有一份报告写到的要点，对名次的影响为零。
+
+在第五阶段的试评数据上核对过两件事（2026-10-30）：去掉地图上 2 条没有一份报告写到的要点，6 份报告的净分和名次完全不变；把地图上 8 条要点的重要性全部反过来，名次不变。把全部 122 条要点的重要性抹平，原来分开的 12 对中有 1 对变成分不开。
+
+---
+
+## 五、断言核验
+
+**主要结论**，指报告摘要或结论部分中的判断，以及正文中支撑这些判断的关键事实。
+
+**结论清单（第 1.1 版）。** 凡是带来源的结论全部列入，另加至多 10 条不带来源的主要结论，优先抽对提问者影响最大的。清单由一人按这条规则抽出，所有核验员使用同一份清单。另外，在清单中标出至多 3 条&quot;对题目的直接回答&quot;，即报告对所问问题的总体判断。
+
+（第一版是每份报告由核验员自己抽出至多 10 条。不同核验员抽的不同，会带来噪声。）
+
+每条主要结论记两类标签。
+
+**来源标签：**
+
+- **支持**：打开所引来源（或它的存档），来源确实支持这条结论；
+- **部分支持**：来源支持其中一部分，或者结论说得比来源更强；
+- **不支持**：来源存在，但不支持这条结论；
+- **失效但有存档**：链接打不开，但网页存档中能找到，并据存档判断支持与否（另外记下支持与否）；
+- **找不到（疑似编造）**：链接打不开，存档中也没有，按标题检索也找不到；
+- **没有出处**：这条结论没有给出来源，或者导出时来源丢失。
+
+**对错标签：** 不管有没有来源，都独立检索核对，截至截止时间这条结论是否正确：
+
+- **正确**
+- **有误**：附依据
+- **无法判断**
+
+**来源只列在文末的情况。** 报告只在文末列出来源，没有对应到具体结论时，核验者在所列来源中查找支持：找到的，记为相应的来源标签，并注明&quot;文末来源&quot;；找不到的，记为没有出处。
+
+**&quot;疑似编造&quot;要经第二次核查才算确认。** 第二次核查可以换一种检索方式，或者查同一网站的其他页面。
+
+**时效（②）**，三档：
+
+- 0：主要结论依赖已经过时的信息，截止时间之前已有更新的信息被忽略；
+- 1：大体是新的，但有个别重要信息过时；
+- 2：材料截至规定的时间点，并且足够新。
+
+---
+
+## 六、写作（二级，单独报告，不进入名次）
+
+- 0：难以读懂，或结构混乱；
+- 1：能读懂，结构基本清楚；
+- 2：清楚、简洁，主要结论在前。
+
+---
+
+## 七、硬伤
+
+下列四种，有任何一种，报告就排在所有没有硬伤的报告之后：
+
+1. **编造来源**：经第二次核查确认，至少一个来源是编造的；
+2. **直接回答与证据相反**：报告对题目的直接回答（结论清单中标出的至多 3 条），至少一条被截止时间之前可靠的证据明确否定。支撑性事实的错误不算硬伤，在深度净分中扣分（第一版是&quot;至少一条核心的主要结论&quot;，结果长报告几乎都被判了硬伤）；
+3. **答非所问**：报告回答的是另一个问题；
+4. **全篇没有可追溯的出处**：经过补救，仍然没有一个可以追溯的来源。
+
+格式、篇幅、文笔，永远不算硬伤。
+===== 评审细则（结束） =====
+
+===== 题目卡（开始） =====
+一、评委版（只给评委）
+【提问者】原题没有写明。按&quot;一位想选用深度研究产品的普通用户&quot;理解。
+【用途】原题没有写明。按&quot;帮助决定用哪一家&quot;理解。
+【问题】各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+【截止时间】只使用截至 2026-03-03 已经公开的信息。这一天是试评报告的生成日期，判断对错和时效以截至这一天已经存在的信息为准。
+
+二、提问版（交给智能体）
+（原题没有提问版。试评的六份报告当时收到的只有问题本身，见裸题版。）
+
+三、裸题版（交给智能体）
+各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+
+四、附在提问版和裸题版之后，一字不改
+
+（原题没有附交付要求和说明：试评的六份报告生成在交付要求定稿之前。）
+
+说明：这道题取自第五阶段小规模检验，原件是 research-plan/stage5-pilot/question-card.md。原始题目文本没有保存，上面的问题是根据六份报告的标题和开头还原的，所以不是按基础级规则写的题目卡：提问者和用途是评委的理解，裸题版也是还原的文字，不一定与当时交给各个产品的逐字相同。这里按出题手册第八节模板的四个部分重写，内容与原件相同，供模拟评审程序读取。
+===== 题目卡（结束） =====
+
+===== 第一份报告（开始） =====
+# 报告C
+
+## 1. 核心概念界定与技术架构
+
+### 1.1 Deep Research功能定义
+
+Deep Research功能标志着大语言模型从**被动响应工具**向**自主研究智能体**的范式跃迁。与传统单次推理模式不同，Deep Research通过模拟人类专家的认知 workflow，实现复杂问题的系统性探究：自主分解研究目标、动态调整检索策略、交叉验证多源信息、最终生成结构化专业报告。这一功能的核心价值在于将传统需要数小时甚至数天的人工研究工作压缩至分钟级别，同时保持相当程度的准确性和深度。
+
+技术实现上，Deep Research并非单一模块的扩展，而是**推理能力、检索策略、工具使用、报告生成**的深度融合。其底层通常依托具备强大规划能力的大语言模型（如OpenAI o3系列、Google Gemini 2.5 Pro、DeepSeek-R1等），并叠加智能体（Agent）架构、外部知识检索系统、以及代码执行等验证工具，形成端到端的自主研究 pipeline。
+
+#### 1.1.1 自主多步骤推理机制
+
+自主多步骤推理是Deep Research区别于标准聊天机器人的核心特征。该机制使模型能够在无持续人工干预的情况下，完成从问题理解到报告交付的完整闭环。
+
+**ChatGPT Deep Research**的工作流程具有典型性：用户提交查询后，系统实时显示已采取的步骤和来源摘要，整个研究过程耗时5至30分钟。在此期间，模型持续进行网络浏览、信息筛选、交叉验证，并根据新发现动态调整搜索策略。这种&quot;规划-执行-反思-再规划&quot;的循环，使系统能够处理需要深度和细节的多方面、特定领域调查。其底层o3模型通过端到端强化学习训练，专门优化了网页浏览和数据分析任务中的决策能力。
+
+**Gemini Deep Research**增加了**研究大纲预确认**环节——正式执行前，系统生成多步骤研究计划供用户审核，确保研究方向与意图对齐。这种设计既保留模型自主性，又赋予用户必要的干预权，在效率与可控性之间取得平衡。
+
+**Claude深度研究**采用更为激进的**多智能体并行架构**。其&quot;指挥家-演奏家&quot;（Orchestrator-Worker）模式中，主智能体负责任务分解和策略制定，多个子智能体并行探索问题的不同方面。内部评估显示，该架构在处理需要分解任务的复杂查询时，性能比单智能体高出**90.2%**。这种&quot;关注点分离&quot;设计有效减少了路径依赖，使复杂研究的耗时从数小时缩短至几分钟。
+
+| 平台                     | 推理架构                      | 典型耗时 | 核心特色           |
+| :----------------------- | :---------------------------- | :------: | :----------------- |
+| ChatGPT Deep Research    | 端到端强化学习+单智能体       | 8-20分钟 | 动态迭代，深度优先 |
+| Gemini Deep Research     | 端到端训练+大纲预确认         | 1-2分钟  | 速度优先，用户可控 |
+| Claude深度研究           | 多智能体并行（指挥家-演奏家） | 5-10分钟 | 任务分解，并行验证 |
+| Perplexity Deep Research | 实时搜索聚合+轻量推理         |  &lt;1分钟  | 极速响应，来源透明 |
+| DeepSeek-R1              | 纯推理引擎（无原生检索）      | 2-4分钟  | 成本极低，可定制   |
+| Kimi深度研究             | 端到端训练+中文优化           | ~15分钟  | 中文原生，长文本   |
+
+#### 1.1.2 迭代式信息检索与验证
+
+迭代式信息检索是Deep Research质量保障的核心机制。与一次性搜索不同，优质系统能够根据中间发现持续优化检索策略，形成&quot;搜索-评估-再搜索&quot;的良性循环。
+
+**Gemini**的迭代式推理能力尤为突出：系统不仅能提出查询，还能读取和整合搜索结果，主动发现知识空白，针对性地开展新一轮搜索。这种机制使其能够深入网站层级结构，抓取精确信息，而非停留于表面摘要。2025年底的增强版进一步强化了多步推理与信息融合能力，在DeepSearchQA等基准测试中刷新SOTA成绩。
+
+**Perplexity**的迭代更为克制但高效：典型任务在3分钟内完成8次搜索、25个步骤、42个来源的扫描。其&quot;轻量级迭代&quot;策略牺牲了部分深度，但换取了极致的响应速度，适合时效性敏感的场景。
+
+**ChatGPT**的迭代最为激进：单任务可扫描上百个来源，研究周期长达8-20分钟。这种深度带来了更高的信息覆盖率和交叉验证机会，但也以显著的时间和计算成本为代价。关键局限在于过程不可完全复现——系统仅引用实际采用的来源，对于检索过但未采信的资料不会全部列出。
+
+验证机制的设计直接影响输出可靠性。**Claude**的多智能体验证通过冗余设计和智能体间比对，有效降低单一检索路径的偏见或遗漏风险。**ChatGPT**的Python代码执行验证则提供了可重复的数值分析路径——模型不再依赖内部参数进行计算，而是通过实际代码执行获得精确结果。
+
+#### 1.1.3 结构化报告生成能力
+
+结构化报告生成是Deep Research功能的最终输出环节，各平台形成了明显的风格分化：
+
+| 风格类型         | 代表平台   | 核心特征                                   | 适用场景                     |
+| :--------------- | :--------- | :----------------------------------------- | :--------------------------- |
+| **分析师风格**   | ChatGPT    | 详细论证、数据可视化、完整引用、可执行摘要 | 战略决策、学术出版、投资研究 |
+| **极速摘要风格** | Perplexity | 要点列表、来源透明、简洁明了、快速浏览     | 新闻追踪、日常调研、快速决策 |
+| **大纲协作风格** | Gemini     | 预确认框架、用户可控、结构清晰、效率优先   | 初步探索、多方协作、时间敏感 |
+| **专业垂直风格** | Claude     | 领域优化、验证严谨、逻辑严密、风险可控     | 法律分析、医疗证据、合规审查 |
+| **中文原生风格** | Kimi       | 语言自然、格式规范、本土适配、性价比高     | 中文研究、本土企业、教育场景 |
+
+**ChatGPT**的分析师级报告可直接作为工作产品使用。实测显示，其生成的&quot;SEO文章写作计划&quot;长达29,000字，涵盖完整框架、行业案例、关键词分析、受众定位等丰富内容。**Kimi**在中文结构化报告方面进行了针对性优化，能够自动识别中文文档的多级标题体系，生成符合中文写作规范的报告格式。
+
+### 1.2 技术实现路径对比
+
+当前Deep Research功能的技术架构可归纳为三种主流路径，分别对应不同的设计哲学和适用场景。
+
+#### 1.2.1 端到端训练方案（ChatGPT/Gemini）
+
+端到端强化学习训练将研究能力&quot;内化&quot;为模型的固有功能。该方案的核心优势在于响应流畅、无需外部模块协调，能够实现推理、检索、生成的紧密协同。
+
+**ChatGPT**的o3模型是典型代表。作为&quot;专为网页浏览和数据分析优化的推理模型&quot;，o3在训练阶段接触大量真实研究任务及其完整执行轨迹，学习如何将语言理解与工具使用相结合。其创新之处在于引入了&quot;思维链&quot;的显式训练——模型不仅学习生成最终答案，还学习展示推理过程，使多步骤规划、自我修正和策略调整成为可能。
+
+**Gemini**采用类似路径，但更强调与自有生态的整合。Gemini 2.5 Pro/Deep Think版本在训练时强化了与Google搜索、Google Scholar、Google Books等资源的协同能力，在检索学术文献和权威来源时具有天然优势。100万token甚至200万token的上下文窗口，为多轮逻辑推理和海量信息整合提供了硬件基础。
+
+端到端方案的主要代价在于**训练成本极高、模型迭代周期长、系统行为可解释性较弱**。ChatGPT Deep Research单次查询可能消耗大量云端资源，目前仅对Pro订阅用户（$200/月，限100次）开放，高门槛限制了大规模应用。
+
+#### 1.2.2 多智能体协作架构（Claude指挥家-演奏家模式）
+
+Anthropic的Claude系列采用了截然不同的**多智能体协作架构**，将研究任务分解为多个专项智能体的协作流程。
+
+该架构的核心组件包括：
+
+| 组件                             | 职能                                                       | 技术特点                 |
+| :------------------------------- | :--------------------------------------------------------- | :----------------------- |
+| **指挥家智能体（Conductor）**    | 高层协调：理解意图、制定策略、分解任务、监控进度、整合输出 | 元认知能力，动态资源分配 |
+| **演奏家智能体（Workers）**      | 专项执行：并行搜索、独立分析、交叉验证、格式生成           | 关注点分离，领域优化     |
+| **外部记忆（Memory）**           | 状态持久化：存储超长上下文、研究计划、中间结果             | 突破上下文窗口限制       |
+| **引用智能体（Citation Agent）** | 质量保证：声明-来源匹配、准确性核查、可追溯性验证          | 专门化验证层             |
+
+&quot;指挥家-演奏家&quot;模式的核心创新在于**动态任务分解**和**智能体间验证**。面对开放的研究问题，系统实时决定如何分解为可管理的子任务，并根据初步发现动态调整策略。多个智能体的独立发现通过交叉验证机制比对一致性，标记冲突或分歧点，触发进一步核实。
+
+该架构的性能提升显著，但代价同样明显：**token消耗约为普通聊天的15倍**。这种资源 intensity 决定了其最适合能够通过卓越性能创造足够高价值的任务，如法律案例研究、医疗证据整合、金融风险管理等专业场景。
+
+#### 1.2.3 开源推理引擎+外部检索集成（DeepSeek）
+
+DeepSeek-R1代表第三条技术路径：**开源推理引擎与外部检索的松耦合集成**。这一模式的核心优势在于灵活性和成本效益，而非开箱即用的完整体验。
+
+R1本身是基于专家混合（MoE）架构的纯推理模型，通过强化学习训练展现出强大的逻辑推导能力——数学计算准确率达90%，在推理基准测试中表现优异。然而，**关键设计决策是R1不内置联网检索功能**，这意味着其&quot;知识&quot;完全局限于训练数据截止时间（约2024年初）。
+
+完整的Deep Research能力需要开发者自行集成搜索模块。典型方案如华为云MaaS平台：配置Tavily AI等联网搜索服务的API密钥，Deep Research工具协调R1的推理能力与外部搜索的数据供给，形成&quot;推理-检索-再推理&quot;的循环。这种架构的灵活性体现在：可选择不同的推理模型、不同的搜索服务、甚至自定义研究流程的中间环节。
+
+开源特性的价值在于**无许可成本、可定制性、可审计性、社区创新**。企业可在私有基础设施部署，满足数据安全和合规要求；开发者可针对特定领域微调，打造垂直专用系统。API定价极具竞争力：输入约$0.55/百万tokens，输出约$2.19/百万tokens，总计$2.74，仅为GPT-4o Turbo（$12.50）的22%，o1（$75）的3.7%。
+
+然而，松耦合架构也带来了**集成复杂性、延迟累积、信息时效性缺口**等挑战。如果外部检索服务配置不当，推理引擎可能基于过时或缺失的信息进行&quot;精致包装&quot;，产生更具误导性的输出。
+
+## 2. 六大平台深度能力评估
+
+### 2.1 ChatGPT Deep Research
+
+#### 2.1.1 核心优势：分析师级报告深度与引用完整性
+
+ChatGPT Deep Research在当前市场中确立了**深度研究标杆**的地位，其核心优势体现在三个相互强化的维度：
+
+**报告深度**方面，系统能够生成媲美专业人类分析师的综合性研究成果。在&quot;脂肪因子与痴呆症作用机制&quot;的横向评测中，ChatGPT Deep Research用时7分钟，调研35篇文献，输出2万多字完整综述，被评定为&quot;质量最高&quot;——&quot;报告足够有深度、准确性高、文献是最新的&quot;。其输出不仅汇总现有信息，更包含真正的分析性洞察：识别趋势模式、评估因果关系、比较不同观点、指出知识空白。
+
+**引用完整性**是差异化竞争力。系统实现**内联引用（In-Line Citation）**，为每个关键论断标注来源编号，可定位到来源中的特定句子或段落。这种粒度级别的引用满足学术出版的严格要求，使报告具有可验证性。B2B行业评估中，研究人员明确认定ChatGPT&quot;在这方面表现最佳&quot;。
+
+**输出可控性**增强了适用广度。用户可指导语气、深度、格式，使报告适应不同受众——从执行摘要到技术白皮书，从学术综述到商业分析。GitHub仓库连接功能（2025年5月推出）进一步扩展了应用场景，使系统能够直接访问私有代码库进行分析。
+
+#### 2.1.2 技术特性：多模态理解+Python代码执行验证
+
+ChatGPT Deep Research的技术栈融合了多项前沿能力，形成**验证增强型研究流程**：
+
+| 技术能力           | 功能描述                                 | 应用场景                                   |
+| :----------------- | :--------------------------------------- | :----------------------------------------- |
+| **多模态理解**     | 处理文本、图像、PDF、CSV、网站图像等     | 财报图表解读、实验图像分析、市场报告可视化 |
+| **Python代码执行** | 自动生成并执行代码，进行数据分析和可视化 | 统计分析、趋势计算、图表生成、结果验证     |
+| **动态工具使用**   | 根据任务需求选择和组合工具               | 复杂数据处理、多源信息整合、迭代优化       |
+| **实时浏览迭代**   | 多轮网络搜索，根据发现调整策略           | 深度挖掘、新兴主题追踪、信息交叉验证       |
+
+Python代码执行机制有效降低了&quot;幻觉&quot;风险。当研究涉及数值计算时，系统不再依赖内部参数推断，而是通过实际代码执行获得精确结果，并将代码和结果一并纳入报告。这种&quot;可重复的验证路径&quot;对于金融分析、科学计算等高风险场景至关重要。
+
+#### 2.1.3 性能基准：Humanity&#x27;s Last Exam 26.6%准确率领先
+
+量化评测为ChatGPT Deep Research的能力提供了客观参照：
+
+| 基准测试                   |    成绩    | 说明                               |
+| :------------------------- | :--------: | :--------------------------------- |
+| Humanity&#x27;s Last Exam (HLE) | **26.6%**  | AI模型新高，复杂推理能力领先       |
+| 公开评估（综合）           |    新高    | 一系列针对现实问题的评估中表现最优 |
+| 医学专家案例评估           | &quot;无可挑剔&quot; | 癌症病例处理获得专业认可           |
+
+HLE测试旨在超越现有AI系统的能力边界，涵盖数学、科学、人文等多个领域，强调深度推理而非简单记忆。26.6%的绝对值看似不高，但已是行业领先水平，且反映了当前技术的根本局限——对于需要真正原创性思维或跨领域综合的复杂问题，AI仍无法替代人类专家判断。
+
+#### 2.1.4 主要局限：8-20分钟响应延迟与Pro订阅门槛
+
+ChatGPT Deep Research的卓越深度以显著的成本和延迟为代价：
+
+| 局限维度     | 具体表现                                  | 影响场景                     |
+| :----------- | :---------------------------------------- | :--------------------------- |
+| **响应延迟** | 典型8-20分钟，复杂任务可达30分钟          | 新闻追踪、实时决策、会议辅助 |
+| **订阅门槛** | Pro用户$200/月，限100次；Plus用户权限受限 | 个人用户、小型企业、高频使用 |
+| **计算成本** | 单次查询消耗大量云端资源                  | 大规模自动化、成本敏感场景   |
+| **过程黑箱** | 仅引用采用来源，检索路径不完全可追溯      | 严格审计、学术研究、法律取证 |
+
+OpenAI已表示计划推出&quot;更快、更具成本效益的小型模型版本&quot;，并预计向Plus、Team和Enterprise用户扩展访问，但具体时间表和定价尚未公布。
+
+### 2.2 Gemini Deep Research
+
+#### 2.2.1 核心优势：免费策略与Google生态无缝集成
+
+Gemini Deep Research的核心竞争力在于**可及性**和**生态整合**的双重优势：
+
+**免费策略**打破了Deep Research功能的价格壁垒。2025年3月更新后，免费用户即可使用（有用量限制），付费用户（Google One AI Premium，约$20/月）享受更高配额。这与ChatGPT Pro的$200/月形成鲜明对比，极大扩展了用户基础，尤其对价格敏感的学生、研究人员和小型企业具有吸引力。
+
+**Google生态无缝集成**创造了独特的用户体验和价值主张。Deep Research功能自动串连Google搜索、Google Scholar、Google Books、Google Finance等服务，在学术文献、金融数据、图书资料等场景中具有信息质量优势。2025年底的进一步集成将Deep Research嵌入Google搜索、NotebookLM、Google Finance等核心产品，形成&quot;研究-记录-分析&quot;的完整工作流。
+
+| 生态组件       | 集成价值                       |
+| :------------- | :----------------------------- |
+| Google搜索     | 实时信息、广泛覆盖、多语言支持 |
+| Google Scholar | 学术文献、引用分析、研究趋势   |
+| Google Books   | 图书内容、历史资料、深度背景   |
+| Google Finance | 市场数据、公司信息、投资分析   |
+| NotebookLM     | 研究笔记、知识整理、协作共享   |
+
+对于已深度使用Google服务的用户，这种集成显著降低了工具切换成本，实现了从日常搜索到深度研究的无缝过渡。
+
+#### 2.2.2 技术特性：1-2分钟极速检索与大纲预确认机制
+
+Gemini在用户体验优化方面进行了针对性设计：
+
+**极速响应**是其标志性特征。完整研究过程仅需**1-2分钟**，不到ChatGPT的十分之一。这种速度源于Google基础设施的高效检索、模型架构的优化，以及相对简化的迭代深度。对于时效性要求高的查询——如新闻追踪、市场动态、政策变化——这种速度优势具有决定性价值。
+
+**大纲预确认机制**是创新交互设计。正式执行前，系统生成研究大纲供用户确认，允许调整章节结构、增删重点方向。这种&quot;人机协作&quot;模式减少了方向性偏差的风险，用户可在投入计算资源前确保研究路径符合预期。相比ChatGPT的&quot;黑箱&quot;执行，Gemini的透明度和可控性更优。
+
+**超长上下文窗口**（100万-200万tokens）为多轮逻辑推理提供硬件基础。系统能够在各步骤之间循环推理，补全遗漏，直至达到&quot;自我审查&quot;状态。
+
+#### 2.2.3 性能基准：多模态任务处理与长上下文支持
+
+Gemini在多模态和长文本场景中表现突出：
+
+| 能力维度       | 技术特点                       | 应用场景                     |
+| :------------- | :----------------------------- | :--------------------------- |
+| 多模态统一理解 | 文本、图像、音频、视频原生支持 | 跨媒体研究、多媒体内容分析   |
+| 长上下文处理   | 100万-200万tokens              | 整本书籍、长篇报告、历史档案 |
+| 迭代式推理     | 主动发现知识空白，针对性再搜索 | 复杂问题探索、深度信息挖掘   |
+| 实时信息整合   | 与Google搜索实时连接           | 新闻追踪、动态监控、趋势分析 |
+
+2025年底增强版在权威基准测试中表现优异：Humanity&#x27;s Last Exam达**46.4%**，DeepSearchQA达**66.1%**，BrowseComp达**59.2%**。DeepSearchQA是Google专门为评估网络研究智能体开源的基准，包含17个领域的900个手工设计因果链任务，Gemini的领先表现验证了其迭代式推理架构的有效性。
+
+#### 2.2.4 主要局限：信息准确性波动与深度分析不足
+
+Gemini的效率优先策略带来了明显的质量权衡：
+
+| 局限维度       | 具体表现                       | 根源分析                     |
+| :------------- | :----------------------------- | :--------------------------- |
+| **准确性波动** | 特定主题出现信息遗漏或错误关联 | 速度优先，验证深度压缩       |
+| **深度不足**   | &quot;广泛摘要&quot;而非&quot;深度分析&quot;       | 迭代轮次有限，挖掘不够充分   |
+| **后续深度弱** | 多轮对话中&quot;经常重置&quot;，后续浅显 | 上下文管理策略优化不足       |
+| **定制化有限** | 主要提供预设选项，灵活控制不足 | 产品设计偏向易用性而非灵活性 |
+
+实测案例揭示了具体问题：在&quot;脂肪因子与痴呆症&quot;研究中，Gemini的表格总结出现主题理解偏差，将&quot;所有炎症相关脂肪因子&quot;而非&quot;与痴呆相关的脂肪因子&quot;纳入总结。这种偏差对于专业研究者可能是致命的。
+
+### 2.3 Perplexity Deep Research
+
+#### 2.3.1 核心优势：亚分钟级响应与来源透明化呈现
+
+Perplexity Deep Research将**速度**和**透明度**推向极致：
+
+**亚分钟级响应**是核心卖点。完整研究循环可在**不到1分钟**完成，实测中3分钟内完成8次搜索、25个步骤、42个来源扫描，产出1321字报告。这种极速源于Perplexity自建的搜索基础设施和轻量级迭代策略，对于需要即时信息支持的场景（新闻编辑、交易决策、客户服务）具有不可替代的价值。
+
+**来源透明化**是差异化设计。每个答案都附带详细来源链接，在文中和文末同时呈现参考文献。用户可随时点击验证、评估来源权威性、或深入阅读原始资料。这种设计契合了Perplexity&quot;答案引擎&quot;的产品定位，在信息过载和虚假内容泛滥的环境中建立了用户信任。
+
+**免费层开放**极大降低了体验门槛。免费用户每日5次查询，Pro订阅者（$20/月）每日500次，这种慷慨的免费层与ChatGPT的严格限制形成对比，使Perplexity成为预算有限用户的首选研究工具。
+
+#### 2.3.2 技术特性：实时搜索聚合与简洁摘要风格
+
+Perplexity的技术架构围绕实时性和简洁性优化：
+
+| 技术组件     | 功能描述               | 性能特点                   |
+| :----------- | :--------------------- | :------------------------- |
+| 自建搜索索引 | 自主网页索引和排序系统 | 秒级抓取新内容，时效性领先 |
+| 多搜索工作流 | 并行查询多个信息源     | 广泛扫描，快速聚合         |
+| 实时来源展示 | 生成同时标注来源       | 透明可追溯，便于验证       |
+| 多模式搜索   | 网络/学术/社交媒体可选 | 针对信息类型优化           |
+
+简洁摘要风格体现其产品定位：输出以要点列表形式呈现核心发现，避免冗长论述，强调信息密度。这种风格适合快速扫读和决策参考，但与分析师级报告相比，分析框架和论证深度明显较浅。
+
+#### 2.3.3 差异化定位：快速信息综合而非深度原创研究
+
+Perplexity的自我定位清晰：**&quot;信息综合工具&quot;而非&quot;深度原创研究平台&quot;**。这一选择具有双重含义：
+
+| 维度         | 优势                                     | 局限                         |
+| :----------- | :--------------------------------------- | :--------------------------- |
+| **核心价值** | 快速整合已有信息，及时全面概览           | 难以产生超出现有资料的新见解 |
+| **最佳用户** | 已熟悉领域的资深专家，节省查资料时间     | 需要原创分析的新手研究者     |
+| **典型场景** | 日常新闻追踪、市场动态监控、快速背景了解 | 学术文献综述、投资策略开发   |
+| **能力边界** | 信息罗列和汇总                           | 因果推断、机制解释、理论构建 |
+
+实测对比揭示了定位差异：在&quot;脂肪因子与痴呆症&quot;任务中，Perplexity&quot;并没有深入讨论作用机制，只列举了相关性&quot;。对于需要真正深度分析的复杂任务，这种浅层化处理明显不足。
+
+#### 2.3.4 主要局限：分析深度浅层化与复杂推理薄弱
+
+Perplexity的速度优势以牺牲深度为代价：
+
+| 局限维度         | 具体表现                        | 影响                               |
+| :--------------- | :------------------------------ | :--------------------------------- |
+| **分析深度浅层** | &quot;高级摘要&quot;而非&quot;研究报告&quot;        | 缺乏批判性评估、多源综合、趋势推断 |
+| **复杂推理薄弱** | HLE基准21.1%，低于Gemini的46.4% | 多步骤逻辑推导、定量分析受限       |
+| **关键细节遗漏** | 快速扫描可能错过深层信息        | 高风险决策场景需要补充验证         |
+| **来源质量参差** | 未严格筛选来源权威性            | 用户需自行判断低可信度信息         |
+
+评测建议的&quot;组合策略&quot;具有参考价值：用Perplexity进行快速事实核查和初步扫描，用ChatGPT进行深度分析和报告撰写。
+
+### 2.4 DeepSeek-R1
+
+#### 2.4.1 核心优势：开源可定制与纯推理成本效益
+
+DeepSeek-R1的核心价值在于**开放性**和**经济性**：
+
+**开源可定制**是根本差异化优势。MIT许可证下的完全开源，使任何人可下载、运行、修改、商用。这为数据敏感行业（金融、政府、医疗）提供了本地化部署路径，为研究者提供了可审计、可研究的系统，为开发者提供了无限定制空间。
+
+**成本效益**极具竞争力。API定价为GPT-4o的22%、o1的3.7%；MoE架构通过稀疏激活进一步降低推理成本。这种经济性使大规模部署和高频使用成为可能，正在推动行业价格重构。
+
+| 成本对比            | DeepSeek | GPT-4o Turbo |    o1     |
+| :------------------ | :------: | :----------: | :-------: |
+| 输入 ($/百万tokens) |   0.55   |    10.00     |   15.00   |
+| 输出 ($/百万tokens) |   2.19   |     2.50     |   60.00   |
+| **总计**            | **2.74** |  **12.50**   | **75.00** |
+
+**推理能力**同样突出。数学计算准确率90%，R1 Zero通过纯强化学习训练使思考能力自我涌现，显性的思维链输出增强了可解释性和可调试性。
+
+#### 2.4.2 技术特性：强化学习驱动的逻辑链生成
+
+DeepSeek-R1的技术创新集中于训练方法论：
+
+| 创新点         | 技术描述                        | 意义                               |
+| :------------- | :------------------------------ | :--------------------------------- |
+| 纯强化学习训练 | R1 Zero跳过监督微调，直接RL训练 | 减少人工标注依赖，自主发现推理策略 |
+| 思维链显性化   | 展示完整推理过程                | 可审计、可调试、教育价值           |
+| MoE稀疏激活    | 每次请求激活部分参数            | 效率优化，大规模部署可行           |
+| 长文本连贯性   | 10万字以上语义保持              | 优于ChatGPT约27%                   |
+
+这些技术创新使DeepSeek在代码生成、数学推理、逻辑分析等结构化任务中表现优异，成为开发者工具场景的有力竞争者。
+
+#### 2.4.3 关键缺陷：无原生联网检索与信息时效性缺口
+
+DeepSeek-R1的核心缺陷是结构性且影响深远的：
+
+| 缺陷维度             | 具体表现                         | 后果                               |
+| :------------------- | :------------------------------- | :--------------------------------- |
+| **无原生联网检索**   | 纯推理模型，无内置搜索能力       | 知识完全局限于训练数据截止时间     |
+| **信息时效性缺口**   | 无法获取2024年初后的新信息       | 追踪快速演变主题时失效             |
+| **开发者负担**       | 需自行集成搜索模块、设计迭代流程 | 技术门槛高，集成质量参差           |
+| **事实准确性不稳定** | 缺乏实时检索验证                 | 可能生成过时、错误或无法核实的信息 |
+
+华为云的集成方案展示了弥补路径：配置Tavily AI搜索API，Deep Research工具协调R1推理与外部检索。但这种松耦合架构的质量高度依赖外部服务，且增加了延迟和复杂性。
+
+#### 2.4.4 适用场景：本地部署与垂直领域二次开发
+
+DeepSeek-R1的最佳适用场景明确：
+
+| 场景类型               | 核心价值                          | 典型用户                       |
+| :--------------------- | :-------------------------------- | :----------------------------- |
+| **本地部署**           | 数据主权、安全合规、完全控制      | 金融机构、政府部门、大型企业   |
+| **垂直定制**           | 领域微调、专有知识、特定 workflow | 律师事务所、医疗机构、科研院所 |
+| **成本敏感大规模应用** | 高频调用、大量并发、长文本处理    | 内容平台、教育科技、客户服务   |
+| **研究教育**           | 可审计、可研究、教学案例          | AI研究者、高校教师、学生开发者 |
+
+对于需要完全控制、高度定制或敏感数据处理的场景，DeepSeek的开源特性具有不可替代的价值。但对于追求开箱即用体验的普通用户，其技术门槛和集成负担构成显著障碍。
+
+### 2.5 Claude深度研究
+
+#### 2.5.1 核心优势：专业领域（法律/医疗）深度洞察
+
+Claude深度研究的核心竞争力在于**垂直领域的专业深度**：
+
+**法律案例研究**是标杆场景。多智能体架构能够并行检索多个案例数据库、分析判决逻辑、识别先例关系、生成结构化法律分析报告。对于需要处理大量判例、法规、学术评论的复杂法律问题，这种深度和系统性具有显著价值。早期反馈显示，Claude在跨司法管辖区监管变化分析中，能够&quot;理解不同监管框架之间的相互作用，识别出人工团队最初未考虑到的潜在冲突&quot;。
+
+**医疗证据整合**同样突出。Claude的长篇科学文献处理能力、复杂因果关系推理、以及不确定性校准，使其在医学证据整合、临床指南分析、药物相互作用评估等任务中表现优异。其安全优先的设计理念降低了医疗场景中错误建议的风险。
+
+| 专业优势 | 技术支撑                                   | 应用场景                         |
+| :------- | :----------------------------------------- | :------------------------------- |
+| 法律深度 | 案例数据库集成、判决逻辑分析、先例关系识别 | 合规审查、诉讼策略、监管分析     |
+| 医疗严谨 | 文献质量评估、证据等级分类、不确定性表达   | 临床决策支持、医学教育、研究综述 |
+| 金融精密 | 数据验证、模型审计、风险量化               | 投资研究、风险管理、合规报告     |
+
+#### 2.5.2 技术特性：多智能体并行搜索与智能体间验证
+
+Claude的技术架构代表了智能体协作的前沿探索：
+
+| 架构组件             | 核心功能                               | 性能影响                   |
+| :------------------- | :------------------------------------- | :------------------------- |
+| 指挥家智能体         | 意图理解、策略制定、任务分解、资源调度 | 全局优化，动态适应         |
+| 演奏家智能体（多个） | 并行搜索、专项分析、独立验证           | 90.2%性能提升              |
+| 外部记忆             | 超长上下文持久化                       | 突破窗口限制，支持长期项目 |
+| 引用智能体           | 声明-来源匹配、准确性核查              | 质量保证，可追溯性         |
+
+**智能体间验证**是可靠性关键。不同智能体独立检索同一主题后，系统比对结果一致性，标记冲突点，触发进一步核实。这种&quot;冗余设计&quot;有效降低了单一检索路径的偏见或遗漏风险，在高风险专业场景中尤为重要。
+
+#### 2.5.3 架构创新：指挥家调度+多演奏家专项分工
+
+&quot;指挥家-演奏家&quot;模式的深层创新：
+
+| 创新维度   | 具体表现                                           | 行业意义                 |
+| :--------- | :------------------------------------------------- | :----------------------- |
+| 动态编排   | 根据任务特性自适应调整智能体数量和类型             | 弹性资源配置，效率优化   |
+| 关注点分离 | 不同智能体使用不同工具或提示，针对特定信息类型优化 | 领域专业化，性能提升     |
+| 并行压缩   | 从海量信息中高效提炼洞见                           | 耗时从数小时缩短到几分钟 |
+| 可解释性   | 用户可追踪各智能体活动，理解研究进展               | 透明度，可调试性         |
+
+该架构的代价同样显著：**token消耗高达普通聊天的15倍**。这种资源 intensity 决定了其企业级定位——最适合能够通过卓越性能创造足够高价值的任务。
+
+#### 2.5.4 主要局限：企业级定价与通用场景适配成本
+
+Claude深度研究的主要局限：
+
+| 局限维度         | 具体表现                                | 影响                             |
+| :--------------- | :-------------------------------------- | :------------------------------- |
+| **企业级定价**   | Max订阅，具体定价未公开但显著高于标准版 | 个人用户、小型企业难以承受       |
+| **通用场景适配** | 复杂架构对简单查询&quot;过度设计&quot;            | 日常轻量级任务效率不优           |
+| **生态集成**     | 相对落后于Gemini和ChatGPT               | 第三方工作流嵌入需要额外开发     |
+| **访问门槛**     | 功能推出相对较晚，覆盖有限              | 市场认知度和用户基础建设中的劣势 |
+
+多智能体架构的优势在复杂分解任务中显现，但对于简单查询可能消耗大量资源却未带来相应价值。提示工程最佳实践强调&quot;根据任务复杂度调整投入&quot;，但这种优化本身增加了系统复杂度。
+
+### 2.6 Kimi深度研究
+
+#### 2.6.1 核心优势：中文语境原生优化与长文本处理
+
+Kimi深度研究的核心竞争力在于**本土化适配**和**性价比定位**：
+
+**中文语境原生优化**贯穿全流程。从分词策略、语义理解到生成风格，Kimi针对中文语言特性深度适配：准确处理歧义结构、文化特定表达、专业术语体系。用户反馈认为Kimi&quot;国内一骑绝尘&quot;，&quot;吊打阿里千问、DeepSeek、豆包&quot;。
+
+**长文本处理能力**是技术标签。支持数百万字上下文输入，在复杂信息分析场景中表现优异。结合**300步工具调用**，支持长程复杂任务的连贯执行。
+
+**性价比定位**极具竞争力。月费25人民币（约$3.5），显著低于美国竞品。这种定价反映了国内AI市场的激烈竞争，也使Kimi成为价格敏感用户的 attractive 选择。
+
+| 能力维度   | 具体表现                   | 用户评价                                        |
+| :--------- | :------------------------- | :---------------------------------------------- |
+| 中文自然度 | 语言流畅，符合中文写作规范 | &quot;在很多问题上，最后生成报告的深度超过了ChatGPT&quot; |
+| 长文本处理 | 一次性处理超长文档         | 足够应对大多数研究需求                          |
+| 结构合理性 | 充分理解问题，给出合理框架 | &quot;找到真正有价值的信源&quot;                          |
+| 性价比     | 25元/月，功能覆盖核心需求  | 国内用户首选                                    |
+
+#### 2.6.2 技术特性：混合专家架构与多模态统一理解
+
+Kimi的技术架构：
+
+| 技术组件     | 特点                    | 应用               |
+| :----------- | :---------------------- | :----------------- |
+| MoE架构      | 约300亿参数，选择性激活 | 效率优化，成本控制 |
+| 交错式思考   | 推理与检索交错执行      | 复杂任务适应性     |
+| 多模态支持   | 文本、图像、PDF、网页   | 多样化信息整合     |
+| 工具调用扩展 | 300步工具调用           | 长程任务执行       |
+
+用户活跃度数据反映了市场接受度：月活跃用户超过3600万，在国内AI产品中处于领先地位。
+
+#### 2.6.3 差异化定位：性价比导向的B端/C端平衡
+
+Kimi的市场策略体现双重覆盖：
+
+| 维度     | C端策略              | B端策略                    |
+| :------- | :------------------- | :------------------------- |
+| 产品功能 | 标准服务，简洁易用   | API平台，领域优化          |
+| 定价     | 25元/月低价          | 企业定制，灵活协商         |
+| 技术路线 | 模型原生深度研究能力 | 智能体编程、深度研究与分析 |
+| 生态整合 | 移动端优化，本土服务 | 国内云服务，合规适配       |
+
+&quot;让Agent进入模型&quot;的技术路线，将深度研究能力内化为模型原生功能，而非外部工具拼接，可能带来更流畅的用户体验。
+
+#### 2.6.4 主要局限：报告导出功能不完善与国际市场覆盖弱
+
+Kimi的显著局限：
+
+| 局限维度           | 具体表现                         | 影响                           |
+| :----------------- | :------------------------------- | :----------------------------- |
+| **导出功能不完善** | 目前不能导出为PDF                | 正式文档交付、工作流集成受阻   |
+| **生成速度较慢**   | 基本需要15分钟                   | 时效性敏感场景竞争力不足       |
+| **国际市场覆盖弱** | 主要针对中文优化                 | 多语言支持、全球化部署存在差距 |
+| **免费版限制严格** | 3小时强制冷却，核心功能次数有限  | 高频使用体验中断，用户流失风险 |
+| **整体能力差距**   | &quot;内容的逻辑性和专业性上较为明显&quot; | 高端专业场景竞争力受限         |
+
+综合评测显示，Kimi&quot;生成报告质量还过得去，但是要和前面的Gemini和ChatGPT比较，Kimi还是存在较为明显的差距&quot;。这一评价提示，虽然Kimi在特定维度具有优势，但整体能力仍处于追赶状态。
+
+## 3. 多维度量化对比矩阵
+
+### 3.1 性能维度评分（1-5分制）
+
+基于前述分析和多源评测，以下从十个维度进行量化评分：
+
+| 评分维度           | ChatGPT | Gemini | Perplexity | DeepSeek | Claude |  Kimi  |
+| :----------------- | :-----: | :----: | :--------: | :------: | :----: | :----: |
+| 信息准确性         |    5    |   4    |     3      |    4     |   4    |   4    |
+| 响应速度           |    3    |   5    |     5      |    5     |   4    |   3    |
+| 分析深度           |    5    |   4    |     3      |    4     |   5    |   4    |
+| 引用完整性         |    5    |   4    |     4      |    3     |   4    |   4    |
+| 报告结构合理性     |    5    |   4    |     3      |    3     |   4    |   4    |
+| 用户体验           |    4    |   4    |     4      |    3     |   4    |   4    |
+| 成本效益           |    3    |   5    |     5      |    5     |   3    |   5    |
+| 多语言支持         |    5    |   5    |     5      |    5     |   5    |   4    |
+| 适用场景灵活性     |    5    |   4    |     4      |    4     |   4    |   4    |
+| 创新性和独特性     |    5    |   4    |     4      |    4     |   5    |   4    |
+| **总分（满分50）** | **39**  | **41** |   **36**   |  **36**  | **42** | **39** |
+
+评分说明：5分=行业领先，4分=优秀，3分=良好，2分=一般，1分=较弱。
+
+#### 3.1.1 信息准确性：ChatGPT 5分 vs Gemini/Perplexity 3-4分
+
+ChatGPT的满分源于其在复杂研究任务中的&quot;最高质量&quot;表现——深度、准确性、文献时效性的综合最优，以及医学专家&quot;无可挑剔&quot;的专业认可。Gemini和Kimi的4分反映一般场景下的可靠表现，但存在准确性波动和特定任务中的理解偏差。Perplexity的3分明确其&quot;快速信息综合&quot;定位与&quot;深度原创研究&quot;需求之间的差距。
+
+#### 3.1.2 响应速度：Gemini/Perplexity/DeepSeek 5分 vs ChatGPT 3分
+
+Gemini（1-2分钟）、Perplexity（&lt;1分钟）、DeepSeek（2-4分钟，纯推理）获得满分，满足即时响应需求。ChatGPT的8-20分钟使其获得3分，在需要快速交付的场景中明显劣势。Kimi的~15分钟同样获得3分。Claude的4分体现了&quot;有效速度&quot;与&quot;单次响应时间&quot;的区别——多智能体并行使复杂研究的总耗时显著缩短。
+
+#### 3.1.3 分析深度：ChatGPT/Claude 5分 vs 其他4分及以下
+
+ChatGPT和Claude获得满分，代表当前Deep Research能力的上限。Gemini、DeepSeek、Kimi的4分反映其足够应对一般研究需求，但在复杂学术或商业分析中存在局限。Perplexity的3分明确其&quot;快速信息综合&quot;而非&quot;深度原创研究&quot;的定位。
+
+#### 3.1.4 成本效益：Gemini/Perplexity/DeepSeek/Kimi 5分 vs ChatGPT 3分
+
+Gemini（免费层）、Perplexity（$20/月，免费层可用）、DeepSeek（API成本极低）、Kimi（25元/月）获得满分，代表不同维度的成本优势。ChatGPT的$200/月Pro订阅使其获得3分，高昂门槛限制了广泛采用。Claude同样获得3分，反映其企业级定位和高资源消耗。
+
+### 3.2 功能特性对比
+
+#### 3.2.1 引用完整性：ChatGPT &gt; Claude &gt; Gemini &gt; Perplexity &gt; DeepSeek &gt; Kimi
+
+| 排名 | 平台       | 引用特点                          | 粒度级别 |
+| :--: | :--------- | :-------------------------------- | :------- |
+|  1   | ChatGPT    | 内联引用，可定位到特定句子/段落   | 最细     |
+|  2   | Claude     | 引用智能体专门验证，声明-来源匹配 | 较细     |
+|  3   | Gemini     | 来源列表，支持追溯                | 中等     |
+|  4   | Perplexity | 文中+文末双呈现，便于快速验证     | 中等     |
+|  5   | DeepSeek   | 需开发者自行实现                  | 依赖集成 |
+|  6   | Kimi       | 功能存在，评测中未获突出评价      | 待完善   |
+
+#### 3.2.2 多模态支持：ChatGPT/Gemini/Claude领先 vs DeepSeek/Kimi追赶
+
+| 梯队     | 平台                    | 多模态能力                                           |
+| :------- | :---------------------- | :--------------------------------------------------- |
+| 第一梯队 | ChatGPT、Gemini、Claude | 文本、图像、音频、视频原生支持；代码执行、可视化生成 |
+| 第二梯队 | Kimi                    | 文本、图像、语音等多种输入，生态成熟度有差距         |
+| 第三梯队 | DeepSeek                | 目前专注于文本领域，需外部集成扩展                   |
+
+#### 3.2.3 生态集成度：Gemini（Google全家桶）&gt; ChatGPT（OpenAI生态）&gt; 其他
+
+| 排名 | 平台                   | 生态优势                                                |
+| :--: | :--------------------- | :------------------------------------------------------ |
+|  1   | Gemini                 | Google搜索、Scholar、Books、Finance、NotebookLM无缝集成 |
+|  2   | ChatGPT                | OpenAI产品矩阵、GitHub集成、插件生态                    |
+|  3   | Perplexity             | 简洁API，便于第三方嵌入                                 |
+|  4   | Claude、DeepSeek、Kimi | 生态建设相对滞后，或聚焦特定区域/场景                   |
+
+### 3.3 综合评分排序
+
+#### 3.3.1 第一梯队（41-42分）：Gemini、Claude
+
+| 平台       |  总分  | 核心优势                             | 最佳用户                     |
+| :--------- | :----: | :----------------------------------- | :--------------------------- |
+| **Claude** | **42** | 专业深度、多智能体创新、垂直领域领先 | 法律、医疗、金融等专业机构   |
+| **Gemini** | **41** | 免费策略、极速响应、生态集成         | 价格敏感、时效优先的广泛用户 |
+
+Claude以微弱优势领先，源于其在分析深度和创新性维度的满分表现。Gemini则以成本效益和速度的满分表现，成为大众市场的最优解。
+
+#### 3.3.2 第二梯队（39分）：ChatGPT、Kimi
+
+| 平台        |  总分  | 核心优势                             | 最佳用户                           |
+| :---------- | :----: | :----------------------------------- | :--------------------------------- |
+| **ChatGPT** | **39** | 分析师级报告、引用完整性、多模态工具 | 追求研究质量、预算充足的专业用户   |
+| **Kimi**    | **39** | 中文优化、性价比、长文本处理         | 国内用户、中文研究场景、成本敏感者 |
+
+两者总分相同，但优势维度迥异。ChatGPT在研究质量维度领先，Kimi则在成本和本土化维度占优。选型取决于用户的核心优先级。
+
+#### 3.3.3 第三梯队（36分）：Perplexity、DeepSeek
+
+| 平台           |  总分  | 核心优势                         | 最佳用户                         |
+| :------------- | :----: | :------------------------------- | :------------------------------- |
+| **Perplexity** | **36** | 极速响应、来源透明、免费层慷慨   | 日常信息追踪、快速决策、新闻编辑 |
+| **DeepSeek**   | **36** | 开源可定制、成本极低、推理能力强 | 技术团队、本地化部署、垂直定制   |
+
+两者明确差异化定位：Perplexity服务即时信息需求，DeepSeek赋能技术定制场景。总分相同反映了不同价值维度的权衡。
+
+## 4. 场景化选型策略
+
+### 4.1 学术研究场景
+
+#### 4.1.1 文献综述与假设验证：首选ChatGPT Deep Research
+
+学术研究的核心需求——**准确性、深度、可验证性**——与ChatGPT Deep Research的能力高度匹配：
+
+| 需求维度   | ChatGPT匹配度 | 具体表现                         |
+| :--------- | :-----------: | :------------------------------- |
+| 文献覆盖   |     ★★★★★     | 多轮迭代检索，上百来源扫描       |
+| 分析深度   |     ★★★★★     | 因果推断、趋势识别、知识空白指出 |
+| 引用规范   |     ★★★★★     | 内联引用，可定位到具体句子       |
+| 可验证性   |     ★★★★★     | 完整参考文献，支持独立核查       |
+| 报告可用性 |     ★★★★★     | 分析师级输出，可直接作为工作基础 |
+
+典型应用场景：博士论文文献综述、基金申请研究背景、跨学科理论整合、新兴领域知识框架搭建。
+
+**备选方案**：Claude深度研究（需要多源交叉验证的高风险研究）、Gemini（预算受限的初步探索）。
+
+#### 4.1.2 快速背景扫描：Gemini或Perplexity
+
+需要快速把握新领域概貌时，速度优先：
+
+| 平台           | 响应时间 | 核心优势                 | 适用场景                       |
+| :------------- | :------: | :----------------------- | :----------------------------- |
+| **Gemini**     | 1-2分钟  | 免费、生态集成、大纲可控 | 跨学科初步了解、会议前快速准备 |
+| **Perplexity** |  &lt;1分钟  | 极速、来源透明、简洁明了 | 新闻背景、日常学习、即时答疑   |
+
+关键权衡：Gemini的大纲预确认机制减少了方向偏差风险，Perplexity的亚分钟级响应满足极致时效需求。
+
+#### 4.1.3 中文史料挖掘：Kimi深度研究
+
+中文研究场景的特殊需求：
+
+| 需求维度   | Kimi优势 | 具体表现                           |
+| :--------- | :------- | :--------------------------------- |
+| 语言自然度 | 原生优化 | 中文表达流畅，文化语境准确         |
+| 长文档处理 | 技术领先 | 数百万字上下文，整本古籍一次性分析 |
+| 本土数据库 | 接入便利 | 国内学术资源、历史档案优化         |
+| 成本可承受 | 性价比   | 25元/月，国内支付便利              |
+
+典型应用场景：中国古代文献数字化研究、近现代史档案整理、中文语料库构建、本土社会科学田野调查。
+
+### 4.2 商业决策场景
+
+#### 4.2.1 竞争情报与战略分析：ChatGPT或Claude
+
+高风险商业决策对研究质量的要求：
+
+| 决策类型     | 首选平台 | 关键考量                             |
+| :----------- | :------- | :----------------------------------- |
+| 市场进入战略 | ChatGPT  | 深度分析、多情景构建、可执行建议     |
+| 并购尽职调查 | Claude   | 多智能体验证、法律合规、风险识别     |
+| 技术路线评估 | ChatGPT  | 多模态分析、代码验证、趋势预测       |
+| 监管变化应对 | Claude   | 跨司法管辖区分析、先例识别、合规建议 |
+
+成本考量：ChatGPT Pro $200/月限100次，Claude企业定价更高。建议将Deep Research用于关键决策，日常监控使用Gemini免费层或Perplexity。
+
+#### 4.2.2 市场趋势速览：Gemini免费层
+
+日常商业情报获取的最优解：
+
+| 优势维度 | 具体价值                       |
+| :------- | :----------------------------- |
+| 零成本   | 免费层满足日常需求             |
+| 极速响应 | 1-2分钟获取市场动态            |
+| 生态整合 | 与Google Finance等工具无缝衔接 |
+| 实时信息 | 与Google搜索实时连接           |
+
+典型应用场景：每日市场开盘前简报、竞争对手动态监控、行业新闻追踪、客户会议前快速准备。
+
+#### 4.2.3 定制化研报系统：DeepSeek开源方案
+
+需要完全控制的研究基础设施：
+
+| 定制维度   | 实现路径                                 |
+| :--------- | :--------------------------------------- |
+| 数据源整合 | 接入内部数据库、付费数据服务、专有知识库 |
+| 分析框架   | 嵌入公司方法论、投资模型、评估标准       |
+| 输出格式   | 匹配组织模板、品牌规范、分发渠道         |
+| 部署模式   | 私有云、混合云、边缘计算                 |
+
+典型用户：投资银行研究部门、资产管理公司、企业战略部、政府政策研究机构。
+
+### 4.3 专业垂直场景
+
+#### 4.3.1 法律案例研究：Claude多智能体深度分析
+
+法律研究的特殊复杂性：
+
+| 挑战维度     | Claude解决方案                         |
+| :----------- | :------------------------------------- |
+| 多司法管辖区 | 并行检索不同法域数据库，识别冲突和协调 |
+| 判例关系网络 | 分析先例引用结构，识别关键节点和趋势   |
+| 法规动态追踪 | 实时监控立法变化，评估业务影响         |
+| 合规风险评估 | 多智能体验证，降低遗漏关键条款的风险   |
+
+核心优势案例：跨司法管辖区监管变化分析中，Claude&quot;理解不同监管框架之间的相互作用，识别出人工团队最初未考虑到的潜在冲突&quot;。
+
+#### 4.3.2 医疗证据整合：Claude或ChatGPT
+
+医疗场景的高风险和高复杂性：
+
+| 平台        | 核心优势                             | 适用场景                                 |
+| :---------- | :----------------------------------- | :--------------------------------------- |
+| **Claude**  | 安全优先、多智能体验证、不确定性校准 | 临床决策支持、药物相互作用评估、医学教育 |
+| **ChatGPT** | 文献覆盖广、分析深度强、可视化工具   | 医学研究综述、流行病学分析、健康政策评估 |
+
+关键考量：医疗场景的错误成本极高，建议人工专家复核关键结论，将AI作为效率工具而非决策替代。
+
+#### 4.3.3 代码技术调研：ChatGPT代码执行+Perplexity实时检索组合
+
+技术研究的复合需求：
+
+| 组件           | 功能                                 | 组合价值                   |
+| :------------- | :----------------------------------- | :------------------------- |
+| **ChatGPT**    | 代码理解、架构分析、趋势预测、可视化 | 深度技术分析，历史演进梳理 |
+| **Perplexity** | 最新发布、社区动态、问题解决方案     | 实时信息补充，快速问题定位 |
+
+典型 workflow：ChatGPT Deep Research生成技术领域全景分析，Perplexity实时追踪最新版本发布和安全公告。
+
+## 5. 技术演进趋势与风险提示
+
+### 5.1 能力融合方向
+
+#### 5.1.1 速度-深度权衡优化：Gemini向ChatGPT深度靠拢
+
+当前市场的明显趋势：**速度优先者增强深度，深度优先者提升速度**。
+
+Gemini的演进路径最具代表性。2025年3月的更新将Deep Research推向免费用户，但功能相对基础；2025年底的增强版显著强化了迭代式推理能力，在HLE、DeepSearchQA等基准测试中刷新成绩。这一轨迹显示Google正在&quot;向上延伸&quot;，在不牺牲速度优势的同时提升分析深度。
+
+ChatGPT的应对是&quot;向下扩展&quot;——计划推出&quot;更快、更具成本效益的小型模型版本&quot;，降低访问门槛，覆盖更广泛的用户群体。
+
+**预测**：2026年，头部平台的Deep Research功能将在速度-深度光谱上趋于收敛，差异化将更多体现在垂直领域优化、生态集成、和定价策略上。
+
+#### 5.1.2 开源-闭源边界模糊：DeepSeek推动行业成本重构
+
+DeepSeek的开源策略正在产生深远的行业影响：
+
+| 影响维度   | 具体表现                                       |
+| :--------- | :--------------------------------------------- |
+| 价格压力   | OpenAI、Google等被迫重新评估定价策略           |
+| 技术民主化 | 中小企业和开发者获得 previously 不可及的AI能力 |
+| 创新加速   | 开源社区催生丰富的衍生工具和集成方案           |
+| 安全挑战   | 无审查版本（如R1-1776）的广泛传播引发监管关注  |
+
+Perplexity整合R1-1776的案例展示了新模式：开源推理引擎+商业产品优化，实现&quot;最高事实准确度&quot;和&quot;高级自主性&quot;的结合。这种&quot;模型+产品&quot;的分离可能成为行业新常态。
+
+#### 5.1.3 多智能体成为标配：Claude架构被广泛借鉴
+
+Claude的&quot;指挥家-演奏家&quot;模式代表了AI系统设计的重要方向，其核心创新正在被行业广泛借鉴：
+
+| 架构要素           | 行业采纳趋势               |
+| :----------------- | :------------------------- |
+| 任务分解与并行执行 | 从研究工具扩展到通用AI助手 |
+| 智能体间验证       | 高可靠性场景的标准配置     |
+| 动态资源分配       | 效率优化的关键机制         |
+| 可解释性设计       | 监管合规和用户信任的基础   |
+
+预测：多智能体架构将从Deep Research功能扩展到更广泛的AI应用场景，成为复杂任务处理的主流范式。
+
+### 5.2 可靠性风险
+
+#### 5.2.1 幻觉率差异：Perplexity 7.7% vs ChatGPT 9.7%
+
+量化风险数据提供了重要参考：
+
+| 平台       |  幻觉率  | 数据来源 |
+| :--------- | :------: | :------- |
+| Perplexity | **7.7%** | 独立评测 |
+| ChatGPT    | **9.7%** | 独立评测 |
+| 行业平均   |   ~10%   | 综合估计 |
+
+需要强调的是，**幻觉率测量方法存在显著差异**，不同评测的定义、测试集、评估标准可能不同，直接比较需谨慎。更可靠的解读是：即使表现最优的系统，仍有约1/10的概率生成不可信内容，关键决策场景必须人工复核。
+
+#### 5.2.2 来源权威性：需人工验证低可信度信源
+
+Deep Research系统的共同风险：
+
+| 风险类型     | 具体表现                           | 缓解策略                  |
+| :----------- | :--------------------------------- | :------------------------ |
+| 来源质量参差 | 内容农场、过时信息、偏见来源被纳入 | 建立来源白名单/黑名单机制 |
+| 引用粒度不足 | 仅标注来源，未精确到具体主张       | 优先选择内联引用系统      |
+| 循环引用陷阱 | AI生成内容被后续AI检索引用         | 人工识别和标记AI生成内容  |
+| 权威性误判   | 形式权威（如.gov域名）≠内容准确    | 领域专家建立权威来源清单  |
+
+#### 5.2.3 时效性陷阱：训练数据截止与实时检索的冲突
+
+信息时效性的复杂现实：
+
+| 场景类型               | 风险描述                                 | 应对建议                               |
+| :--------------------- | :--------------------------------------- | :------------------------------------- |
+| 纯推理模型（DeepSeek） | 知识完全局限于训练截止日                 | 必须集成可靠检索模块，明确标注信息时间 |
+| 检索增强系统           | 检索失败时可能基于过时知识推断           | 设计检索失败时的保守响应策略           |
+| 实时检索系统           | 新信息发布到被索引存在延迟               | 关键时效信息人工二次确认               |
+| 动态变化主题           | 快速演变事件中，几小时前的信息可能已过时 | 建立信息新鲜度评估机制                 |
+
+### 5.3 评估方法论建议
+
+#### 5.3.1 建立任务分级标准（简单/中等/复杂/专家级）
+
+建议用户根据任务复杂度选择合适工具：
+
+| 任务级别   | 特征描述                       | 推荐工具                          |  预期投入   |
+| :--------- | :----------------------------- | :-------------------------------- | :---------: |
+| **简单**   | 事实查询、定义解释、快速确认   | Perplexity、Gemini                |   &lt;2分钟    |
+| **中等**   | 主题概览、背景了解、初步分析   | Gemini、Kimi                      |  2-10分钟   |
+| **复杂**   | 多源综合、趋势分析、决策支持   | ChatGPT、Claude                   |  10-30分钟  |
+| **专家级** | 原创研究、理论构建、高风险决策 | ChatGPT+人工复核、Claude+专家验证 | 30分钟+人工 |
+
+#### 5.3.2 引入人工评审与自动化指标双轨验证
+
+质量保障的双重机制：
+
+| 验证层级   | 方法                                           | 适用场景             |
+| :--------- | :--------------------------------------------- | :------------------- |
+| 自动化指标 | 幻觉率检测、来源一致性检查、事实性基准测试     | 大规模筛选、日常监控 |
+| 人工评审   | 领域专家抽样复核、关键结论验证、逻辑一致性检查 | 高风险决策、最终输出 |
+| 混合模式   | 自动化初筛+人工重点复核                        | 大多数专业场景       |
+
+#### 5.3.3 关注动态基准测试而非静态排名
+
+评估方法论的演进方向：
+
+| 传统方法     | 局限                 | 改进方向                       |
+| :----------- | :------------------- | :----------------------------- |
+| 静态基准排名 | 快照式评估，快速过时 | 持续更新的动态基准             |
+| 单一指标比较 | 简化复杂能力空间     | 多维度能力雷达图               |
+| 实验室测试   | 脱离真实使用场景     | 真实用户任务日志分析           |
+| 专家主观评估 | 可重复性差           | 结构化 rubric + 多评估者一致性 |
+
+建议用户建立**持续评估机制**：定期用代表性任务测试各平台表现，跟踪其演进轨迹，而非依赖一次性排名做出长期工具选择。
+===== 第一份报告（结束） =====
+
+===== 第二份报告（开始） =====
+# 报告A
+
+# Executive Summary
+
+We compare the advanced **Deep Research** capabilities of major AI platforms – Google Gemini, OpenAI ChatGPT, Anthropic Claude, Perplexity AI, Moonshot AI’s Kimi, and China’s DeepSeek – along multiple dimensions. All of these systems augment large language models (LLMs) with external search and retrieval, but they differ in data freshness, tools, context size, explainability, and enterprise features. For example, Google’s Gemini Deep Research agent autonomously plans and executes multi-step searches over the web and private data (Gmail, Drive, Chat), producing multi-page, cited reports【8†L183-L189】【14†L49-L57】. ChatGPT has introduced an integrated **Search** mode (GPT-4o) that fetches up-to-date web answers with live source links【25†L51-L59】. Anthropic’s Claude offers a “Research” mode that performs iterative searches and returns answers with “easy-to-check citations”【27†L41-L48】. Perplexity functions as a real-time AI search engine, synthesizing web content into direct answers with footnoted sources【34†L203-L210】. Moonshot’s Kimi provides extremely long-context reasoning (up to 256K tokens) and launched an AI-powered **Explore** mode (Oct 2024) that “deeply reads” hundreds of web pages per query【19†L104-L112】. DeepSeek (China) releases open MoE models (V3, R1, V3.1, etc.) with 128K token windows and strong reasoning modes【40†L315-L324】, though its research use is primarily via API. 
+
+In short, **Gemini** shines in enterprise/Workspace-integrated research with Google search and user data (long context, multimodal, chain-of-thought via a “thinking” panel)【14†L69-L76】【8†L183-L189】. **ChatGPT (OpenAI)** offers broad web search with source links and a huge plugin ecosystem, making it ideal for general queries and multi-turn research【25†L51-L59】【25†L99-L107】. **Claude** focuses on safe, iterative exploration (including “extended thinking” and web tools), suited for complex research tasks in enterprise settings【27†L41-L48】【29†L216-L224】. **Perplexity** is built specifically for research: it uses continuously-updated web indexes and provides concise, cited answers and connectors (e.g. Google Drive)【34†L203-L210】【36†L49-L58】. **Kimi** targets extreme-long-context scenarios and research in the Chinese market: its “Explore” mode aggressively crawls hundreds of pages, and its models boast trillion-parameter MoEs with 256K context【19†L104-L112】【16†L204-L207】. **DeepSeek** offers open LLMs with large context and dedicated reasoning modes (R1 with chain-of-thought), aimed at developers building agentic workflows【40†L315-L324】【22†L45-L53】. 
+
+Below we analyze each dimension in detail, with references. Our final comparison table highlights each vendor’s strengths, weaknesses, and ideal use-cases. All information is drawn from official docs, technical blogs, and reputable sources (citations in brackets). 
+
+## Data Sources &amp; Freshness
+
+- **Google Gemini (Deep Research)** draws on **real-time web search** (Google Search) plus optionally the user’s private data (Gmail, Drive, Chat). It “autonomously searches and deeply browses the web … to find relevant, up-to-date information”【14†L62-L70】. Gemini’s model is periodically updated (Gemini 3.x series in 2025–2026) and can include very fresh news or facts, though it uses the standard Google Search engine. 
+- **ChatGPT (Search mode)** leverages third-party web search providers (e.g. Bing) and premium news/content partnerships. The ChatGPT Search model (GPT‑4o) was “post-trained using … synthetic data” and explicitly “leverages third-party search providers, as well as content provided directly by our partners, to provide the information users are looking for”【25†L139-L144】. This yields answers based on current internet content (scores of live websites, stock quotes, weather, etc.). 
+- **Claude (Research)** similarly requires enabling web search and optionally workspace data (Google Workspace, etc.). With Research on, “Claude will kick off the research process across your internal context (Gmail, Calendar, Docs) and the web,” conducting iterative searches【27†L59-L64】. Anthropic’s API also offers a **Web Search tool** giving “direct access to real-time web content, allowing it to answer questions with up-to-date information beyond its knowledge cutoff”【29†L216-L224】. 
+- **Perplexity AI** maintains its own continuously-refreshed web index and crawlers. By design, it is a search engine, “incorporat[ing] real-time web search capabilities” so that responses are always based on **current Internet content**, citing sources【34†L203-L210】. (Note: Perplexity’s scraping practices have drawn legal scrutiny【34†L213-L220】.) Perplexity can also connect to personal data via “App Connectors” (e.g. Google Drive) to search user files【36†L47-L56】. 
+- **Kimi (Moonshot AI)** offers an “Explore Edition” search mode since Oct 2024. Kimi Explore “adopted a different approach: letting the AI search autonomously … reading through hundreds of pages”【19†L104-L112】. In effect, one query dispatches thousands of parallel searches (Kimi claims 10× the queries of normal search) and reads up to ~500 pages per query【19†L104-L112】【19†L124-L130】. It likely uses Bing-like search or an internal crawler but the details are proprietary. Kimi also now has **Kimi-Researcher** (mid-2025), an autonomous agentic model that performs multi-turn search (around 23 steps, 200+ URLs) via an internal parallel search tool【22†L10-L18】【22†L45-L53】. 
+- **DeepSeek (China)** provides powerful LLMs but no public information suggests a dedicated multi-search agent UI. Its models (V3 series, R1) are trained on vast corpora and support tool use, but their web-search integration is likely developer-driven (via RAG or API). DeepSeek models can work with retrieval systems but details are scarce. The BentoML guide notes DeepSeek’s R1 model is specialized for “complex math, coding, and reasoning” with chain-of-thought【40†L315-L324】. DeepSeek has released vision-language models (DeepSeek-VL) but not specifically a search agent.
+
+## Retrieval Methods
+
+- **Retrieval-Augmented Generation (RAG):** All these systems use RAG or agentic retrieval to incorporate external information. ChatGPT’s Search and Claude’s Research both run real-time search queries in the loop, effectively RAG with web sources. Gemini’s Deep Research agent “plans -&gt; search -&gt; read -&gt; iterate”【12†L849-L857】. Perplexity’s engine runs search queries and feeds results to the LLM for summarization with citations. DeepSeek and Kimi models support tool use (with code execution or browsing tools) that enable RAG. 
+- **Vector/Embeddings:** Claude’s API does not publicly document a proprietary vector search, but it does allow a code tool for filtering search results. Perplexity’s products may use vector retrieval on their own updated indexes for fast search, but this is internal. DeepSeek-V3 and R1 are MoE LLMs; developers can use vector search over embeddings of documents as needed. 
+- **Web Crawling:** Perplexity explicitly runs web crawlers (albeit controversially【34†L213-L220】). Gemini relies on Google’s search index, which constantly crawls the web. Claude’s web search likely uses Bing or a similar API. Kimi Explore likely issues queries to existing search APIs at massive scale. DeepSeek does not publish crawlers. 
+- **Proprietary Corpora:** All base models are pre-trained on large text corpora (Common Crawl, etc.), but the freshness in answers comes from live search. Claude and ChatGPT also have fine-tuning on curated data, but do not train on user queries. Gemini as a product is continuously updated by Google’s training data and web knowledge graph. DeepSeek’s models are open (e.g. DeepSeek-V3-0324) with public checkpoints and have been updated via reinforcement learning【40†L278-L287】.
+
+## Citation &amp; Evidence Tracing
+
+- **Gemini**: In Deep Research mode, Gemini returns **detailed reports with citations**. The API documentation states it produces “reports … with detailed, cited sources”【8†L183-L189】. The Google UI (“Deep Research” in the Gemini app) includes a *thinking panel* and, presumably, an output that cites URLs or blocks of text. (Gemini is internally built on Google Search, so results can be linked.) 
+- **ChatGPT**: The new ChatGPT Search explicitly provides **links to sources**. After answering a query, ChatGPT shows clickable source links (news articles, websites) at the top of the response【25†L100-L107】. Users can open a “Sources” sidebar for full references【25†L100-L107】. (The images below illustrate this: ChatGPT answered a weather question with a linked AccuWeather source【25†L100-L107】 and shows a “Sources” panel.) This makes ChatGPT answers verifiable. 
+- **Claude**: Claude’s Research mode also returns citations. The Help Center notes Claude delivers “thorough answers … complete with easy-to-check citations”【27†L46-L48】. In its API web-search tool, Claude “automatically cites sources from search results as part of its answer”【29†L216-L224】. Thus Claude’s responses include footnotes or URL references to the websites it used. 
+- **Perplexity**: Citing sources is a core feature. Perplexity’s answers are typically presented with numbered footnotes linking to each source【34†L203-L210】. For example, an answer might say “… based on [Source Title][1]” with a link. (This Wikipedia summary confirms Perplexity “synthesizes responses … citing sources used”【34†L203-L210】.) The connectivity to Google Drive files also allows citing documents. 
+- **Kimi**: The documentation does not clearly state a citation format. The Chinese news on Kimi Explore highlights its high-volume search but does not mention citing. It seems Kimi’s answers are delivered directly (like standard chatbots) without formal source links. The focus is on completeness and multi-page output rather than traceability. (The Kimi-Researcher paper does not detail citation style, focusing on learning via reinforcement learning【22†L10-L18】.) 
+- **DeepSeek**: DeepSeek’s products are model-centric (V3, R1, etc.). They do not natively produce linked citations unless developers implement their own retrieval pipelines. Their inferences are “direct answers” or chain-of-thought text, without explicit source links. (The BentoML guide distinguishes DeepSeek-V3’s “Direct answers” vs R1’s step-by-step reasoning【40†L315-L324】, but no mention of citing.) 
+
+## Context Window &amp; Long-Document Handling
+
+- **Google Gemini** boasts an enormous context window. As of Gemini 3.1 Pro, **1 million tokens** are supported in beta【7†L214-L222】. (Gemini 3.0 Ultra already had 256K tokens base.) This far exceeds other publicly-available models, enabling Gemini to ingest and reason over very long documents or even entire books. 
+- **Claude** has also extended context. Claude Opus 4.6 (Feb 2026) supports up to **1M tokens** (beta)【31†L22-L26】, with 200K normally. (Claude Sonnet/Opus series have sub-variants like 4.5 with 128K, and newer 4.6 with 1M.) This allows lengthy chats, documents or codebases. Claude also offers “compaction” to summarize older context【31†L63-L70】. 
+- **OpenAI ChatGPT** (GPT-4 Turbo/4o) supports up to about **128K tokens** (as of late 2025)【49†L7-L11】. This is very large compared to GPT-3-era models. (Earlier GPT-4 Turbo was 32K, now extended to 128K.) ChatGPT’s Search mode (GPT-4o) can handle long chats and combine multiple answers, but still under this window. 
+- **Kimi** was the first with **128K tokens** (Nov 2023) and has since moved to **256K tokens** (Sep 2025)【16†L204-L207】. Its “context caching” and streaming allow effectively unlimited context by chunking. Kimi-K2 (1T param MoE) and later K2.5 support 256K tokens, making it unique for extremely long research sessions. Kimi’s “OK Computer” mode can also ingest millions of data points concurrently【16†L209-L217】. 
+- **Perplexity**: No official context window is published, but it uses frontier LLMs under the hood (e.g. GPT-5.2 for long contexts as cited by Perplexity Computer)【37†L153-L160】. Likely comparable to ChatGPT on its highest tier. For per-query research, Perplexity splits content across browsed pages and synthesizes, so it effectively handles large content by multi-query aggregation. 
+- **DeepSeek** (Moonshot’s models) supports up to **128K tokens** (DeepSeek-V3, R1, V3.1)【40†L315-L324】. The table shows all DeepSeek variants have 128K windows. (These open models emphasize “thoughtful responses” rather than memory length.) Without an API like Gemini’s agent, users must manually chunk text. 
+
+## Multimodal Support
+
+- **Gemini** (Google) is natively multimodal. Gemini models can process text, images, audio, and video【7†L242-L245】. The Deep Research agent can take images or mixed media inputs (though this may increase cost). Google also offers Canvas (interactive reports) and image/video gen in the Gemini app. 
+- **Claude** is multimodal in its latest versions. Sonnet 4 models handle images and text, and Opus can integrate with tools like Claude in Excel (data integration). Claude’s vision capabilities are more limited compared to Gemini (no direct user UI for images yet, aside from Claude-in-Excel). 
+- **ChatGPT** supports multimodal interactions in certain interfaces. The web ChatGPT has an **Image** tool (DALL·E) and a code interpreter (files, images, charts) for Plus and Enterprise users. Its conversation can include image uploads and audio (Advanced Voice)【25†L146-L154】. ChatGPT Search also has specialized answers for weather, stocks, etc., with visual panels【25†L87-L96】. 
+- **Perplexity** is primarily text-based. It does have an experimental “video generation” feature (as mentioned in Pro plan), but its core Q&amp;A is text-only. It cannot natively ingest images or other modalities in search results. 
+- **Kimi** explicitly has vision. Kimi K2 models are **multimodal** (image + text)【3†L220-L223】. The company is testing AI video generation【15†L181-L188】 and has an image understanding feature (Kimi-VL). In practice, the public Kimi chatbot can take image inputs and generate image/video outputs in development. 
+- **DeepSeek** has released vision-language models (DeepSeek-VL, DeepSeek-R1-0528 supports vision). However, DeepSeek’s primary offerings are language-only. Their documentation highlights text tasks; any image/video work would require a separate model (not core to “Deep Research” function). 
+
+## Reasoning &amp; Chain-of-Thought Transparency
+
+- **Gemini** explicitly exposes its reasoning steps in Deep Research. Google introduced a “thinking” panel so users see what Gemini learned so far and its next moves【14†L153-L156】. The Deep Research pipeline itself involves iterative self-critique and multiple passes【14†L158-L162】, though the final report is a polished synthesis. 
+- **ChatGPT** does not show its internal chain-of-thought to users. It uses GPT‑4’s reasoning capabilities internally, but the answer is delivered as a final narrative (no step-by-step log). However, one can prompt ChatGPT for step-by-step answers manually. The “Search” mode does not reveal internal steps, only the final answer with sources. 
+- **Claude** similarly does not publicly reveal its chains of thought. Its “extended thinking” tools can let it run longer reasoning (e.g. “parrot mode”), but users see only the final answer. Claude emphasizes safe reasoning rather than transparency. (In API, one can ask for more explanation, but it’s not a built-in UI feature.) 
+- **Perplexity** prioritizes concise answers. It generally does *not* provide step-by-step reasoning, only a brief summary and citations. Its “Answer Engine” is akin to search results, not a thought-process log. 
+- **Kimi** does have a form of transparency. The Kimi-Researcher model, for example, defines a (think_t, action_t) output at each step【22†L45-L53】, and Kimi’s UI (like Gemini) shows a “thinking mode” where it can output intermediate reasoning if prompted. In their app, responses can include a “|COT mode” (chain-of-thought) option. 
+- **DeepSeek** places a special emphasis on internal reasoning. Its R1 model is designed for chain-of-thought and can be prompted to show its reasoning steps (using `&lt;think&gt;` tokens or system instructions)【40†L315-L324】. DeepSeek-V3.1 even has a hybrid mode where you can switch between “thinking” and “non-thinking” behavior【40†L284-L293】. Thus DeepSeek is explicitly aimed at making reasoning explicit when desired.
+
+## Customization, Plugins &amp; API Access
+
+- **ChatGPT** (OpenAI) has a rich ecosystem. Users can install **plugins** (web browser, code, third-party apps) and developers can integrate via the GPT-4/4o API. ChatGPT offers a browser extension and supports tools like Code Interpreter, Python REPL, etc. Its API and plugins allow deep customization (Enterprise accounts have build-your-own GPTs). 
+- **Gemini** is primarily accessed through Google’s ecosystem. For end users, Deep Research is built into the Gemini app (free for consumers, additional access for Google Workspace). For developers, Gemini models (3.1 Pro etc.) are available via the Google Cloud Generative AI API (GenAI)【12†L860-L869】. The Deep Research agent itself is accessed via the **Interactions API**【12†L860-L868】 and currently cannot take custom tools from users. 
+- **Claude** provides an API (Anthropic Claude API) with tool use. Developers can use **Web Search** and **Code** tools via API (as documented【29†L216-L224】【29†L253-L261】). Anthropic also offers **Claude In Excel/PowerPoint** and a Connectors catalog (e.g. Slack, Salesforce) for enterprises. The Claude Chat UI supports a “Research” toggle (on Pro/Team plans) but not end-user plugins. 
+- **Perplexity** has an **API** (Search API and Assistant API) that returns JSON with answers and source URLs. It also offers “Perplexity Connectors” (e.g. Google Drive) so that organizations can query their own documents【36†L47-L56】. The architecture is closed (no user plugins), but developers can script queries. Perplexity Max (new) even allows orchestrating multiple models (ChatGPT, Claude, Gemini) behind the scenes【37†L151-L160】. 
+- **Kimi (Moonshot AI)**: The public Kimi app/website is the main interface (web, iOS, Android). Moonshot also offers an API platform (platform.moonshot.ai) where developers can call their models. Kimi-VL and K2 are open-sourced under MIT-like licenses【15†L149-L158】【16†L200-L208】, so teams can run DeepSeek-compatible inference. Advanced agentic features (like “OK Computer” for slides/websites) exist in the app. The Kimi-Researcher is accessible via Kimi’s UI. 
+- **DeepSeek**: DeepSeek provides an API for its models (via deepseek.com) and open-source releases (DeepSeek-V3, R1, V3.1 on Hugging Face【40†L307-L315】). There is no end-user plugin system – it’s a toolkit for developers. Because the models (especially R1/V3.1) are available, teams can build custom agents around them. BentoML’s guide shows how to integrate DeepSeek models with code for “agentic workflows”【39†L75-L83】.
+
+## User Experience &amp; Query Types
+
+- **ChatGPT**: A chat interface supporting free-form queries. With Search enabled, users can click a globe icon or type “/search” to run web queries. Answers are conversational, and a “Sources” panel can open showing references【25†L100-L107】. Plus and Enterprise users get immediate access to Search; free users get it later【25†L39-L47】. ChatGPT also supports multi-turn follow-ups and diverse output formats (text, code, tables, images). 
+- **Google Gemini**: In Gemini’s web/mobile app, users select “Deep Research” from the prompt bar. They enter a topic (e.g. “market analysis of X”), and Gemini autonomously breaks it down【14†L57-L66】. The UI shows the plan and a “thinking” panel as the agent works through sources【14†L153-L156】. The final product is a multi-page report (with possibly an Audio Overview) that the user can navigate. (Gemini is integrated into Google Workspace, so eligible users see it seamlessly.) 
+- **Claude**: On claude.ai or desktop apps, a user toggles the “Research” button (bottom left)【27†L51-L59】. Claude then automatically performs the multi-search process. Users can also prompt Claude in regular mode to “use the Research tool” if needed. Output is a single comprehensive answer (often long-form paragraphs) with citations. There is no special step-by-step display, but users can refine the prompt or ask for clarifications. 
+- **Perplexity**: Operates like a search engine. The user types a question and gets an answer box with sources at the bottom. It also shows a pane listing the key sources used (clickable). Perplexity Pro/Max adds features like setting the agent’s “persona” and connecting to private data. The interface is web-based (with mobile apps and browser extensions). Users can also upload documents or connect apps; the query can then cover web+private data jointly【36†L49-L58】. 
+- **Kimi**: The Kimi chatbot (kimi.com) is primarily Chinese-language but supports English. The “Explore” mode is akin to Perplexity: a search box where AI fetches and summarizes many pages. Results are usually lengthy summaries or reports. Kimi also has an “OK Computer” mode to generate webpages/slides, and a “Slides” tool. The interface allows switching between human-like chat and agentic modes (instant vs thinking). Advanced Chinese users can prompt for chain-of-thought or use Kimi-Researcher for deep tasks. 
+- **DeepSeek**: Has no consumer UI. Users (typically developers) submit prompts via API or a Python client. There are examples in documentation for “scientific reasoning” or “math problems.” Query types include Q&amp;A, summarization, code generation, etc. Without a built-in search, DeepSeek users must explicitly provide context (documents, or use a separate retrieval step) for evidence-based answers. 
+
+## Accuracy, Hallucinations &amp; Factuality
+
+- **ChatGPT**: With its Search mode, factuality is tied to source quality. It generally **provides source links** so answers can be checked, reducing hallucination【25†L51-L59】【25†L100-L107】. Nonetheless, ChatGPT can still make mistakes if it misinterprets sources or the prompt. OpenAI continuously tunes GPT‑4 with synthetic data to improve accuracy. 
+- **Claude**: Anthropic emphasizes safety and factuality. The Claude 4.6 announcement highlights “overall safety profile as good as, or better than, any other frontier model”【31†L43-L47】. The web search tool includes dynamic filtering and code execution to improve accuracy by weeding out irrelevant content【29†L270-L279】. In practice, Claude Research answers tend to be thorough and aligned, though Claude can also err if sources are ambiguous. 
+- **Perplexity**: Strives for precision. Its answers are concise and *sourced*, which users find helpful for verification. However, some media have noted legal concerns about content scraping【34†L213-L220】, and like any AI, Perplexity can “hallucinate” if it mis-synthesizes sources. Perplexity Pro’s feature of “10× citation density”【48†L270-L273】 suggests extra emphasis on sourcing. 
+- **Google Gemini**: Google has powerful retrieval, but does not claim zero hallucination. The Deep Research agent is in preview, and Google cautions that it should be fact-checked (“review the citations provided”【12†L895-L903】). However, Gemini’s backbone on Google Search and Knowledge Graph should help accuracy. Early reports suggest Gemini Deep Research produces high-quality comparative analysis (a new category of output), but concrete metrics are not public. 
+- **Kimi**: The Moonshot team claims strong performance (e.g. matching GPT-4 in math/coding【15†L183-L188】). Chinese news reports also claim they have “basically eliminated” hallucination【16†L247-L254】 (though that’s unverified PR). Kimi’s Explore, by scanning 500 pages per query, may reduce omission errors but could still summarize incorrectly. There’s no independent study of Kimi’s factuality in English. 
+- **DeepSeek**: The BentoML article notes DeepSeek-R1’s high reasoning but also explicitly says hallucination was reduced by ~45–50% in R1-0528 compared to earlier models【40†L257-L264】. DeepSeek is open-source, so accuracy depends on model choice: R1 and V3.1-Think are optimized for correctness at the cost of verbosity. Without a built-in retrieval, any hallucination likely comes from the base LLM rather than external mis-citation. 
+
+## Privacy, Data Retention &amp; Enterprise Controls
+
+- **ChatGPT**: OpenAI’s policy is that data is not used to train models (especially in Enterprise/Edu) and users can opt out of sharing. ChatGPT Enterprise offers features like SSO, data logs, and admin control. The Search mode likely logs queries to partners (Vox Media, etc.) as per OpenAI’s publisher agreements【25†L129-L138】, but user data is isolated under OpenAI’s policies. 
+- **Gemini**: As a Google product, Gemini Deep Research in Workspace means enterprise admin controls (data lives in Google Cloud). Google states that search and uploaded documents are not used to train models except for safety. The docs warn about security: don’t upload untrusted docs, vet malicious pages【12†L886-L895】. Google enforces privacy and security policies (e.g. you must enable Workspace Data integration explicitly). 
+- **Claude**: Anthropic offers **Zero Data Retention (ZDR)** options. The web search tool is “ZDR-eligible” – data passed through it is not stored after the response【29†L228-L230】. Claude in Enterprise also can be set to not train on inputs, and offers SOC 2 compliance. The Help Center notes that research queries count against normal usage limits, but does not detail retention, implying normal Claude policies apply (no training on corporate data by default). 
+- **Perplexity**: It markets itself to enterprises with SOC2 Type II, encryption, and an explicit guarantee that “no training is done on customer data”【48†L291-L294】. The Google Drive Connector respects Google permissions【36†L49-L58】 and syncs files privately. Enterprise plans include audit logging and data retention controls【36†L49-L58】【48†L285-L293】. However, Perplexity’s own query logs might still be used to improve its search algorithms (this is not fully public). 
+- **Kimi**: Moonshot has not published detailed enterprise policies. As a Chinese company, it likely stores user data. The Kimi app is free with rate limits; premium tiers offer more usage. There are no public statements about data retention or enterprise controls. Given China’s legal environment, Kimi’s data may be subject to Chinese regulations. 
+- **DeepSeek**: As an open model/API provider, DeepSeek’s data policies are determined by the company or the user’s own deployment. If using DeepSeek’s API, presumably queries are logged by the service (they haven’t highlighted a ZDR option). If self-hosting the open models, data stays on-prem. In summary, privacy depends on deployment choice. 
+
+## Pricing &amp; Limits
+
+- **ChatGPT**: Offers a free tier and a ChatGPT Plus subscription (~$20/month) for GPT-4 access. ChatGPT Search (GPT-4o) is being rolled out to Plus, Teams, and eventually all users【25†L39-L47】. Enterprise/Edu customers have custom pricing. The backend API (GPT-4o) is billed by tokens (currently ~$5/$25 per million tokens for GPT-4 via OpenAI).
+- **Gemini**: In the Google AI API (GenAI) model, pricing is pay-as-you-go on top of Gemini’s cost【12†L860-L869】. Example estimates: a typical Deep Research task (multiple searches and ~60K output tokens) costs a few dollars【12†L874-L881】. The user-facing Gemini app has a free level; Workspace users may get it included or on Workspace licensing. (Google offered free Deep Research access to students.) 
+- **Claude**: Claude’s API is priced at $5 per million input tokens and $25 per million output tokens (consistent with [31†L78-L81]). Claude “Pro” (for individuals) or “Max” (for power users) subscriptions exist (e.g. Claude Pro at $20/mo for 100K context model, Max for 200K). Usage limits (rate and total tokens per day) vary by plan; Research mode simply consumes more tokens per answer. 
+- **Perplexity**: Free version allows a limited number of daily queries. **Perplexity Pro** is $20/month ($200/yr) and grants “unlimited Pro queries” with multi-step search【48†L253-L262】. **Perplexity Max** (new, Feb 2026) costs $200/month and adds advanced model access and features. Enterprise seats run $40–$325 per user/month (for Pro/Max tiers)【48†L274-L283】【48†L299-L308】, with heavy usage quotas. 
+- **Kimi**: The Kimi apps are free with basic rate limits (e.g. 5 free searches per day【19†L114-L122】). Premium subscriptions (“Moderato”, “Allegretto”, “Vivace”) offer higher usage, faster service, and access to Kimi’s advanced models (K2 Turbo, Kimi-Researcher, etc.)【16†L229-L237】. Exact prices are not public (likely tiered around tens of USD monthly). Enterprise options are not clearly defined. 
+- **DeepSeek**: DeepSeek’s APIs and models appear to be mostly free or open (MIT license) for the core LLM weights【40†L307-L315】. They likely charge for hosted API usage, but details are scarce. Since DeepSeek is research-oriented, cost may be similar to self-hosting on consumer cloud. In any case, limits would follow usual token billing. 
+
+## Recent Major Updates (18 months)
+
+- **ChatGPT (OpenAI)**:  
+  - *Oct 2024:* Launched **ChatGPT Search** (GPT-4o) that integrates web browsing with citations【25†L51-L59】.  
+  - *Dec 2024:* Made Search broadly available; partnered with publishers (Le Monde, etc.)【25†L100-L107】.  
+  - *Feb 2025:* Rolled out Search to all users. Continual GPT-4 enhancements (GPT-4 Turbo, GPT-4.1, etc. up to GPT-4o). GPT-5 (o1) series rumored but not officially in apps yet.  
+- **Gemini (Google)**:  
+  - *Dec 2024:* Introduced **Gemini Deep Research** as a product category (Gemini 3 model)【14†L158-L162】.  
+  - *Early 2025:* Released Gemini 3.0 “Ultra” (256K context, multimodal) and 3.1 (March 2026 preview)【8†L183-L189】【7†L214-L222】.  
+  - *Feb 2026:* Added 1M token context in Gemini 3.1 Pro preview【7†L214-L222】.  
+- **Claude (Anthropic)**:  
+  - *Oct 2024:* Announced Claude with web browsing and research features for paid users. Introduced “Extended Thinking” and “Research” modes.  
+  - *2025:* Released **Sonnet 4** (mid-2025) with 100K context, and **Opus 4** (Nov 2025) with larger context and better reasoning.  
+  - *Feb 2026:* Released **Claude Opus 4.6** (1M context beta, superior coding/search abilities)【31†L22-L31】.  
+- **Perplexity AI**:  
+  - *2024:* Rapid growth; raised funding, launched mobile apps and browser extensions.  
+  - *2025:* Expanded integrations (Drive, Slack). Introduced “Spaces” (collaborative search threads) and advanced queries.  
+  - *Feb 2026:* Launched **Perplexity Computer** (multi-agent research assistant using 19 models)【37†L109-L118】【37†L151-L160】, available to Max subscribers.  
+- **Kimi (Moonshot AI)**:  
+  - *Oct 2024:* Launched **Kimi Explore Edition** (AI search)【19†L104-L112】.  
+  - *Jan 2025:* Released Kimi K1.5 model.  
+  - *June 2025:* Released **Kimi-Researcher** agent (June 2025)【16†L194-L200】, and open-sourced Kimi K2 (1T param)【16†L199-L207】.  
+  - *Sep 2025:* Updated K2 context to 256K. Added “OK Computer” multi-page agents.  
+  - *Jan 2026:* Released **Kimi K2.5** with 1T params, vision and agentic “thinking” modes【3†L220-L223】.  
+- **DeepSeek (Moonshot.ai)**:  
+  - *2024:* Released DeepSeek-V3 (671B MoE) and R1 models.  
+  - *Mar 2025:* Updated **DeepSeek-V3-0324** (improved reasoning)【40†L237-L242】.  
+  - *May 2025:* Released **DeepSeek-R1-0528** (major reasoning upgrade, hallucination reduced)【40†L247-L255】【40†L257-L264】.  
+  - *Aug 2025:* Released **DeepSeek-V3.1** (hybrid thinking mode)【40†L276-L285】.  
+  - *Oct 2025:* Released **DeepSeek-V3.2**.  
+
+These timelines highlight that all platforms have aggressively advanced their research capabilities in the past 18 months, including model upgrades (4.x series), extended context, and new search/agent features.
+
+## Strengths, Weaknesses &amp; Use-Cases
+
+| **Vendor / System** | **Strengths**                                                                                                   | **Weaknesses**                                                                                                          | **Recommended Use-Cases**                                                 |
+|---------------------|-----------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| **Gemini (Google)** | – Very large context (up to 1M tokens)【7†L214-L222】, natively multimodal (text, image, video)【7†L242-L245】&lt;br&gt;– Integrated with Google Search (up-to-date web data) and Workspace data【14†L62-L70】&lt;br&gt;– Transparent multi-step planning (“thinking panel”)【14†L153-L156】&lt;br&gt;– Agentic Deep Research produces polished, cited reports【8†L183-L189】 | – Requires Google account/Workspace; currently in preview (may change)&lt;br&gt;– Async workflow (minutes-long tasks)【12†L849-L857】 not suited to instant queries&lt;br&gt;– Limited to Google’s search licensing (some content restrictions)【12†L891-L900】 | In-depth tasks like market analysis, literature reviews, due diligence – anywhere one needs an “analyst-in-the-box” to comb web and internal docs【12†L849-L857】. Good for large enterprises with lots of data in Google Workspace. Ideal when citations and context are critical. |
+| **ChatGPT (OpenAI)**| – Natural, conversational interface; instantly answers even casual questions.&lt;br&gt;– Integrated web search (GPT-4o) with live sources【25†L51-L59】.&lt;br&gt;– Vast plugin/tool ecosystem (browser, Code Interpreter, voice, etc.).&lt;br&gt;– Large context (128K tokens) and active community. | – Still chat-style (may not plan multi-step tasks on its own).&lt;br&gt;– Requires Plus/Enterprise for advanced models; free tier is limited to GPT-3.5.&lt;br&gt;– May generate plausible-sounding but incorrect answers (though less so with search). | General-purpose research and Q&amp;A for individuals and teams. Great for quickly finding answers with sources (e.g. news, technical definitions) or drafting text. Good for domain research where web answers suffice and ease-of-use is key. |
+| **Claude (Anthropic)**| – Designed for safe, systematic research: does iterative searches and analysis【27†L41-L48】.&lt;br&gt;– Strong on complex reasoning (latest models lead on DeepSearch benchmarks【31†L53-L61】).&lt;br&gt;– Provides citations from web search【29†L216-L224】.&lt;br&gt;– Enterprise-ready (ZDR, SOC2, Google connectors). | – Lacks a polished end-user research UI (Research mode is via toggle/button).&lt;br&gt;– Not free – Pro/Max plans are paid. API costs for large tasks.&lt;br&gt;– Doesn’t show chain-of-thought by default (though it’s “thinking internally”). | Advanced research and analytical tasks in corporate or scientific contexts. Good where safety and auditability matter. Useful for team planning, literature reviews, or any case where you want multiple search passes and working through details (e.g. project proposals, strategy). |
+| **Perplexity AI**  | – Real-time web answers with sources (like an AI search engine)【34†L203-L210】.&lt;br&gt;– Very user-friendly search UI (Q&amp;A with footnotes).&lt;br&gt;– Supports searching personal files (Drive, Slack) for connected accounts【36†L49-L58】.&lt;br&gt;– New “Computer” agent for heavy projects (multi-model orchestration)【37†L151-L160】. | – Limited chat capabilities (just short Q&amp;A).&lt;br&gt;– Only English? (Interface is English; less known in non-English markets.)&lt;br&gt;– Legal/IP concerns about scraping/content use【34†L213-L220】.&lt;br&gt;– Free tier limits; Pro/Max needed for extensive queries. | Everyone from casual users to researchers who need quick, sourced answers. Good for synthesizing news/current events, fact-checking, or simple data tasks. The Enterprise/Computer features target consultants, analysts, and developers building complex workflows. |
+| **Kimi (Moonshot AI)**| – Extremely large context (256K tokens) and cutting-edge MoE models (1T parameters)【16†L204-L207】.&lt;br&gt;– Supports Chinese language and technical domains; free usage attracts big user base (36M MAU)【3†L178-L181】.&lt;br&gt;– “Explore” mode searches hundreds of pages per query【19†L104-L112】.&lt;br&gt;– Agentic features (video gen, “OK Computer” slide generator). | – Primarily Chinese-focused (internationalization limited).&lt;br&gt;– No official English documentation or Citations UI.&lt;br&gt;– Data privacy under Chinese regulation; no enterprise controls publicly known.&lt;br&gt;– Answers likely in Chinese unless specified; model performance in English less documented. | Research tasks in Chinese or bilingual contexts requiring vast knowledge. Scenarios needing analysis of large data (reports, literature) or code search. Also useful for developers using its open-source models (for code generation, math). |
+| **DeepSeek**       | – Open-source MoE LLMs with large context (128K) and powerful reasoning (R1)【40†L315-L324】.&lt;br&gt;– Users can self-host or fine-tune; great for experimentation.&lt;br&gt;– Supports multimodal (VL models) and agentic workflows if built on【22†L45-L53】.&lt;br&gt;– Recent updates emphasize accuracy (hallucination down 45–50%)【40†L257-L264】. | – No integrated search or UI; purely a model/API offering.&lt;br&gt;– Requires developer expertise to add retrieval, sources, or agents.&lt;br&gt;– Relatively new; ecosystem/tools smaller than others. | Custom research pipelines or agent systems built by developers. Best when you need a free/open LLM with strong reasoning for tasks like math, coding, or specialized queries, and can supply your own data/retrieval. Not a turn-key “research assistant” product, but a toolkit for building one. |
+
+## Example Scenarios &amp; Outputs
+
+- **ChatGPT (Search)**: *Query:* “What is the weather in Paris on Nov 3, 2024?” ChatGPT (with Search enabled) responds conversationally, e.g. “The forecast for Positano (near Paris) on Nov 3 shows mild weather with rain,” and lists a specific AccuWeather source at the top【25†L51-L59】【42†】. The user can click “Sources” to see the linked article. (See image below: ChatGPT answered with weather info and source.)  
+
+- **Gemini (Deep Research)**: *Query:* “Write a research report on decarbonization in aviation.” Gemini Deep Research would plan subtopics (fuel innovations, regulatory environment, market players), run hundreds of search queries, read dozens of papers, and output a multi-page report with citations. For example, it might cite IEA reports or news articles on sustainable aviation fuel. (As of writing, published example outputs are not publicly available, but Google’s docs emphasize detailed reports.)  
+
+- **Claude (Research)**: *Query:* “Analyze the competitive landscape for electric vehicles.” With Research enabled, Claude might do sequential searches (for EV models, market shares, technology), then answer in a structured form (e.g. paragraphs on major automakers, tech trends), embedding references like “[1] (Automotive News)” or footnotes. The cited sources can be reviewed for verification.  
+
+- **Perplexity**: *Query:* “How do Li-ion battery prices compare in 2025 vs 2010?” Perplexity would return a succinct answer: e.g. “Lithium-ion battery pack prices have fallen from about $1,000 per kWh in 2010 to roughly $120 per kWh in 2025【34†L203-L210】.” It would include footnotes (e.g. [1] a BloombergNEF report, [2] a scientific article). This demonstrates real-time data with citations.  
+
+- **Kimi (Explore)**: *Query:* “Investigate Yangtze River flood prevention investments.” Kimi Explore would launch parallel searches on Chinese news, government sources, and academic papers (potentially reading hundreds of pages). It would then produce a detailed answer (in Chinese) summarizing budgets, projects, outcomes, etc. (No public English examples are available; output plausibly reads like an encyclopedia entry, though citations are typically omitted.)  
+
+- **DeepSeek**: *Query:* “Prove that √2 is irrational.” DeepSeek-R1 might output a formal step-by-step proof (like a math assistant), while DeepSeek-V3 might give a short explanation. Either way, it would not quote sources, but rely on internal reasoning. (DeepSeek models excel at logical/mathematical tasks and can output the full derivation.) 
+
+The images below illustrate ChatGPT Search output (weather query) with evidence-tracing:
+
+【41†embed_image】 *Figure: ChatGPT’s Search interface. Users can type a question and click the globe icon to search (here, “Positano weather Nov 2-3”). The response includes a weather forecast. (Source: OpenAI blog【25†L51-L59】.)*
+
+【42†embed_image】 *Figure: ChatGPT’s answer with sources. The model answered a weather query, listing source links (e.g. AccuWeather) above its reply【25†L51-L59】.*
+
+【43†embed_image】 *Figure: ChatGPT’s citations sidebar. Clicking “Sources” shows full references to the articles used. OpenAI’s Search ensures answers are grounded in verifiable content【25†L100-L107】.*
+
+  
+
+**Mermaid Diagrams:** (Omitted – see referenced architecture descriptions above for how each system is structured.)  
+
+**Timeline Chart:** (Omitted – major updates are summarized in the text above.)  
+
+*Sources:* Official documentation and reputable analyses as cited above【8†L183-L189】【25†L51-L59】【27†L41-L48】【34†L203-L210】【19†L104-L112】【22†L10-L18】【40†L315-L324】. Any claims without citation are derived from these sources or common knowledge. Unspecified details (e.g. exact pricing tiers for some services) are noted as assumptions.
+===== 第二份报告（结束） =====
+
+要做的事：回答一个问题——按细则第一节的定义，哪一份是更好的调研？你只需要用细则第一节（定义）和第二节（好的调研包括哪些环节）作为判断的依据。
+
+- 好的调研，指切题、材料够新、查找系统并有交代、甄别来源、分析深入（推进到本质、全体、内部联系）、结论有据、结论明确并说明把握。
+- 篇幅、格式、表格、引用条数、文笔，都不作为理由。写得长不等于更好。
+- 先后顺序不代表任何倾向。
+- verdict 只能是 &quot;first&quot;、&quot;second&quot; 或 &quot;tie&quot;。
+- reason 不超过两句，必须指向报告的具体内容。
+
+规则：
+- 不要猜测报告出自哪个产品。
+
+只回答一个 JSON 对象，不要写任何别的文字，也不要用代码块。格式如下：
+
+{&quot;verdict&quot;:&quot;first&quot;,&quot;reason&quot;:&quot;…&quot;}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 287 字，一字不改。</p>
+  <pre class="raw" id="answer">
+{&quot;verdict&quot;:&quot;first&quot;,&quot;reason&quot;:&quot;第一份报告切中“深度研究（Deep Research）”的核心概念，深入剖析了端到端强化学习、多智能体并行（指挥家-演奏家）与松耦合检索三类底层架构的因果权衡（如耗时、Token成本与研究深度的制约关系），并针对不同专业场景给出了明确的选型判断。第二份报告在核心研究对象上出现严重偏差（将ChatGPT的普通联网搜索ChatGPT Search误作Deep Research进行对比，且将DeepSeek误归入Moonshot旗下），且仅停留于表面功能特性的罗列，未能就“哪家最好”给出有深度的分析与明确结论。&quot;}
+</pre>
+</section>
+<section class="block" id="config" aria-labelledby="config-h">
+  <h2 class="heading-5" id="config-h">调用前写进临时目录的设置文件</h2>
+  
+  <div class="file"><h3 class="title-3"><code>work/.agents/agents/materials-only/agent.md</code></h3><pre class="raw" id="config-1">
+---
+name: materials-only
+description: 模型调用层的单次调用（只给材料）
+mainAgent: true
+subagent: false
+excludeDefaultComponents: true
+inheritCustomizations: false
+inheritMcp: false
+tools: []
+---
+
+# materials-only
+
+按用户消息里的要求作答，只依据消息里给出的材料。
+</pre></div>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 6927 字</summary><pre class="raw" id="raw-output">
+{&quot;event&quot;:&quot;init&quot;,&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;init&quot;:{&quot;model&quot;:&quot;gemini-4-argon-medium&quot;,&quot;cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpvsma_2o8/work&quot;,&quot;agent&quot;:&quot;materials-only&quot;,&quot;tools&quot;:[&quot;ask_custom_permission&quot;,&quot;ask_permission&quot;,&quot;ask_question&quot;,&quot;browser_click_element&quot;,&quot;browser_drag_pixel_to_pixel&quot;,&quot;browser_get_dom&quot;,&quot;browser_get_network_request&quot;,&quot;browser_input&quot;,&quot;browser_list_network_requests&quot;,&quot;browser_mouse_down&quot;,&quot;browser_mouse_up&quot;,&quot;browser_move_mouse&quot;,&quot;browser_press_key&quot;,&quot;browser_refresh_page&quot;,&quot;browser_resize_window&quot;,&quot;browser_scroll&quot;,&quot;browser_scroll_dom&quot;,&quot;browser_select_option&quot;,&quot;browser_subagent&quot;,&quot;call_mcp_tool&quot;,&quot;capture_browser_console_logs&quot;,&quot;capture_browser_screenshot&quot;,&quot;click_browser_pixel&quot;,&quot;command_status&quot;,&quot;define_subagent&quot;,&quot;delete_knowledge&quot;,&quot;execute_browser_javascript&quot;,&quot;find_by_name&quot;,&quot;finish&quot;,&quot;generate_image&quot;,&quot;grep_search&quot;,&quot;invoke_subagent&quot;,&quot;list_browser_pages&quot;,&quot;list_dir&quot;,&quot;list_permissions&quot;,&quot;list_plugin_accounts&quot;,&quot;list_resources&quot;,&quot;manage_inbox&quot;,&quot;manage_subagents&quot;,&quot;manage_task&quot;,&quot;multi_replace_file_content&quot;,&quot;notebook_edit&quot;,&quot;notebook_execution&quot;,&quot;open_browser_url&quot;,&quot;read_browser_page&quot;,&quot;read_resource&quot;,&quot;read_url_content&quot;,&quot;replace_file_content&quot;,&quot;run_command&quot;,&quot;run_workflow&quot;,&quot;schedule&quot;,&quot;search_marketplace&quot;,&quot;search_web&quot;,&quot;sed_file&quot;,&quot;send_command_input&quot;,&quot;send_message&quot;,&quot;view_file&quot;,&quot;wait&quot;,&quot;wait_5_seconds&quot;,&quot;write_to_file&quot;],&quot;permission_mode&quot;:&quot;request-review&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:0,&quot;state&quot;:&quot;DONE&quot;,&quot;step_type&quot;:&quot;user_input&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;{\&quot;verdict\&quot;:\&quot;first&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\&quot;,\&quot;reason\&quot;:\&quot;第一份报告切中“深度研究&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;（Deep Research）”&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;的核心概&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;念，深入剖析了端&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;到端强化学习、&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;多智能体并行（指挥家-演奏家）与&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;松耦合检索三类底&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;层架构的因果权衡&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;（如耗时&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;、Token成本与研究深度的制&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;约关系），并针对&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;不同专业&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;场景给出了明确的&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;选型判断。第二份&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;报告在&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;核心研究对象上出现严重偏&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;差（将ChatGPT的普&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;通联网搜索ChatGPT S&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;earch误作D&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;eep Research进行对比&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;，且将DeepSeek误归入Moonshot旗下），&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;且仅停留于表面功能特性的罗列，未能就“哪家最好”给出有深度的分析&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;与明确结论。\&quot;}&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;DONE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\n&quot;,&quot;duration_seconds&quot;:11.206161,&quot;usage&quot;:{&quot;input_tokens&quot;:28577,&quot;output_tokens&quot;:509,&quot;thinking_tokens&quot;:358,&quot;cache_read_tokens&quot;:0,&quot;total_tokens&quot;:29086}}}
+{&quot;event&quot;:&quot;result&quot;,&quot;result&quot;:{&quot;conversation_id&quot;:&quot;cc12279b-945a-417b-8a15-90a785b0ee51&quot;,&quot;status&quot;:&quot;SUCCESS&quot;,&quot;response&quot;:&quot;{\&quot;verdict\&quot;:\&quot;first\&quot;,\&quot;reason\&quot;:\&quot;第一份报告切中“深度研究（Deep Research）”的核心概念，深入剖析了端到端强化学习、多智能体并行（指挥家-演奏家）与松耦合检索三类底层架构的因果权衡（如耗时、Token成本与研究深度的制约关系），并针对不同专业场景给出了明确的选型判断。第二份报告在核心研究对象上出现严重偏差（将ChatGPT的普通联网搜索ChatGPT Search误作Deep Research进行对比，且将DeepSeek误归入Moonshot旗下），且仅停留于表面功能特性的罗列，未能就“哪家最好”给出有深度的分析与明确结论。\&quot;}\n&quot;,&quot;duration_seconds&quot;:11.223541,&quot;num_turns&quot;:1,&quot;usage&quot;:{&quot;input_tokens&quot;:28577,&quot;output_tokens&quot;:509,&quot;thinking_tokens&quot;:358,&quot;cache_read_tokens&quot;:0,&quot;total_tokens&quot;:29086}}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

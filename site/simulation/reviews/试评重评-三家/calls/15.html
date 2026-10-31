@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟评审 试评重评 三家 第 15 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟评审 试评重评 三家第 15 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这次评审</a>
+    <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 15 次调用</p>
+    <h1 class="heading-3">评审 · 断言核验：报告 D，只给材料，评委 2</h1>
+    <p class="body-3 lede">OpenAI（codex），命令行默认模型，只给材料，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟评审 试评重评 三家的第 15 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-断言核验：报告 D，只给材料，评委 2</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">OpenAI（codex）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 23:50:59.197（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 23:52:15.648（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">76.45 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>31a468141e2dacad0051a97d8a713e638841cd5bfed743171e5738ba6a57df01</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>f63d3082f4f88bba41b20a79a0e0e3bfacb9df46766ddb38e14a947ecaad6d6e</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/codex exec --json --output-last-message /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpwv_ubqr8/last-message.txt --cd /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpwv_ubqr8/work --ephemeral --skip-git-repo-check --ignore-user-config --ignore-rules --sandbox read-only -c approval_policy=&quot;never&quot; --disable shell_tool --disable unified_exec -c web_search=&quot;disabled&quot; -</code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 15 行，记录里的序号是 15</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="14.html">上一次调用</a></li><li><a class="caption-1" href="16.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 31143 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 31143 字，点开看全文</summary><pre class="raw" id="prompt">
+你在一项深度研究报告评测的模拟评审中担任核验员，负责&quot;断言核验&quot;。
+
+下面先给出材料：评审细则、题目卡，以及从一份报告中列出的几条主要结论。结论清单由另一位清单员按细则第五节的规则列出，所有核验员共用。本任务只用这些材料：不能上网，不能运行命令，不能读写文件。所引网页的内容，用主办方的网页存档（运行后取回、按校验值保存的副本）。截止时间是 2026-03-03，判断对错和时效，以截至这一天已经存在的信息为准。
+
+===== 评审细则（开始） =====
+# 评审细则（第 1.2 版）
+
+2026-10-29。这是第四阶段方案（`stage4-design.md`）的操作版本，写给评委看，评委按它判定。第五阶段的小规模检验用的是第一版；检验之后改了两处，即第五节的结论清单和第七节第 2 条，改动的原因见 `stage5-report.md` 第三节。
+
+2026-10-30 第 1.2 版：第四节加了深度地图标注的用法和判定时隐去出处；有争议标注的计分规则见第四节末尾。起因是出题手册审阅时提出的问题：深度地图的定位不清，出题人不知道写到什么程度为止。第 1.2 版的改动还没有检验。
+
+---
+
+## 一、评委需要知道的定义
+
+**调研。** 为了回答提问者的一个具体问题，以截至某一时间点已经存在的信息为材料，系统地查找、甄别、分析和整合，得出有理有据的结论。结论可以是描述、解释、预测或建议，但都要讲得出道理、拿得出依据。
+
+**深。** 指调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。全体，是事情的历史和全部现状；本质，是事情的性质，以及这件事与其他事情之间的内在联系。材料的丰富是深的基础，但材料多本身不等于深。
+
+**不看的东西。** 篇幅、格式、标题层级、表格多少、引用条数、文笔，都不进入名次。写作只在第六节单独评。
+
+---
+
+## 二、环节评级（每个环节三档：0、1、2）
+
+每个评级都必须引用报告原文一到两句作为依据。原文中找不到依据时，按较低的一档评。
+
+**① 切题与真实需要**
+
+- 0：答的是另一个问题；或者只按字面回答，没有交代自己怎样理解问题和提问者的需要。
+- 1：回答了所问的问题，并写明了自己的理解或假设。
+- 2：在 1 的基础上，审视了问题的前提或其中概念的边界，例如&quot;最好&quot;按什么标准、某个概念包括哪些范围，并据此组织回答。
+
+**③ 查找过程的交代**
+
+- 0：没有交代查了什么、怎么查的。
+- 1：交代了来源的大致范围或类型。
+- 2：交代了查找的范围、方法和局限：查了哪些，没查到什么，为什么。
+
+**④ 甄别来源与处理矛盾**
+
+- 0：不加区分地使用来源；遇到相互矛盾的信息，不处理或没有发现。
+- 1：对来源有所区分，例如区分官方材料和二手评论，但对矛盾的处理不足。
+- 2：说明来源的可靠程度，主动指出相互矛盾的信息，并给出取舍的理由。
+
+**⑤ 分析**（区分事实和判断、考虑其他解释、不迎合）
+
+- 0：事实和判断混在一起；只有一种解释；结论迎合提问者或某一方。
+- 1：大体分开了事实和判断，推理基本清楚。
+- 2：明确区分事实和判断；考虑过其他解释或反例，并说明取舍；没有为了迎合而扭曲结论。
+
+**⑦ 结论与把握**
+
+- 0：结论含糊或回避判断，例如只说&quot;各有所长&quot;而不给出可用的判断；或者下了判断，但完全不说明把握。
+- 1：给出了明确的结论，但没有说明把握程度，或者把握说明流于形式。
+- 2：结论具体、明确，并如实说明各个结论有多大把握、依据是什么。
+
+**关于&quot;查不到&quot;。** 报告说&quot;查不到&quot;&quot;无法确定&quot;时，交代了查了什么、缺什么，并且仍然给出带把握说明的判断，算诚实；只说&quot;无法确定&quot;而不给可用的判断，算回避，在 ⑦ 中按 0 评。
+
+---
+
+## 三、要点抽取
+
+**要点**是报告中一条独立的、有实质内容的认识，例如一个事实、一个解释、一个判断、一条建议。
+
+- 同一个意思写了几遍，只算一条。
+- 只是罗列名字、没有说出任何认识的，不算要点。
+
+每条要点记下：
+
+- **内容**：一句话概括；
+- **层级**：现象、全体、内部联系、本质，四选一，定义见下；
+- **原文**：报告中的一句原话。
+
+**层级的定义：**
+
+- **现象**：事情本身的事实和表面特征。例如&quot;某产品于某日发布&quot;&quot;某产品支持上传文件&quot;。
+- **全体**：事情的历史，即怎样演变而来；或者全部现状，特别是容易被忽略的方面、例外和反例。例如&quot;这类功能从 2024 年底的首个产品发展到 2025 年各家跟进，期间定义发生了什么变化&quot;&quot;某产品在中文资料上的表现与英文不同&quot;。
+- **内部联系**：这件事与其他事情之间的因果、制约、依赖关系。例如&quot;某产品报告质量高，是因为它把检索和写作交给不同的子智能体，代价是用时更长&quot;。
+- **本质**：事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。例如&quot;&#x27;哪家最好&#x27;没有脱离用途的答案，因为各产品优化的目标不同：有的优化引用透明度，有的优化报告的完整性&quot;。
+
+**判定层级时的提醒。** 抽象的套话不算&quot;本质&quot;，例如&quot;技术在不断进步&quot;&quot;各有所长&quot;。一条要点只有说出了具体的性质或联系，并且能在报告中找到支撑，才能定为内部联系或本质。
+
+---
+
+## 四、要点池的判定
+
+把所有报告和出题人深度地图中的要点合并，意思相同的合成一条，再对每条池中要点判定四件事：
+
+1. **对不对。** 截至题目卡规定的截止时间，这条认识是否正确。标为正确、有误或无法判断，并附依据：来源网址或理由。
+2. **切不切题。** 它是否有助于回答提问者的问题。标为切题或不切题。不切题的要点不计分。
+3. **层级。** 现象、全体、内部联系、本质，四选一。以池中判定为准，不受抽取时所标层级的约束。
+4. **重要性。** 核心或一般。核心，指回答这个问题不能缺少的认识。
+
+然后记下每份报告写到了哪些池中要点，写对了还是写错了。
+
+**深度地图的标注（第 1.2 版）。** 深度地图是出题人在看到任何报告之前预先登记的浅答案、转折点和核心要点。它不是标准答案：地图上没有、但正确又切题的要点同样计分；要点的对错一律按来源判定。
+
+1. 地图上已有的要点，以地图登记的层级和重要性为默认值。评委组改动，必须依据来源或第三节的定义写明理由。
+2. 地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告。判为核心的，列入人工审计。
+3. **有争议的标注**，指评委组判定时没有一种意见达到三分之二的层级或重要性判定，以及评委组改动过的地图标注。计分时，比较一对报告，每条有争议的要点都按对领先一方最不利的那种标注计分，再做分开检验。有争议的判定只能让一对报告并列，不能把它们拉开。
+4. 估计名次把握的重抽样，只在至少一份报告写到的要点中进行。这样，地图上写了而没有一份报告写到的要点，对名次的影响为零。
+
+在第五阶段的试评数据上核对过两件事（2026-10-30）：去掉地图上 2 条没有一份报告写到的要点，6 份报告的净分和名次完全不变；把地图上 8 条要点的重要性全部反过来，名次不变。把全部 122 条要点的重要性抹平，原来分开的 12 对中有 1 对变成分不开。
+
+---
+
+## 五、断言核验
+
+**主要结论**，指报告摘要或结论部分中的判断，以及正文中支撑这些判断的关键事实。
+
+**结论清单（第 1.1 版）。** 凡是带来源的结论全部列入，另加至多 10 条不带来源的主要结论，优先抽对提问者影响最大的。清单由一人按这条规则抽出，所有核验员使用同一份清单。另外，在清单中标出至多 3 条&quot;对题目的直接回答&quot;，即报告对所问问题的总体判断。
+
+（第一版是每份报告由核验员自己抽出至多 10 条。不同核验员抽的不同，会带来噪声。）
+
+每条主要结论记两类标签。
+
+**来源标签：**
+
+- **支持**：打开所引来源（或它的存档），来源确实支持这条结论；
+- **部分支持**：来源支持其中一部分，或者结论说得比来源更强；
+- **不支持**：来源存在，但不支持这条结论；
+- **失效但有存档**：链接打不开，但网页存档中能找到，并据存档判断支持与否（另外记下支持与否）；
+- **找不到（疑似编造）**：链接打不开，存档中也没有，按标题检索也找不到；
+- **没有出处**：这条结论没有给出来源，或者导出时来源丢失。
+
+**对错标签：** 不管有没有来源，都独立检索核对，截至截止时间这条结论是否正确：
+
+- **正确**
+- **有误**：附依据
+- **无法判断**
+
+**来源只列在文末的情况。** 报告只在文末列出来源，没有对应到具体结论时，核验者在所列来源中查找支持：找到的，记为相应的来源标签，并注明&quot;文末来源&quot;；找不到的，记为没有出处。
+
+**&quot;疑似编造&quot;要经第二次核查才算确认。** 第二次核查可以换一种检索方式，或者查同一网站的其他页面。
+
+**时效（②）**，三档：
+
+- 0：主要结论依赖已经过时的信息，截止时间之前已有更新的信息被忽略；
+- 1：大体是新的，但有个别重要信息过时；
+- 2：材料截至规定的时间点，并且足够新。
+
+---
+
+## 六、写作（二级，单独报告，不进入名次）
+
+- 0：难以读懂，或结构混乱；
+- 1：能读懂，结构基本清楚；
+- 2：清楚、简洁，主要结论在前。
+
+---
+
+## 七、硬伤
+
+下列四种，有任何一种，报告就排在所有没有硬伤的报告之后：
+
+1. **编造来源**：经第二次核查确认，至少一个来源是编造的；
+2. **直接回答与证据相反**：报告对题目的直接回答（结论清单中标出的至多 3 条），至少一条被截止时间之前可靠的证据明确否定。支撑性事实的错误不算硬伤，在深度净分中扣分（第一版是&quot;至少一条核心的主要结论&quot;，结果长报告几乎都被判了硬伤）；
+3. **答非所问**：报告回答的是另一个问题；
+4. **全篇没有可追溯的出处**：经过补救，仍然没有一个可以追溯的来源。
+
+格式、篇幅、文笔，永远不算硬伤。
+===== 评审细则（结束） =====
+
+===== 题目卡（开始） =====
+一、评委版（只给评委）
+【提问者】原题没有写明。按&quot;一位想选用深度研究产品的普通用户&quot;理解。
+【用途】原题没有写明。按&quot;帮助决定用哪一家&quot;理解。
+【问题】各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+【截止时间】只使用截至 2026-03-03 已经公开的信息。这一天是试评报告的生成日期，判断对错和时效以截至这一天已经存在的信息为准。
+
+二、提问版（交给智能体）
+（原题没有提问版。试评的六份报告当时收到的只有问题本身，见裸题版。）
+
+三、裸题版（交给智能体）
+各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+
+四、附在提问版和裸题版之后，一字不改
+
+（原题没有附交付要求和说明：试评的六份报告生成在交付要求定稿之前。）
+
+说明：这道题取自第五阶段小规模检验，原件是 research-plan/stage5-pilot/question-card.md。原始题目文本没有保存，上面的问题是根据六份报告的标题和开头还原的，所以不是按基础级规则写的题目卡：提问者和用途是评委的理解，裸题版也是还原的文字，不一定与当时交给各个产品的逐字相同。这里按出题手册第八节模板的四个部分重写，内容与原件相同，供模拟评审程序读取。
+===== 题目卡（结束） =====
+
+===== 主要结论（只给材料）（开始） =====
+[c1] 结论：深度研究通过自主规划、多步检索、阅读、反思和推演，将碎片信息合成为带引文的专业报告。
+原文：“深度研究的核心机制在于其复杂的多步工作流：系统首先将用户的模糊提示词转化为多节点的个性化研究计划，随后通过自主调用工具在广袤的公共互联网或企业私有数据库中进行迭代式搜索、阅读、自我反思与逻辑推演，最终将海量碎片化信息合成为具备严密引文支持的长篇专业报告 。”
+报告标的来源：ChatGPT Deep Research: Guide to AI Agents &amp; RAG - IntuitionLabs.ai；Gemini Deep Research Agent | Gemini API | Google AI for Developers
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c2] 结论：深度研究的响应时间可由传统对话的数秒延长至数分钟乃至数小时。
+原文：“在深度研究任务中，模型的响应延迟从传统对话的数秒钟延长至数分钟乃至数小时 。”
+报告标的来源：Deep research in ChatGPT | OpenAI Help Center；Gemini Deep Research Agent | Gemini API | Google AI for Developers
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c3] 结论：ChatGPT在2026年初升级了深度研究，支持执行前澄清问题及动态编辑研究计划。
+原文：“其最显著的变化在于引入了高度交互的研究计划阶段，模型在执行长程任务前会主动向用户提出澄清性问题，并生成一份可视化的、可动态编辑的研究大纲，确保最终报告不偏离用户的核心约束条件 。”
+报告标的来源：Deep research in ChatGPT | OpenAI Help Center；ChatGPT — Release Notes - OpenAI Help Center
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c4] 结论：ChatGPT结合GPT-5.2及o系列模型，在跨学科复杂定性问题的合成能力上达到行业标杆水平。
+原文：“结合最新部署的GPT-5.2模型及o系列推理模型，ChatGPT在处理需要跨学科知识融合的复杂定性问题时展现出了行业标杆级别的合成能力 。”
+报告标的来源：AI Tools Comparison: ChatGPT, Claude, and Perplexity in 2026 - ClickForest；ChatGPT Deep Research: Guide to AI Agents &amp; RAG - IntuitionLabs.ai
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c5] 结论：ChatGPT深度研究分完整版与轻量版，前者可能耗时近三十分钟，后者数分钟。
+原文：“完整版研究可能耗时近三十分钟，模型会进行极深层次的知识检索与反思；而轻量版则在数分钟内提供结构化概述 。”
+报告标的来源：Deep research in ChatGPT | OpenAI Help Center；ChatGPT — Release Notes - OpenAI Help Center
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c6] 结论：ChatGPT的优势是文本连贯性、逻辑推演、复杂概念解释及战略报告写作。
+原文：“ChatGPT架构的优势在于其无与伦比的文本连贯性与深度逻辑推演能力，特别是在复杂概念的解释与战略级报告的撰写上，其输出质量高度拟人化 。”
+报告标的来源：AI Tools Comparison: ChatGPT, Claude, and Perplexity in 2026 - ClickForest；ChatGPT vs Perplexity AI: Which AI Is Right for You in 2026? - Coursiv
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c7] 结论：ChatGPT的深度反思机制使其在海量高频实时数据抓取上不及专用搜索智能体敏捷。
+原文：“然而，这种深度反思机制也导致其在面对海量高频的实时数据抓取时，敏捷度不及专用的搜索智能体。”
+报告标的来源：ChatGPT vs Perplexity AI: Which AI Is Right for You in 2026? - Coursiv；Perplexity vs ChatGPT: Which is Better in 2026 - GuruSup
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c8] 结论：OpenAI在2026年开始于免费及入门订阅层级测试广告，并声称广告独立于生成内容。
+原文：“此外，为应对高昂的推理成本，OpenAI在2026年开始在免费及入门订阅层级中测试广告植入，尽管其声称广告独立于生成内容，但这标志着算力成本对产品形态的深刻影响 。”
+报告标的来源：ChatGPT — Release Notes - OpenAI Help Center
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c9] 结论：Gemini Deep Research在2026年依托Gemini 3.1 Pro确立了企业长文档处理的统治地位。
+原文：“Google的Gemini Deep Research在2026年依托Gemini 3.1 Pro模型确立了其在企业级长文档处理领域的统治地位。”
+报告标的来源：Gemini Deep Research — your personal research assistant；Google AI Pro &amp; Ultra — get access to Gemini 3.1 Pro &amp; more
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c10] 结论：Gemini通常具备百万Token上下文，可一次摄入一千五百页文本或三万行代码。
+原文：“Gemini架构的最核心技术壁垒在于其庞大的上下文窗口（普遍达到一百万Token，测试版甚至更高），这使得模型能够一次性摄入高达一千五百页的文本或三万行代码 。”
+报告标的来源：Gemini Deep Research — your personal research assistant；Google AI Pro &amp; Ultra — get access to Gemini 3.1 Pro &amp; more
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c11] 结论：Gemini的长上下文减少了对RAG分块及截断的依赖，从而避免跨文档逻辑关联丢失。
+原文：“在深度研究场景下，这意味着Gemini不需要像其他模型那样频繁依赖检索增强生成（RAG）中的向量分块与截断，从而避免了跨文档逻辑关联的丢失。”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c12] 结论：Gemini可在一次研究任务中交叉检索公共网页、Gmail及Google Drive。
+原文：“模型可以在一次研究任务中，同时检索公共网页的行业动态、用户Gmail中的历史沟通记录以及Google Drive中的内部财务报表，进行交叉比对与综合分析 。”
+报告标的来源：Gemini Deep Research — your personal research assistant
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c13] 结论：Gemini以异步任务管理器维护规划和执行模型的共享状态，并能在子查询失败后恢复任务。
+原文：“由于单次深度研究可能包含成百上千次模型调用并耗时数十分钟，该管理器在规划模型与任务执行模型之间维护了一个共享状态；一旦某个子查询失败，系统能够优雅地进行错误恢复，而无需重启整个长达数十分钟的进程 。”
+报告标的来源：Gemini Deep Research Agent | Gemini API | Google AI for Developers
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c14] 结论：Gemini研究报告可转为Canvas交互面板或音频概述。
+原文：“生成的报告可以直接输出至Gemini Canvas转化为交互式数据面板，或转换为音频概述（Audio Overviews），极大丰富了研究成果的消费形态 。”
+报告标的来源：Gemini Deep Research — your personal research assistant；Try Deep Research and our new experimental model in Gemini, your AI assistant
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c15] 结论：Claude Opus 4.6及Sonnet 4.5在长程自主任务和复杂工程研究中具有无可争议的领先地位。
+原文：“Anthropic通过Claude Opus 4.6和Sonnet 4.5在长程自主任务和极度复杂的工程级研究中确立了无可争议的领先地位。”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；2026 Agentic Coding Trends Report - Anthropic
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c16] 结论：Claude以Agent Teams和Cowork支持多个角色在同一代码库或文档库并行工作、交叉审查。
+原文：“其核心功能通过“智能体团队（Agent Teams）”和Cowork协作空间展现，允许用户实例化多个具备特定角色的AI实例（如前端开发智能体、后端逻辑验证智能体、测试编写智能体）在同一代码库或文档库中并行工作、交叉审查 。”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；What&#x27;s new in Claude 4.6 - Claude API Docs；Anthropic&#x27;s Explosive Start to 2026: Everything Claude Has Launched (And Why It&#x27;s Shaking Up the Entire Tech World) | by Fazal
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c17] 结论：Claude Opus 4.6的自适应思考可根据任务难度动态调整思维链深度。
+原文：“Claude Opus 4.6引入了革命性的“自适应思考（Adaptive Thinking）”模式，模型能够根据任务的难度动态调整其思维链的深度，从而在计算成本与输出质量之间取得最优解 。”
+报告标的来源：What&#x27;s new in Claude 4.6 - Claude API Docs；Introducing Claude Opus 4.6 - Anthropic
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c18] 结论：Claude通过上下文压缩总结早期步骤与决策，避免长程任务上下文溢出并保持目标记忆。
+原文：“在长达数小时的单一任务流中，模型会自动总结和浓缩早期的执行步骤与设计决策，从而避免上下文窗口溢出，并保持对全局目标的清晰记忆 。”
+报告标的来源：What&#x27;s new in Claude 4.6 - Claude API Docs；Introducing Claude Opus 4.6 - Anthropic
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c19] 结论：Claude Opus 4.6可连续自主执行14.5小时而不丢失逻辑连贯性，是截至2026年初已知最长纪录。
+原文：“测试表明，Claude Opus 4.6能够维持长达14.5小时的自主任务执行而不丢失逻辑连贯性，这是截至2026年初行业内已知运行时间最长的自主智能体记录 。”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；Measuring AI agent autonomy in practice - Anthropic；2026 Agentic Coding Trends Report - Anthropic
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c20] 结论：Claude被集成进斯坦福Biomni平台，可自主使用数百个数据库和软件包，将数月研究缩短至数小时。
+原文：“在生物医学等垂直领域，Claude甚至被整合进斯坦福大学的Biomni平台，作为通用生物医学智能体自主导航于数百个割裂的数据库和软件包中，将数月的研究周期压缩至数小时 。”
+报告标的来源：How scientists are using Claude to accelerate research and discovery - Anthropic
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c21] 结论：Perplexity把事实准确性、引文透明度、检索和交叉验证作为深度研究的核心。
+原文：“面对大模型普遍存在的幻觉问题，Perplexity并不追求在创造性文本生成上的优势，而是将算力倾注于信息的检索、交叉验证与可追溯性上 。”
+报告标的来源：Introducing Perplexity Deep Research；AI Tools Comparison: ChatGPT, Claude, and Perplexity in 2026 - ClickForest
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c22] 结论：Perplexity在2026年于Max层级推出Comet Browser Agent。
+原文：“2026年，Perplexity在其Max订阅层级中推出了Comet Browser Agent。”
+报告标的来源：Introducing Perplexity Max；Perplexity Pro vs Max Features 2026: Ultimate Comparison
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c23] 结论：Comet能解析复杂网页DOM、自主登录动态仪表盘、抓取JavaScript框架中的数据及模拟注册流程。
+原文：“它能够自主登录动态仪表盘、抓取嵌套在复杂JavaScript框架下的数据、甚至模拟用户走查竞争对手的注册入网流程以评估摩擦点 。”
+报告标的来源：Perplexity Pro vs Max Features 2026: Ultimate Comparison；Introducing Perplexity Max
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c24] 结论：Perplexity Spaces能将深度研究严格限制在用户圈定的可信来源内，彻底排除外部无关数据污染。
+原文：“此外，Perplexity的Spaces功能允许用户将特定的PDF文件、网页链接和本地数据圈定在一个独立的研究空间内，模型在进行深度研究时将严格受限于这些可信信息源，从而彻底排除了外部无关数据的污染 。”
+报告标的来源：Perplexity Pro；What&#x27;s New in Advanced Deep Research | Perplexity Help Center
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c25] 结论：在优先考虑事实准确性及可验证性的研究中，Perplexity Max是无可争议的最佳选择。
+原文：“首先，对于那些将**“事实的准确性”与“数据的可验证性”置于最高优先级**的用户（如金融量化分析师、法律合规审核员、硬新闻记者），**Perplexity Max**是当前无可争议的王者 。”
+报告标的来源：Perplexity vs ChatGPT: Which is Better in 2026 - GuruSup；Perplexity vs ChatGPT: The Ultimate AI Showdown in 2026 - ClickRank AI；ChatGPT vs Perplexity AI: Which AI Is Right for You in 2026? - Coursiv
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c26] 结论：Kimi K2.5通过PARL构建了业内首个成熟的智能体集群架构。
+原文：“Kimi K2.5通过引入“并行智能体强化学习（PARL）”，构建了业内首个成熟的**智能体集群（Agent Swarm）**架构 。”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face；Kimi AI with K2.5 | Visual Coding Meets Agent Swarm
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c27] 结论：Kimi的编排器可动态生成多达100个子智能体，并发执行超过1500次工具调用和网页抓取。
+原文：“当Kimi接收到一个宏大的研究指令（例如“提取并分析全球100个不同细分赛道中排名前三的视频创作者的变现策略”）时，其中心编排器（Orchestrator）会将任务解耦，并瞬间动态生成多达100个专属子智能体。这些子智能体并发执行超过1500次工具调用和网页抓取，最终由编排器聚合结果 。”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face；Kimi AI with K2.5 | Visual Coding Meets Agent Swarm
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c28] 结论：Kimi的并行机制避免串行崩溃，将复杂研究耗时缩短80%，速度提高至单智能体的4.5倍。
+原文：“这种并行机制不仅避免了“串行崩溃（Serial Collapse）”，还将极端复杂研究任务的端到端执行时间缩减了百分之八十，整体执行速度相比单智能体模型提升了4.5倍 。”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face；Kimi AI with K2.5 | Visual Coding Meets Agent Swarm
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c29] 结论：Kimi K2.5使用15万亿文本与视觉混合Token预训练，具备原生多模态架构。
+原文：“此外，Kimi K2.5是一套原生的多模态架构，底层预训练融合了15万亿的文本与视觉混合Token。”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face；Kimi K2.5: Complete Guide to Moonshot&#x27;s AI Model | Codecademy
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c30] 结论：Kimi深度研究可解析网页UI、财务图表和视频工作流，实现跨模态合成。
+原文：“这意味着Kimi的深度研究智能体不仅能阅读文本，还能直接解析网页的UI设计图、复杂的财务数据图表甚至视频工作流，实现了真正意义上的跨模态信息合成 。”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face；Kimi K2.5: The Future of Native Multimodal Agentic AI | Moonshot AI - Vertu
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c31] 结论：DeepSeek V3.2及R系列以极低成本实现与国际顶尖模型持平甚至超越的深度研究能力。
+原文：“DeepSeek V3.2及其相关的推理模型（R系列）在2026年展示了如何通过底层架构的极致优化，在极低计算成本下实现与国际最顶尖模型持平甚至超越的深度研究能力。”
+报告标的来源：DeepSeek-V3.2 Matches GPT-5 at 10x Lower Cost | Introl Blog；The Ultimate DeepSeek Guide: Mastering the AI Landscape in 2026
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c32] 结论：DeepSeek V3.2的技术突破源于mHC与DSA结合，重构万亿参数模型的信息流效率并降低先进芯片依赖。
+原文：“其技术突破源于一种被称为“流形约束超连接（mHC）”的新型训练方法，结合DeepSeek稀疏注意力（DSA）机制，彻底重构了万亿参数模型内部信息流转的效率 。这使得模型在规模扩张时不仅保持了极高的训练稳定性，还有效规避了对先进芯片暴力的算力依赖 。”
+报告标的来源：DeepSeek AI training breakthrough in 2026: New method for scaling large language models；Introducing DeepSeek-V3.2-Exp
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c33] 结论：DeepSeek V3.2集成工具使用中的思考，在工具调用前推理并在反馈后验证研究目标的一致性。
+原文：“在深度研究功能层面，DeepSeek V3.2深度集成了“工具使用中的思考（Thinking in Tool-Use）”机制。模型在调用外部数据接口或执行代码前，会先生成详细的内部推理路径，并在获取外部反馈后，运用严密的逻辑来验证结果是否与研究目标一致 。”
+报告标的来源：DeepSeek-V3.2 Matches GPT-5 at 10x Lower Cost | Introl Blog；DeepSeek Update: what changed, what&#x27;s new, and why it matters - CometAPI
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c34] 结论：DeepSeek在数学证明、结构化复杂报告及算法代码研究中具有统治力，输出连贯且精练。
+原文：“DeepSeek尤其在数学定理证明、高度结构化的复杂报告生成以及算法级代码研究中表现出非凡的统治力 。其输出风格被广泛评价为极度连贯、结构清晰且没有冗余的废话 。”
+报告标的来源：The Ultimate DeepSeek Guide: Mastering the AI Landscape in 2026；Complete Free Guide 2026 | DeepSeek R1 &amp; V3 Tutorial | YUV.AI
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c35] 结论：DeepSeek以MIT协议开放权重及低价推理，成为本地部署和定制深度研究管道的首选底座。
+原文：“更重要的是，DeepSeek采用了开源策略（基于MIT协议发布权重），并彻底击穿了高端推理模型的定价底线，使其成为无数企业和开发者在本地部署或构建定制化深度研究数据管道时的首选底座 。”
+报告标的来源：DeepSeek；DeepSeek-V3.2 Matches GPT-5 at 10x Lower Cost | Introl Blog；Introducing DeepSeek-V3.2-Exp
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c36] 结论：BrowseComp衡量智能体在复杂互联网环境中定位、提取及整合隐蔽信息的能力。
+原文：“BrowseComp基准测试旨在衡量AI智能体在充满噪音和动态变化的互联网环境中，定位、提取并整合“极其隐蔽、嵌套极深的信息”的能力。”
+报告标的来源：BrowseComp: a benchmark for browsing agents - OpenAI
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c37] 结论：BrowseComp-Plus采用人工验证的固定语料库和困难负样本，排除实时网络波动并评估检索、引文及综合能力。
+原文：“其升级版BrowseComp-Plus采用了经过人工验证的固定语料库和经过挖掘的极具挑战性的负面样本，从而排除了实时网络波动的干扰，精准评估模型在检索、引文准确性及信息综合方面的真实实力 。”
+报告标的来源：BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent - NeurIPS
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c38] 结论：Claude Opus 4.6多智能体框架在BrowseComp-Plus得分86.8%，为行业最高，报告将其归因于上下文压缩和多角色验证。
+原文：“| **Claude Opus 4.6 (结合多智能体框架)** | 86.8%                    | 行业绝对最高分。证明了在长程复杂检索中，基于Context Compaction的记忆保持与多角色Agent交叉验证能有效过滤网页噪音。 |”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；What&#x27;s new in Claude 4.6 - Claude API Docs
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c39] 结论：Kimi K2.5 Agent Swarm在BrowseComp-Plus得分78.4%，报告将高召回率归因于百级并发。
+原文：“| **Kimi K2.5 (Agent Swarm)**            | 78.4%                    | 得益于PARL架构下的百级并发能力，Kimi在极短时间内遍历海量节点，大幅提升了“大海捞针”式线索的召回率。 |”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c40] 结论：GPT-5.2 Deep Research在BrowseComp-Plus得分59.2%至71.3%，处理干扰信息时偶尔陷入逻辑死锁。
+原文：“| **GPT-5.2 (Deep Research)**            | 59.2% ~ 71.3%            | 展现了单体模型依靠深度反思和连续思维链所能达到的极限，但在处理大量无关干扰信息时偶尔会陷入逻辑死锁。 |”
+报告标的来源：BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent - NeurIPS；AI Model Benchmarks Feb 2026 | Compare GPT-5, Claude 4.5, Gemini 2.5, Grok 4
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c41] 结论：Gemini 3 Pro在BrowseComp-Plus得分59.2%至63.2%，复杂多步搜索策略效率低于专用多智能体框架。
+原文：“| **Gemini 3 Pro**                       | 59.2% ~ 63.2%            | 虽然拥有百万级上下文，但在主动制定复杂多步跳跃式搜索策略时，效率低于专用的多智能体框架。 |”
+报告标的来源：BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent - NeurIPS；AI Model Benchmarks Feb 2026 | Compare GPT-5, Claude 4.5, Gemini 2.5, Grok 4
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c42] 结论：Onyx Deep Research在BrowseComp-Plus得分54.54%，是2026年2月领先的MIT开源深度研究项目。
+原文：“| **Onyx Deep Research (开源基准)**      | 54.54%                   | 2026年2月新晋的开源深度研究王者（MIT协议），为开发者提供了优秀的本地化部署起点。 |”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c43] 结论：DeepSeek V3.2在BrowseComp-Plus得分32.5%至50%，内置抓取工具鲁棒性较弱，更适合处理干净语料。
+原文：“| **DeepSeek V3.2**                      | 32.5% ~ 50%              | 尽管逻辑推理能力极强，但其配套的内置网络抓取工具的鲁棒性略逊于西方顶流，更适合在给定干净语料后进行深度推演。 |”
+报告标的来源：BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent - NeurIPS；AI Model Benchmarks Feb 2026 | Compare GPT-5, Claude 4.5, Gemini 2.5, Grok 4
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c44] 结论：GAIA评估浏览器、代码解释器及多模态工具的综合决策，SWE-bench评估真实代码库Issue修复。
+原文：“GAIA基准测试评估模型在使用网络浏览器、代码解释器和多模态工具时的综合决策能力；而SWE-bench则专门评估模型自主阅读复杂代码库并解决真实GitHub历史Issue的能力 。”
+报告标的来源：GAIA Leaderboard - a Hugging Face Space by gaia-benchmark；2025-2026 AI Computer-Use Benchmarks &amp; Top AI Agents Guide | Articles | o-mega
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c45] 结论：GPT-5及o3系列的GAIA成绩超过90.37%，报告认为该基准基本被解决。
+原文：“基准测试的深层洞察表明，截至2026年，大语言模型在解决传统单一路径问题上已趋于饱和（例如GAIA测试中GPT-5系列已突破90%的大关，宣告该基准基本被解决） 。”
+报告标的来源：The 2026 Agentic Singularity: GAIA 90%+, SWE-bench 74%, and the Death of the Cost Barrier : r/aiagents - Reddit；GAIA Leaderboard - a Hugging Face Space by gaia-benchmark
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c46] 结论：报告所列SWE-bench Verified成绩分别为Opus 4.6的80.8%、GPT-5及o3系列的65.0%、Gemini系列的53.6%、Kimi K2.5的76.8%。
+原文：“| **SWE-bench Verified (真实代码修复)** | **80.8% (Opus 4.6)**        | 65.0%          | 53.6%            | 76.8%                 | 优秀 (在基础算法重构表现突出) |”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；moonshotai/Kimi-K2.5 - Hugging Face；AI Model Benchmarks Feb 2026 | Compare GPT-5, Claude 4.5, Gemini 2.5, Grok 4；2025-2026 AI Computer-Use Benchmarks &amp; Top AI Agents Guide | Articles | o-mega
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c47] 结论：报告称Claude的Terminal-Bench成绩最高，GPT-5及o3系列为43.8%，Kimi和DeepSeek未参加专项评估。
+原文：“| **Terminal-Bench (运维系统交互)**     | **最高**                    | 43.8%          | 缺乏有效对比数据 | 未参与专项评估        | 未参与专项评估                |”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；2025-2026 AI Computer-Use Benchmarks &amp; Top AI Agents Guide | Articles | o-mega
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c48] 结论：报告称Claude在GDPval-AA领先GPT-5.2共144 Elo积分，Kimi办公分析效能提升43.7%。
+原文：“| **GDPval-AA (高价值经济知识工作)**    | **领先GPT-5.2 144 Elo积分** | 行业标杆级表现 | 行业标杆级表现   | 办公分析效能提升43.7% | 极致性价比选项                |”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；moonshotai/Kimi-K2.5 - Hugging Face；Kimi K2.5: Complete Guide to Moonshot&#x27;s AI Model | Codecademy
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c49] 结论：Claude 4.6凭借针对智能体编码优化的架构、自主调试及审错能力，在工程研究中取得霸主地位。
+原文：“Anthropic的Claude 4.6凭借其专为Agentic编码优化的架构，不仅能编写代码，还能自主运行调试并审查自身错误，从而在这一领域确立了霸主地位 。”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；2026 Agentic Coding Trends Report - Anthropic
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c50] 结论：研究人员用自动检测工具在ICLR 2026投稿中发现五十余处人类专家未察觉的严重AI幻觉。
+原文：“在2026年的ICLR（国际学习表征会议）上，研究人员利用自动化幻觉检测工具，从正在进行同行评审的学术论文中找出了超过五十处连人类专家都未曾察觉的严重AI幻觉，这一事件在学术界引发了巨大震动 。”
+报告标的来源：GPTZero finds over 50 new hallucinations in ICLR 2026 submissions
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c51] 结论：报告称OpenAI于2026年初发布未经同行评审的报告，将幻觉归因于鼓励猜测而惩罚承认未知的训练和评估激励。
+原文：“OpenAI在2026年初发布的未经同行评审的学术报告深刻揭示了幻觉的系统性根源。研究指出，模型产生幻觉并非单纯的代码缺陷或数据噪声，而是当前机器学习训练激励机制的直接后果 。”
+报告标的来源：Why language models hallucinate | OpenAI
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c52] 结论：二元对错评分使模型猜测有机会得分，而回答不知道必得零分，从而鼓励生成貌似合理的虚构事实。
+原文：“这种机制变相鼓励了模型在遇到知识盲区时进行“猜测”，因为猜测有一定概率得分，而坦诚回答“我不知道”则必定得零分。”
+报告标的来源：Why language models hallucinate | OpenAI
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c53] 结论：Gemini 2.5 Flash-Lite的摘要幻觉率为3.3%、事实一致性为96.7%，报告归因于事实边界约束和搜索Grounding。
+原文：“| **Gemini 2.5 Flash-Lite**   | 3.3%                            | 96.7%                                 | 极低的幻觉率得益于Google内部极强的事实边界约束与搜索Grounding机制。 |”
+报告标的来源：Leaderboard Comparing LLM Performance at Producing Hallucinations when Summarizing Short Documents - GitHub；AI Hallucination: Compare top LLMs like GPT-5.2 - AIMultiple
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c54] 结论：Llama 3.3 70B Instruct的摘要幻觉率为4.1%、事实一致性为95.9%，报告归因于高质量指令微调。
+原文：“| **Llama 3.3 70B Instruct**  | 4.1%                            | 95.9%                                 | 高质量的开源指令微调极大地压制了模型随性生成的倾向。         |”
+报告标的来源：Leaderboard Comparing LLM Performance at Producing Hallucinations when Summarizing Short Documents - GitHub；AI Hallucination: Compare top LLMs like GPT-5.2 - AIMultiple
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c55] 结论：DeepSeek V3.2 Exp的摘要幻觉率为5.3%、事实一致性为94.7%。
+原文：“| **DeepSeek V3.2 Exp**       | 5.3%                            | 94.7%                                 | 在保证卓越逻辑推理的同时，展现出了极高的数据忠诚度。         |”
+报告标的来源：Leaderboard Comparing LLM Performance at Producing Hallucinations when Summarizing Short Documents - GitHub；AI Hallucination: Compare top LLMs like GPT-5.2 - AIMultiple
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c56] 结论：Kimi K2 Instruct的摘要幻觉率为17.9%、事实一致性为82.1%。
+原文：“| **Kimi K2 Instruct**        | 17.9%                           | 82.1%                                 | 在处理海量混合数据时，仍有一定概率出现事实拼凑现象。         |”
+报告标的来源：Leaderboard Comparing LLM Performance at Producing Hallucinations when Summarizing Short Documents - GitHub；AI Hallucination: Compare top LLMs like GPT-5.2 - AIMultiple
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c57] 结论：Claude Opus及GPT-5系列的摘要幻觉率约20%至27%，事实一致性73%至80%，报告归因于维持复杂推理连贯性导致细节偏差。
+原文：“| **Claude Opus / GPT-5系列** | ~20% - 27%                      | 73% - 80%                             | 在应对极其复杂的、开放式的长文档分析任务时，顶尖模型为了维持推理逻辑的连贯性，反而更容易出现事实细节的偏差。 |”
+报告标的来源：Leaderboard Comparing LLM Performance at Producing Hallucinations when Summarizing Short Documents - GitHub；AI Hallucination: Compare top LLMs like GPT-5.2 - AIMultiple
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c58] 结论：将关键词转换成自然语言问题的Q2Q技术，可显著提高BM25及monoT5检索管道的召回率和事实准确性。
+原文：“通过引入“查询到问题（Query-to-Question, Q2Q）”转换技术，将生硬的关键词转化为自然语言问题，可以显著提高包含BM25和monoT5架构的检索管道的信息召回率与事实准确性 。”
+报告标的来源：Revisiting Text Ranking in Deep Research - arXiv.org
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c59] 结论：报告以Q2Q研究推断，Perplexity等专注检索优化的平台在严谨事实方面远胜于依靠模型权重记忆的系统。
+原文：“这也从侧面印证了，为什么像Perplexity这样专注于检索技术优化的平台，在提供严谨事实方面远胜于试图让大模型直接从权重中提取记忆的系统。”
+报告标的来源：Revisiting Text Ranking in Deep Research - arXiv.org
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c60] 结论：各主流平台每月20美元的基础订阅通常只有受限研究次数或轻量推理模型。
+原文：“基础的每月20美元订阅在各大平台中已成为标配，但它们通常只包含受限的深度研究查询次数或轻量级的推理模型 。”
+报告标的来源：ChatGPT Plans Compared: Free vs Plus ($20) vs Pro ($200) vs Business vs Enterprise (2026) | IntuitionLabs；Which Perplexity Subscription Plan is right for you?；Google AI Pro &amp; Ultra — get access to Gemini 3.1 Pro &amp; more
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c61] 结论：ChatGPT Pro每月200美元，提供最高频次高级推理和无限制完整版深度研究。
+原文：“| **ChatGPT Pro**              | $200 / 月         | 突破高频需求限制，提供最高频次的o系列（如o1/o3-pro）高级推理模式访问，以及无限制的“完整版（Full）”深度研究权限。 | 适合极度依赖复杂数学推演、学术级报告合成和长时间深度交互的科研人员及硬核工程师 。 |”
+报告标的来源：ChatGPT Plans Compared: Free vs Plus ($20) vs Pro ($200) vs Business vs Enterprise (2026) | IntuitionLabs；ChatGPT Pricing 2026: Free vs Plus vs Pro ($200!) Explained - UserJot；Deep research in ChatGPT | OpenAI Help Center
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c62] 结论：Google AI Ultra每月249.99美元，提供Gemini 3.1 Pro最高上限、大规模并发研究、Veo 3及2TB存储。
+原文：“| **Google AI Ultra**          | $249.99 / 月      | 提供Gemini 3.1 Pro的最高使用上限和最大规模并发的Deep Research权限，附带Veo 3原生视频生成工具以及2TB的生态存储空间。 | 适合大型跨国企业、需要同时处理复杂文本挖掘与多媒体资产生成的全媒体创意机构及高阶战略分析师 。 |”
+报告标的来源：Introducing Google AI Ultra: The best of Google AI in one subscription；Google AI Pro &amp; Ultra — get access to Gemini 3.1 Pro &amp; more；What Gemini features you get with Google AI Plus, Pro, &amp; Ultra [February 2026] - 9to5Google
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c63] 结论：Perplexity Max每月200美元，提供无限Pro Search、专属Comet浏览器智能体及前沿模型抢先体验。
+原文：“| **Perplexity Max**           | $200 / 月         | 解锁无限量的Pro Search多步推理搜索、专属的Comet Browser Agent浏览器智能体自动化、以及抢先体验前沿模型（Frontier models）的特权。 | 面向需要每日产出大量高精度尽职调查报告、竞争对手数据仪表盘监控的量化分析团队及咨询公司 。 |”
+报告标的来源：Introducing Perplexity Max；Which Perplexity Subscription Plan is right for you?；Perplexity Pro vs Max Features 2026: Ultimate Comparison
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c64] 结论：Claude Team及Enterprise每用户每月30美元起，支持Agent Teams、大规模知识库摄入，并保证数据不用于训练。
+原文：“| **Claude Team / Enterprise** | $30起 / 用户 / 月 | 核心溢价在于支持复杂多智能体（Agent Teams）的协作与极大规模的知识库 ingest，并保证数据隐私合规不用于训练。 | 中大型软件开发团队、律所及需要严格审计与长文档处理的专业知识密集型组织 。 |”
+报告标的来源：AI Tools Comparison: ChatGPT, Claude, and Perplexity in 2026 - ClickForest；Anthropic&#x27;s Explosive Start to 2026: Everything Claude Has Launched (And Why It&#x27;s Shaking Up the Entire Tech World) | by Fazal
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c65] 结论：报告用GPT-4每百万输入30美元、输出60美元作为ChatGPT成本参考，并认为这一成本不适合大规模自动化爬取分析。
+原文：“| **ChatGPT (GPT-4 参考值)** | ~$30.00                  | ~$60.00                  | 作为行业能力上限的标杆，其高昂的成本使得大规模自动化爬虫与分析在经济上不可行，仅适用于关键决策节点的少量推理。 |”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c66] 结论：Claude Opus 4.6每百万输入5美元、输出25美元，提示缓存最高节省90%，批处理节省50%。
+原文：“| **Claude Opus 4.6**        | $5.00                    | $25.00                   | 结合其提示词缓存（Prompt Caching，最高节省90%成本）与批处理（节省50%）功能，极大地优化了处理超大型企业代码库时的资金消耗 。 |”
+报告标的来源：Claude Opus 4.6 - Anthropic；What&#x27;s new in Claude 4.6 - Claude API Docs
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c67] 结论：Kimi K2.5每百万输入0.60美元、输出2.50美元，报告称较传统国际厂商便宜近98%，可低成本建设大规模监控系统。
+原文：“| **Kimi K2.5**              | $0.60                    | $2.50                    | 价格仅为传统国际大厂的几十分之一（便宜近98%）。结合其并行生成上百个Agent的能力，初创企业可以以几乎忽略不计的成本构建过去需要数十万美元的全网竞品监控系统 。 |”
+报告标的来源：MoonshotAI: Kimi K2.5 – Effective Pricing | OpenRouter；Kimi API Pricing Calculator &amp; Cost Guide (Feb 2026) - CostGoat；Kimi K2.5 vs ChatGPT: Which AI Should Entrepreneurs Choose in 2026? (Complete Comparison) | NxCode
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c68] 结论：DeepSeek V3.2 Exp每百万输入0.27美元、输出0.41美元，缓存命中输入0.028美元，并开放权重。
+原文：“| **DeepSeek V3.2 Exp**      | **$0.27**                | **$0.41**                | 绝对的价格屠夫。如果在缓存命中情况下，输入成本更是低至惊人的$0.028/M 。在同等运算量下，将数十美元的成本压缩至几美分，并且完全开源模型权重，彻底重塑了企业自主构建深度研究系统的经济学模型 。 |”
+报告标的来源：Introducing DeepSeek-V3.2-Exp；Models &amp; Pricing | DeepSeek API Docs；DeepSeek V3.2 Exp Model Specs, Costs &amp; Benchmarks (February 2026) | Galaxy.ai
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c69] 结论：不存在各方面统一最优的深度研究平台，最佳选择取决于业务场景、容错要求和预算。
+原文：“没有任何一个单一的平台能够同时在执行极速、绝对的准确性、长程逻辑深度、生态系统融合与计算成本控制上达到完美的统一。因此，最优的深度研究服务完全取决于用户的具体业务场景约束、容错容忍度以及预算空间。”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c70] 结论：对于高度依赖企业内部历史数据的研究，Gemini 3.1 Pro及AI Ultra凭Workspace整合和长上下文具有垄断性优势。
+原文：“其次，如果研究任务的语境高度依赖于**企业内部的历史沉淀数据**（如将过往两年的内部销售数据表与外部宏观经济报告进行联合对比），**Google Gemini 3.1 Pro (AI Ultra)**凭借其深度穿透Google Workspace的生态特权和百万级别的超长上下文，展现出了垄断性的主场优势 。”
+报告标的来源：Gemini Deep Research — your personal research assistant；Google AI Pro &amp; Ultra — get access to Gemini 3.1 Pro &amp; more
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c71] 结论：Claude 4.6凭自适应思考、上下文压缩和多角色协作，在深层逻辑及长期跨系统工程研究中处于巅峰。
+原文：“在面对需要**极深逻辑嵌套、长周期跨系统操作的“工程级研究”**（如分析一个包含数千个文件的遗留代码库并设计重构方案，或自主审阅上百份关联性极强的商业合同）时，**Anthropic Claude 4.6**凭借其革命性的自适应思考（Adaptive Thinking）、上下文压缩技术以及Agent Teams的多角色协同查错能力，牢牢占据了知识工作效能的巅峰 。”
+报告标的来源：Introducing Claude Opus 4.6 - Anthropic；What&#x27;s new in Claude 4.6 - Claude API Docs；2026 Agentic Coding Trends Report - Anthropic
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c72] 结论：ChatGPT Pro适合横向发散、跨学科知识综合及前瞻性战略报告。
+原文：“然而，在面对需要**横向发散思维、跨界知识综合碰撞以及撰写最具启发性前瞻报告**的场景时，**OpenAI ChatGPT Pro (结合GPT-5.2与o系列推理)**依然提供了最为平滑和深邃的合成体验 。”
+报告标的来源：AI Tools Comparison: ChatGPT, Claude, and Perplexity in 2026 - ClickForest；ChatGPT vs Perplexity AI: Which AI Is Right for You in 2026? - Coursiv
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c73] 结论：Kimi K2.5凭智能体集群和低价调用，在超大规模并发研究中的效率远超西方传统巨头。
+原文：“当研究任务的规模突破了人类等待的极限（例如需要在一小时内并发提取并对比全网几千个细分市场数据）时，Kimi首创的并行智能体集群（Agent Swarm）技术结合其低廉的调用成本，展现出了令西方传统巨头望尘莫及的效率 。”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face；Kimi AI with K2.5 | Visual Coding Meets Agent Swarm；Kimi K2.5 vs ChatGPT: Which AI Should Entrepreneurs Choose in 2026? (Complete Comparison) | NxCode
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c74] 结论：2026年顶尖机构和专业研究者的最佳实践已全面转向混合技术栈组合。
+原文：“综上所述，2026年顶尖机构与专业研究者的最佳实践已全面转向**混合技术栈组合（Hybrid AI Stack Strategy）**  1 。”
+报告标的来源：1
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c75] 结论：报告建议以Kimi广域搜集、Perplexity抓取和零幻觉核查、Gemini整合私有数据，再由Claude验证或ChatGPT完成报告。
+原文：“一个具备工业级强度的现代深度研究工作流应当是：在信息发现阶段，利用**Kimi K2.5**的Agent Swarm进行低成本的广域网页并发扫掠与粗筛；随后，将目标锁定并交由**Perplexity Max**进行深度的动态数据抓取与绝对的零幻觉事实核查；接着，将经过清洗和验证的纯净语料库输入到拥有超长上下文的**Gemini 3.1 Pro**中，与企业私有数据库进行穿透式对撞；最终，将核心分析框架交托给**Claude 4.6**进行严密的逻辑溯源和代码级验证，或由**ChatGPT Pro**的深度推理模型完成那份极具洞察力与战略高度的终极执行报告。”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c76] 结论：ChatGPT接入FactSet和PitchBook等专业数据库，增强了金融研究的实证深度。
+原文：“例如，ChatGPT 不仅升级了对研究计划的动态干预能力，还通过接入 FactSet 和 PitchBook 等专业数据库，显著增强了金融领域的实证深度。”
+报告标的来源：ChatGPT — Release Notes - OpenAI Help Center；Deep research in ChatGPT | OpenAI Help Center
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c77] 结论：ChatGPT支持全屏报告视图以及对特定站点和应用生态的研究控制。
+原文：“ChatGPT 引入了全屏报告视图和研究计划的实时干预机制，允许用户在研究启动前深度定制路径；而 Gemini 则通过将研究成果转化为可交互的“画布”和音频综述，极大地丰富了信息的吸收方式。”
+报告标的来源：ChatGPT — Release Notes - OpenAI Help Center；Deep research in ChatGPT | OpenAI Help Center；Gemini Deep Research — your personal research assistant
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c78] 结论：Perplexity高端方案引入Claude 4.6，在复杂逻辑验证和高难度知识考核中严谨性很高。
+原文：“而 Perplexity 则在其高端方案中引入了最新的 Claude 4.6 模型，在复杂逻辑验证和高难度知识考核中表现出极高的严谨性。”
+报告标的来源：What We Shipped - February 6th, 2026 - Perplexity Changelog；What&#x27;s New in Advanced Deep Research | Perplexity Help Center
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c79] 结论：Kimi K2.5具有一万亿参数规模，借助智能体集群实现上千次并行调用。
+原文：“一个令人惊喜的发现是 Kimi K2.5 的架构突破，它通过一万亿参数的规模和“智能体集群”技术，实现了上千次并行调用，这在处理海量分布式信息时提供了极高的效率。”
+报告标的来源：moonshotai/Kimi-K2.5 - Hugging Face；Kimi AI with K2.5 | Visual Coding Meets Agent Swarm
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c80] 结论：Gemini专项数学研究智能体可用自然语言验证器发现逻辑缺陷，在顶级数学和科学任务中比基础模型更严谨。
+原文：“例如，Gemini 推出的专项数学研究智能体，能够利用自然语言验证器识别逻辑缺陷，在处理顶级数学和科学难题时展现出超越基础模型的严谨性。”
+报告标的来源：Gemini Deep Think: Redefining the Future of Scientific Research - Google DeepMind
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c81] 结论：主流研究工具普遍允许用户在研究开始前编辑计划，提升结果的定向精准度。
+原文：“同时，主流工具已普遍支持在研究开始前人工干预并编辑研究计划，这种“人机协同”的模式显著提升了最终报告的定向精准度。”
+报告标的来源：Deep research in ChatGPT | OpenAI Help Center；Gemini Deep Research — your personal research assistant
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+===== 主要结论（只给材料）（结束） =====
+
+要做的事：按细则第五节，对上面每一条结论判定两类标签。
+
+1. 来源标签 source_label：只能是&quot;支持&quot;&quot;部分支持&quot;&quot;不支持&quot;&quot;失效但有存档&quot;&quot;找不到（疑似编造）&quot;&quot;没有出处&quot;之一。
+   - 给了存档内容的，按存档判断所引来源是否支持这条结论。存档只附了前面一部分的，在没附的部分里找不到，不能据此判为不支持，要在 source_note 中写明。
+   - 写明&quot;没有网址&quot;的结论，来源标签已经定为&quot;没有出处&quot;，你只判定对错，source_label 不用写。
+   - 判为&quot;找不到（疑似编造）&quot;的，必须换一种方式再查一次，例如按标题检索、查同一网站的其他页面，结果写进 second_check。second_check 为空的&quot;找不到&quot;不算数。
+2. 对错标签 correct：只能是&quot;正确&quot;&quot;有误&quot;&quot;无法判断&quot;之一。不管有没有来源，都独立核对：截至截止时间，这条结论是否正确。要注意排除截止时间之后才出现的信息。依据写进 correct_basis，包括网址或理由。没有把握的，标&quot;无法判断&quot;，不要猜。
+
+规则：
+- 不要猜测报告出自哪个产品。
+- 网络请求只做读取和检索，不提交任何表单。
+
+只回答一个 JSON 对象，不要写任何别的文字，也不要用代码块。每条结论一项，id 用上面方括号里的编号。格式如下：
+
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;source_label&quot;:&quot;…&quot;,&quot;source_note&quot;:&quot;…&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;…&quot;,&quot;correct_basis&quot;:&quot;…&quot;}]}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 7198 字，一字不改。</p>
+  <details><summary class="caption-2">回答共 7198 字，点开看全文</summary><pre class="raw" id="answer">
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料没有提供工作流的独立说明或来源存档，无法核实所述机制及其适用范围。&quot;},{&quot;id&quot;:&quot;c2&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料没有提供实际运行时长或官方时限，无法核实“数小时”的适用产品与条件。&quot;},{&quot;id&quot;:&quot;c3&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供截至截止日的发布记录，无法核实升级时间及计划编辑功能。&quot;},{&quot;id&quot;:&quot;c4&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有模型部署记录和跨产品对照评测，无法核实模型组合及“行业标杆”判断。&quot;},{&quot;id&quot;:&quot;c5&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供版本划分和运行时长的独立证据。&quot;},{&quot;id&quot;:&quot;c6&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有统一任务和评价标准下的对照证据，无法确认所述优势，尤其“无与伦比”的比较。&quot;},{&quot;id&quot;:&quot;c7&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供实时抓取性能对比，也没有证明差异源于深度反思机制的证据。&quot;},{&quot;id&quot;:&quot;c8&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供广告测试公告，无法核实启动时间、适用订阅层级及广告独立性声明。&quot;},{&quot;id&quot;:&quot;c9&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前的模型接入记录及企业长文档比较评测，无法确认“统治地位”。&quot;},{&quot;id&quot;:&quot;c10&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有型号对应的上下文规格；页数和代码行数还取决于内容与分词方式。&quot;},{&quot;id&quot;:&quot;c11&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;长上下文可能减少分块需求，但材料没有证明实际检索架构，也没有证明能够避免跨文档关联丢失。&quot;},{&quot;id&quot;:&quot;c12&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供功能说明、开放时间及权限条件，无法核实三类来源能否在同一任务中联合检索。&quot;},{&quot;id&quot;:&quot;c13&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有架构或恢复机制的独立资料，不能由异步执行推定内部共享状态及子查询恢复方式。&quot;},{&quot;id&quot;:&quot;c14&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供截止日前的功能说明，无法核实报告转交互面板及音频概述的支持范围。&quot;},{&quot;id&quot;:&quot;c15&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有覆盖相关竞争产品的对照证据，无法确认“无可争议的领先地位”。&quot;},{&quot;id&quot;:&quot;c16&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有产品功能存档，无法区分Agent Teams与Cowork各自支持的并行协作和交叉审查能力。&quot;},{&quot;id&quot;:&quot;c17&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供自适应思考机制说明；动态调整能力及“最优解”均缺少独立依据。&quot;},{&quot;id&quot;:&quot;c18&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有上下文压缩功能说明或长程任务测试，无法确认自动触发条件及目标记忆保持效果。&quot;},{&quot;id&quot;:&quot;c19&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供14.5小时测试的任务、成功标准和比较范围，无法核实连贯性及最长纪录。&quot;},{&quot;id&quot;:&quot;c20&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供Biomni的模型配置、工具数量和具体研究案例，无法核实时间缩短幅度。&quot;},{&quot;id&quot;:&quot;c21&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有产品设计或资源分配证据，无法确认其将算力主要投入检索和交叉验证的描述。&quot;},{&quot;id&quot;:&quot;c22&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供Comet发布与订阅开放时间线，无法确认“2026年推出”。&quot;},{&quot;id&quot;:&quot;c23&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有功能说明或实际操作测试，无法核实自主登录、动态数据抓取及注册流程模拟能力。&quot;},{&quot;id&quot;:&quot;c24&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供Spaces来源限制的具体设置和执行保证，不能确认“严格受限”及“彻底排除污染”。&quot;},{&quot;id&quot;:&quot;c25&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有同条件事实准确率和可验证性评测，无法确认Perplexity Max是无可争议的最佳选择。&quot;},{&quot;id&quot;:&quot;c26&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有PARL技术资料及行业历史比较，“首个成熟”也缺少可操作的判定标准。&quot;},{&quot;id&quot;:&quot;c27&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供技术规格，无法区分子智能体数量、累计工具调用数量及同时并发数量。&quot;},{&quot;id&quot;:&quot;c28&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有测试条件与原始结果；耗时减少80%与速度达到4.5倍并非严格等价，无法确认是否来自不同测试或近似表述。&quot;},{&quot;id&quot;:&quot;c29&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供模型卡或训练说明，无法核实15万亿Token及原生多模态架构。&quot;},{&quot;id&quot;:&quot;c30&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有深度研究产品的工具配置或测试，不能仅凭底层模型多模态能力确认完整研究流程的能力。&quot;},{&quot;id&quot;:&quot;c31&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有同条件深度研究评测及成本核算，不能由基础模型能力推定研究产品持平或超越。&quot;},{&quot;id&quot;:&quot;c32&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供V3.2架构资料及mHC应用时间线，无法核实技术归属、参数规模和芯片依赖判断。&quot;},{&quot;id&quot;:&quot;c33&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有工具调用协议或技术说明，无法确认思考机制及反馈后验证目标一致性的具体行为。&quot;},{&quot;id&quot;:&quot;c34&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有数学、报告和代码研究的对照评测，也没有支持“广泛评价”的材料。&quot;},{&quot;id&quot;:&quot;c35&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供许可证、价格及实际采用情况，无法核实MIT授权和“首选底座”的市场判断。&quot;},{&quot;id&quot;:&quot;c36&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供BrowseComp任务定义，无法核实其是否同时评估所述定位、提取及整合能力。&quot;},{&quot;id&quot;:&quot;c37&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供BrowseComp-Plus数据构造与评分方法，无法核实固定语料、负样本及引文和综合能力评价范围。&quot;},{&quot;id&quot;:&quot;c38&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有原始成绩表，无法核实86.8%所属基准、运行配置及行业排名；因果归因还需要消融实验。&quot;},{&quot;id&quot;:&quot;c39&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有原始成绩表，无法确认78.4%属于BrowseComp-Plus，也没有并发机制影响召回率的独立测试。&quot;},{&quot;id&quot;:&quot;c40&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供成绩来源和运行配置，无法核实区间及“逻辑死锁”的诊断。&quot;},{&quot;id&quot;:&quot;c41&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有原始成绩和搜索效率测试，无法核实分数区间及效率比较。&quot;},{&quot;id&quot;:&quot;c42&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供项目发布记录、许可证和排行榜，无法核实分数及领先地位。&quot;},{&quot;id&quot;:&quot;c43&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有成绩表、工具配置及故障分析，无法核实分数或将表现归因于内置抓取工具。&quot;},{&quot;id&quot;:&quot;c44&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料没有附GAIA和SWE-bench的任务定义或评测说明，无法在限定材料内完成独立核对。&quot;},{&quot;id&quot;:&quot;c45&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有GAIA排行榜快照和具体系统配置，无法核实90.37%的模型归属，也无法确认“基本被解决”。&quot;},{&quot;id&quot;:&quot;c46&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供对应模型、评测配置和日期的成绩表，无法核实四组SWE-bench Verified数值。&quot;},{&quot;id&quot;:&quot;c47&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有Terminal-Bench版本和排行榜，无法核实最高成绩、43.8%及未参与评估的判断。&quot;},{&quot;id&quot;:&quot;c48&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供GDPval-AA成绩及Kimi提升指标的定义、基线和测试条件。&quot;},{&quot;id&quot;:&quot;c49&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有架构说明及跨产品工程研究评测，自主调试能力本身不能证明“霸主地位”。&quot;},{&quot;id&quot;:&quot;c50&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供检测报告、样本及人工复核结果，无法核实数量、严重程度和是否确属AI幻觉。&quot;},{&quot;id&quot;:&quot;c51&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供报告正文及发布日期，无法核实“2026年初发布”和所述因果解释的适用范围。&quot;},{&quot;id&quot;:&quot;c52&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;在题述评分规则成立的条件下，猜测有一定概率得分，而回答“不知道”固定得零分，确实形成鼓励猜测的评分激励；这不等于证明所有评测均使用该规则。&quot;},{&quot;id&quot;:&quot;c53&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前的排行榜快照及评测设置，无法核实数值；摘要测试结果本身也不能证明搜索Grounding的因果作用。&quot;},{&quot;id&quot;:&quot;c54&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供排行榜快照和训练消融实验，无法核实数值及指令微调的因果归因。&quot;},{&quot;id&quot;:&quot;c55&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供截止日前对应模型的摘要评测结果，无法核实5.3%及94.7%。&quot;},{&quot;id&quot;:&quot;c56&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供截止日前对应模型的摘要评测结果，无法核实17.9%及82.1%。&quot;},{&quot;id&quot;:&quot;c57&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有具体模型版本和排行榜快照；摘要评测也不足以支持开放式长文档推理导致细节偏差的解释。&quot;},{&quot;id&quot;:&quot;c58&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供论文方法和实验结果，无法核实Q2Q对召回率及事实准确性的提升。&quot;},{&quot;id&quot;:&quot;c59&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料未提供Perplexity与相关系统的直接比较，Q2Q检索实验即使成立，也不足以独立确认该产品优越性判断。&quot;},{&quot;id&quot;:&quot;c60&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前各平台的价格和配额表，无法核实20美元订阅的普遍性及包含内容。&quot;},{&quot;id&quot;:&quot;c61&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供ChatGPT Pro的截止日价格和深度研究配额，尤其无法确认完整版研究是否无限制。&quot;},{&quot;id&quot;:&quot;c62&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前的套餐说明，无法核实存储容量、模型权限及并发研究上限。&quot;},{&quot;id&quot;:&quot;c63&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供套餐权益及开放时间线，无法核实无限Pro Search和Comet的专属性。&quot;},{&quot;id&quot;:&quot;c64&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有Team与Enterprise分别对应的价格、Agent Teams权限和数据政策，无法核实合并描述。&quot;},{&quot;id&quot;:&quot;c65&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供价格依据和自动化任务成本模型；历史参考价格不能单独证明截至截止日相关方案在经济上不可行。&quot;},{&quot;id&quot;:&quot;c66&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前的定价表，无法核实基础价格及缓存、批处理折扣的适用条件。&quot;},{&quot;id&quot;:&quot;c67&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供具体渠道价格、比较基线及集群调用费用，无法核实98%降幅和监控系统成本判断。&quot;},{&quot;id&quot;:&quot;c68&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前的价格表与授权说明，无法核实各项价格；同等运算量的成本降幅也缺少计算依据。&quot;},{&quot;id&quot;:&quot;c69&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;场景、容错和预算是合理的选型维度，但材料没有跨平台证据，无法独立确认不存在统一最优平台这一总体比较判断。&quot;},{&quot;id&quot;:&quot;c70&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供企业内部数据接入范围及跨平台比较，Workspace整合和长上下文本身不能证明垄断性优势。&quot;},{&quot;id&quot;:&quot;c71&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有针对所列工程和合同任务的对照评测，无法由功能存在推定知识工作效能处于巅峰。&quot;},{&quot;id&quot;:&quot;c72&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有对应场景的统一评测或用户测试，无法核实适用性及“最为平滑和深邃”的比较。&quot;},{&quot;id&quot;:&quot;c73&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供相同任务规模、质量标准和预算下的耗时比较，无法确认效率远超竞争产品。&quot;},{&quot;id&quot;:&quot;c74&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有机构采用情况的调查或案例集合，无法核实“已全面转向”混合技术栈的普遍性判断。&quot;},{&quot;id&quot;:&quot;c75&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供整套工作流的效果、成本和可行性验证，尤其没有支持Perplexity能够进行绝对零幻觉事实核查的证据。&quot;},{&quot;id&quot;:&quot;c76&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供数据库接入公告、开放条件及金融研究效果评测，无法核实接入状态与效果。&quot;},{&quot;id&quot;:&quot;c77&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供功能发布记录，无法核实全屏报告、实时计划干预及站点和应用控制的截止日状态。&quot;},{&quot;id&quot;:&quot;c78&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供所列更新日志内容和评测结果，无法核实模型接入及严谨性判断。&quot;},{&quot;id&quot;:&quot;c79&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有模型规格和集群执行说明，无法核实参数数量，亦无法区分上千次累计调用与同时并行调用。&quot;},{&quot;id&quot;:&quot;c80&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供专项智能体的技术说明和对照实验，无法核实自然语言验证器及相对基础模型的改进。&quot;},{&quot;id&quot;:&quot;c81&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供覆盖主流产品的功能清单及效果测试，无法由两个来源标题确认普遍支持和显著提升。&quot;}]}</pre></details>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 8519 字</summary><pre class="raw" id="raw-output">
+{&quot;type&quot;:&quot;thread.started&quot;,&quot;thread_id&quot;:&quot;01a190b9-d143-7d83-9d9d-5be7ec899017&quot;}
+{&quot;type&quot;:&quot;turn.started&quot;}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_0&quot;,&quot;type&quot;:&quot;agent_message&quot;,&quot;text&quot;:&quot;{\&quot;claims\&quot;:[{\&quot;id\&quot;:\&quot;c1\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;材料没有提供工作流的独立说明或来源存档，无法核实所述机制及其适用范围。\&quot;},{\&quot;id\&quot;:\&quot;c2\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;材料没有提供实际运行时长或官方时限，无法核实“数小时”的适用产品与条件。\&quot;},{\&quot;id\&quot;:\&quot;c3\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供截至截止日的发布记录，无法核实升级时间及计划编辑功能。\&quot;},{\&quot;id\&quot;:\&quot;c4\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有模型部署记录和跨产品对照评测，无法核实模型组合及“行业标杆”判断。\&quot;},{\&quot;id\&quot;:\&quot;c5\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供版本划分和运行时长的独立证据。\&quot;},{\&quot;id\&quot;:\&quot;c6\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有统一任务和评价标准下的对照证据，无法确认所述优势，尤其“无与伦比”的比较。\&quot;},{\&quot;id\&quot;:\&quot;c7\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供实时抓取性能对比，也没有证明差异源于深度反思机制的证据。\&quot;},{\&quot;id\&quot;:\&quot;c8\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供广告测试公告，无法核实启动时间、适用订阅层级及广告独立性声明。\&quot;},{\&quot;id\&quot;:\&quot;c9\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有截止日前的模型接入记录及企业长文档比较评测，无法确认“统治地位”。\&quot;},{\&quot;id\&quot;:\&quot;c10\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有型号对应的上下文规格；页数和代码行数还取决于内容与分词方式。\&quot;},{\&quot;id\&quot;:\&quot;c11\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;长上下文可能减少分块需求，但材料没有证明实际检索架构，也没有证明能够避免跨文档关联丢失。\&quot;},{\&quot;id\&quot;:\&quot;c12\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供功能说明、开放时间及权限条件，无法核实三类来源能否在同一任务中联合检索。\&quot;},{\&quot;id\&quot;:\&quot;c13\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有架构或恢复机制的独立资料，不能由异步执行推定内部共享状态及子查询恢复方式。\&quot;},{\&quot;id\&quot;:\&quot;c14\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供截止日前的功能说明，无法核实报告转交互面板及音频概述的支持范围。\&quot;},{\&quot;id\&quot;:\&quot;c15\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有覆盖相关竞争产品的对照证据，无法确认“无可争议的领先地位”。\&quot;},{\&quot;id\&quot;:\&quot;c16\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有产品功能存档，无法区分Agent Teams与Cowork各自支持的并行协作和交叉审查能力。\&quot;},{\&quot;id\&quot;:\&quot;c17\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供自适应思考机制说明；动态调整能力及“最优解”均缺少独立依据。\&quot;},{\&quot;id\&quot;:\&quot;c18\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有上下文压缩功能说明或长程任务测试，无法确认自动触发条件及目标记忆保持效果。\&quot;},{\&quot;id\&quot;:\&quot;c19\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供14.5小时测试的任务、成功标准和比较范围，无法核实连贯性及最长纪录。\&quot;},{\&quot;id\&quot;:\&quot;c20\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供Biomni的模型配置、工具数量和具体研究案例，无法核实时间缩短幅度。\&quot;},{\&quot;id\&quot;:\&quot;c21\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有产品设计或资源分配证据，无法确认其将算力主要投入检索和交叉验证的描述。\&quot;},{\&quot;id\&quot;:\&quot;c22\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供Comet发布与订阅开放时间线，无法确认“2026年推出”。\&quot;},{\&quot;id\&quot;:\&quot;c23\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有功能说明或实际操作测试，无法核实自主登录、动态数据抓取及注册流程模拟能力。\&quot;},{\&quot;id\&quot;:\&quot;c24\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供Spaces来源限制的具体设置和执行保证，不能确认“严格受限”及“彻底排除污染”。\&quot;},{\&quot;id\&quot;:\&quot;c25\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有同条件事实准确率和可验证性评测，无法确认Perplexity Max是无可争议的最佳选择。\&quot;},{\&quot;id\&quot;:\&quot;c26\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有PARL技术资料及行业历史比较，“首个成熟”也缺少可操作的判定标准。\&quot;},{\&quot;id\&quot;:\&quot;c27\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供技术规格，无法区分子智能体数量、累计工具调用数量及同时并发数量。\&quot;},{\&quot;id\&quot;:\&quot;c28\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有测试条件与原始结果；耗时减少80%与速度达到4.5倍并非严格等价，无法确认是否来自不同测试或近似表述。\&quot;},{\&quot;id\&quot;:\&quot;c29\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供模型卡或训练说明，无法核实15万亿Token及原生多模态架构。\&quot;},{\&quot;id\&quot;:\&quot;c30\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有深度研究产品的工具配置或测试，不能仅凭底层模型多模态能力确认完整研究流程的能力。\&quot;},{\&quot;id\&quot;:\&quot;c31\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有同条件深度研究评测及成本核算，不能由基础模型能力推定研究产品持平或超越。\&quot;},{\&quot;id\&quot;:\&quot;c32\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供V3.2架构资料及mHC应用时间线，无法核实技术归属、参数规模和芯片依赖判断。\&quot;},{\&quot;id\&quot;:\&quot;c33\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有工具调用协议或技术说明，无法确认思考机制及反馈后验证目标一致性的具体行为。\&quot;},{\&quot;id\&quot;:\&quot;c34\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有数学、报告和代码研究的对照评测，也没有支持“广泛评价”的材料。\&quot;},{\&quot;id\&quot;:\&quot;c35\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供许可证、价格及实际采用情况，无法核实MIT授权和“首选底座”的市场判断。\&quot;},{\&quot;id\&quot;:\&quot;c36\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供BrowseComp任务定义，无法核实其是否同时评估所述定位、提取及整合能力。\&quot;},{\&quot;id\&quot;:\&quot;c37\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供BrowseComp-Plus数据构造与评分方法，无法核实固定语料、负样本及引文和综合能力评价范围。\&quot;},{\&quot;id\&quot;:\&quot;c38\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有原始成绩表，无法核实86.8%所属基准、运行配置及行业排名；因果归因还需要消融实验。\&quot;},{\&quot;id\&quot;:\&quot;c39\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有原始成绩表，无法确认78.4%属于BrowseComp-Plus，也没有并发机制影响召回率的独立测试。\&quot;},{\&quot;id\&quot;:\&quot;c40\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供成绩来源和运行配置，无法核实区间及“逻辑死锁”的诊断。\&quot;},{\&quot;id\&quot;:\&quot;c41\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有原始成绩和搜索效率测试，无法核实分数区间及效率比较。\&quot;},{\&quot;id\&quot;:\&quot;c42\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供项目发布记录、许可证和排行榜，无法核实分数及领先地位。\&quot;},{\&quot;id\&quot;:\&quot;c43\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有成绩表、工具配置及故障分析，无法核实分数或将表现归因于内置抓取工具。\&quot;},{\&quot;id\&quot;:\&quot;c44\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;材料没有附GAIA和SWE-bench的任务定义或评测说明，无法在限定材料内完成独立核对。\&quot;},{\&quot;id\&quot;:\&quot;c45\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有GAIA排行榜快照和具体系统配置，无法核实90.37%的模型归属，也无法确认“基本被解决”。\&quot;},{\&quot;id\&quot;:\&quot;c46\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供对应模型、评测配置和日期的成绩表，无法核实四组SWE-bench Verified数值。\&quot;},{\&quot;id\&quot;:\&quot;c47\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有Terminal-Bench版本和排行榜，无法核实最高成绩、43.8%及未参与评估的判断。\&quot;},{\&quot;id\&quot;:\&quot;c48\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供GDPval-AA成绩及Kimi提升指标的定义、基线和测试条件。\&quot;},{\&quot;id\&quot;:\&quot;c49\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有架构说明及跨产品工程研究评测，自主调试能力本身不能证明“霸主地位”。\&quot;},{\&quot;id\&quot;:\&quot;c50\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供检测报告、样本及人工复核结果，无法核实数量、严重程度和是否确属AI幻觉。\&quot;},{\&quot;id\&quot;:\&quot;c51\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供报告正文及发布日期，无法核实“2026年初发布”和所述因果解释的适用范围。\&quot;},{\&quot;id\&quot;:\&quot;c52\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;在题述评分规则成立的条件下，猜测有一定概率得分，而回答“不知道”固定得零分，确实形成鼓励猜测的评分激励；这不等于证明所有评测均使用该规则。\&quot;},{\&quot;id\&quot;:\&quot;c53\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有截止日前的排行榜快照及评测设置，无法核实数值；摘要测试结果本身也不能证明搜索Grounding的因果作用。\&quot;},{\&quot;id\&quot;:\&quot;c54\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供排行榜快照和训练消融实验，无法核实数值及指令微调的因果归因。\&quot;},{\&quot;id\&quot;:\&quot;c55\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供截止日前对应模型的摘要评测结果，无法核实5.3%及94.7%。\&quot;},{\&quot;id\&quot;:\&quot;c56\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供截止日前对应模型的摘要评测结果，无法核实17.9%及82.1%。\&quot;},{\&quot;id\&quot;:\&quot;c57\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有具体模型版本和排行榜快照；摘要评测也不足以支持开放式长文档推理导致细节偏差的解释。\&quot;},{\&quot;id\&quot;:\&quot;c58\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供论文方法和实验结果，无法核实Q2Q对召回率及事实准确性的提升。\&quot;},{\&quot;id\&quot;:\&quot;c59\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;材料未提供Perplexity与相关系统的直接比较，Q2Q检索实验即使成立，也不足以独立确认该产品优越性判断。\&quot;},{\&quot;id\&quot;:\&quot;c60\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有截止日前各平台的价格和配额表，无法核实20美元订阅的普遍性及包含内容。\&quot;},{\&quot;id\&quot;:\&quot;c61\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供ChatGPT Pro的截止日价格和深度研究配额，尤其无法确认完整版研究是否无限制。\&quot;},{\&quot;id\&quot;:\&quot;c62\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有截止日前的套餐说明，无法核实存储容量、模型权限及并发研究上限。\&quot;},{\&quot;id\&quot;:\&quot;c63\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供套餐权益及开放时间线，无法核实无限Pro Search和Comet的专属性。\&quot;},{\&quot;id\&quot;:\&quot;c64\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有Team与Enterprise分别对应的价格、Agent Teams权限和数据政策，无法核实合并描述。\&quot;},{\&quot;id\&quot;:\&quot;c65\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供价格依据和自动化任务成本模型；历史参考价格不能单独证明截至截止日相关方案在经济上不可行。\&quot;},{\&quot;id\&quot;:\&quot;c66\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有截止日前的定价表，无法核实基础价格及缓存、批处理折扣的适用条件。\&quot;},{\&quot;id\&quot;:\&quot;c67\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供具体渠道价格、比较基线及集群调用费用，无法核实98%降幅和监控系统成本判断。\&quot;},{\&quot;id\&quot;:\&quot;c68\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有截止日前的价格表与授权说明，无法核实各项价格；同等运算量的成本降幅也缺少计算依据。\&quot;},{\&quot;id\&quot;:\&quot;c69\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;场景、容错和预算是合理的选型维度，但材料没有跨平台证据，无法独立确认不存在统一最优平台这一总体比较判断。\&quot;},{\&quot;id\&quot;:\&quot;c70\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供企业内部数据接入范围及跨平台比较，Workspace整合和长上下文本身不能证明垄断性优势。\&quot;},{\&quot;id\&quot;:\&quot;c71\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有针对所列工程和合同任务的对照评测，无法由功能存在推定知识工作效能处于巅峰。\&quot;},{\&quot;id\&quot;:\&quot;c72\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有对应场景的统一评测或用户测试，无法核实适用性及“最为平滑和深邃”的比较。\&quot;},{\&quot;id\&quot;:\&quot;c73\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供相同任务规模、质量标准和预算下的耗时比较，无法确认效率远超竞争产品。\&quot;},{\&quot;id\&quot;:\&quot;c74\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有机构采用情况的调查或案例集合，无法核实“已全面转向”混合技术栈的普遍性判断。\&quot;},{\&quot;id\&quot;:\&quot;c75\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供整套工作流的效果、成本和可行性验证，尤其没有支持Perplexity能够进行绝对零幻觉事实核查的证据。\&quot;},{\&quot;id\&quot;:\&quot;c76\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供数据库接入公告、开放条件及金融研究效果评测，无法核实接入状态与效果。\&quot;},{\&quot;id\&quot;:\&quot;c77\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供功能发布记录，无法核实全屏报告、实时计划干预及站点和应用控制的截止日状态。\&quot;},{\&quot;id\&quot;:\&quot;c78\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供所列更新日志内容和评测结果，无法核实模型接入及严谨性判断。\&quot;},{\&quot;id\&quot;:\&quot;c79\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有模型规格和集群执行说明，无法核实参数数量，亦无法区分上千次累计调用与同时并行调用。\&quot;},{\&quot;id\&quot;:\&quot;c80\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供专项智能体的技术说明和对照实验，无法核实自然语言验证器及相对基础模型的改进。\&quot;},{\&quot;id\&quot;:\&quot;c81\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供覆盖主流产品的功能清单及效果测试，无法由两个来源标题确认普遍支持和显著提升。\&quot;}]}&quot;}}
+{&quot;type&quot;:&quot;turn.completed&quot;,&quot;usage&quot;:{&quot;input_tokens&quot;:28371,&quot;cached_input_tokens&quot;:9216,&quot;cache_write_input_tokens&quot;:0,&quot;output_tokens&quot;:3441,&quot;reasoning_output_tokens&quot;:110}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

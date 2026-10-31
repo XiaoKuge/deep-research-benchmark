@@ -591,6 +591,10 @@ class CommittedPagesTest(unittest.TestCase):
                     with open(os.path.join(tmp, name), "rb") as a, open(os.path.join(COMMITTED, name), "rb") as b:
                         self.assertTrue(a.read() == b.read(), f"site/simulation/{name} 不是最新的，请重新运行生成器")
 
+    def test_the_committed_review_records_link_the_demo_note(self):
+        page = Page(os.path.join(COMMITTED, "reviews.html"))
+        self.assertIn("../../simulation/演示运行说明.md", [unquote(x) for x in page.links])
+
     def test_the_pilot_question_is_in_the_committed_bank_with_its_full_text(self):
         page = Page(os.path.join(COMMITTED, "questions", "第五阶段试评题", "index.html"))
         shown = [p["text"] for p in page.pres.values()]

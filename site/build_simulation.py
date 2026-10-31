@@ -53,6 +53,7 @@ join_cn = results.join_cn
 
 FOLD_FILE = 6000    # 文件超过这么多字就折叠起来，点开看全文
 FOLD_CALL = 2000    # 提示词和回答超过这么多字就折叠起来
+DEMO_NOTE = "演示运行说明.md"    # 与评审目录同一层；有这个文件，评审记录页就链接它
 
 QUESTION_FILES = [
     ("card", "题目卡.txt", "题目卡的三个版本", "评委版、提问版、裸题版，以及附在交给智能体的版本之后的交付要求和说明。"),
@@ -663,8 +664,11 @@ def reviews_page(site, reviews):
     pilot = os.path.join(HERE, "results", "index.html")
     sections = [section("all", "全部评审", f"共 {len(reviews)} 次。点运行标识看这次评审的详情和全部调用。", listing)]
     if os.path.isfile(pilot):
+        note = os.path.join(os.path.dirname(os.path.abspath(site.reviews_dir)), DEMO_NOTE)
+        compare = (f'用模拟评审程序重评试评的六份报告、与试评名次的对照，见<a href="{site.link(note, page)}">演示运行说明</a>。'
+                   if os.path.isfile(note) else "")
         sections.append(section("pilot", "第五阶段试评", f'第五阶段试评不是由模拟评审程序完成的：评委运行的提示词另外存了档。它的名次见'
-                                f'<a href="{site.link(pilot, page)}">试评名次</a>。', ""))
+                                f'<a href="{site.link(pilot, page)}">试评名次</a>。{compare}', ""))
     site.page(page, "评审记录", "每一次模拟评审用了哪些厂商和模型、调用了几次，以及名次页、复核页和每一次调用的原文。", head, sections)
 
 

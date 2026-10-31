@@ -1,0 +1,323 @@
+{
+ "judge": "评委 1",
+ "reports": {
+  "A": {
+   "ratings": {
+    "①": {
+     "score": 0,
+     "evidence": "We compare the advanced **Deep Research** capabilities of major AI platforms – Google Gemini, OpenAI ChatGPT, Anthropic Claude, Perplexity AI, Moonshot AI’s Kimi, and China’s DeepSeek – along multiple dimensions.",
+     "reason": "报告只列出比较范围和维度，没有交代对问题和提问者需要的理解，没有界定“最好”的标准或“深度研究”的边界，还把 ChatGPT Search 和 DeepSeek 模型直接当作比较对象，也没有回答哪家最好。",
+     "evidence_in_report": true
+    },
+    "③": {
+     "score": 1,
+     "evidence": "All information is drawn from official docs, technical blogs, and reputable sources (citations in brackets).",
+     "reason": "报告交代了来源的大致类型，个别地方也提到资料缺失，但没有系统说明查找范围、方法和局限。",
+     "evidence_in_report": true
+    },
+    "④": {
+     "score": 1,
+     "evidence": "Chinese news reports also claim they have “basically eliminated” hallucination【16†L247-L254】 (though that’s unverified PR).",
+     "reason": "报告对厂商宣传和已证实信息有所区分，但没有系统评估来源可靠性，也没有主动指出相互矛盾的信息并说明取舍。",
+     "evidence_in_report": true
+    },
+    "⑤": {
+     "score": 1,
+     "evidence": "It likely uses Bing-like search or an internal crawler but the details are proprietary.",
+     "reason": "报告常用 likely 等词标出推测，事实和判断大体分开，但多为逐项描述，没有考虑其他解释或反例并说明取舍。",
+     "evidence_in_report": true
+    },
+    "⑦": {
+     "score": 0,
+     "evidence": "Below we analyze each dimension in detail, with references. Our final comparison table highlights each vendor’s strengths, weaknesses, and ideal use-cases.",
+     "reason": "全文停留在各家优劣和适用场景，始终没有回答哪家最好，也没有说明各项结论的把握及其依据。",
+     "evidence_in_report": true
+    },
+    "写作": {
+     "score": 1,
+     "evidence": "**Mermaid Diagrams:** (Omitted – see referenced architecture descriptions above for how each system is structured.)",
+     "reason": "按维度组织，结构基本清楚、能读懂，但开头没有给出总体结论，还留有无法解析的引用标记和被省略内容的占位说明。",
+     "evidence_in_report": true
+    }
+   },
+   "timeliness": {
+    "score": 1,
+    "reason": "多数厂商的材料更新到 2026 年 1 至 2 月（如 Gemini 3.1 Pro、Claude Opus 4.6、Kimi K2.5、Perplexity Computer），但 ChatGPT 部分严重过时：停留在 GPT-4o 时期的 Search，忽略了 2025 年 2 月推出的 ChatGPT Deep Research，并称 GPT-5 仍是传闻，而 GPT-5 已于 2025 年 8 月发布。"
+   },
+   "off_topic": {
+    "value": false,
+    "reason": "报告确实在比较各家的深度研究和相关检索能力，主题与所问问题一致，不算回答另一个问题；但 ChatGPT 的比较对象选错，也没有给出哪家最好的总体判断，这些缺陷在相应环节处理。"
+   },
+   "traceable_sources": {
+    "value": true,
+    "reason": "报告没有网址，【25†L51-L59】这类引用标记也无法还原，但写明了 OpenAI blog 上的 ChatGPT Search 介绍、BentoML guide、Claude 4.6 announcement 等名称，可以检索追溯。"
+   },
+   "vendor": "claude"
+  },
+  "B": {
+   "ratings": {
+    "①": {
+     "score": 1,
+     "evidence": "根据多方评测和用户反馈，各家 Deep Research 功能各有所长，没有一个绝对的\"最好\"，但可以按不同维度来梳理：",
+     "reason": "报告回答了所问的问题，并写明按不同维度理解“最好”，但没有论证这些标准为何成立，也没有界定 Deep Research 的范围，够不上审视前提或概念边界。",
+     "evidence_in_report": true
+    },
+    "③": {
+     "score": 1,
+     "evidence": "根据多方评测和用户反馈，各家 Deep Research 功能各有所长",
+     "reason": "报告只交代了来源的大致类型是评测和用户反馈，没有说明查找范围、方法和局限。",
+     "evidence_in_report": true
+    },
+    "④": {
+     "score": 0,
+     "evidence": "一位测评者发现，ChatGPT 生成了长达 36 页、包含 25 个来源的报告，其中包含具体可操作的建议，与实际商业策略高度吻合。",
+     "reason": "报告依赖匿名测评者的说法，既不说明来源的可靠程度，也不区分来源类型，全文没有指出或处理任何相互矛盾的信息。",
+     "evidence_in_report": true
+    },
+    "⑤": {
+     "score": 0,
+     "evidence": "Claude 的 Deep Research 生成了 7 页、427 个来源的报告，在信息综合方面做得非常出色，而不是简单堆砌信息。",
+     "reason": "单次测试的事实与“非常出色”的评价混在同一句中，没有给出推理过程，也没有考虑其他解释或反例。",
+     "evidence_in_report": true
+    },
+    "⑦": {
+     "score": 1,
+     "evidence": "如果你看重引用和事实报告，Perplexity 是最佳选择。",
+     "reason": "报告给出了梯队划分和按需求选择的明确判断，但没有说明各结论有多大把握、依据是否充分。",
+     "evidence_in_report": true
+    },
+    "写作": {
+     "score": 1,
+     "evidence": "这是一个很好的问题，让我搜索一下最新的评测和比较信息。这是一个目前业界讨论很热烈的话题。",
+     "reason": "报告能读懂，结构基本清楚，但开头残留过程性套话，可直接使用的选择建议放在末尾，够不上简洁且主要结论在前。",
+     "evidence_in_report": true
+    }
+   },
+   "timeliness": {
+    "score": 1,
+    "reason": "报告内容大体涵盖主要产品，但测试结果都没有标注日期，无法确认是否反映截止时的产品版本；DeepSeek 和 Kimi 仍以 R1、K2 为代表，而截止前两家都已有更新的模型，属于个别重要信息过时。"
+   },
+   "off_topic": {
+    "value": false,
+    "reason": "报告直接比较各家 Deep Research 功能，并给出梯队划分和选择建议，回答的正是所问的问题。"
+   },
+   "traceable_sources": {
+    "value": false,
+    "reason": "所给文本中没有网址，也没有写明名称、可供检索的来源，只有“一位测评者”“多位评测者”等匿名说法；个别句间的空格可能是导出时丢失引用的痕迹，但这只是推测，是否存在可追溯来源需由细则规定的补救步骤确认。"
+   },
+   "vendor": "claude"
+  },
+  "C": {
+   "ratings": {
+    "①": {
+     "score": 1,
+     "evidence": "Deep Research通过模拟人类专家的认知 workflow，实现复杂问题的系统性探究：自主分解研究目标、动态调整检索策略、交叉验证多源信息、最终生成结构化专业报告。",
+     "reason": "报告界定了 Deep Research 的含义，并用评分和场景回答哪家最好，但没有审视「最好」的标准或比较范围，例如把无原生检索的 DeepSeek-R1 直接列入，却未讨论它是否算同类功能。",
+     "evidence_in_report": true
+    },
+    "③": {
+     "score": 0,
+     "evidence": "基于前述分析和多源评测，以下从十个维度进行量化评分",
+     "reason": "全篇只有「多源评测」这类笼统说法，没有交代查了哪些来源、怎样查找、有什么局限。",
+     "evidence_in_report": true
+    },
+    "④": {
+     "score": 1,
+     "evidence": "不同评测的定义、测试集、评估标准可能不同，直接比较需谨慎。",
+     "reason": "报告对内部评估、用户反馈和独立评测略有区分，并提示幻觉率不宜直接比较，但没有评估来源可靠性，也未处理矛盾，如称 ChatGPT 的 HLE 26.6% 领先，同时又列出 Gemini 的 46.4%。",
+     "evidence_in_report": true
+    },
+    "⑤": {
+     "score": 0,
+     "evidence": "Claude以微弱优势领先，源于其在分析深度和创新性维度的满分表现。",
+     "reason": "主观评分被当作量化结论，且总分与分项不符（ChatGPT 分项合计 45 而标 39，高于 Claude 的 42，且这两个维度同样满分），核心排名的推理不成立，也未考虑其他解释。",
+     "evidence_in_report": true
+    },
+    "⑦": {
+     "score": 1,
+     "evidence": "Gemini则以成本效益和速度的满分表现，成为大众市场的最优解。",
+     "reason": "报告给出了明确的排名和分场景推荐，但没有说明各结论有多大把握，只有幻觉率比较需谨慎、需人工复核等泛泛提醒。",
+     "evidence_in_report": true
+    },
+    "写作": {
+     "score": 1,
+     "evidence": "这一功能的核心价值在于将传统需要数小时甚至数天的人工研究工作压缩至分钟级别，同时保持相当程度的准确性和深度。",
+     "reason": "报告能读懂、结构基本清楚，但开头先讲概念和架构，没有摘要，综合排名到第三节末才出现，内容也有较多重复，不算简洁且结论在前。",
+     "evidence_in_report": true
+    }
+   },
+   "timeliness": {
+    "score": 0,
+    "reason": "报告虽纳入 2025 年底的 Gemini 基准，但影响选型的关键信息停留在 2025 年初：称 ChatGPT 深度研究仅对 Pro 开放、小型版本尚无时间表，而它在 2025 年 2 月已扩展到 Plus 等付费用户，4 月又推出轻量版；称 Claude Max 定价未公开，也与当时已公开的定价不符，这些都直接影响成本评分和推荐。"
+   },
+   "off_topic": {
+    "value": false,
+    "reason": "报告直接比较各家深度研究功能，给出综合排名和分场景选型，回答的就是所问的问题。"
+   },
+   "traceable_sources": {
+    "value": true,
+    "reason": "全篇没有网址和参考文献，多数出处也只写作「独立评测」「B2B行业评估」等无名称说法，但写明了 DeepSearchQA、Humanity's Last Exam 等能按名称检索到的基准，可追溯部分结论，因此至少有一个可追溯的来源。"
+   },
+   "vendor": "claude"
+  },
+  "D": {
+   "ratings": {
+    "①": {
+     "score": 2,
+     "evidence": "随着大语言模型技术栈的严重分化，没有任何一个单一的平台能够同时在执行极速、绝对的准确性、长程逻辑深度、生态系统融合与计算成本控制上达到完美的统一。因此，最优的深度研究服务完全取决于用户的具体业务场景约束、容错容忍度以及预算空间。",
+     "reason": "报告审视了“最好”的标准，判定不存在单一最优并按场景组织结论，尽管它没有分清深度研究功能与底层模型。",
+     "evidence_in_report": true
+    },
+    "③": {
+     "score": 1,
+     "evidence": "我接下来的行动将聚焦于搜集各平台的官方技术文档与最新的行业评测数据。我会通过综合分析这些一手资料与专家评估，深入探究各工具在不同专业场景下的实际表现。",
+     "reason": "文末的过程记录和来源列表交代了来源类型与大致范围，但中文语境表现等缺口最终查到没有、为什么没查到都未说明，够不上2档。",
+     "evidence_in_report": true
+    },
+    "④": {
+     "score": 0,
+     "evidence": "根据Vectara于2026年更新的休斯幻觉评估模型（HHEM）排行榜，以及行业内的多项综合评测，各家模型在摘要生成及事实陈述中的幻觉率数据如下",
+     "reason": "官方文档与Reddit、Medium、营销博客混列而不说明数据可靠程度，全篇仅一处“未经同行评审”的标注，BrowseComp分数区间等不一致也未作处理和取舍。",
+     "evidence_in_report": true
+    },
+    "⑤": {
+     "score": 0,
+     "evidence": "这也从侧面印证了，为什么像Perplexity这样专注于检索技术优化的平台，在提供严谨事实方面远胜于试图让大模型直接从权重中提取记忆的系统。",
+     "reason": "报告把一项检索技术研究直接当作Perplexity更可靠的佐证，幻觉表中却没有Perplexity的数据，判断与事实混写，也没有讨论其他解释或反例。",
+     "evidence_in_report": true
+    },
+    "⑦": {
+     "score": 1,
+     "evidence": "首先，对于那些将**“事实的准确性”与“数据的可验证性”置于最高优先级**的用户（如金融量化分析师、法律合规审核员、硬新闻记者），**Perplexity Max**是当前无可争议的王者",
+     "reason": "细则0档与1档在未说明把握上有重叠，这里因各场景结论明确可用而取1档，但报告通篇用“无可争议”等绝对措辞，没有说明各结论的把握程度。",
+     "evidence_in_report": true
+    },
+    "写作": {
+     "score": 1,
+     "evidence": "截至2026年，人工智能领域的核心竞争与底层技术逻辑已从传统的“对话式问答（Conversational Q&A）”全面转向“智能体驱动的深度研究（Agentic Deep Research）”。",
+     "reason": "报告能读懂、结构基本清楚，但开篇是背景铺陈，主要结论到最后一节才出现，文字也不够简洁。",
+     "evidence_in_report": true
+    }
+   },
+   "timeliness": {
+    "score": 1,
+    "reason": "主体材料已到2026年初（Gemini 3.1 Pro、Claude Opus 4.6、Kimi K2.5），但API价格表仍以GPT-4作为OpenAI的参考值而非GPT-5.2，Claude Sonnet也只写到4.5，而来源清单里已出现Sonnet 4.6，属个别重要信息过时。"
+   },
+   "off_topic": {
+    "value": false,
+    "reason": "报告比较了各家的深度研究能力并按场景给出选用结论，回答的是所问问题；相当篇幅偏向模型和编码基准，但不构成答非所问。"
+   },
+   "traceable_sources": {
+    "value": true,
+    "reason": "文末列有写明名称和域名的来源，如help.openai.com的“Deep research in ChatGPT”和clickforest.com/en/blog/ai-tools-comparison；正文引用标记已丢失、难以对应到具体结论，但来源本身可以检索。"
+   },
+   "vendor": "claude"
+  },
+  "E": {
+   "ratings": {
+    "①": {
+     "score": 1,
+     "evidence": "从公开评测和用户口碑来看，目前没有一个“绝对第一”的 Deep Research，但趋势比较清晰：",
+     "reason": "报告回答了所问问题，并表明按场景分别判断的理解，但没有明确“最好”的评价标准，也没有界定深度研究的范围，还把 Kimi k1.5、DeepSeek R1 等模型与深度研究产品混在一起比较。",
+     "evidence_in_report": true
+    },
+    "③": {
+     "score": 1,
+     "evidence": "从多篇 2025–2026 年的评测来看，ChatGPT 的 Deep Research 在“严肃技术/学术研究”场景里普遍被认为略胜一筹，尤其是在推理严谨性和整体可靠性上更受信任。",
+     "reason": "报告只交代了公开评测、用户口碑等来源的大致类型和时间范围，没有说明查找方法、缺失内容和局限。",
+     "evidence_in_report": true
+    },
+    "④": {
+     "score": 1,
+     "evidence": "官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；在 Humanity’s Last Exam 上达到 21.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。",
+     "reason": "报告区分了官方数据和第三方评测，但没有评估各来源的可靠程度，也没有主动指出相互矛盾的信息并说明取舍理由。",
+     "evidence_in_report": true
+    },
+    "⑤": {
+     "score": 1,
+     "evidence": "有文章直接评价“Deep Research 是 ChatGPT 目前最好的产品”，在对比 Grok、Perplexity、Gemini 等同类功能时，ChatGPT Deep Research 的总结质量和问题分解能力被认为更好。",
+     "reason": "报告靠归因大体分开了事实和他人判断，也列出了各家优劣，但没有考虑其他解释或反例，并把模型层面的评测直接当作深度研究功能的证据。",
+     "evidence_in_report": true
+    },
+    "⑦": {
+     "score": 1,
+     "evidence": "英文技术与综合研究：ChatGPT 的 Deep Research 综合实力最强，尤其在技术/严肃研究场景里整体评价略高于 Perplexity、Gemini 等竞品。",
+     "reason": "报告按场景给出了明确结论，但只用“略高”“普遍被认为”等措辞带过，没有逐项说明各结论的把握程度和依据强弱。",
+     "evidence_in_report": true
+    },
+    "写作": {
+     "score": 2,
+     "evidence": "从公开评测和用户口碑来看，目前没有一个“绝对第一”的 Deep Research，但趋势比较清晰：",
+     "reason": "报告开头先给出分场景的主要结论，后文按产品和场景展开，结构清楚易读，虽然表格与正文有些重复，总体仍算简洁。",
+     "evidence_in_report": true
+    }
+   },
+   "timeliness": {
+    "score": 0,
+    "reason": "主要结论依赖 2025 年初的材料和 o3-mini、Claude 3.5 sonnet、Kimi k1.5、DeepSeek R1 等旧模型，忽略了截止前已有的更新信息，例如 Claude 在 2025 年上线的网页搜索和 Research 功能、Gemini 自 2024 年底已有的专门 Deep Research 模式，以及 ChatGPT 在 2025 年调整的配额。"
+   },
+   "off_topic": {
+    "value": false,
+    "reason": "报告直接比较各家深度研究能力并按场景回答哪家最好，虽然混入了不少模型层面的比较，但回答的仍是所问问题。"
+   },
+   "traceable_sources": {
+    "value": true,
+    "reason": "报告给出了可追溯的带网址来源，例如 perplexity.ai/hub/blog/introducing-perplexity-deep-research 和 clickittech.com 上的对比文章。"
+   },
+   "vendor": "claude"
+  },
+  "F": {
+   "ratings": {
+    "①": {
+     "score": 2,
+     "evidence": "关于哪家Deep Research功能做得最好，目前并没有一个绝对的答案，因为各大模型在不同维度的评测中各有胜负，表现优异的场景也各不相同。这有点像询问“哪个工具最好用”——最终答案往往取决于你要完成什么样的任务。",
+     "reason": "报告质疑了存在脱离用途的“最好”这一前提，指出答案取决于任务，并据此按需求场景组织回答；审视虽浅，也未界定产品与模型的边界，但已符合 2 档的描述。",
+     "evidence_in_report": true
+    },
+    "③": {
+     "score": 1,
+     "evidence": "为了让你更清晰地了解当前各家实力的分野，我整理了近期几个权威第三方评测机构的结果，或许能提供一个更客观的视角。",
+     "reason": "只交代了来源类型是第三方评测，没有说明查找方法、未查到的内容和局限。",
+     "evidence_in_report": true
+    },
+    "④": {
+     "score": 1,
+     "evidence": "它在自己发布的DRACO评测中，特别是在医学、通用知识和技术领域，领先优势明显。",
+     "reason": "报告标出了各评测的发布方，也点明 DRACO 是厂商自评并注意到结果相互冲突，但开头又笼统称之为权威第三方，既未评估各来源的可靠程度，也未给出取舍理由。",
+     "evidence_in_report": true
+    },
+    "⑤": {
+     "score": 1,
+     "evidence": "不同评测结果“打架”，恰恰说明了当前的Deep Research功能正在快速演进，并且开始走向**专业化分工**。",
+     "reason": "表格把结论与分析分列，事实和判断大体分开，但评测分歧被直接归因于专业化分工，没有考虑基准设计差异、厂商自评等其他解释。",
+     "evidence_in_report": true
+    },
+    "⑦": {
+     "score": 1,
+     "evidence": "**谷歌Gemini Deep Research**是一个均衡而稳健的选择。它在MMDR-Bench评测中被认为是处理横跨人文、社科等多领域复杂任务的首选。",
+     "reason": "报告按场景给出了明确可用的推荐并附评测依据，但没有说明各结论的把握程度，只有“可能”等零散的措辞。",
+     "evidence_in_report": true
+    },
+    "写作": {
+     "score": 2,
+     "evidence": "关于哪家Deep Research功能做得最好，目前并没有一个绝对的答案，因为各大模型在不同维度的评测中各有胜负，表现优异的场景也各不相同。",
+     "reason": "开篇先给总体结论，随后依次是评测对比和选择建议，清楚简洁。",
+     "evidence_in_report": true
+    }
+   },
+   "timeliness": {
+    "score": 2,
+    "reason": "报告使用了 DRACO、ICLR 2026 的 LiveDRBench、MMDR-Bench 和 GPT-5.2 等截止时间前不久的材料，足够新，也未见主要结论依赖已过时的信息；不过报告未标注各项材料的日期，此判断未经联网核对。"
+   },
+   "off_topic": {
+    "value": false,
+    "reason": "报告直接回答了哪家 Deep Research 做得最好，结论是没有绝对赢家，并按需求给出选择建议，没有转去回答另一个问题。"
+   },
+   "traceable_sources": {
+    "value": true,
+    "reason": "报告没有网址，但写明了 DeepResearch Bench、DRACO、LiveDRBench、MMDR-Bench 等可检索的评测名称，其中部分还注明了发布方或会议。"
+   },
+   "vendor": "claude"
+  }
+ }
+}

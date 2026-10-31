@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟评审 试评重评 三家 第 14 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟评审 试评重评 三家第 14 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这次评审</a>
+    <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 14 次调用</p>
+    <h1 class="heading-3">评审 · 断言核验：报告 B，只给材料，评委 1</h1>
+    <p class="body-3 lede">Anthropic（claude），Claude Opus 5.5，只给材料，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟评审 试评重评 三家的第 14 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-断言核验：报告 B，只给材料，评委 1</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">Anthropic（claude）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">Claude Opus 5.5（<code>claude-opus-5-5</code>）</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6"><code>[]</code></dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 23:49:43.767（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 23:50:59.188（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">75.421 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>55698576751acb8407a1e4fc6746a507cb58c454f70fea6458931e2ffaa39f99</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>3d07c6a7c294be67cfcf9d1b5690bb7db6af3ad12be43ad5f05cbbe43440a42b</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/Users/zonghuanwu/.local/bin/claude -p --output-format stream-json --verbose --no-session-persistence --safe-mode --strict-mcp-config --disable-slash-commands --permission-mode dontAsk --tools </code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 14 行，记录里的序号是 14</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="13.html">上一次调用</a></li><li><a class="caption-1" href="15.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 7019 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 7019 字，点开看全文</summary><pre class="raw" id="prompt">
+你在一项深度研究报告评测的模拟评审中担任核验员，负责&quot;断言核验&quot;。
+
+下面先给出材料：评审细则、题目卡，以及从一份报告中列出的几条主要结论。结论清单由另一位清单员按细则第五节的规则列出，所有核验员共用。本任务只用这些材料：不能上网，不能运行命令，不能读写文件。所引网页的内容，用主办方的网页存档（运行后取回、按校验值保存的副本）。截止时间是 2026-03-03，判断对错和时效，以截至这一天已经存在的信息为准。
+
+===== 评审细则（开始） =====
+# 评审细则（第 1.2 版）
+
+2026-10-29。这是第四阶段方案（`stage4-design.md`）的操作版本，写给评委看，评委按它判定。第五阶段的小规模检验用的是第一版；检验之后改了两处，即第五节的结论清单和第七节第 2 条，改动的原因见 `stage5-report.md` 第三节。
+
+2026-10-30 第 1.2 版：第四节加了深度地图标注的用法和判定时隐去出处；有争议标注的计分规则见第四节末尾。起因是出题手册审阅时提出的问题：深度地图的定位不清，出题人不知道写到什么程度为止。第 1.2 版的改动还没有检验。
+
+---
+
+## 一、评委需要知道的定义
+
+**调研。** 为了回答提问者的一个具体问题，以截至某一时间点已经存在的信息为材料，系统地查找、甄别、分析和整合，得出有理有据的结论。结论可以是描述、解释、预测或建议，但都要讲得出道理、拿得出依据。
+
+**深。** 指调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。全体，是事情的历史和全部现状；本质，是事情的性质，以及这件事与其他事情之间的内在联系。材料的丰富是深的基础，但材料多本身不等于深。
+
+**不看的东西。** 篇幅、格式、标题层级、表格多少、引用条数、文笔，都不进入名次。写作只在第六节单独评。
+
+---
+
+## 二、环节评级（每个环节三档：0、1、2）
+
+每个评级都必须引用报告原文一到两句作为依据。原文中找不到依据时，按较低的一档评。
+
+**① 切题与真实需要**
+
+- 0：答的是另一个问题；或者只按字面回答，没有交代自己怎样理解问题和提问者的需要。
+- 1：回答了所问的问题，并写明了自己的理解或假设。
+- 2：在 1 的基础上，审视了问题的前提或其中概念的边界，例如&quot;最好&quot;按什么标准、某个概念包括哪些范围，并据此组织回答。
+
+**③ 查找过程的交代**
+
+- 0：没有交代查了什么、怎么查的。
+- 1：交代了来源的大致范围或类型。
+- 2：交代了查找的范围、方法和局限：查了哪些，没查到什么，为什么。
+
+**④ 甄别来源与处理矛盾**
+
+- 0：不加区分地使用来源；遇到相互矛盾的信息，不处理或没有发现。
+- 1：对来源有所区分，例如区分官方材料和二手评论，但对矛盾的处理不足。
+- 2：说明来源的可靠程度，主动指出相互矛盾的信息，并给出取舍的理由。
+
+**⑤ 分析**（区分事实和判断、考虑其他解释、不迎合）
+
+- 0：事实和判断混在一起；只有一种解释；结论迎合提问者或某一方。
+- 1：大体分开了事实和判断，推理基本清楚。
+- 2：明确区分事实和判断；考虑过其他解释或反例，并说明取舍；没有为了迎合而扭曲结论。
+
+**⑦ 结论与把握**
+
+- 0：结论含糊或回避判断，例如只说&quot;各有所长&quot;而不给出可用的判断；或者下了判断，但完全不说明把握。
+- 1：给出了明确的结论，但没有说明把握程度，或者把握说明流于形式。
+- 2：结论具体、明确，并如实说明各个结论有多大把握、依据是什么。
+
+**关于&quot;查不到&quot;。** 报告说&quot;查不到&quot;&quot;无法确定&quot;时，交代了查了什么、缺什么，并且仍然给出带把握说明的判断，算诚实；只说&quot;无法确定&quot;而不给可用的判断，算回避，在 ⑦ 中按 0 评。
+
+---
+
+## 三、要点抽取
+
+**要点**是报告中一条独立的、有实质内容的认识，例如一个事实、一个解释、一个判断、一条建议。
+
+- 同一个意思写了几遍，只算一条。
+- 只是罗列名字、没有说出任何认识的，不算要点。
+
+每条要点记下：
+
+- **内容**：一句话概括；
+- **层级**：现象、全体、内部联系、本质，四选一，定义见下；
+- **原文**：报告中的一句原话。
+
+**层级的定义：**
+
+- **现象**：事情本身的事实和表面特征。例如&quot;某产品于某日发布&quot;&quot;某产品支持上传文件&quot;。
+- **全体**：事情的历史，即怎样演变而来；或者全部现状，特别是容易被忽略的方面、例外和反例。例如&quot;这类功能从 2024 年底的首个产品发展到 2025 年各家跟进，期间定义发生了什么变化&quot;&quot;某产品在中文资料上的表现与英文不同&quot;。
+- **内部联系**：这件事与其他事情之间的因果、制约、依赖关系。例如&quot;某产品报告质量高，是因为它把检索和写作交给不同的子智能体，代价是用时更长&quot;。
+- **本质**：事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。例如&quot;&#x27;哪家最好&#x27;没有脱离用途的答案，因为各产品优化的目标不同：有的优化引用透明度，有的优化报告的完整性&quot;。
+
+**判定层级时的提醒。** 抽象的套话不算&quot;本质&quot;，例如&quot;技术在不断进步&quot;&quot;各有所长&quot;。一条要点只有说出了具体的性质或联系，并且能在报告中找到支撑，才能定为内部联系或本质。
+
+---
+
+## 四、要点池的判定
+
+把所有报告和出题人深度地图中的要点合并，意思相同的合成一条，再对每条池中要点判定四件事：
+
+1. **对不对。** 截至题目卡规定的截止时间，这条认识是否正确。标为正确、有误或无法判断，并附依据：来源网址或理由。
+2. **切不切题。** 它是否有助于回答提问者的问题。标为切题或不切题。不切题的要点不计分。
+3. **层级。** 现象、全体、内部联系、本质，四选一。以池中判定为准，不受抽取时所标层级的约束。
+4. **重要性。** 核心或一般。核心，指回答这个问题不能缺少的认识。
+
+然后记下每份报告写到了哪些池中要点，写对了还是写错了。
+
+**深度地图的标注（第 1.2 版）。** 深度地图是出题人在看到任何报告之前预先登记的浅答案、转折点和核心要点。它不是标准答案：地图上没有、但正确又切题的要点同样计分；要点的对错一律按来源判定。
+
+1. 地图上已有的要点，以地图登记的层级和重要性为默认值。评委组改动，必须依据来源或第三节的定义写明理由。
+2. 地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告。判为核心的，列入人工审计。
+3. **有争议的标注**，指评委组判定时没有一种意见达到三分之二的层级或重要性判定，以及评委组改动过的地图标注。计分时，比较一对报告，每条有争议的要点都按对领先一方最不利的那种标注计分，再做分开检验。有争议的判定只能让一对报告并列，不能把它们拉开。
+4. 估计名次把握的重抽样，只在至少一份报告写到的要点中进行。这样，地图上写了而没有一份报告写到的要点，对名次的影响为零。
+
+在第五阶段的试评数据上核对过两件事（2026-10-30）：去掉地图上 2 条没有一份报告写到的要点，6 份报告的净分和名次完全不变；把地图上 8 条要点的重要性全部反过来，名次不变。把全部 122 条要点的重要性抹平，原来分开的 12 对中有 1 对变成分不开。
+
+---
+
+## 五、断言核验
+
+**主要结论**，指报告摘要或结论部分中的判断，以及正文中支撑这些判断的关键事实。
+
+**结论清单（第 1.1 版）。** 凡是带来源的结论全部列入，另加至多 10 条不带来源的主要结论，优先抽对提问者影响最大的。清单由一人按这条规则抽出，所有核验员使用同一份清单。另外，在清单中标出至多 3 条&quot;对题目的直接回答&quot;，即报告对所问问题的总体判断。
+
+（第一版是每份报告由核验员自己抽出至多 10 条。不同核验员抽的不同，会带来噪声。）
+
+每条主要结论记两类标签。
+
+**来源标签：**
+
+- **支持**：打开所引来源（或它的存档），来源确实支持这条结论；
+- **部分支持**：来源支持其中一部分，或者结论说得比来源更强；
+- **不支持**：来源存在，但不支持这条结论；
+- **失效但有存档**：链接打不开，但网页存档中能找到，并据存档判断支持与否（另外记下支持与否）；
+- **找不到（疑似编造）**：链接打不开，存档中也没有，按标题检索也找不到；
+- **没有出处**：这条结论没有给出来源，或者导出时来源丢失。
+
+**对错标签：** 不管有没有来源，都独立检索核对，截至截止时间这条结论是否正确：
+
+- **正确**
+- **有误**：附依据
+- **无法判断**
+
+**来源只列在文末的情况。** 报告只在文末列出来源，没有对应到具体结论时，核验者在所列来源中查找支持：找到的，记为相应的来源标签，并注明&quot;文末来源&quot;；找不到的，记为没有出处。
+
+**&quot;疑似编造&quot;要经第二次核查才算确认。** 第二次核查可以换一种检索方式，或者查同一网站的其他页面。
+
+**时效（②）**，三档：
+
+- 0：主要结论依赖已经过时的信息，截止时间之前已有更新的信息被忽略；
+- 1：大体是新的，但有个别重要信息过时；
+- 2：材料截至规定的时间点，并且足够新。
+
+---
+
+## 六、写作（二级，单独报告，不进入名次）
+
+- 0：难以读懂，或结构混乱；
+- 1：能读懂，结构基本清楚；
+- 2：清楚、简洁，主要结论在前。
+
+---
+
+## 七、硬伤
+
+下列四种，有任何一种，报告就排在所有没有硬伤的报告之后：
+
+1. **编造来源**：经第二次核查确认，至少一个来源是编造的；
+2. **直接回答与证据相反**：报告对题目的直接回答（结论清单中标出的至多 3 条），至少一条被截止时间之前可靠的证据明确否定。支撑性事实的错误不算硬伤，在深度净分中扣分（第一版是&quot;至少一条核心的主要结论&quot;，结果长报告几乎都被判了硬伤）；
+3. **答非所问**：报告回答的是另一个问题；
+4. **全篇没有可追溯的出处**：经过补救，仍然没有一个可以追溯的来源。
+
+格式、篇幅、文笔，永远不算硬伤。
+===== 评审细则（结束） =====
+
+===== 题目卡（开始） =====
+一、评委版（只给评委）
+【提问者】原题没有写明。按&quot;一位想选用深度研究产品的普通用户&quot;理解。
+【用途】原题没有写明。按&quot;帮助决定用哪一家&quot;理解。
+【问题】各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+【截止时间】只使用截至 2026-03-03 已经公开的信息。这一天是试评报告的生成日期，判断对错和时效以截至这一天已经存在的信息为准。
+
+二、提问版（交给智能体）
+（原题没有提问版。试评的六份报告当时收到的只有问题本身，见裸题版。）
+
+三、裸题版（交给智能体）
+各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+
+四、附在提问版和裸题版之后，一字不改
+
+（原题没有附交付要求和说明：试评的六份报告生成在交付要求定稿之前。）
+
+说明：这道题取自第五阶段小规模检验，原件是 research-plan/stage5-pilot/question-card.md。原始题目文本没有保存，上面的问题是根据六份报告的标题和开头还原的，所以不是按基础级规则写的题目卡：提问者和用途是评委的理解，裸题版也是还原的文字，不一定与当时交给各个产品的逐字相同。这里按出题手册第八节模板的四个部分重写，内容与原件相同，供模拟评审程序读取。
+===== 题目卡（结束） =====
+
+===== 主要结论（只给材料）（开始） =====
+[c1] 结论：各家 Deep Research 各有所长，没有绝对最好的产品，选择取决于具体需求。
+原文：“根据多方评测和用户反馈，各家 Deep Research 功能各有所长，没有一个绝对的&quot;最好&quot;，但可以按不同维度来梳理：”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c2] 结论：ChatGPT 和 Gemini 属于 Deep Research 产品的第一梯队。
+原文：“第一梯队：ChatGPT 和 Gemini”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c3] 结论：需要最深度的分析和推理时，应选择 ChatGPT Deep Research。
+原文：“需要**最深度的分析和推理** → ChatGPT Deep Research”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c4] 结论：需要广泛覆盖和 Google 生态整合时，应选择 Gemini Deep Research。
+原文：“需要**广泛覆盖和 Google 生态整合** → Gemini Deep Research”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c5] 结论：Perplexity 是注重引用和事实报告的用户的最佳选择，适合快速获取有来源支撑的研究概览。
+原文：“如果你看重引用和事实报告，Perplexity 是最佳选择。它特别适合需要快速获取有来源支撑的研究概览的场景。”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c6] 结论：需要可读性强、综合质量高的报告时，应选择 Claude Deep Research。
+原文：“需要**可读性强、综合质量高的报告** → Claude Deep Research”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c7] 结论：DeepSeek 和 Kimi 的独立 Deep Research 产品功能成熟度与完善程度落后于上述几家，目前不是这一赛道的领跑者。
+原文：“但在&quot;Deep Research&quot;这个独立产品功能上，相比上述几家的成熟度和完善程度还有差距。它们的搜索整合和报告生成能力在不断进步，但目前还不是 Deep Research 这个赛道的领跑者。”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c8] 结论：需要低成本和开源生态时，可以把 DeepSeek 或 Kimi 的搜索功能作为补充。
+原文：“需要**低成本、开源生态** → DeepSeek / Kimi 的搜索功能可以作为补充”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c9] 结论：已经因其他功能付费使用某个平台的用户，可以直接使用该平台自带的 Deep Research。
+原文：“如果你已经因为其他功能（比如 Claude Code 或 OpenAI Codex）而付费使用某个平台，那直接用它自带的 Deep Research 就很好。”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c10] 结论：目前最务实的做法可能是根据具体任务在不同平台之间灵活切换。
+原文：“目前最务实的做法可能是根据具体任务在不同平台之间灵活切换。”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+===== 主要结论（只给材料）（结束） =====
+
+要做的事：按细则第五节，对上面每一条结论判定两类标签。
+
+1. 来源标签 source_label：只能是&quot;支持&quot;&quot;部分支持&quot;&quot;不支持&quot;&quot;失效但有存档&quot;&quot;找不到（疑似编造）&quot;&quot;没有出处&quot;之一。
+   - 给了存档内容的，按存档判断所引来源是否支持这条结论。存档只附了前面一部分的，在没附的部分里找不到，不能据此判为不支持，要在 source_note 中写明。
+   - 写明&quot;没有网址&quot;的结论，来源标签已经定为&quot;没有出处&quot;，你只判定对错，source_label 不用写。
+   - 判为&quot;找不到（疑似编造）&quot;的，必须换一种方式再查一次，例如按标题检索、查同一网站的其他页面，结果写进 second_check。second_check 为空的&quot;找不到&quot;不算数。
+2. 对错标签 correct：只能是&quot;正确&quot;&quot;有误&quot;&quot;无法判断&quot;之一。不管有没有来源，都独立核对：截至截止时间，这条结论是否正确。要注意排除截止时间之后才出现的信息。依据写进 correct_basis，包括网址或理由。没有把握的，标&quot;无法判断&quot;，不要猜。
+
+规则：
+- 不要猜测报告出自哪个产品。
+- 网络请求只做读取和检索，不提交任何表单。
+
+只回答一个 JSON 对象，不要写任何别的文字，也不要用代码块。每条结论一项，id 用上面方括号里的编号。格式如下：
+
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;source_label&quot;:&quot;…&quot;,&quot;source_note&quot;:&quot;…&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;…&quot;,&quot;correct_basis&quot;:&quot;…&quot;}]}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 2423 字，一字不改。</p>
+  <details><summary class="caption-2">回答共 2423 字，点开看全文</summary><pre class="raw" id="answer">
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;未联网，未打开任何网页，依据是截至截止时间的已有知识。各产品的侧重确有不同：Perplexity 速度快、引用突出，Gemini 与 Google 生态整合，ChatGPT 长于长篇分析。据我所知，截止时间前没有公认的权威总排名，不同评测的名次也随任务和指标变化。这是全称否定判断，只能说没有已知反证。&quot;},{&quot;id&quot;:&quot;c2&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;未联网，凭记忆，未打开原文。2025 年的学术评测 DeepResearch Bench 中，Gemini 与 OpenAI 的深度研究产品总分居前两位，当时的多数媒体对比也把二者列在前列。局限：第一梯队没有明确定义；该评测早于截止时间约半年，也没有覆盖所有产品。本条只判断二者属于第一梯队，不判断其他产品是否也属于。&quot;},{&quot;id&quot;:&quot;c3&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未联网。ChatGPT Deep Research 的分析能力评价较高，但“最深度”是最高级判断，没有可靠证据确立。凭记忆，DeepResearch Bench（2025）的总分是 Gemini 略高于 OpenAI，但该结果不足以否定本条，也未在截止时间前的新版本上复核。&quot;},{&quot;id&quot;:&quot;c4&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;未联网，凭记忆，未打开原文。Google 于 2025 年 11 月宣布 Gemini Deep Research 可调用 Gmail、Drive 和 Chat 的内容，这是原生生态整合。该产品也以检索大量网页为特点。ChatGPT 虽有 Google 连接器，但不改变这条按需求给出的建议。其中“Google 生态整合”把握高，“广泛覆盖”把握中等。&quot;},{&quot;id&quot;:&quot;c5&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未联网。后半句基本成立：Perplexity 的 Deep Research 通常几分钟出结果，引用也显眼。但“最佳选择”没有可靠依据：引用显眼不等于引用准确，我也无法确认截止时间前有针对深度研究产品引用准确率的可靠对比能确立它第一。目前同样没有明确反证，所以不判有误。&quot;},{&quot;id&quot;:&quot;c6&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未联网。Claude 确有深度研究类功能，官方名称是 Research。但“可读性强、综合质量高，因而应选它”是比较判断，我想不起可靠的独立对比能证实或否定，零散评价不足以定论。&quot;},{&quot;id&quot;:&quot;c7&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未联网，凭记忆。两家情况不同：据我所知，截止时间前 DeepSeek 没有独立命名的 Deep Research 产品，只有联网搜索加深度思考，所以它有差距这一点基本成立，但“独立产品”的前提不准确。Kimi 于 2025 年 6 月推出了 Kimi-Researcher，我没有可靠的独立对比来确认其成熟度落后于上述几家。整条无法一并判定。&quot;},{&quot;id&quot;:&quot;c8&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;未联网，凭记忆。DeepSeek（如 R1，MIT 许可）和 Moonshot 的 Kimi K2 都公开了模型权重，两家的网页端或 App 都有免费可用的联网搜索，API 价格也较低，所以“可以作为补充”这一弱建议成立。局限：开源的是模型权重，不是其产品内的搜索功能。&quot;},{&quot;id&quot;:&quot;c9&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;未联网，凭记忆，未核对当时的套餐页面。ChatGPT 付费套餐同时包含 Codex 和 deep research，Claude 付费套餐同时包含 Claude Code 和 Research，所以这条做法可行。局限：只通过 API 按量付费的用户不一定能用到；各套餐的额度不同；本条只判断可行，不判断其质量是否足够好。&quot;},{&quot;id&quot;:&quot;c10&quot;,&quot;source_label&quot;:&quot;&quot;,&quot;source_note&quot;:&quot;&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未联网。这是带“可能”的主观建议，没有可核对的事实标准。任务不同时换用产品有其道理，但对普通用户，切换可能要付多份订阅费或受免费额度限制，所以无法确认它是“最务实”的做法，也没有证据说明它错误。&quot;}]}</pre></details>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 41268 字</summary><pre class="raw" id="raw-output">
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;init&quot;,&quot;cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpids3oez3/work&quot;,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;tools&quot;:[],&quot;mcp_servers&quot;:[],&quot;model&quot;:&quot;claude-opus-5-5&quot;,&quot;permissionMode&quot;:&quot;dontAsk&quot;,&quot;slash_commands&quot;:[],&quot;apiKeySource&quot;:&quot;none&quot;,&quot;claude_code_version&quot;:&quot;2.1.314&quot;,&quot;output_style&quot;:&quot;default&quot;,&quot;agents&quot;:[&quot;claude&quot;,&quot;Explore&quot;,&quot;general-purpose&quot;,&quot;Plan&quot;],&quot;skills&quot;:[],&quot;plugins&quot;:[{&quot;name&quot;:&quot;pyright-lsp&quot;,&quot;path&quot;:&quot;/Users/zonghuanwu/.claude/plugins/cache/claude-plugins-official/pyright-lsp/1.0.0&quot;,&quot;source&quot;:&quot;pyright-lsp@claude-plugins-official&quot;,&quot;version&quot;:&quot;1.0.0&quot;},{&quot;name&quot;:&quot;cc-plugin-agents-md&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-agents-md@builtin&quot;},{&quot;name&quot;:&quot;cc-plugin-telemetry&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-telemetry@builtin&quot;},{&quot;name&quot;:&quot;cc-plugin-plugin-authoring&quot;,&quot;path&quot;:&quot;builtin&quot;,&quot;source&quot;:&quot;cc-plugin-plugin-authoring@builtin&quot;}],&quot;capabilities&quot;:[&quot;interrupt_receipt_v1&quot;,&quot;interrupt_cancel_queued_v1&quot;,&quot;interrupt_send_now_v1&quot;,&quot;interrupt_requeue_taken_v1&quot;,&quot;msg_lifecycle_v1&quot;,&quot;request_marker_lists_v1&quot;,&quot;ask_user_question_unanswered_v1&quot;,&quot;lifecycle_wakeup_source_v1&quot;,&quot;sdk_mcp_tools_list_changed&quot;,&quot;sdk_mcp_manifests&quot;,&quot;mcp_read_resource_v1&quot;,&quot;mcp_tool_ui_meta_v1&quot;,&quot;ui_surface_v1&quot;,&quot;mcp_call_result_not_for_model_v1&quot;],&quot;analytics_disabled&quot;:false,&quot;product_feedback_disabled&quot;:false,&quot;uuid&quot;:&quot;f6fa87d2-ae5a-4c47-a496-50502028f579&quot;,&quot;original_cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpids3oez3/work&quot;,&quot;additional_directories&quot;:[],&quot;messaging_socket_path&quot;:&quot;/tmp/cc-socks/58481.sock&quot;,&quot;fast_mode_state&quot;:&quot;off&quot;,&quot;fast_mode_disabled_reason&quot;:&quot;sdk_opt_in_required&quot;,&quot;per_turn_effort_active&quot;:true,&quot;view_mode&quot;:&quot;default&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:50,&quot;estimated_tokens_delta&quot;:50,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;1c6c87a9-cbb3-4df3-9c86-dd7bda60a1b3&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:150,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;63cc0db2-72f6-40bd-8bdf-06b9a25f8675&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:300,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;a9c8002e-e8d6-4c77-b12d-d4afb4786b3b&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:350,&quot;estimated_tokens_delta&quot;:50,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;9082c9a7-cc90-4a7a-90df-9f17c46cefd3&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:450,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;ade62884-dab1-44e0-94e3-6cb79e8360c7&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:600,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;e2c45287-5e78-4cf7-b431-db1e741590ff&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:750,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;6efa68f9-b739-4916-b19d-1e82d5582bee&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:900,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;88ff99f3-a2e3-4142-b3e4-6e4eab90cffe&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1000,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;13af39e9-f725-4b5a-a6c3-e34ca4bfd88d&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1150,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;65291952-d99d-4c99-a3c8-902df930a414&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1250,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;501f194e-b66a-4fdd-936e-663b48b3d2c1&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1400,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;1b6b8eaa-3b06-4256-959f-576af772c6e9&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1500,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;93117888-2ba1-4ed6-ada3-0fcf7e2c9d87&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1600,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;3c6ec049-a590-4415-9884-064cbada0025&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1750,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;29d34db6-cafc-43ba-a97f-18578ebbd4ae&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:1900,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;2a3e0506-ff60-489b-a859-bab9e5361d05&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2050,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;41ae906b-546a-44db-a500-024e89019ac7&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2200,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;19b3b996-5647-4f5b-a38b-043fba92934b&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2300,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;31b592d7-edad-4c4a-871f-1783f9b2de71&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2450,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;2bfaacbc-1304-4463-bfda-1183bf64e372&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2550,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;ee3064d6-9ef4-45e5-9e33-e378b9ecc520&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2700,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;d9e7ae53-cfb0-4c85-b8bd-c1aaf5f76415&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2800,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;29c4a940-a84e-4851-a683-209355804dc6&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:2900,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;408622f3-a4fe-49b8-9122-7bd70a5f5f27&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:3000,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;35685a55-6b71-4200-a938-e1796033b815&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:3200,&quot;estimated_tokens_delta&quot;:200,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;5d9b5f71-7692-47a6-a4db-1503db0ff066&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:3400,&quot;estimated_tokens_delta&quot;:200,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;07bf5dbe-fc3c-4711-a5cd-b999eb3fc1d0&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:3500,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;898d044b-ff2f-4893-b10d-0d2bceffa1fc&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:3600,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;07cf9011-464e-4a80-8acd-090da0bf9809&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:3700,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;06b98941-548b-498d-b6df-c8b4c2eee62b&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:3900,&quot;estimated_tokens_delta&quot;:200,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;1452718c-224b-4de2-8add-aaee1085d79a&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4000,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;54a53ab3-7ecc-4810-9e6c-d20bcb74bc6c&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4150,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;b6817413-9617-4857-b6d1-4071760c9d93&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4250,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;90ef92b4-0660-41e0-a5bb-0cab0e4ebf51&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4350,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;8e385681-4925-4f5d-9759-a2f9a7a5c4e7&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4500,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;211342d2-d29f-47f4-adbe-cb660af0ae7e&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4550,&quot;estimated_tokens_delta&quot;:50,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;ec8027e3-282b-4017-9d54-a812fd6cf7ff&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4650,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;cab85702-e52e-4af6-b944-ea26e78752b1&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4750,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;651fe20d-df4b-42e1-b574-764b9938c566&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:4900,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;53ea1cdc-537a-4bcc-b5a3-bc2454b6e80c&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:5000,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;a939aca9-5bef-4967-abd4-2aa1b3cea07a&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:5100,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;b3779030-a606-4059-8276-2b931eb175de&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:5200,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;cc9915f6-9ace-47f0-8966-f3a23a9dc5be&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:5300,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;9bd652bd-ce50-491b-acbc-145f40e7aeeb&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:5450,&quot;estimated_tokens_delta&quot;:150,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;466cf22c-24f5-4ca8-b5ec-339971739bd9&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:5550,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;edc2f1e0-a887-45b6-9033-22d122db7a2c&quot;}
+{&quot;type&quot;:&quot;system&quot;,&quot;subtype&quot;:&quot;thinking_tokens&quot;,&quot;estimated_tokens&quot;:5650,&quot;estimated_tokens_delta&quot;:100,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;2d19917d-29db-4a95-8e03-1319e92bee33&quot;}
+{&quot;type&quot;:&quot;assistant&quot;,&quot;message&quot;:{&quot;model&quot;:&quot;claude-opus-5-5&quot;,&quot;id&quot;:&quot;msg_011CgZsPp5bxbFoJ1HexHUk5&quot;,&quot;type&quot;:&quot;message&quot;,&quot;role&quot;:&quot;assistant&quot;,&quot;content&quot;:[{&quot;type&quot;:&quot;thinking&quot;,&quot;thinking&quot;:&quot;&quot;,&quot;signature&quot;:&quot;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&quot;}],&quot;container&quot;:null,&quot;stop_reason&quot;:null,&quot;stop_sequence&quot;:null,&quot;stop_details&quot;:null,&quot;usage&quot;:{&quot;input_tokens&quot;:2,&quot;cache_creation_input_tokens&quot;:7016,&quot;cache_read_input_tokens&quot;:1659,&quot;cache_creation&quot;:{&quot;ephemeral_5m_input_tokens&quot;:0,&quot;ephemeral_1h_input_tokens&quot;:7016},&quot;output_tokens&quot;:5,&quot;service_tier&quot;:&quot;standard&quot;,&quot;inference_geo&quot;:&quot;global&quot;,&quot;speed&quot;:&quot;standard&quot;},&quot;input_transformations&quot;:[],&quot;diagnostics&quot;:null,&quot;context_management&quot;:null},&quot;parent_tool_use_id&quot;:null,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;3501229f-9829-4896-b550-fd3e11d9c860&quot;,&quot;timestamp&quot;:&quot;2026-10-31T06:50:41.337Z&quot;,&quot;request_id&quot;:&quot;req_011CgZsPoWs18EoyV3fyHwse&quot;,&quot;thinking_duration_ms&quot;:56753,&quot;thinking_display&quot;:&quot;updates&quot;}
+{&quot;type&quot;:&quot;assistant&quot;,&quot;message&quot;:{&quot;model&quot;:&quot;claude-opus-5-5&quot;,&quot;id&quot;:&quot;msg_011CgZsPp5bxbFoJ1HexHUk5&quot;,&quot;type&quot;:&quot;message&quot;,&quot;role&quot;:&quot;assistant&quot;,&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;claims\&quot;:[{\&quot;id\&quot;:\&quot;c1\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，未打开任何网页，依据是截至截止时间的已有知识。各产品的侧重确有不同：Perplexity 速度快、引用突出，Gemini 与 Google 生态整合，ChatGPT 长于长篇分析。据我所知，截止时间前没有公认的权威总排名，不同评测的名次也随任务和指标变化。这是全称否定判断，只能说没有已知反证。\&quot;},{\&quot;id\&quot;:\&quot;c2\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆，未打开原文。2025 年的学术评测 DeepResearch Bench 中，Gemini 与 OpenAI 的深度研究产品总分居前两位，当时的多数媒体对比也把二者列在前列。局限：第一梯队没有明确定义；该评测早于截止时间约半年，也没有覆盖所有产品。本条只判断二者属于第一梯队，不判断其他产品是否也属于。\&quot;},{\&quot;id\&quot;:\&quot;c3\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。ChatGPT Deep Research 的分析能力评价较高，但“最深度”是最高级判断，没有可靠证据确立。凭记忆，DeepResearch Bench（2025）的总分是 Gemini 略高于 OpenAI，但该结果不足以否定本条，也未在截止时间前的新版本上复核。\&quot;},{\&quot;id\&quot;:\&quot;c4\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆，未打开原文。Google 于 2025 年 11 月宣布 Gemini Deep Research 可调用 Gmail、Drive 和 Chat 的内容，这是原生生态整合。该产品也以检索大量网页为特点。ChatGPT 虽有 Google 连接器，但不改变这条按需求给出的建议。其中“Google 生态整合”把握高，“广泛覆盖”把握中等。\&quot;},{\&quot;id\&quot;:\&quot;c5\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。后半句基本成立：Perplexity 的 Deep Research 通常几分钟出结果，引用也显眼。但“最佳选择”没有可靠依据：引用显眼不等于引用准确，我也无法确认截止时间前有针对深度研究产品引用准确率的可靠对比能确立它第一。目前同样没有明确反证，所以不判有误。\&quot;},{\&quot;id\&quot;:\&quot;c6\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。Claude 确有深度研究类功能，官方名称是 Research。但“可读性强、综合质量高，因而应选它”是比较判断，我想不起可靠的独立对比能证实或否定，零散评价不足以定论。\&quot;},{\&quot;id\&quot;:\&quot;c7\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆。两家情况不同：据我所知，截止时间前 DeepSeek 没有独立命名的 Deep Research 产品，只有联网搜索加深度思考，所以它有差距这一点基本成立，但“独立产品”的前提不准确。Kimi 于 2025 年 6 月推出了 Kimi-Researcher，我没有可靠的独立对比来确认其成熟度落后于上述几家。整条无法一并判定。\&quot;},{\&quot;id\&quot;:\&quot;c8\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆。DeepSeek（如 R1，MIT 许可）和 Moonshot 的 Kimi K2 都公开了模型权重，两家的网页端或 App 都有免费可用的联网搜索，API 价格也较低，所以“可以作为补充”这一弱建议成立。局限：开源的是模型权重，不是其产品内的搜索功能。\&quot;},{\&quot;id\&quot;:\&quot;c9\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆，未核对当时的套餐页面。ChatGPT 付费套餐同时包含 Codex 和 deep research，Claude 付费套餐同时包含 Claude Code 和 Research，所以这条做法可行。局限：只通过 API 按量付费的用户不一定能用到；各套餐的额度不同；本条只判断可行，不判断其质量是否足够好。\&quot;},{\&quot;id\&quot;:\&quot;c10\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。这是带“可能”的主观建议，没有可核对的事实标准。任务不同时换用产品有其道理，但对普通用户，切换可能要付多份订阅费或受免费额度限制，所以无法确认它是“最务实”的做法，也没有证据说明它错误。\&quot;}]}&quot;}],&quot;container&quot;:null,&quot;stop_reason&quot;:null,&quot;stop_sequence&quot;:null,&quot;stop_details&quot;:null,&quot;usage&quot;:{&quot;input_tokens&quot;:2,&quot;cache_creation_input_tokens&quot;:7016,&quot;cache_read_input_tokens&quot;:1659,&quot;cache_creation&quot;:{&quot;ephemeral_5m_input_tokens&quot;:0,&quot;ephemeral_1h_input_tokens&quot;:7016},&quot;output_tokens&quot;:5,&quot;service_tier&quot;:&quot;standard&quot;,&quot;inference_geo&quot;:&quot;global&quot;,&quot;speed&quot;:&quot;standard&quot;},&quot;input_transformations&quot;:[],&quot;diagnostics&quot;:null,&quot;context_management&quot;:null},&quot;parent_tool_use_id&quot;:null,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;uuid&quot;:&quot;bd18e087-7245-4c8c-b2f6-20ee623b979a&quot;,&quot;timestamp&quot;:&quot;2026-10-31T06:50:58.971Z&quot;,&quot;request_id&quot;:&quot;req_011CgZsPoWs18EoyV3fyHwse&quot;}
+{&quot;type&quot;:&quot;rate_limit_event&quot;,&quot;rate_limit_info&quot;:{&quot;status&quot;:&quot;allowed&quot;,&quot;resetsAt&quot;:1793437200,&quot;rateLimitType&quot;:&quot;five_hour&quot;,&quot;overageStatus&quot;:&quot;rejected&quot;,&quot;overageDisabledReason&quot;:&quot;org_level_disabled&quot;,&quot;isUsingOverage&quot;:false,&quot;unifiedWindows&quot;:{&quot;five_hour&quot;:{&quot;utilization&quot;:0.24,&quot;resetsAt&quot;:1793437200,&quot;status&quot;:&quot;allowed&quot;},&quot;seven_day&quot;:{&quot;utilization&quot;:0.36,&quot;resetsAt&quot;:1793541600,&quot;status&quot;:&quot;allowed&quot;}}},&quot;uuid&quot;:&quot;616d2718-70be-49e8-b86a-4ef1cdff4a6a&quot;,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;}
+{&quot;duration_api_ms&quot;:74858,&quot;stop_reason&quot;:&quot;end_turn&quot;,&quot;session_id&quot;:&quot;cc576216-840e-4c8d-850e-1f97c7af1681&quot;,&quot;total_cost_usd&quot;:0.20630779999999999,&quot;usage&quot;:{&quot;input_tokens&quot;:2,&quot;cache_creation_input_tokens&quot;:7016,&quot;cache_read_input_tokens&quot;:1659,&quot;output_tokens&quot;:7492,&quot;output_tokens_details&quot;:{&quot;thinking_tokens&quot;:5760},&quot;server_tool_use&quot;:{&quot;web_search_requests&quot;:0,&quot;web_fetch_requests&quot;:0},&quot;service_tier&quot;:&quot;standard&quot;,&quot;cache_creation&quot;:{&quot;ephemeral_1h_input_tokens&quot;:7016,&quot;ephemeral_5m_input_tokens&quot;:0},&quot;inference_geo&quot;:&quot;global&quot;,&quot;iterations&quot;:[{&quot;input_tokens&quot;:2,&quot;output_tokens&quot;:7492,&quot;cache_read_input_tokens&quot;:1659,&quot;cache_creation_input_tokens&quot;:7016,&quot;cache_creation&quot;:{&quot;ephemeral_5m_input_tokens&quot;:0,&quot;ephemeral_1h_input_tokens&quot;:7016},&quot;type&quot;:&quot;message&quot;}],&quot;speed&quot;:&quot;standard&quot;,&quot;fallback_credit&quot;:null},&quot;modelUsage&quot;:{&quot;claude-opus-5-5&quot;:{&quot;inputTokens&quot;:2,&quot;outputTokens&quot;:7492,&quot;cacheReadInputTokens&quot;:1659,&quot;cacheCreationInputTokens&quot;:7016,&quot;webSearchRequests&quot;:0,&quot;costUSD&quot;:0.20630779999999999,&quot;contextWindow&quot;:1000000,&quot;maxOutputTokens&quot;:128000,&quot;thinkingTokens&quot;:5760,&quot;cacheCreationEphemeral5mInputTokens&quot;:0,&quot;cacheCreationEphemeral1hInputTokens&quot;:7016,&quot;canonicalModel&quot;:&quot;claude-opus-5-5&quot;,&quot;provider&quot;:&quot;firstParty&quot;,&quot;costBasis&quot;:&quot;list&quot;}},&quot;permission_denials&quot;:[],&quot;terminal_reason&quot;:&quot;completed&quot;,&quot;fast_mode_state&quot;:&quot;off&quot;,&quot;fast_mode_disabled_reason&quot;:&quot;sdk_opt_in_required&quot;,&quot;subagent_stats&quot;:{&quot;spawned&quot;:0,&quot;requested&quot;:{&quot;background&quot;:0,&quot;foreground&quot;:0,&quot;unset&quot;:0},&quot;started_in_background&quot;:0,&quot;max_depth&quot;:0,&quot;spawned_by_subagents&quot;:0,&quot;completed&quot;:0,&quot;failed&quot;:0,&quot;killed&quot;:{&quot;parent&quot;:0,&quot;user&quot;:0,&quot;system&quot;:0},&quot;refused&quot;:{&quot;depth_limit&quot;:0,&quot;concurrency_limit&quot;:0,&quot;budget&quot;:0},&quot;by_type&quot;:{}},&quot;safety_stops&quot;:0,&quot;is_error&quot;:false,&quot;num_turns&quot;:1,&quot;subtype&quot;:&quot;success&quot;,&quot;api_error_status&quot;:null,&quot;result&quot;:&quot;{\&quot;claims\&quot;:[{\&quot;id\&quot;:\&quot;c1\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，未打开任何网页，依据是截至截止时间的已有知识。各产品的侧重确有不同：Perplexity 速度快、引用突出，Gemini 与 Google 生态整合，ChatGPT 长于长篇分析。据我所知，截止时间前没有公认的权威总排名，不同评测的名次也随任务和指标变化。这是全称否定判断，只能说没有已知反证。\&quot;},{\&quot;id\&quot;:\&quot;c2\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆，未打开原文。2025 年的学术评测 DeepResearch Bench 中，Gemini 与 OpenAI 的深度研究产品总分居前两位，当时的多数媒体对比也把二者列在前列。局限：第一梯队没有明确定义；该评测早于截止时间约半年，也没有覆盖所有产品。本条只判断二者属于第一梯队，不判断其他产品是否也属于。\&quot;},{\&quot;id\&quot;:\&quot;c3\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。ChatGPT Deep Research 的分析能力评价较高，但“最深度”是最高级判断，没有可靠证据确立。凭记忆，DeepResearch Bench（2025）的总分是 Gemini 略高于 OpenAI，但该结果不足以否定本条，也未在截止时间前的新版本上复核。\&quot;},{\&quot;id\&quot;:\&quot;c4\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆，未打开原文。Google 于 2025 年 11 月宣布 Gemini Deep Research 可调用 Gmail、Drive 和 Chat 的内容，这是原生生态整合。该产品也以检索大量网页为特点。ChatGPT 虽有 Google 连接器，但不改变这条按需求给出的建议。其中“Google 生态整合”把握高，“广泛覆盖”把握中等。\&quot;},{\&quot;id\&quot;:\&quot;c5\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。后半句基本成立：Perplexity 的 Deep Research 通常几分钟出结果，引用也显眼。但“最佳选择”没有可靠依据：引用显眼不等于引用准确，我也无法确认截止时间前有针对深度研究产品引用准确率的可靠对比能确立它第一。目前同样没有明确反证，所以不判有误。\&quot;},{\&quot;id\&quot;:\&quot;c6\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。Claude 确有深度研究类功能，官方名称是 Research。但“可读性强、综合质量高，因而应选它”是比较判断，我想不起可靠的独立对比能证实或否定，零散评价不足以定论。\&quot;},{\&quot;id\&quot;:\&quot;c7\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆。两家情况不同：据我所知，截止时间前 DeepSeek 没有独立命名的 Deep Research 产品，只有联网搜索加深度思考，所以它有差距这一点基本成立，但“独立产品”的前提不准确。Kimi 于 2025 年 6 月推出了 Kimi-Researcher，我没有可靠的独立对比来确认其成熟度落后于上述几家。整条无法一并判定。\&quot;},{\&quot;id\&quot;:\&quot;c8\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆。DeepSeek（如 R1，MIT 许可）和 Moonshot 的 Kimi K2 都公开了模型权重，两家的网页端或 App 都有免费可用的联网搜索，API 价格也较低，所以“可以作为补充”这一弱建议成立。局限：开源的是模型权重，不是其产品内的搜索功能。\&quot;},{\&quot;id\&quot;:\&quot;c9\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网，凭记忆，未核对当时的套餐页面。ChatGPT 付费套餐同时包含 Codex 和 deep research，Claude 付费套餐同时包含 Claude Code 和 Research，所以这条做法可行。局限：只通过 API 按量付费的用户不一定能用到；各套餐的额度不同；本条只判断可行，不判断其质量是否足够好。\&quot;},{\&quot;id\&quot;:\&quot;c10\&quot;,\&quot;source_label\&quot;:\&quot;\&quot;,\&quot;source_note\&quot;:\&quot;\&quot;,\&quot;second_check\&quot;:\&quot;\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未联网。这是带“可能”的主观建议，没有可核对的事实标准。任务不同时换用产品有其道理，但对普通用户，切换可能要付多份订阅费或受免费额度限制，所以无法确认它是“最务实”的做法，也没有证据说明它错误。\&quot;}]}&quot;,&quot;ttft_ms&quot;:57359,&quot;type&quot;:&quot;result&quot;,&quot;duration_ms&quot;:75016,&quot;uuid&quot;:&quot;80e3e39d-98ed-457b-8b04-35113740d683&quot;,&quot;ttft_stream_ms&quot;:605,&quot;time_to_request_ms&quot;:155,&quot;first_content_frame_ms&quot;:605,&quot;queued_turn_count&quot;:0,&quot;result_index&quot;:0,&quot;model_usage_since_last_result&quot;:{&quot;claude-opus-5-5&quot;:{&quot;inputTokens&quot;:2,&quot;outputTokens&quot;:7492,&quot;cacheReadInputTokens&quot;:1659,&quot;cacheCreationInputTokens&quot;:7016,&quot;webSearchRequests&quot;:0,&quot;costUSD&quot;:0.20630779999999999,&quot;contextWindow&quot;:1000000,&quot;maxOutputTokens&quot;:128000,&quot;thinkingTokens&quot;:5760,&quot;cacheCreationEphemeral5mInputTokens&quot;:0,&quot;cacheCreationEphemeral1hInputTokens&quot;:7016,&quot;canonicalModel&quot;:&quot;claude-opus-5-5&quot;,&quot;provider&quot;:&quot;firstParty&quot;,&quot;costBasis&quot;:&quot;list&quot;}}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

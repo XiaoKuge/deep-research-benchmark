@@ -1,0 +1,18 @@
+{
+ "reports": {
+  "A": "ChatGPT",
+  "B": "Claude",
+  "C": "Kimi",
+  "D": "Gemini",
+  "E": "Perplexity",
+  "F": "DeepSeek"
+ },
+ "files": {
+  "A": "research-plan/stage5-pilot/reports/A.md",
+  "B": "research-plan/stage5-pilot/reports/B.md",
+  "C": "research-plan/stage5-pilot/reports/C.md",
+  "D": "research-plan/stage5-pilot/reports/D.md",
+  "E": "research-plan/stage5-pilot/reports/E.md",
+  "F": "research-plan/stage5-pilot/reports/F.md"
+ }
+}

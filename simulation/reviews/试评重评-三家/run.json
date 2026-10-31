@@ -1,0 +1,503 @@
+{
+ "run_id": "试评重评-三家",
+ "mode": "真实调用",
+ "started_at": "2026-10-30T23:40:06-07:00",
+ "finished_at": "2026-10-31T00:27:55-07:00",
+ "status": "完成",
+ "error": null,
+ "question": {
+  "dir": "simulation/questions/第五阶段试评题",
+  "kind": "练习题",
+  "cutoff": "2026-03-03",
+  "card_sha256": "fb9df09ca57bf5ea48487f9cb0f85c18cfc528b806cf90d17ababa28b0d9443f",
+  "depth_map_sha256": "10c7b5c2a599b81595d6c62f6bd594e9b0ab246ac39bc7230f3ba44a74b5021e",
+  "checksum_matches": true,
+  "map_points": [
+   "M1",
+   "M2",
+   "M3",
+   "M4",
+   "M5",
+   "M6",
+   "M7",
+   "M8"
+  ]
+ },
+ "reports": [
+  {
+   "label": "A",
+   "name": "ChatGPT",
+   "file": "research-plan/stage5-pilot/reports/A.md",
+   "sha256": "748146b3855888124ef1c7e85025f01da6840fa68b79d524e8dd950e89bb8078",
+   "characters": 41389,
+   "urls": 0,
+   "copy": "reports/A.md"
+  },
+  {
+   "label": "B",
+   "name": "Claude",
+   "file": "research-plan/stage5-pilot/reports/B.md",
+   "sha256": "1c32ceb9edd2f2f29baa5aeb4791752b0713fbee2279b459f60117794dbb6dd9",
+   "characters": 1237,
+   "urls": 0,
+   "copy": "reports/B.md"
+  },
+  {
+   "label": "C",
+   "name": "Kimi",
+   "file": "research-plan/stage5-pilot/reports/C.md",
+   "sha256": "0873e55a719d0c033adac5931f9d379f2f8f73a15552bd0c7e0cc86e1b70951b",
+   "characters": 31709,
+   "urls": 0,
+   "copy": "reports/C.md"
+  },
+  {
+   "label": "D",
+   "name": "Gemini",
+   "file": "research-plan/stage5-pilot/reports/D.md",
+   "sha256": "05696a02ba30199739059e73770147c5f3582e7770e34d7d985efa9efe36c3cd",
+   "characters": 84529,
+   "urls": 0,
+   "copy": "reports/D.md"
+  },
+  {
+   "label": "E",
+   "name": "Perplexity",
+   "file": "research-plan/stage5-pilot/reports/E.md",
+   "sha256": "8c1f2f86da09877801ea20ce60c2c96db8032665c1fe1e22874dfc8f7a21fa97",
+   "characters": 6251,
+   "urls": 6,
+   "copy": "reports/E.md"
+  },
+  {
+   "label": "F",
+   "name": "DeepSeek",
+   "file": "research-plan/stage5-pilot/reports/F.md",
+   "sha256": "9b1d68c6045784bdf318db42f8ed830a2ee206debe1bd73663ebd25921d5867d",
+   "characters": 1849,
+   "urls": 0,
+   "copy": "reports/F.md"
+  }
+ ],
+ "archive": {
+  "dir": null,
+  "manifests": [],
+  "usable_urls": 0
+ },
+ "config": {
+  "steps": {
+   "claims_list": {
+    "vendors": [
+     "codex"
+    ],
+    "times": 1
+   },
+   "verify": {
+    "vendors": [
+     "claude",
+     "codex",
+     "google"
+    ],
+    "times": 1
+   },
+   "extract": {
+    "vendors": [
+     "codex",
+     "google"
+    ],
+    "times": 1
+   },
+   "merge": {
+    "vendors": [
+     "codex"
+    ],
+    "times": 1
+   },
+   "reach": {
+    "vendors": [
+     "google"
+    ],
+    "times": 1
+   },
+   "judge": {
+    "vendors": [
+     "claude",
+     "codex",
+     "google"
+    ],
+    "times": 1
+   },
+   "rating": {
+    "vendors": [
+     "claude",
+     "codex",
+     "google"
+    ],
+    "times": 1
+   },
+   "pairwise": {
+    "vendors": [
+     "codex",
+     "google"
+    ],
+    "times": 1
+   },
+   "direct": {
+    "vendors": [
+     "google"
+    ],
+    "times": 1
+   }
+  },
+  "models": {
+   "claude": null,
+   "codex": null,
+   "kimi": null,
+   "google": "gemini-4-argon-medium"
+  },
+  "substitutes": [
+   "codex",
+   "google",
+   "claude"
+  ],
+  "source_chars": 12000,
+  "workers": 3,
+  "seed": 0
+ },
+ "scorer": {
+  "program": "research-plan/stage5-pilot/score.py",
+  "version": "1.2",
+  "command": [
+   "python3.14",
+   "-I",
+   "research-plan/stage5-pilot/score.py",
+   "simulation/reviews/试评重评-三家/mapping.json",
+   "1.2",
+   "--data",
+   "simulation/reviews/试评重评-三家/data",
+   "--output",
+   "simulation/reviews/试评重评-三家/results-v1.2.json"
+  ],
+  "timeout_seconds": 600,
+  "timed_out": false,
+  "exit_code": 0,
+  "stderr": ""
+ },
+ "calls": {
+  "calls": 133,
+  "by_vendor": {
+   "codex": 58,
+   "google": 61,
+   "claude": 14
+  },
+  "by_step": {
+   "结论清单": 6,
+   "断言核验": 21,
+   "要点抽取": 12,
+   "要点池合并": 1,
+   "写到核对": 6,
+   "要点判定": 3,
+   "环节评级": 18,
+   "两两比较": 60,
+   "直接回答": 6
+  },
+  "max_calls": 145,
+  "over_limit": false
+ },
+ "steps": {
+  "结论清单": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "codex"
+    }
+   ],
+   "calls": 6,
+   "by_vendor": {
+    "codex": 6
+   },
+   "models": {
+    "codex": [
+     "命令行默认模型"
+    ]
+   }
+  },
+  "断言核验": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "codex"
+    },
+    {
+     "slot": 3,
+     "vendor": "google"
+    }
+   ],
+   "calls": 21,
+   "by_vendor": {
+    "claude": 7,
+    "codex": 8,
+    "google": 6
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5"
+    ],
+    "codex": [
+     "命令行默认模型"
+    ],
+    "google": [
+     "gemini-4-argon-medium"
+    ]
+   }
+  },
+  "要点抽取": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "codex"
+    },
+    {
+     "slot": 2,
+     "vendor": "google"
+    }
+   ],
+   "calls": 12,
+   "by_vendor": {
+    "codex": 6,
+    "google": 6
+   },
+   "models": {
+    "codex": [
+     "命令行默认模型"
+    ],
+    "google": [
+     "gemini-4-argon-medium"
+    ]
+   }
+  },
+  "要点池合并": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "codex"
+    }
+   ],
+   "calls": 1,
+   "by_vendor": {
+    "codex": 1
+   },
+   "models": {
+    "codex": [
+     "命令行默认模型"
+    ]
+   }
+  },
+  "写到核对": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "google"
+    }
+   ],
+   "calls": 6,
+   "by_vendor": {
+    "google": 6
+   },
+   "models": {
+    "google": [
+     "gemini-4-argon-medium"
+    ]
+   }
+  },
+  "要点判定": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "codex"
+    },
+    {
+     "slot": 3,
+     "vendor": "google"
+    }
+   ],
+   "calls": 3,
+   "by_vendor": {
+    "claude": 1,
+    "codex": 1,
+    "google": 1
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5"
+    ],
+    "codex": [
+     "命令行默认模型"
+    ],
+    "google": [
+     "gemini-4-argon-medium"
+    ]
+   }
+  },
+  "环节评级": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "claude"
+    },
+    {
+     "slot": 2,
+     "vendor": "codex"
+    },
+    {
+     "slot": 3,
+     "vendor": "google"
+    }
+   ],
+   "calls": 18,
+   "by_vendor": {
+    "claude": 6,
+    "codex": 6,
+    "google": 6
+   },
+   "models": {
+    "claude": [
+     "claude-opus-5-5"
+    ],
+    "codex": [
+     "命令行默认模型"
+    ],
+    "google": [
+     "gemini-4-argon-medium"
+    ]
+   }
+  },
+  "两两比较": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "codex"
+    },
+    {
+     "slot": 2,
+     "vendor": "google"
+    }
+   ],
+   "calls": 60,
+   "by_vendor": {
+    "codex": 30,
+    "google": 30
+   },
+   "models": {
+    "codex": [
+     "命令行默认模型"
+    ],
+    "google": [
+     "gemini-4-argon-medium"
+    ]
+   }
+  },
+  "直接回答": {
+   "planned": [
+    {
+     "slot": 1,
+     "vendor": "google"
+    }
+   ],
+   "calls": 6,
+   "by_vendor": {
+    "google": 6
+   },
+   "models": {
+    "google": [
+     "gemini-4-argon-medium"
+    ]
+   }
+  }
+ },
+ "too_few_vendors": [],
+ "unavailable": [],
+ "substitutions": [
+  {
+   "步骤": "断言核验",
+   "任务": "评审-断言核验：报告 E，只读网页，评委 3",
+   "原来的厂商": "google",
+   "改用的厂商": "codex",
+   "原因": "google：Google（agy）不能用于只读网页一档：非交互运行时读取网页需要人批准，一律被拒"
+  }
+ ],
+ "invalid_answers": [],
+ "disputed_points": [
+  "Q36",
+  "Q40",
+  "Q42",
+  "Q68",
+  "Q248",
+  "Q274"
+ ],
+ "audit_points": [
+  "Q40",
+  "Q41",
+  "Q42",
+  "Q47",
+  "Q53",
+  "Q68",
+  "Q83",
+  "Q101"
+ ],
+ "notes": {
+  "evidence_not_found": [
+   {
+    "report": "C",
+    "slot": 3,
+    "vendor": "google",
+    "element": "①"
+   }
+  ],
+  "not_merged": [],
+  "unknown_sources": [],
+  "map_points_added": [],
+  "map_points_merged_together": [],
+  "unjudged_points": [],
+  "unverified_claims": [],
+  "ignored_map_changes": 0,
+  "reach_added": 100
+ },
+ "outputs": {
+  "calls": "calls.jsonl",
+  "mapping": "mapping.json",
+  "reports": "reports",
+  "judgments": "judgments",
+  "data": "data",
+  "results": "results-v1.2.json"
+ },
+ "estimate": {
+  "calls": 133,
+  "by_vendor": {
+   "codex": 58,
+   "claude": 14,
+   "google": 61
+  },
+  "by_step": {
+   "结论清单": 6,
+   "断言核验": 21,
+   "要点抽取": 12,
+   "要点池合并": 1,
+   "写到核对": 6,
+   "要点判定": 3,
+   "环节评级": 18,
+   "两两比较": 60,
+   "直接回答": 6
+  },
+  "max_calls": 145,
+  "over_limit": false
+ }
+}

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟评审 试评重评 三家 第 50 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟评审 试评重评 三家第 50 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这次评审</a>
+    <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 50 次调用</p>
+    <h1 class="heading-3">评审 · 环节评级：报告 A，评委 3</h1>
+    <p class="body-3 lede">Google（google），Gemini Argon Medium 4，只给材料，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟评审 试评重评 三家的第 50 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-环节评级：报告 A，评委 3</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">Google（google）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 31 日 00:20:14.603（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 31 日 00:20:30.433（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">15.83 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>aa0aa96d542541b01a6a172d6cdc66f32857785df90e2be7db363315ba9d082e</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>b881269194ac1e13096e7c1936a20fed0ea51b44e3bb7209803adc5db4468fac</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/agy --input-format stream-json --output-format stream-json --agent materials-only --sandbox --disable-slash-commands --model gemini-4-argon-medium -p </code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 50 行，记录里的序号是 50</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="49.html">上一次调用</a></li><li><a class="caption-1" href="51.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 47046 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 47046 字，点开看全文</summary><pre class="raw" id="prompt">
+你在一项深度研究报告评测的模拟评审中担任评委，负责&quot;环节评级&quot;。
+
+下面先给出材料：评审细则、题目卡和一份报告的全文。这就是你判定的全部依据。本任务只用这些材料：不能上网，不能运行命令，不能读写文件。报告要完整读完，长报告不要只读开头。截止时间是 2026-03-03，判断对错和时效，以截至这一天已经存在的信息为准。
+
+===== 评审细则（开始） =====
+# 评审细则（第 1.2 版）
+
+2026-10-29。这是第四阶段方案（`stage4-design.md`）的操作版本，写给评委看，评委按它判定。第五阶段的小规模检验用的是第一版；检验之后改了两处，即第五节的结论清单和第七节第 2 条，改动的原因见 `stage5-report.md` 第三节。
+
+2026-10-30 第 1.2 版：第四节加了深度地图标注的用法和判定时隐去出处；有争议标注的计分规则见第四节末尾。起因是出题手册审阅时提出的问题：深度地图的定位不清，出题人不知道写到什么程度为止。第 1.2 版的改动还没有检验。
+
+---
+
+## 一、评委需要知道的定义
+
+**调研。** 为了回答提问者的一个具体问题，以截至某一时间点已经存在的信息为材料，系统地查找、甄别、分析和整合，得出有理有据的结论。结论可以是描述、解释、预测或建议，但都要讲得出道理、拿得出依据。
+
+**深。** 指调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。全体，是事情的历史和全部现状；本质，是事情的性质，以及这件事与其他事情之间的内在联系。材料的丰富是深的基础，但材料多本身不等于深。
+
+**不看的东西。** 篇幅、格式、标题层级、表格多少、引用条数、文笔，都不进入名次。写作只在第六节单独评。
+
+---
+
+## 二、环节评级（每个环节三档：0、1、2）
+
+每个评级都必须引用报告原文一到两句作为依据。原文中找不到依据时，按较低的一档评。
+
+**① 切题与真实需要**
+
+- 0：答的是另一个问题；或者只按字面回答，没有交代自己怎样理解问题和提问者的需要。
+- 1：回答了所问的问题，并写明了自己的理解或假设。
+- 2：在 1 的基础上，审视了问题的前提或其中概念的边界，例如&quot;最好&quot;按什么标准、某个概念包括哪些范围，并据此组织回答。
+
+**③ 查找过程的交代**
+
+- 0：没有交代查了什么、怎么查的。
+- 1：交代了来源的大致范围或类型。
+- 2：交代了查找的范围、方法和局限：查了哪些，没查到什么，为什么。
+
+**④ 甄别来源与处理矛盾**
+
+- 0：不加区分地使用来源；遇到相互矛盾的信息，不处理或没有发现。
+- 1：对来源有所区分，例如区分官方材料和二手评论，但对矛盾的处理不足。
+- 2：说明来源的可靠程度，主动指出相互矛盾的信息，并给出取舍的理由。
+
+**⑤ 分析**（区分事实和判断、考虑其他解释、不迎合）
+
+- 0：事实和判断混在一起；只有一种解释；结论迎合提问者或某一方。
+- 1：大体分开了事实和判断，推理基本清楚。
+- 2：明确区分事实和判断；考虑过其他解释或反例，并说明取舍；没有为了迎合而扭曲结论。
+
+**⑦ 结论与把握**
+
+- 0：结论含糊或回避判断，例如只说&quot;各有所长&quot;而不给出可用的判断；或者下了判断，但完全不说明把握。
+- 1：给出了明确的结论，但没有说明把握程度，或者把握说明流于形式。
+- 2：结论具体、明确，并如实说明各个结论有多大把握、依据是什么。
+
+**关于&quot;查不到&quot;。** 报告说&quot;查不到&quot;&quot;无法确定&quot;时，交代了查了什么、缺什么，并且仍然给出带把握说明的判断，算诚实；只说&quot;无法确定&quot;而不给可用的判断，算回避，在 ⑦ 中按 0 评。
+
+---
+
+## 三、要点抽取
+
+**要点**是报告中一条独立的、有实质内容的认识，例如一个事实、一个解释、一个判断、一条建议。
+
+- 同一个意思写了几遍，只算一条。
+- 只是罗列名字、没有说出任何认识的，不算要点。
+
+每条要点记下：
+
+- **内容**：一句话概括；
+- **层级**：现象、全体、内部联系、本质，四选一，定义见下；
+- **原文**：报告中的一句原话。
+
+**层级的定义：**
+
+- **现象**：事情本身的事实和表面特征。例如&quot;某产品于某日发布&quot;&quot;某产品支持上传文件&quot;。
+- **全体**：事情的历史，即怎样演变而来；或者全部现状，特别是容易被忽略的方面、例外和反例。例如&quot;这类功能从 2024 年底的首个产品发展到 2025 年各家跟进，期间定义发生了什么变化&quot;&quot;某产品在中文资料上的表现与英文不同&quot;。
+- **内部联系**：这件事与其他事情之间的因果、制约、依赖关系。例如&quot;某产品报告质量高，是因为它把检索和写作交给不同的子智能体，代价是用时更长&quot;。
+- **本质**：事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。例如&quot;&#x27;哪家最好&#x27;没有脱离用途的答案，因为各产品优化的目标不同：有的优化引用透明度，有的优化报告的完整性&quot;。
+
+**判定层级时的提醒。** 抽象的套话不算&quot;本质&quot;，例如&quot;技术在不断进步&quot;&quot;各有所长&quot;。一条要点只有说出了具体的性质或联系，并且能在报告中找到支撑，才能定为内部联系或本质。
+
+---
+
+## 四、要点池的判定
+
+把所有报告和出题人深度地图中的要点合并，意思相同的合成一条，再对每条池中要点判定四件事：
+
+1. **对不对。** 截至题目卡规定的截止时间，这条认识是否正确。标为正确、有误或无法判断，并附依据：来源网址或理由。
+2. **切不切题。** 它是否有助于回答提问者的问题。标为切题或不切题。不切题的要点不计分。
+3. **层级。** 现象、全体、内部联系、本质，四选一。以池中判定为准，不受抽取时所标层级的约束。
+4. **重要性。** 核心或一般。核心，指回答这个问题不能缺少的认识。
+
+然后记下每份报告写到了哪些池中要点，写对了还是写错了。
+
+**深度地图的标注（第 1.2 版）。** 深度地图是出题人在看到任何报告之前预先登记的浅答案、转折点和核心要点。它不是标准答案：地图上没有、但正确又切题的要点同样计分；要点的对错一律按来源判定。
+
+1. 地图上已有的要点，以地图登记的层级和重要性为默认值。评委组改动，必须依据来源或第三节的定义写明理由。
+2. 地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告。判为核心的，列入人工审计。
+3. **有争议的标注**，指评委组判定时没有一种意见达到三分之二的层级或重要性判定，以及评委组改动过的地图标注。计分时，比较一对报告，每条有争议的要点都按对领先一方最不利的那种标注计分，再做分开检验。有争议的判定只能让一对报告并列，不能把它们拉开。
+4. 估计名次把握的重抽样，只在至少一份报告写到的要点中进行。这样，地图上写了而没有一份报告写到的要点，对名次的影响为零。
+
+在第五阶段的试评数据上核对过两件事（2026-10-30）：去掉地图上 2 条没有一份报告写到的要点，6 份报告的净分和名次完全不变；把地图上 8 条要点的重要性全部反过来，名次不变。把全部 122 条要点的重要性抹平，原来分开的 12 对中有 1 对变成分不开。
+
+---
+
+## 五、断言核验
+
+**主要结论**，指报告摘要或结论部分中的判断，以及正文中支撑这些判断的关键事实。
+
+**结论清单（第 1.1 版）。** 凡是带来源的结论全部列入，另加至多 10 条不带来源的主要结论，优先抽对提问者影响最大的。清单由一人按这条规则抽出，所有核验员使用同一份清单。另外，在清单中标出至多 3 条&quot;对题目的直接回答&quot;，即报告对所问问题的总体判断。
+
+（第一版是每份报告由核验员自己抽出至多 10 条。不同核验员抽的不同，会带来噪声。）
+
+每条主要结论记两类标签。
+
+**来源标签：**
+
+- **支持**：打开所引来源（或它的存档），来源确实支持这条结论；
+- **部分支持**：来源支持其中一部分，或者结论说得比来源更强；
+- **不支持**：来源存在，但不支持这条结论；
+- **失效但有存档**：链接打不开，但网页存档中能找到，并据存档判断支持与否（另外记下支持与否）；
+- **找不到（疑似编造）**：链接打不开，存档中也没有，按标题检索也找不到；
+- **没有出处**：这条结论没有给出来源，或者导出时来源丢失。
+
+**对错标签：** 不管有没有来源，都独立检索核对，截至截止时间这条结论是否正确：
+
+- **正确**
+- **有误**：附依据
+- **无法判断**
+
+**来源只列在文末的情况。** 报告只在文末列出来源，没有对应到具体结论时，核验者在所列来源中查找支持：找到的，记为相应的来源标签，并注明&quot;文末来源&quot;；找不到的，记为没有出处。
+
+**&quot;疑似编造&quot;要经第二次核查才算确认。** 第二次核查可以换一种检索方式，或者查同一网站的其他页面。
+
+**时效（②）**，三档：
+
+- 0：主要结论依赖已经过时的信息，截止时间之前已有更新的信息被忽略；
+- 1：大体是新的，但有个别重要信息过时；
+- 2：材料截至规定的时间点，并且足够新。
+
+---
+
+## 六、写作（二级，单独报告，不进入名次）
+
+- 0：难以读懂，或结构混乱；
+- 1：能读懂，结构基本清楚；
+- 2：清楚、简洁，主要结论在前。
+
+---
+
+## 七、硬伤
+
+下列四种，有任何一种，报告就排在所有没有硬伤的报告之后：
+
+1. **编造来源**：经第二次核查确认，至少一个来源是编造的；
+2. **直接回答与证据相反**：报告对题目的直接回答（结论清单中标出的至多 3 条），至少一条被截止时间之前可靠的证据明确否定。支撑性事实的错误不算硬伤，在深度净分中扣分（第一版是&quot;至少一条核心的主要结论&quot;，结果长报告几乎都被判了硬伤）；
+3. **答非所问**：报告回答的是另一个问题；
+4. **全篇没有可追溯的出处**：经过补救，仍然没有一个可以追溯的来源。
+
+格式、篇幅、文笔，永远不算硬伤。
+===== 评审细则（结束） =====
+
+===== 题目卡（开始） =====
+一、评委版（只给评委）
+【提问者】原题没有写明。按&quot;一位想选用深度研究产品的普通用户&quot;理解。
+【用途】原题没有写明。按&quot;帮助决定用哪一家&quot;理解。
+【问题】各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+【截止时间】只使用截至 2026-03-03 已经公开的信息。这一天是试评报告的生成日期，判断对错和时效以截至这一天已经存在的信息为准。
+
+二、提问版（交给智能体）
+（原题没有提问版。试评的六份报告当时收到的只有问题本身，见裸题版。）
+
+三、裸题版（交给智能体）
+各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+
+四、附在提问版和裸题版之后，一字不改
+
+（原题没有附交付要求和说明：试评的六份报告生成在交付要求定稿之前。）
+
+说明：这道题取自第五阶段小规模检验，原件是 research-plan/stage5-pilot/question-card.md。原始题目文本没有保存，上面的问题是根据六份报告的标题和开头还原的，所以不是按基础级规则写的题目卡：提问者和用途是评委的理解，裸题版也是还原的文字，不一定与当时交给各个产品的逐字相同。这里按出题手册第八节模板的四个部分重写，内容与原件相同，供模拟评审程序读取。
+===== 题目卡（结束） =====
+
+===== 报告（开始） =====
+# 报告A
+
+# Executive Summary
+
+We compare the advanced **Deep Research** capabilities of major AI platforms – Google Gemini, OpenAI ChatGPT, Anthropic Claude, Perplexity AI, Moonshot AI’s Kimi, and China’s DeepSeek – along multiple dimensions. All of these systems augment large language models (LLMs) with external search and retrieval, but they differ in data freshness, tools, context size, explainability, and enterprise features. For example, Google’s Gemini Deep Research agent autonomously plans and executes multi-step searches over the web and private data (Gmail, Drive, Chat), producing multi-page, cited reports【8†L183-L189】【14†L49-L57】. ChatGPT has introduced an integrated **Search** mode (GPT-4o) that fetches up-to-date web answers with live source links【25†L51-L59】. Anthropic’s Claude offers a “Research” mode that performs iterative searches and returns answers with “easy-to-check citations”【27†L41-L48】. Perplexity functions as a real-time AI search engine, synthesizing web content into direct answers with footnoted sources【34†L203-L210】. Moonshot’s Kimi provides extremely long-context reasoning (up to 256K tokens) and launched an AI-powered **Explore** mode (Oct 2024) that “deeply reads” hundreds of web pages per query【19†L104-L112】. DeepSeek (China) releases open MoE models (V3, R1, V3.1, etc.) with 128K token windows and strong reasoning modes【40†L315-L324】, though its research use is primarily via API. 
+
+In short, **Gemini** shines in enterprise/Workspace-integrated research with Google search and user data (long context, multimodal, chain-of-thought via a “thinking” panel)【14†L69-L76】【8†L183-L189】. **ChatGPT (OpenAI)** offers broad web search with source links and a huge plugin ecosystem, making it ideal for general queries and multi-turn research【25†L51-L59】【25†L99-L107】. **Claude** focuses on safe, iterative exploration (including “extended thinking” and web tools), suited for complex research tasks in enterprise settings【27†L41-L48】【29†L216-L224】. **Perplexity** is built specifically for research: it uses continuously-updated web indexes and provides concise, cited answers and connectors (e.g. Google Drive)【34†L203-L210】【36†L49-L58】. **Kimi** targets extreme-long-context scenarios and research in the Chinese market: its “Explore” mode aggressively crawls hundreds of pages, and its models boast trillion-parameter MoEs with 256K context【19†L104-L112】【16†L204-L207】. **DeepSeek** offers open LLMs with large context and dedicated reasoning modes (R1 with chain-of-thought), aimed at developers building agentic workflows【40†L315-L324】【22†L45-L53】. 
+
+Below we analyze each dimension in detail, with references. Our final comparison table highlights each vendor’s strengths, weaknesses, and ideal use-cases. All information is drawn from official docs, technical blogs, and reputable sources (citations in brackets). 
+
+## Data Sources &amp; Freshness
+
+- **Google Gemini (Deep Research)** draws on **real-time web search** (Google Search) plus optionally the user’s private data (Gmail, Drive, Chat). It “autonomously searches and deeply browses the web … to find relevant, up-to-date information”【14†L62-L70】. Gemini’s model is periodically updated (Gemini 3.x series in 2025–2026) and can include very fresh news or facts, though it uses the standard Google Search engine. 
+- **ChatGPT (Search mode)** leverages third-party web search providers (e.g. Bing) and premium news/content partnerships. The ChatGPT Search model (GPT‑4o) was “post-trained using … synthetic data” and explicitly “leverages third-party search providers, as well as content provided directly by our partners, to provide the information users are looking for”【25†L139-L144】. This yields answers based on current internet content (scores of live websites, stock quotes, weather, etc.). 
+- **Claude (Research)** similarly requires enabling web search and optionally workspace data (Google Workspace, etc.). With Research on, “Claude will kick off the research process across your internal context (Gmail, Calendar, Docs) and the web,” conducting iterative searches【27†L59-L64】. Anthropic’s API also offers a **Web Search tool** giving “direct access to real-time web content, allowing it to answer questions with up-to-date information beyond its knowledge cutoff”【29†L216-L224】. 
+- **Perplexity AI** maintains its own continuously-refreshed web index and crawlers. By design, it is a search engine, “incorporat[ing] real-time web search capabilities” so that responses are always based on **current Internet content**, citing sources【34†L203-L210】. (Note: Perplexity’s scraping practices have drawn legal scrutiny【34†L213-L220】.) Perplexity can also connect to personal data via “App Connectors” (e.g. Google Drive) to search user files【36†L47-L56】. 
+- **Kimi (Moonshot AI)** offers an “Explore Edition” search mode since Oct 2024. Kimi Explore “adopted a different approach: letting the AI search autonomously … reading through hundreds of pages”【19†L104-L112】. In effect, one query dispatches thousands of parallel searches (Kimi claims 10× the queries of normal search) and reads up to ~500 pages per query【19†L104-L112】【19†L124-L130】. It likely uses Bing-like search or an internal crawler but the details are proprietary. Kimi also now has **Kimi-Researcher** (mid-2025), an autonomous agentic model that performs multi-turn search (around 23 steps, 200+ URLs) via an internal parallel search tool【22†L10-L18】【22†L45-L53】. 
+- **DeepSeek (China)** provides powerful LLMs but no public information suggests a dedicated multi-search agent UI. Its models (V3 series, R1) are trained on vast corpora and support tool use, but their web-search integration is likely developer-driven (via RAG or API). DeepSeek models can work with retrieval systems but details are scarce. The BentoML guide notes DeepSeek’s R1 model is specialized for “complex math, coding, and reasoning” with chain-of-thought【40†L315-L324】. DeepSeek has released vision-language models (DeepSeek-VL) but not specifically a search agent.
+
+## Retrieval Methods
+
+- **Retrieval-Augmented Generation (RAG):** All these systems use RAG or agentic retrieval to incorporate external information. ChatGPT’s Search and Claude’s Research both run real-time search queries in the loop, effectively RAG with web sources. Gemini’s Deep Research agent “plans -&gt; search -&gt; read -&gt; iterate”【12†L849-L857】. Perplexity’s engine runs search queries and feeds results to the LLM for summarization with citations. DeepSeek and Kimi models support tool use (with code execution or browsing tools) that enable RAG. 
+- **Vector/Embeddings:** Claude’s API does not publicly document a proprietary vector search, but it does allow a code tool for filtering search results. Perplexity’s products may use vector retrieval on their own updated indexes for fast search, but this is internal. DeepSeek-V3 and R1 are MoE LLMs; developers can use vector search over embeddings of documents as needed. 
+- **Web Crawling:** Perplexity explicitly runs web crawlers (albeit controversially【34†L213-L220】). Gemini relies on Google’s search index, which constantly crawls the web. Claude’s web search likely uses Bing or a similar API. Kimi Explore likely issues queries to existing search APIs at massive scale. DeepSeek does not publish crawlers. 
+- **Proprietary Corpora:** All base models are pre-trained on large text corpora (Common Crawl, etc.), but the freshness in answers comes from live search. Claude and ChatGPT also have fine-tuning on curated data, but do not train on user queries. Gemini as a product is continuously updated by Google’s training data and web knowledge graph. DeepSeek’s models are open (e.g. DeepSeek-V3-0324) with public checkpoints and have been updated via reinforcement learning【40†L278-L287】.
+
+## Citation &amp; Evidence Tracing
+
+- **Gemini**: In Deep Research mode, Gemini returns **detailed reports with citations**. The API documentation states it produces “reports … with detailed, cited sources”【8†L183-L189】. The Google UI (“Deep Research” in the Gemini app) includes a *thinking panel* and, presumably, an output that cites URLs or blocks of text. (Gemini is internally built on Google Search, so results can be linked.) 
+- **ChatGPT**: The new ChatGPT Search explicitly provides **links to sources**. After answering a query, ChatGPT shows clickable source links (news articles, websites) at the top of the response【25†L100-L107】. Users can open a “Sources” sidebar for full references【25†L100-L107】. (The images below illustrate this: ChatGPT answered a weather question with a linked AccuWeather source【25†L100-L107】 and shows a “Sources” panel.) This makes ChatGPT answers verifiable. 
+- **Claude**: Claude’s Research mode also returns citations. The Help Center notes Claude delivers “thorough answers … complete with easy-to-check citations”【27†L46-L48】. In its API web-search tool, Claude “automatically cites sources from search results as part of its answer”【29†L216-L224】. Thus Claude’s responses include footnotes or URL references to the websites it used. 
+- **Perplexity**: Citing sources is a core feature. Perplexity’s answers are typically presented with numbered footnotes linking to each source【34†L203-L210】. For example, an answer might say “… based on [Source Title][1]” with a link. (This Wikipedia summary confirms Perplexity “synthesizes responses … citing sources used”【34†L203-L210】.) The connectivity to Google Drive files also allows citing documents. 
+- **Kimi**: The documentation does not clearly state a citation format. The Chinese news on Kimi Explore highlights its high-volume search but does not mention citing. It seems Kimi’s answers are delivered directly (like standard chatbots) without formal source links. The focus is on completeness and multi-page output rather than traceability. (The Kimi-Researcher paper does not detail citation style, focusing on learning via reinforcement learning【22†L10-L18】.) 
+- **DeepSeek**: DeepSeek’s products are model-centric (V3, R1, etc.). They do not natively produce linked citations unless developers implement their own retrieval pipelines. Their inferences are “direct answers” or chain-of-thought text, without explicit source links. (The BentoML guide distinguishes DeepSeek-V3’s “Direct answers” vs R1’s step-by-step reasoning【40†L315-L324】, but no mention of citing.) 
+
+## Context Window &amp; Long-Document Handling
+
+- **Google Gemini** boasts an enormous context window. As of Gemini 3.1 Pro, **1 million tokens** are supported in beta【7†L214-L222】. (Gemini 3.0 Ultra already had 256K tokens base.) This far exceeds other publicly-available models, enabling Gemini to ingest and reason over very long documents or even entire books. 
+- **Claude** has also extended context. Claude Opus 4.6 (Feb 2026) supports up to **1M tokens** (beta)【31†L22-L26】, with 200K normally. (Claude Sonnet/Opus series have sub-variants like 4.5 with 128K, and newer 4.6 with 1M.) This allows lengthy chats, documents or codebases. Claude also offers “compaction” to summarize older context【31†L63-L70】. 
+- **OpenAI ChatGPT** (GPT-4 Turbo/4o) supports up to about **128K tokens** (as of late 2025)【49†L7-L11】. This is very large compared to GPT-3-era models. (Earlier GPT-4 Turbo was 32K, now extended to 128K.) ChatGPT’s Search mode (GPT-4o) can handle long chats and combine multiple answers, but still under this window. 
+- **Kimi** was the first with **128K tokens** (Nov 2023) and has since moved to **256K tokens** (Sep 2025)【16†L204-L207】. Its “context caching” and streaming allow effectively unlimited context by chunking. Kimi-K2 (1T param MoE) and later K2.5 support 256K tokens, making it unique for extremely long research sessions. Kimi’s “OK Computer” mode can also ingest millions of data points concurrently【16†L209-L217】. 
+- **Perplexity**: No official context window is published, but it uses frontier LLMs under the hood (e.g. GPT-5.2 for long contexts as cited by Perplexity Computer)【37†L153-L160】. Likely comparable to ChatGPT on its highest tier. For per-query research, Perplexity splits content across browsed pages and synthesizes, so it effectively handles large content by multi-query aggregation. 
+- **DeepSeek** (Moonshot’s models) supports up to **128K tokens** (DeepSeek-V3, R1, V3.1)【40†L315-L324】. The table shows all DeepSeek variants have 128K windows. (These open models emphasize “thoughtful responses” rather than memory length.) Without an API like Gemini’s agent, users must manually chunk text. 
+
+## Multimodal Support
+
+- **Gemini** (Google) is natively multimodal. Gemini models can process text, images, audio, and video【7†L242-L245】. The Deep Research agent can take images or mixed media inputs (though this may increase cost). Google also offers Canvas (interactive reports) and image/video gen in the Gemini app. 
+- **Claude** is multimodal in its latest versions. Sonnet 4 models handle images and text, and Opus can integrate with tools like Claude in Excel (data integration). Claude’s vision capabilities are more limited compared to Gemini (no direct user UI for images yet, aside from Claude-in-Excel). 
+- **ChatGPT** supports multimodal interactions in certain interfaces. The web ChatGPT has an **Image** tool (DALL·E) and a code interpreter (files, images, charts) for Plus and Enterprise users. Its conversation can include image uploads and audio (Advanced Voice)【25†L146-L154】. ChatGPT Search also has specialized answers for weather, stocks, etc., with visual panels【25†L87-L96】. 
+- **Perplexity** is primarily text-based. It does have an experimental “video generation” feature (as mentioned in Pro plan), but its core Q&amp;A is text-only. It cannot natively ingest images or other modalities in search results. 
+- **Kimi** explicitly has vision. Kimi K2 models are **multimodal** (image + text)【3†L220-L223】. The company is testing AI video generation【15†L181-L188】 and has an image understanding feature (Kimi-VL). In practice, the public Kimi chatbot can take image inputs and generate image/video outputs in development. 
+- **DeepSeek** has released vision-language models (DeepSeek-VL, DeepSeek-R1-0528 supports vision). However, DeepSeek’s primary offerings are language-only. Their documentation highlights text tasks; any image/video work would require a separate model (not core to “Deep Research” function). 
+
+## Reasoning &amp; Chain-of-Thought Transparency
+
+- **Gemini** explicitly exposes its reasoning steps in Deep Research. Google introduced a “thinking” panel so users see what Gemini learned so far and its next moves【14†L153-L156】. The Deep Research pipeline itself involves iterative self-critique and multiple passes【14†L158-L162】, though the final report is a polished synthesis. 
+- **ChatGPT** does not show its internal chain-of-thought to users. It uses GPT‑4’s reasoning capabilities internally, but the answer is delivered as a final narrative (no step-by-step log). However, one can prompt ChatGPT for step-by-step answers manually. The “Search” mode does not reveal internal steps, only the final answer with sources. 
+- **Claude** similarly does not publicly reveal its chains of thought. Its “extended thinking” tools can let it run longer reasoning (e.g. “parrot mode”), but users see only the final answer. Claude emphasizes safe reasoning rather than transparency. (In API, one can ask for more explanation, but it’s not a built-in UI feature.) 
+- **Perplexity** prioritizes concise answers. It generally does *not* provide step-by-step reasoning, only a brief summary and citations. Its “Answer Engine” is akin to search results, not a thought-process log. 
+- **Kimi** does have a form of transparency. The Kimi-Researcher model, for example, defines a (think_t, action_t) output at each step【22†L45-L53】, and Kimi’s UI (like Gemini) shows a “thinking mode” where it can output intermediate reasoning if prompted. In their app, responses can include a “|COT mode” (chain-of-thought) option. 
+- **DeepSeek** places a special emphasis on internal reasoning. Its R1 model is designed for chain-of-thought and can be prompted to show its reasoning steps (using `&lt;think&gt;` tokens or system instructions)【40†L315-L324】. DeepSeek-V3.1 even has a hybrid mode where you can switch between “thinking” and “non-thinking” behavior【40†L284-L293】. Thus DeepSeek is explicitly aimed at making reasoning explicit when desired.
+
+## Customization, Plugins &amp; API Access
+
+- **ChatGPT** (OpenAI) has a rich ecosystem. Users can install **plugins** (web browser, code, third-party apps) and developers can integrate via the GPT-4/4o API. ChatGPT offers a browser extension and supports tools like Code Interpreter, Python REPL, etc. Its API and plugins allow deep customization (Enterprise accounts have build-your-own GPTs). 
+- **Gemini** is primarily accessed through Google’s ecosystem. For end users, Deep Research is built into the Gemini app (free for consumers, additional access for Google Workspace). For developers, Gemini models (3.1 Pro etc.) are available via the Google Cloud Generative AI API (GenAI)【12†L860-L869】. The Deep Research agent itself is accessed via the **Interactions API**【12†L860-L868】 and currently cannot take custom tools from users. 
+- **Claude** provides an API (Anthropic Claude API) with tool use. Developers can use **Web Search** and **Code** tools via API (as documented【29†L216-L224】【29†L253-L261】). Anthropic also offers **Claude In Excel/PowerPoint** and a Connectors catalog (e.g. Slack, Salesforce) for enterprises. The Claude Chat UI supports a “Research” toggle (on Pro/Team plans) but not end-user plugins. 
+- **Perplexity** has an **API** (Search API and Assistant API) that returns JSON with answers and source URLs. It also offers “Perplexity Connectors” (e.g. Google Drive) so that organizations can query their own documents【36†L47-L56】. The architecture is closed (no user plugins), but developers can script queries. Perplexity Max (new) even allows orchestrating multiple models (ChatGPT, Claude, Gemini) behind the scenes【37†L151-L160】. 
+- **Kimi (Moonshot AI)**: The public Kimi app/website is the main interface (web, iOS, Android). Moonshot also offers an API platform (platform.moonshot.ai) where developers can call their models. Kimi-VL and K2 are open-sourced under MIT-like licenses【15†L149-L158】【16†L200-L208】, so teams can run DeepSeek-compatible inference. Advanced agentic features (like “OK Computer” for slides/websites) exist in the app. The Kimi-Researcher is accessible via Kimi’s UI. 
+- **DeepSeek**: DeepSeek provides an API for its models (via deepseek.com) and open-source releases (DeepSeek-V3, R1, V3.1 on Hugging Face【40†L307-L315】). There is no end-user plugin system – it’s a toolkit for developers. Because the models (especially R1/V3.1) are available, teams can build custom agents around them. BentoML’s guide shows how to integrate DeepSeek models with code for “agentic workflows”【39†L75-L83】.
+
+## User Experience &amp; Query Types
+
+- **ChatGPT**: A chat interface supporting free-form queries. With Search enabled, users can click a globe icon or type “/search” to run web queries. Answers are conversational, and a “Sources” panel can open showing references【25†L100-L107】. Plus and Enterprise users get immediate access to Search; free users get it later【25†L39-L47】. ChatGPT also supports multi-turn follow-ups and diverse output formats (text, code, tables, images). 
+- **Google Gemini**: In Gemini’s web/mobile app, users select “Deep Research” from the prompt bar. They enter a topic (e.g. “market analysis of X”), and Gemini autonomously breaks it down【14†L57-L66】. The UI shows the plan and a “thinking” panel as the agent works through sources【14†L153-L156】. The final product is a multi-page report (with possibly an Audio Overview) that the user can navigate. (Gemini is integrated into Google Workspace, so eligible users see it seamlessly.) 
+- **Claude**: On claude.ai or desktop apps, a user toggles the “Research” button (bottom left)【27†L51-L59】. Claude then automatically performs the multi-search process. Users can also prompt Claude in regular mode to “use the Research tool” if needed. Output is a single comprehensive answer (often long-form paragraphs) with citations. There is no special step-by-step display, but users can refine the prompt or ask for clarifications. 
+- **Perplexity**: Operates like a search engine. The user types a question and gets an answer box with sources at the bottom. It also shows a pane listing the key sources used (clickable). Perplexity Pro/Max adds features like setting the agent’s “persona” and connecting to private data. The interface is web-based (with mobile apps and browser extensions). Users can also upload documents or connect apps; the query can then cover web+private data jointly【36†L49-L58】. 
+- **Kimi**: The Kimi chatbot (kimi.com) is primarily Chinese-language but supports English. The “Explore” mode is akin to Perplexity: a search box where AI fetches and summarizes many pages. Results are usually lengthy summaries or reports. Kimi also has an “OK Computer” mode to generate webpages/slides, and a “Slides” tool. The interface allows switching between human-like chat and agentic modes (instant vs thinking). Advanced Chinese users can prompt for chain-of-thought or use Kimi-Researcher for deep tasks. 
+- **DeepSeek**: Has no consumer UI. Users (typically developers) submit prompts via API or a Python client. There are examples in documentation for “scientific reasoning” or “math problems.” Query types include Q&amp;A, summarization, code generation, etc. Without a built-in search, DeepSeek users must explicitly provide context (documents, or use a separate retrieval step) for evidence-based answers. 
+
+## Accuracy, Hallucinations &amp; Factuality
+
+- **ChatGPT**: With its Search mode, factuality is tied to source quality. It generally **provides source links** so answers can be checked, reducing hallucination【25†L51-L59】【25†L100-L107】. Nonetheless, ChatGPT can still make mistakes if it misinterprets sources or the prompt. OpenAI continuously tunes GPT‑4 with synthetic data to improve accuracy. 
+- **Claude**: Anthropic emphasizes safety and factuality. The Claude 4.6 announcement highlights “overall safety profile as good as, or better than, any other frontier model”【31†L43-L47】. The web search tool includes dynamic filtering and code execution to improve accuracy by weeding out irrelevant content【29†L270-L279】. In practice, Claude Research answers tend to be thorough and aligned, though Claude can also err if sources are ambiguous. 
+- **Perplexity**: Strives for precision. Its answers are concise and *sourced*, which users find helpful for verification. However, some media have noted legal concerns about content scraping【34†L213-L220】, and like any AI, Perplexity can “hallucinate” if it mis-synthesizes sources. Perplexity Pro’s feature of “10× citation density”【48†L270-L273】 suggests extra emphasis on sourcing. 
+- **Google Gemini**: Google has powerful retrieval, but does not claim zero hallucination. The Deep Research agent is in preview, and Google cautions that it should be fact-checked (“review the citations provided”【12†L895-L903】). However, Gemini’s backbone on Google Search and Knowledge Graph should help accuracy. Early reports suggest Gemini Deep Research produces high-quality comparative analysis (a new category of output), but concrete metrics are not public. 
+- **Kimi**: The Moonshot team claims strong performance (e.g. matching GPT-4 in math/coding【15†L183-L188】). Chinese news reports also claim they have “basically eliminated” hallucination【16†L247-L254】 (though that’s unverified PR). Kimi’s Explore, by scanning 500 pages per query, may reduce omission errors but could still summarize incorrectly. There’s no independent study of Kimi’s factuality in English. 
+- **DeepSeek**: The BentoML article notes DeepSeek-R1’s high reasoning but also explicitly says hallucination was reduced by ~45–50% in R1-0528 compared to earlier models【40†L257-L264】. DeepSeek is open-source, so accuracy depends on model choice: R1 and V3.1-Think are optimized for correctness at the cost of verbosity. Without a built-in retrieval, any hallucination likely comes from the base LLM rather than external mis-citation. 
+
+## Privacy, Data Retention &amp; Enterprise Controls
+
+- **ChatGPT**: OpenAI’s policy is that data is not used to train models (especially in Enterprise/Edu) and users can opt out of sharing. ChatGPT Enterprise offers features like SSO, data logs, and admin control. The Search mode likely logs queries to partners (Vox Media, etc.) as per OpenAI’s publisher agreements【25†L129-L138】, but user data is isolated under OpenAI’s policies. 
+- **Gemini**: As a Google product, Gemini Deep Research in Workspace means enterprise admin controls (data lives in Google Cloud). Google states that search and uploaded documents are not used to train models except for safety. The docs warn about security: don’t upload untrusted docs, vet malicious pages【12†L886-L895】. Google enforces privacy and security policies (e.g. you must enable Workspace Data integration explicitly). 
+- **Claude**: Anthropic offers **Zero Data Retention (ZDR)** options. The web search tool is “ZDR-eligible” – data passed through it is not stored after the response【29†L228-L230】. Claude in Enterprise also can be set to not train on inputs, and offers SOC 2 compliance. The Help Center notes that research queries count against normal usage limits, but does not detail retention, implying normal Claude policies apply (no training on corporate data by default). 
+- **Perplexity**: It markets itself to enterprises with SOC2 Type II, encryption, and an explicit guarantee that “no training is done on customer data”【48†L291-L294】. The Google Drive Connector respects Google permissions【36†L49-L58】 and syncs files privately. Enterprise plans include audit logging and data retention controls【36†L49-L58】【48†L285-L293】. However, Perplexity’s own query logs might still be used to improve its search algorithms (this is not fully public). 
+- **Kimi**: Moonshot has not published detailed enterprise policies. As a Chinese company, it likely stores user data. The Kimi app is free with rate limits; premium tiers offer more usage. There are no public statements about data retention or enterprise controls. Given China’s legal environment, Kimi’s data may be subject to Chinese regulations. 
+- **DeepSeek**: As an open model/API provider, DeepSeek’s data policies are determined by the company or the user’s own deployment. If using DeepSeek’s API, presumably queries are logged by the service (they haven’t highlighted a ZDR option). If self-hosting the open models, data stays on-prem. In summary, privacy depends on deployment choice. 
+
+## Pricing &amp; Limits
+
+- **ChatGPT**: Offers a free tier and a ChatGPT Plus subscription (~$20/month) for GPT-4 access. ChatGPT Search (GPT-4o) is being rolled out to Plus, Teams, and eventually all users【25†L39-L47】. Enterprise/Edu customers have custom pricing. The backend API (GPT-4o) is billed by tokens (currently ~$5/$25 per million tokens for GPT-4 via OpenAI).
+- **Gemini**: In the Google AI API (GenAI) model, pricing is pay-as-you-go on top of Gemini’s cost【12†L860-L869】. Example estimates: a typical Deep Research task (multiple searches and ~60K output tokens) costs a few dollars【12†L874-L881】. The user-facing Gemini app has a free level; Workspace users may get it included or on Workspace licensing. (Google offered free Deep Research access to students.) 
+- **Claude**: Claude’s API is priced at $5 per million input tokens and $25 per million output tokens (consistent with [31†L78-L81]). Claude “Pro” (for individuals) or “Max” (for power users) subscriptions exist (e.g. Claude Pro at $20/mo for 100K context model, Max for 200K). Usage limits (rate and total tokens per day) vary by plan; Research mode simply consumes more tokens per answer. 
+- **Perplexity**: Free version allows a limited number of daily queries. **Perplexity Pro** is $20/month ($200/yr) and grants “unlimited Pro queries” with multi-step search【48†L253-L262】. **Perplexity Max** (new, Feb 2026) costs $200/month and adds advanced model access and features. Enterprise seats run $40–$325 per user/month (for Pro/Max tiers)【48†L274-L283】【48†L299-L308】, with heavy usage quotas. 
+- **Kimi**: The Kimi apps are free with basic rate limits (e.g. 5 free searches per day【19†L114-L122】). Premium subscriptions (“Moderato”, “Allegretto”, “Vivace”) offer higher usage, faster service, and access to Kimi’s advanced models (K2 Turbo, Kimi-Researcher, etc.)【16†L229-L237】. Exact prices are not public (likely tiered around tens of USD monthly). Enterprise options are not clearly defined. 
+- **DeepSeek**: DeepSeek’s APIs and models appear to be mostly free or open (MIT license) for the core LLM weights【40†L307-L315】. They likely charge for hosted API usage, but details are scarce. Since DeepSeek is research-oriented, cost may be similar to self-hosting on consumer cloud. In any case, limits would follow usual token billing. 
+
+## Recent Major Updates (18 months)
+
+- **ChatGPT (OpenAI)**:  
+  - *Oct 2024:* Launched **ChatGPT Search** (GPT-4o) that integrates web browsing with citations【25†L51-L59】.  
+  - *Dec 2024:* Made Search broadly available; partnered with publishers (Le Monde, etc.)【25†L100-L107】.  
+  - *Feb 2025:* Rolled out Search to all users. Continual GPT-4 enhancements (GPT-4 Turbo, GPT-4.1, etc. up to GPT-4o). GPT-5 (o1) series rumored but not officially in apps yet.  
+- **Gemini (Google)**:  
+  - *Dec 2024:* Introduced **Gemini Deep Research** as a product category (Gemini 3 model)【14†L158-L162】.  
+  - *Early 2025:* Released Gemini 3.0 “Ultra” (256K context, multimodal) and 3.1 (March 2026 preview)【8†L183-L189】【7†L214-L222】.  
+  - *Feb 2026:* Added 1M token context in Gemini 3.1 Pro preview【7†L214-L222】.  
+- **Claude (Anthropic)**:  
+  - *Oct 2024:* Announced Claude with web browsing and research features for paid users. Introduced “Extended Thinking” and “Research” modes.  
+  - *2025:* Released **Sonnet 4** (mid-2025) with 100K context, and **Opus 4** (Nov 2025) with larger context and better reasoning.  
+  - *Feb 2026:* Released **Claude Opus 4.6** (1M context beta, superior coding/search abilities)【31†L22-L31】.  
+- **Perplexity AI**:  
+  - *2024:* Rapid growth; raised funding, launched mobile apps and browser extensions.  
+  - *2025:* Expanded integrations (Drive, Slack). Introduced “Spaces” (collaborative search threads) and advanced queries.  
+  - *Feb 2026:* Launched **Perplexity Computer** (multi-agent research assistant using 19 models)【37†L109-L118】【37†L151-L160】, available to Max subscribers.  
+- **Kimi (Moonshot AI)**:  
+  - *Oct 2024:* Launched **Kimi Explore Edition** (AI search)【19†L104-L112】.  
+  - *Jan 2025:* Released Kimi K1.5 model.  
+  - *June 2025:* Released **Kimi-Researcher** agent (June 2025)【16†L194-L200】, and open-sourced Kimi K2 (1T param)【16†L199-L207】.  
+  - *Sep 2025:* Updated K2 context to 256K. Added “OK Computer” multi-page agents.  
+  - *Jan 2026:* Released **Kimi K2.5** with 1T params, vision and agentic “thinking” modes【3†L220-L223】.  
+- **DeepSeek (Moonshot.ai)**:  
+  - *2024:* Released DeepSeek-V3 (671B MoE) and R1 models.  
+  - *Mar 2025:* Updated **DeepSeek-V3-0324** (improved reasoning)【40†L237-L242】.  
+  - *May 2025:* Released **DeepSeek-R1-0528** (major reasoning upgrade, hallucination reduced)【40†L247-L255】【40†L257-L264】.  
+  - *Aug 2025:* Released **DeepSeek-V3.1** (hybrid thinking mode)【40†L276-L285】.  
+  - *Oct 2025:* Released **DeepSeek-V3.2**.  
+
+These timelines highlight that all platforms have aggressively advanced their research capabilities in the past 18 months, including model upgrades (4.x series), extended context, and new search/agent features.
+
+## Strengths, Weaknesses &amp; Use-Cases
+
+| **Vendor / System** | **Strengths**                                                                                                   | **Weaknesses**                                                                                                          | **Recommended Use-Cases**                                                 |
+|---------------------|-----------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
+| **Gemini (Google)** | – Very large context (up to 1M tokens)【7†L214-L222】, natively multimodal (text, image, video)【7†L242-L245】&lt;br&gt;– Integrated with Google Search (up-to-date web data) and Workspace data【14†L62-L70】&lt;br&gt;– Transparent multi-step planning (“thinking panel”)【14†L153-L156】&lt;br&gt;– Agentic Deep Research produces polished, cited reports【8†L183-L189】 | – Requires Google account/Workspace; currently in preview (may change)&lt;br&gt;– Async workflow (minutes-long tasks)【12†L849-L857】 not suited to instant queries&lt;br&gt;– Limited to Google’s search licensing (some content restrictions)【12†L891-L900】 | In-depth tasks like market analysis, literature reviews, due diligence – anywhere one needs an “analyst-in-the-box” to comb web and internal docs【12†L849-L857】. Good for large enterprises with lots of data in Google Workspace. Ideal when citations and context are critical. |
+| **ChatGPT (OpenAI)**| – Natural, conversational interface; instantly answers even casual questions.&lt;br&gt;– Integrated web search (GPT-4o) with live sources【25†L51-L59】.&lt;br&gt;– Vast plugin/tool ecosystem (browser, Code Interpreter, voice, etc.).&lt;br&gt;– Large context (128K tokens) and active community. | – Still chat-style (may not plan multi-step tasks on its own).&lt;br&gt;– Requires Plus/Enterprise for advanced models; free tier is limited to GPT-3.5.&lt;br&gt;– May generate plausible-sounding but incorrect answers (though less so with search). | General-purpose research and Q&amp;A for individuals and teams. Great for quickly finding answers with sources (e.g. news, technical definitions) or drafting text. Good for domain research where web answers suffice and ease-of-use is key. |
+| **Claude (Anthropic)**| – Designed for safe, systematic research: does iterative searches and analysis【27†L41-L48】.&lt;br&gt;– Strong on complex reasoning (latest models lead on DeepSearch benchmarks【31†L53-L61】).&lt;br&gt;– Provides citations from web search【29†L216-L224】.&lt;br&gt;– Enterprise-ready (ZDR, SOC2, Google connectors). | – Lacks a polished end-user research UI (Research mode is via toggle/button).&lt;br&gt;– Not free – Pro/Max plans are paid. API costs for large tasks.&lt;br&gt;– Doesn’t show chain-of-thought by default (though it’s “thinking internally”). | Advanced research and analytical tasks in corporate or scientific contexts. Good where safety and auditability matter. Useful for team planning, literature reviews, or any case where you want multiple search passes and working through details (e.g. project proposals, strategy). |
+| **Perplexity AI**  | – Real-time web answers with sources (like an AI search engine)【34†L203-L210】.&lt;br&gt;– Very user-friendly search UI (Q&amp;A with footnotes).&lt;br&gt;– Supports searching personal files (Drive, Slack) for connected accounts【36†L49-L58】.&lt;br&gt;– New “Computer” agent for heavy projects (multi-model orchestration)【37†L151-L160】. | – Limited chat capabilities (just short Q&amp;A).&lt;br&gt;– Only English? (Interface is English; less known in non-English markets.)&lt;br&gt;– Legal/IP concerns about scraping/content use【34†L213-L220】.&lt;br&gt;– Free tier limits; Pro/Max needed for extensive queries. | Everyone from casual users to researchers who need quick, sourced answers. Good for synthesizing news/current events, fact-checking, or simple data tasks. The Enterprise/Computer features target consultants, analysts, and developers building complex workflows. |
+| **Kimi (Moonshot AI)**| – Extremely large context (256K tokens) and cutting-edge MoE models (1T parameters)【16†L204-L207】.&lt;br&gt;– Supports Chinese language and technical domains; free usage attracts big user base (36M MAU)【3†L178-L181】.&lt;br&gt;– “Explore” mode searches hundreds of pages per query【19†L104-L112】.&lt;br&gt;– Agentic features (video gen, “OK Computer” slide generator). | – Primarily Chinese-focused (internationalization limited).&lt;br&gt;– No official English documentation or Citations UI.&lt;br&gt;– Data privacy under Chinese regulation; no enterprise controls publicly known.&lt;br&gt;– Answers likely in Chinese unless specified; model performance in English less documented. | Research tasks in Chinese or bilingual contexts requiring vast knowledge. Scenarios needing analysis of large data (reports, literature) or code search. Also useful for developers using its open-source models (for code generation, math). |
+| **DeepSeek**       | – Open-source MoE LLMs with large context (128K) and powerful reasoning (R1)【40†L315-L324】.&lt;br&gt;– Users can self-host or fine-tune; great for experimentation.&lt;br&gt;– Supports multimodal (VL models) and agentic workflows if built on【22†L45-L53】.&lt;br&gt;– Recent updates emphasize accuracy (hallucination down 45–50%)【40†L257-L264】. | – No integrated search or UI; purely a model/API offering.&lt;br&gt;– Requires developer expertise to add retrieval, sources, or agents.&lt;br&gt;– Relatively new; ecosystem/tools smaller than others. | Custom research pipelines or agent systems built by developers. Best when you need a free/open LLM with strong reasoning for tasks like math, coding, or specialized queries, and can supply your own data/retrieval. Not a turn-key “research assistant” product, but a toolkit for building one. |
+
+## Example Scenarios &amp; Outputs
+
+- **ChatGPT (Search)**: *Query:* “What is the weather in Paris on Nov 3, 2024?” ChatGPT (with Search enabled) responds conversationally, e.g. “The forecast for Positano (near Paris) on Nov 3 shows mild weather with rain,” and lists a specific AccuWeather source at the top【25†L51-L59】【42†】. The user can click “Sources” to see the linked article. (See image below: ChatGPT answered with weather info and source.)  
+
+- **Gemini (Deep Research)**: *Query:* “Write a research report on decarbonization in aviation.” Gemini Deep Research would plan subtopics (fuel innovations, regulatory environment, market players), run hundreds of search queries, read dozens of papers, and output a multi-page report with citations. For example, it might cite IEA reports or news articles on sustainable aviation fuel. (As of writing, published example outputs are not publicly available, but Google’s docs emphasize detailed reports.)  
+
+- **Claude (Research)**: *Query:* “Analyze the competitive landscape for electric vehicles.” With Research enabled, Claude might do sequential searches (for EV models, market shares, technology), then answer in a structured form (e.g. paragraphs on major automakers, tech trends), embedding references like “[1] (Automotive News)” or footnotes. The cited sources can be reviewed for verification.  
+
+- **Perplexity**: *Query:* “How do Li-ion battery prices compare in 2025 vs 2010?” Perplexity would return a succinct answer: e.g. “Lithium-ion battery pack prices have fallen from about $1,000 per kWh in 2010 to roughly $120 per kWh in 2025【34†L203-L210】.” It would include footnotes (e.g. [1] a BloombergNEF report, [2] a scientific article). This demonstrates real-time data with citations.  
+
+- **Kimi (Explore)**: *Query:* “Investigate Yangtze River flood prevention investments.” Kimi Explore would launch parallel searches on Chinese news, government sources, and academic papers (potentially reading hundreds of pages). It would then produce a detailed answer (in Chinese) summarizing budgets, projects, outcomes, etc. (No public English examples are available; output plausibly reads like an encyclopedia entry, though citations are typically omitted.)  
+
+- **DeepSeek**: *Query:* “Prove that √2 is irrational.” DeepSeek-R1 might output a formal step-by-step proof (like a math assistant), while DeepSeek-V3 might give a short explanation. Either way, it would not quote sources, but rely on internal reasoning. (DeepSeek models excel at logical/mathematical tasks and can output the full derivation.) 
+
+The images below illustrate ChatGPT Search output (weather query) with evidence-tracing:
+
+【41†embed_image】 *Figure: ChatGPT’s Search interface. Users can type a question and click the globe icon to search (here, “Positano weather Nov 2-3”). The response includes a weather forecast. (Source: OpenAI blog【25†L51-L59】.)*
+
+【42†embed_image】 *Figure: ChatGPT’s answer with sources. The model answered a weather query, listing source links (e.g. AccuWeather) above its reply【25†L51-L59】.*
+
+【43†embed_image】 *Figure: ChatGPT’s citations sidebar. Clicking “Sources” shows full references to the articles used. OpenAI’s Search ensures answers are grounded in verifiable content【25†L100-L107】.*
+
+  
+
+**Mermaid Diagrams:** (Omitted – see referenced architecture descriptions above for how each system is structured.)  
+
+**Timeline Chart:** (Omitted – major updates are summarized in the text above.)  
+
+*Sources:* Official documentation and reputable analyses as cited above【8†L183-L189】【25†L51-L59】【27†L41-L48】【34†L203-L210】【19†L104-L112】【22†L10-L18】【40†L315-L324】. Any claims without citation are derived from these sources or common knowledge. Unspecified details (e.g. exact pricing tiers for some services) are noted as assumptions.
+===== 报告（结束） =====
+
+要做的事：
+
+1. 按细则第二节，评 ①、③、④、⑤、⑦ 五个环节，每项给 0、1 或 2 分。每项附 evidence（报告原文一到两句，逐字摘录，程序会核对它是否出自报告）和 reason（一句话）。原文中找不到依据时，按较低的一档评。
+2. 按细则第六节评&quot;写作&quot;，格式同上。
+3. 按细则第五节末尾的三档评时效（②），给 0、1 或 2 分，并写一句理由。要以截止时间为准：截止时间之前已有更新的信息却被忽略，算过时。
+4. 按细则第七节第 3 条，判断是否答非所问：off_topic 给出布尔值和理由。
+5. 按细则第七节第 4 条，判断全篇是否至少有一个可以追溯的来源：带网址的来源，或者写明了名称、能检索到的来源。traceable_sources 给出布尔值和理由。
+
+规则：
+- 不要猜测报告出自哪个产品。即使猜到了，也不能影响判定。
+- 不看篇幅、格式、表格多少、引用条数。写作只在&quot;写作&quot;一项中评。
+
+只回答一个 JSON 对象，不要写任何别的文字，也不要用代码块。格式如下：
+
+{&quot;ratings&quot;:{&quot;①&quot;:{&quot;score&quot;:0,&quot;evidence&quot;:&quot;…&quot;,&quot;reason&quot;:&quot;…&quot;},&quot;③&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;…&quot;,&quot;reason&quot;:&quot;…&quot;},&quot;④&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;…&quot;,&quot;reason&quot;:&quot;…&quot;},&quot;⑤&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;…&quot;,&quot;reason&quot;:&quot;…&quot;},&quot;⑦&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;…&quot;,&quot;reason&quot;:&quot;…&quot;},&quot;写作&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;…&quot;,&quot;reason&quot;:&quot;…&quot;}},&quot;timeliness&quot;:{&quot;score&quot;:1,&quot;reason&quot;:&quot;…&quot;},&quot;off_topic&quot;:{&quot;value&quot;:false,&quot;reason&quot;:&quot;…&quot;},&quot;traceable_sources&quot;:{&quot;value&quot;:true,&quot;reason&quot;:&quot;…&quot;}}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 2310 字，一字不改。</p>
+  <details><summary class="caption-2">回答共 2310 字，点开看全文</summary><pre class="raw" id="answer">
+{&quot;ratings&quot;:{&quot;①&quot;:{&quot;score&quot;:0,&quot;evidence&quot;:&quot;We compare the advanced **Deep Research** capabilities of major AI platforms – Google Gemini, OpenAI ChatGPT, Anthropic Claude, Perplexity AI, Moonshot AI’s Kimi, and China’s DeepSeek – along multiple dimensions.&quot;,&quot;reason&quot;:&quot;只按字面铺开对比，没有交代怎样理解问题和提问者的需要，更未审视概念边界（甚至将OpenAI的ChatGPT Search和无内置搜索代理的DeepSeek当作Deep Research功能对比）。&quot;},&quot;③&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;All information is drawn from official docs, technical blogs, and reputable sources (citations in brackets).&quot;,&quot;reason&quot;:&quot;只笼统交代了信息来源的大致类型（官方文档、技术博客和可靠来源），没有交代查找的具体方法、过程和局限。&quot;},&quot;④&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;Chinese news reports also claim they have “basically eliminated” hallucination【16†L247-L254】 (though that’s unverified PR).&quot;,&quot;reason&quot;:&quot;对官方宣传与二手媒体报道有所区分并标注了未经核实的公关口径，但全文未见对相互矛盾信息的发现与取舍处理。&quot;},&quot;⑤&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;Kimi’s Explore, by scanning 500 pages per query, may reduce omission errors but could still summarize incorrectly. There’s no independent study of Kimi’s factuality in English.&quot;,&quot;reason&quot;:&quot;大体区分了事实特征与推测判断（常使用likely、may等词区分），但缺乏对不同解释或反例的系统审视与取舍。&quot;},&quot;⑦&quot;:{&quot;score&quot;:0,&quot;evidence&quot;:&quot;In short, **Gemini** shines in enterprise/Workspace-integrated research with Google search and user data (long context, multimodal, chain-of-thought via a “thinking” panel)【14†L69-L76】【8†L183-L189】. **ChatGPT (OpenAI)** offers broad web search with source links and a huge plugin ecosystem, making it ideal for general queries and multi-turn research【25†L51-L59】【25†L99-L107】.&quot;,&quot;reason&quot;:&quot;对“哪家做得最好”没有给出直接、明确的综合判断，仅罗列各有所长及适用场景，且没有说明结论的把握程度。&quot;},&quot;写作&quot;:{&quot;score&quot;:1,&quot;evidence&quot;:&quot;Below we analyze each dimension in detail, with references. Our final comparison table highlights each vendor’s strengths, weaknesses, and ideal use-cases.&quot;,&quot;reason&quot;:&quot;结构基本清楚，开头有执行摘要并按维度分节对比，但遗漏了OpenAI Deep Research等核心功能且未直接回答哪家最好。&quot;}},&quot;timeliness&quot;:{&quot;score&quot;:1,&quot;reason&quot;:&quot;包含截至2026年2月的最新信息（如Claude Opus 4.6、Perplexity Computer、Gemini 3.1 Pro），但完全忽略了OpenAI在2025年初就已发布的同名核心产品ChatGPT Deep Research（仅写了2024年的ChatGPT Search）以及Perplexity的Deep Research功能，且声称ChatGPT免费版仍限于GPT-3.5，存在重要信息过时与遗漏。&quot;},&quot;off_topic&quot;:{&quot;value&quot;:false,&quot;reason&quot;:&quot;报告围绕各家大语言模型平台的深度研究及搜索能力进行了多维度综合对比，虽然对部分产品的定义边界把握不准，但并非回答另一个问题。&quot;},&quot;traceable_sources&quot;:{&quot;value&quot;:true,&quot;reason&quot;:&quot;虽然形如【8†L183-L189】的编号未附网址列表，但正文中明确写出了部分来源机构与名称（如The BentoML guide、Anthropic Help Center、OpenAI blog、Wikipedia等），属于写明了名称、能检索到的可追溯来源。&quot;}}
+</pre></details>
+</section>
+<section class="block" id="config" aria-labelledby="config-h">
+  <h2 class="heading-5" id="config-h">调用前写进临时目录的设置文件</h2>
+  
+  <div class="file"><h3 class="title-3"><code>work/.agents/agents/materials-only/agent.md</code></h3><pre class="raw" id="config-1">
+---
+name: materials-only
+description: 模型调用层的单次调用（只给材料）
+mainAgent: true
+subagent: false
+excludeDefaultComponents: true
+inheritCustomizations: false
+inheritMcp: false
+tools: []
+---
+
+# materials-only
+
+按用户消息里的要求作答，只依据消息里给出的材料。
+</pre></div>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 30985 字</summary><pre class="raw" id="raw-output">
+{&quot;event&quot;:&quot;init&quot;,&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;init&quot;:{&quot;model&quot;:&quot;gemini-4-argon-medium&quot;,&quot;cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmp2n9mio1y/work&quot;,&quot;agent&quot;:&quot;materials-only&quot;,&quot;tools&quot;:[&quot;ask_custom_permission&quot;,&quot;ask_permission&quot;,&quot;ask_question&quot;,&quot;browser_click_element&quot;,&quot;browser_drag_pixel_to_pixel&quot;,&quot;browser_get_dom&quot;,&quot;browser_get_network_request&quot;,&quot;browser_input&quot;,&quot;browser_list_network_requests&quot;,&quot;browser_mouse_down&quot;,&quot;browser_mouse_up&quot;,&quot;browser_move_mouse&quot;,&quot;browser_press_key&quot;,&quot;browser_refresh_page&quot;,&quot;browser_resize_window&quot;,&quot;browser_scroll&quot;,&quot;browser_scroll_dom&quot;,&quot;browser_select_option&quot;,&quot;browser_subagent&quot;,&quot;call_mcp_tool&quot;,&quot;capture_browser_console_logs&quot;,&quot;capture_browser_screenshot&quot;,&quot;click_browser_pixel&quot;,&quot;command_status&quot;,&quot;define_subagent&quot;,&quot;delete_knowledge&quot;,&quot;execute_browser_javascript&quot;,&quot;find_by_name&quot;,&quot;finish&quot;,&quot;generate_image&quot;,&quot;grep_search&quot;,&quot;invoke_subagent&quot;,&quot;list_browser_pages&quot;,&quot;list_dir&quot;,&quot;list_permissions&quot;,&quot;list_plugin_accounts&quot;,&quot;list_resources&quot;,&quot;manage_inbox&quot;,&quot;manage_subagents&quot;,&quot;manage_task&quot;,&quot;multi_replace_file_content&quot;,&quot;notebook_edit&quot;,&quot;notebook_execution&quot;,&quot;open_browser_url&quot;,&quot;read_browser_page&quot;,&quot;read_resource&quot;,&quot;read_url_content&quot;,&quot;replace_file_content&quot;,&quot;run_command&quot;,&quot;run_workflow&quot;,&quot;schedule&quot;,&quot;search_marketplace&quot;,&quot;search_web&quot;,&quot;sed_file&quot;,&quot;send_command_input&quot;,&quot;send_message&quot;,&quot;view_file&quot;,&quot;wait&quot;,&quot;wait_5_seconds&quot;,&quot;write_to_file&quot;],&quot;permission_mode&quot;:&quot;request-review&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:0,&quot;state&quot;:&quot;DONE&quot;,&quot;step_type&quot;:&quot;user_input&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;{\&quot;ratings\&quot;:{\&quot;①&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\&quot;:{\&quot;score\&quot;:0,\&quot;evidence\&quot;:\&quot;We compare the advanced&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; **Deep Research** capab&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ilities of major AI plat&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;forms&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; – Google Gemini, OpenAI ChatGPT, Anthropic Cl&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;aude, Perple&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;xity AI, Moonshot AI’s&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; Kimi,&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; and China’s DeepSeek – along multiple dim&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ensions.\&quot;,\&quot;reason\&quot;:\&quot;只&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;按字面铺&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;开对比，没有交代&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;怎样&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;理解问题和提问者的需要，更未审视概念边界&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;（甚至将&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;OpenAI的ChatGPT Search&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;和无&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;内置搜索代理的DeepSeek当作Deep Research&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;功能对比&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;）。\&quot;},\&quot;③\&quot;:{\&quot;score&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\&quot;:1,\&quot;evidence\&quot;:\&quot;All info&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;rmation is d&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;rawn from official&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; docs, technical blogs, and reputable sources (c&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;itations in &quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;brackets).\&quot;,\&quot;reason\&quot;:\&quot;&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;只笼统交代了信息&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;来源的大&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;致类型（&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;官方文档、技术博客和可靠来源），&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;没有交代查找的具&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;体方法、过程和局&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;限。\&quot;},\&quot;&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;④\&quot;:{\&quot;score\&quot;:1,\&quot;evidenc&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;e\&quot;:\&quot;Chinese news reports&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; also claim they have “basically eliminated&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;” hallucin&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ation【16†L247-L254&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;】&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; (though that’s unverified PR).\&quot;,\&quot;reason\&quot;:\&quot;对&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;官方宣传与二手媒&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;体报道有&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;所区分并标注了未&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;经&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;核实的公关口径，但全文未&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;见对相互矛盾信息&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;的发现与&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;取舍处理。\&quot;},\&quot;⑤\&quot;:&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;{\&quot;score\&quot;:1,\&quot;&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;evidence\&quot;:\&quot;Kimi’s Explore, by scanning 500 pag&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;es per query, may reduce&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; omission er&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;rors but could still sum&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;marize incor&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;rectly&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;. There’s no independent study of Kimi’s fac&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;tuality in English.\&quot;,\&quot;re&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ason\&quot;:\&quot;大体区分了&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;事实特征&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;与推测判断&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;（常使用likely、may等词区分），但缺&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;乏对不同解释或反&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;例的系统&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;审视与取舍。\&quot;},\&quot;&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;⑦\&quot;:{\&quot;score&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\&quot;:0,\&quot;evidence\&quot;:&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\&quot;In short, **Gemini** shines in enterprise/Works&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;pace-integra&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ted research with Google&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; search and user data (&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;long context, multimodal, chain-of-thought via a&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; “thinking” panel)&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;【14†L69-&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;L76】【8†L183-L189】. **ChatGPT (OpenAI)** offers&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; broad web search with source links and a huge p&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;lugin ecosys&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;tem, making it ideal for&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; general queries and mul&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ti-turn rese&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;arch【&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;25†L51-L59】【25†L99-L107】.\&quot;,\&quot;&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;reason\&quot;:\&quot;对“哪家做&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;得最好”没有给出直接、明&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;确的综合&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;判断，仅罗列各有&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;所长及&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;适用场景，且没有说明结论&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;的把握程度。\&quot;},\&quot;&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;写作\&quot;:{\&quot;score\&quot;:1,\&quot;evid&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ence\&quot;:\&quot;Below&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; we analyze each dimensi&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;on in detail, with&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot; references. Our final comparison table highligh&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ts each vend&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;or’s strengths, weakne&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;sses, and ideal use-case&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;s.\&quot;,\&quot;reason\&quot;:\&quot;结构&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;基本清楚，开头有执行摘要并按维度&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;分节对比&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;，但遗漏了OpenAI De&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ep Research等核心&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;功能且未直接回答哪家最好。\&quot;}},\&quot;timeliness\&quot;:{\&quot;sc&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ore\&quot;:1,\&quot;reason\&quot;:\&quot;包含&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;截至2026&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;年2月的&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;最新信息（如Claude Opus 4.6、Perplexity C&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;omputer、Gemini 3.1 Pro&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;），但完&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;全&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;忽略了OpenAI在2025年初就已发布的同&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;名核心产品ChatGPT D&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;eep Research&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;（仅写了2024年的&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;ChatGPT Search）以及Perplexity的Deep Researc&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;h功能，&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;且声称ChatGPT免费&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;版仍限于GPT-3.5，&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;存在重要信息过时与遗漏。\&quot;},\&quot;off_topi&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;c\&quot;:{\&quot;value\&quot;:false,\&quot;reaso&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;n\&quot;:\&quot;报告&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;围绕各家大语言模&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;型&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;平台的深度研究及搜索能力&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;进行了多维度综合&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;对比，虽然对部分&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;产品的定&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;义边界把握不准，&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;但并非&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;回答另一个问题。\&quot;},\&quot;traceable_sources\&quot;:{&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\&quot;value\&quot;:true,\&quot;reason\&quot;:\&quot;&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;虽然形如&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;【8†L183-&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;L189】的编号未附网址列表，但正文中明确写&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;出了部分&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;来源机构与名称（如The BentoML guide、Anthropic Help Center、OpenAI blog、Wikipedia&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;等），属&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;于写明了名称、能&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;DONE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;检索到的可追溯来源。\&quot;}}\n&quot;,&quot;duration_seconds&quot;:12.925888,&quot;usage&quot;:{&quot;input_tokens&quot;:15144,&quot;output_tokens&quot;:807,&quot;thinking_tokens&quot;:0,&quot;cache_read_tokens&quot;:0,&quot;total_tokens&quot;:15951}}}
+{&quot;event&quot;:&quot;result&quot;,&quot;result&quot;:{&quot;conversation_id&quot;:&quot;d00c79e0-06ed-4eee-a9b2-1d3dbddfd5d7&quot;,&quot;status&quot;:&quot;SUCCESS&quot;,&quot;response&quot;:&quot;{\&quot;ratings\&quot;:{\&quot;①\&quot;:{\&quot;score\&quot;:0,\&quot;evidence\&quot;:\&quot;We compare the advanced **Deep Research** capabilities of major AI platforms – Google Gemini, OpenAI ChatGPT, Anthropic Claude, Perplexity AI, Moonshot AI’s Kimi, and China’s DeepSeek – along multiple dimensions.\&quot;,\&quot;reason\&quot;:\&quot;只按字面铺开对比，没有交代怎样理解问题和提问者的需要，更未审视概念边界（甚至将OpenAI的ChatGPT Search和无内置搜索代理的DeepSeek当作Deep Research功能对比）。\&quot;},\&quot;③\&quot;:{\&quot;score\&quot;:1,\&quot;evidence\&quot;:\&quot;All information is drawn from official docs, technical blogs, and reputable sources (citations in brackets).\&quot;,\&quot;reason\&quot;:\&quot;只笼统交代了信息来源的大致类型（官方文档、技术博客和可靠来源），没有交代查找的具体方法、过程和局限。\&quot;},\&quot;④\&quot;:{\&quot;score\&quot;:1,\&quot;evidence\&quot;:\&quot;Chinese news reports also claim they have “basically eliminated” hallucination【16†L247-L254】 (though that’s unverified PR).\&quot;,\&quot;reason\&quot;:\&quot;对官方宣传与二手媒体报道有所区分并标注了未经核实的公关口径，但全文未见对相互矛盾信息的发现与取舍处理。\&quot;},\&quot;⑤\&quot;:{\&quot;score\&quot;:1,\&quot;evidence\&quot;:\&quot;Kimi’s Explore, by scanning 500 pages per query, may reduce omission errors but could still summarize incorrectly. There’s no independent study of Kimi’s factuality in English.\&quot;,\&quot;reason\&quot;:\&quot;大体区分了事实特征与推测判断（常使用likely、may等词区分），但缺乏对不同解释或反例的系统审视与取舍。\&quot;},\&quot;⑦\&quot;:{\&quot;score\&quot;:0,\&quot;evidence\&quot;:\&quot;In short, **Gemini** shines in enterprise/Workspace-integrated research with Google search and user data (long context, multimodal, chain-of-thought via a “thinking” panel)【14†L69-L76】【8†L183-L189】. **ChatGPT (OpenAI)** offers broad web search with source links and a huge plugin ecosystem, making it ideal for general queries and multi-turn research【25†L51-L59】【25†L99-L107】.\&quot;,\&quot;reason\&quot;:\&quot;对“哪家做得最好”没有给出直接、明确的综合判断，仅罗列各有所长及适用场景，且没有说明结论的把握程度。\&quot;},\&quot;写作\&quot;:{\&quot;score\&quot;:1,\&quot;evidence\&quot;:\&quot;Below we analyze each dimension in detail, with references. Our final comparison table highlights each vendor’s strengths, weaknesses, and ideal use-cases.\&quot;,\&quot;reason\&quot;:\&quot;结构基本清楚，开头有执行摘要并按维度分节对比，但遗漏了OpenAI Deep Research等核心功能且未直接回答哪家最好。\&quot;}},\&quot;timeliness\&quot;:{\&quot;score\&quot;:1,\&quot;reason\&quot;:\&quot;包含截至2026年2月的最新信息（如Claude Opus 4.6、Perplexity Computer、Gemini 3.1 Pro），但完全忽略了OpenAI在2025年初就已发布的同名核心产品ChatGPT Deep Research（仅写了2024年的ChatGPT Search）以及Perplexity的Deep Research功能，且声称ChatGPT免费版仍限于GPT-3.5，存在重要信息过时与遗漏。\&quot;},\&quot;off_topic\&quot;:{\&quot;value\&quot;:false,\&quot;reason\&quot;:\&quot;报告围绕各家大语言模型平台的深度研究及搜索能力进行了多维度综合对比，虽然对部分产品的定义边界把握不准，但并非回答另一个问题。\&quot;},\&quot;traceable_sources\&quot;:{\&quot;value\&quot;:true,\&quot;reason\&quot;:\&quot;虽然形如【8†L183-L189】的编号未附网址列表，但正文中明确写出了部分来源机构与名称（如The BentoML guide、Anthropic Help Center、OpenAI blog、Wikipedia等），属于写明了名称、能检索到的可追溯来源。\&quot;}}\n&quot;,&quot;duration_seconds&quot;:12.952019,&quot;num_turns&quot;:1,&quot;usage&quot;:{&quot;input_tokens&quot;:15144,&quot;output_tokens&quot;:807,&quot;thinking_tokens&quot;:0,&quot;cache_read_tokens&quot;:0,&quot;total_tokens&quot;:15951}}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

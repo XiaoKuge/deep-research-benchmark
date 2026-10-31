@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟评审 试评重评 三家 第 131 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟评审 试评重评 三家第 131 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这次评审</a>
+    <p class="eyebrow caption-1">模拟评审 试评重评 三家 · 第 131 次调用</p>
+    <h1 class="heading-3">评审 · 直接回答：报告 D，评委 1</h1>
+    <p class="body-3 lede">Google（google），Gemini Argon Medium 4，只给材料，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟评审 试评重评 三家的第 131 次调用，共 133 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-直接回答：报告 D，评委 1</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">Google（google）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">Gemini Argon Medium 4（<code>gemini-4-argon-medium</code>）</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 31 日 00:27:36.193（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 31 日 00:27:44.166（协调世界时减 7 小时）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">7.973 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>d982feaabb8c62537f09cdc8fd5907aa90239e3389bda8fa6abffbbae174c03f</code></dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>1b5402b4b972737a53a0d9a183367357f813ec970e4bf464e11f05735e9030ea</code></dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/agy --input-format stream-json --output-format stream-json --agent materials-only --sandbox --disable-slash-commands --model gemini-4-argon-medium -p </code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-%E4%B8%89%E5%AE%B6/calls.jsonl">调用记录文件</a>的第 131 行，记录里的序号是 131</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="130.html">上一次调用</a></li><li><a class="caption-1" href="132.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 5550 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 5550 字，点开看全文</summary><pre class="raw" id="prompt">
+你在一项深度研究报告评测的模拟评审中，负责一个简单的标注任务：从一份报告的主要结论里，挑出&quot;对题目的直接回答&quot;。
+
+下面先给出材料：题目卡和这份报告的主要结论清单。本任务只用这些材料：不能上网，不能运行命令，不能读写文件。
+
+===== 题目卡（开始） =====
+一、评委版（只给评委）
+【提问者】原题没有写明。按&quot;一位想选用深度研究产品的普通用户&quot;理解。
+【用途】原题没有写明。按&quot;帮助决定用哪一家&quot;理解。
+【问题】各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+【截止时间】只使用截至 2026-03-03 已经公开的信息。这一天是试评报告的生成日期，判断对错和时效以截至这一天已经存在的信息为准。
+
+二、提问版（交给智能体）
+（原题没有提问版。试评的六份报告当时收到的只有问题本身，见裸题版。）
+
+三、裸题版（交给智能体）
+各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+
+四、附在提问版和裸题版之后，一字不改
+
+（原题没有附交付要求和说明：试评的六份报告生成在交付要求定稿之前。）
+
+说明：这道题取自第五阶段小规模检验，原件是 research-plan/stage5-pilot/question-card.md。原始题目文本没有保存，上面的问题是根据六份报告的标题和开头还原的，所以不是按基础级规则写的题目卡：提问者和用途是评委的理解，裸题版也是还原的文字，不一定与当时交给各个产品的逐字相同。这里按出题手册第八节模板的四个部分重写，内容与原件相同，供模拟评审程序读取。
+===== 题目卡（结束） =====
+
+===== 主要结论清单（开始） =====
+[c1] 深度研究通过自主规划、多步检索、阅读、反思和推演，将碎片信息合成为带引文的专业报告。
+[c2] 深度研究的响应时间可由传统对话的数秒延长至数分钟乃至数小时。
+[c3] ChatGPT在2026年初升级了深度研究，支持执行前澄清问题及动态编辑研究计划。
+[c4] ChatGPT结合GPT-5.2及o系列模型，在跨学科复杂定性问题的合成能力上达到行业标杆水平。
+[c5] ChatGPT深度研究分完整版与轻量版，前者可能耗时近三十分钟，后者数分钟。
+[c6] ChatGPT的优势是文本连贯性、逻辑推演、复杂概念解释及战略报告写作。
+[c7] ChatGPT的深度反思机制使其在海量高频实时数据抓取上不及专用搜索智能体敏捷。
+[c8] OpenAI在2026年开始于免费及入门订阅层级测试广告，并声称广告独立于生成内容。
+[c9] Gemini Deep Research在2026年依托Gemini 3.1 Pro确立了企业长文档处理的统治地位。
+[c10] Gemini通常具备百万Token上下文，可一次摄入一千五百页文本或三万行代码。
+[c11] Gemini的长上下文减少了对RAG分块及截断的依赖，从而避免跨文档逻辑关联丢失。
+[c12] Gemini可在一次研究任务中交叉检索公共网页、Gmail及Google Drive。
+[c13] Gemini以异步任务管理器维护规划和执行模型的共享状态，并能在子查询失败后恢复任务。
+[c14] Gemini研究报告可转为Canvas交互面板或音频概述。
+[c15] Claude Opus 4.6及Sonnet 4.5在长程自主任务和复杂工程研究中具有无可争议的领先地位。
+[c16] Claude以Agent Teams和Cowork支持多个角色在同一代码库或文档库并行工作、交叉审查。
+[c17] Claude Opus 4.6的自适应思考可根据任务难度动态调整思维链深度。
+[c18] Claude通过上下文压缩总结早期步骤与决策，避免长程任务上下文溢出并保持目标记忆。
+[c19] Claude Opus 4.6可连续自主执行14.5小时而不丢失逻辑连贯性，是截至2026年初已知最长纪录。
+[c20] Claude被集成进斯坦福Biomni平台，可自主使用数百个数据库和软件包，将数月研究缩短至数小时。
+[c21] Perplexity把事实准确性、引文透明度、检索和交叉验证作为深度研究的核心。
+[c22] Perplexity在2026年于Max层级推出Comet Browser Agent。
+[c23] Comet能解析复杂网页DOM、自主登录动态仪表盘、抓取JavaScript框架中的数据及模拟注册流程。
+[c24] Perplexity Spaces能将深度研究严格限制在用户圈定的可信来源内，彻底排除外部无关数据污染。
+[c25] 在优先考虑事实准确性及可验证性的研究中，Perplexity Max是无可争议的最佳选择。
+[c26] Kimi K2.5通过PARL构建了业内首个成熟的智能体集群架构。
+[c27] Kimi的编排器可动态生成多达100个子智能体，并发执行超过1500次工具调用和网页抓取。
+[c28] Kimi的并行机制避免串行崩溃，将复杂研究耗时缩短80%，速度提高至单智能体的4.5倍。
+[c29] Kimi K2.5使用15万亿文本与视觉混合Token预训练，具备原生多模态架构。
+[c30] Kimi深度研究可解析网页UI、财务图表和视频工作流，实现跨模态合成。
+[c31] DeepSeek V3.2及R系列以极低成本实现与国际顶尖模型持平甚至超越的深度研究能力。
+[c32] DeepSeek V3.2的技术突破源于mHC与DSA结合，重构万亿参数模型的信息流效率并降低先进芯片依赖。
+[c33] DeepSeek V3.2集成工具使用中的思考，在工具调用前推理并在反馈后验证研究目标的一致性。
+[c34] DeepSeek在数学证明、结构化复杂报告及算法代码研究中具有统治力，输出连贯且精练。
+[c35] DeepSeek以MIT协议开放权重及低价推理，成为本地部署和定制深度研究管道的首选底座。
+[c36] BrowseComp衡量智能体在复杂互联网环境中定位、提取及整合隐蔽信息的能力。
+[c37] BrowseComp-Plus采用人工验证的固定语料库和困难负样本，排除实时网络波动并评估检索、引文及综合能力。
+[c38] Claude Opus 4.6多智能体框架在BrowseComp-Plus得分86.8%，为行业最高，报告将其归因于上下文压缩和多角色验证。
+[c39] Kimi K2.5 Agent Swarm在BrowseComp-Plus得分78.4%，报告将高召回率归因于百级并发。
+[c40] GPT-5.2 Deep Research在BrowseComp-Plus得分59.2%至71.3%，处理干扰信息时偶尔陷入逻辑死锁。
+[c41] Gemini 3 Pro在BrowseComp-Plus得分59.2%至63.2%，复杂多步搜索策略效率低于专用多智能体框架。
+[c42] Onyx Deep Research在BrowseComp-Plus得分54.54%，是2026年2月领先的MIT开源深度研究项目。
+[c43] DeepSeek V3.2在BrowseComp-Plus得分32.5%至50%，内置抓取工具鲁棒性较弱，更适合处理干净语料。
+[c44] GAIA评估浏览器、代码解释器及多模态工具的综合决策，SWE-bench评估真实代码库Issue修复。
+[c45] GPT-5及o3系列的GAIA成绩超过90.37%，报告认为该基准基本被解决。
+[c46] 报告所列SWE-bench Verified成绩分别为Opus 4.6的80.8%、GPT-5及o3系列的65.0%、Gemini系列的53.6%、Kimi K2.5的76.8%。
+[c47] 报告称Claude的Terminal-Bench成绩最高，GPT-5及o3系列为43.8%，Kimi和DeepSeek未参加专项评估。
+[c48] 报告称Claude在GDPval-AA领先GPT-5.2共144 Elo积分，Kimi办公分析效能提升43.7%。
+[c49] Claude 4.6凭借针对智能体编码优化的架构、自主调试及审错能力，在工程研究中取得霸主地位。
+[c50] 研究人员用自动检测工具在ICLR 2026投稿中发现五十余处人类专家未察觉的严重AI幻觉。
+[c51] 报告称OpenAI于2026年初发布未经同行评审的报告，将幻觉归因于鼓励猜测而惩罚承认未知的训练和评估激励。
+[c52] 二元对错评分使模型猜测有机会得分，而回答不知道必得零分，从而鼓励生成貌似合理的虚构事实。
+[c53] Gemini 2.5 Flash-Lite的摘要幻觉率为3.3%、事实一致性为96.7%，报告归因于事实边界约束和搜索Grounding。
+[c54] Llama 3.3 70B Instruct的摘要幻觉率为4.1%、事实一致性为95.9%，报告归因于高质量指令微调。
+[c55] DeepSeek V3.2 Exp的摘要幻觉率为5.3%、事实一致性为94.7%。
+[c56] Kimi K2 Instruct的摘要幻觉率为17.9%、事实一致性为82.1%。
+[c57] Claude Opus及GPT-5系列的摘要幻觉率约20%至27%，事实一致性73%至80%，报告归因于维持复杂推理连贯性导致细节偏差。
+[c58] 将关键词转换成自然语言问题的Q2Q技术，可显著提高BM25及monoT5检索管道的召回率和事实准确性。
+[c59] 报告以Q2Q研究推断，Perplexity等专注检索优化的平台在严谨事实方面远胜于依靠模型权重记忆的系统。
+[c60] 各主流平台每月20美元的基础订阅通常只有受限研究次数或轻量推理模型。
+[c61] ChatGPT Pro每月200美元，提供最高频次高级推理和无限制完整版深度研究。
+[c62] Google AI Ultra每月249.99美元，提供Gemini 3.1 Pro最高上限、大规模并发研究、Veo 3及2TB存储。
+[c63] Perplexity Max每月200美元，提供无限Pro Search、专属Comet浏览器智能体及前沿模型抢先体验。
+[c64] Claude Team及Enterprise每用户每月30美元起，支持Agent Teams、大规模知识库摄入，并保证数据不用于训练。
+[c65] 报告用GPT-4每百万输入30美元、输出60美元作为ChatGPT成本参考，并认为这一成本不适合大规模自动化爬取分析。
+[c66] Claude Opus 4.6每百万输入5美元、输出25美元，提示缓存最高节省90%，批处理节省50%。
+[c67] Kimi K2.5每百万输入0.60美元、输出2.50美元，报告称较传统国际厂商便宜近98%，可低成本建设大规模监控系统。
+[c68] DeepSeek V3.2 Exp每百万输入0.27美元、输出0.41美元，缓存命中输入0.028美元，并开放权重。
+[c69] 不存在各方面统一最优的深度研究平台，最佳选择取决于业务场景、容错要求和预算。
+[c70] 对于高度依赖企业内部历史数据的研究，Gemini 3.1 Pro及AI Ultra凭Workspace整合和长上下文具有垄断性优势。
+[c71] Claude 4.6凭自适应思考、上下文压缩和多角色协作，在深层逻辑及长期跨系统工程研究中处于巅峰。
+[c72] ChatGPT Pro适合横向发散、跨学科知识综合及前瞻性战略报告。
+[c73] Kimi K2.5凭智能体集群和低价调用，在超大规模并发研究中的效率远超西方传统巨头。
+[c74] 2026年顶尖机构和专业研究者的最佳实践已全面转向混合技术栈组合。
+[c75] 报告建议以Kimi广域搜集、Perplexity抓取和零幻觉核查、Gemini整合私有数据，再由Claude验证或ChatGPT完成报告。
+[c76] ChatGPT接入FactSet和PitchBook等专业数据库，增强了金融研究的实证深度。
+[c77] ChatGPT支持全屏报告视图以及对特定站点和应用生态的研究控制。
+[c78] Perplexity高端方案引入Claude 4.6，在复杂逻辑验证和高难度知识考核中严谨性很高。
+[c79] Kimi K2.5具有一万亿参数规模，借助智能体集群实现上千次并行调用。
+[c80] Gemini专项数学研究智能体可用自然语言验证器发现逻辑缺陷，在顶级数学和科学任务中比基础模型更严谨。
+[c81] 主流研究工具普遍允许用户在研究开始前编辑计划，提升结果的定向精准度。
+===== 主要结论清单（结束） =====
+
+要做的事：挑出这份报告对题目卡里那个问题给出的总体判断。
+
+- 至多 3 条，至少 1 条。
+- 只挑总体判断，不挑支撑它的具体事实。例如&quot;在某某评测上某产品得分多少&quot;是支撑事实，不是直接回答；&quot;没有绝对最好，按用途选：要引用准确选某家&quot;是直接回答。
+- 如果结论里没有总体判断，挑最接近总体判断的一条，并在理由中说明。
+
+规则：
+- 不要猜测报告出自哪个产品。
+
+只回答一个 JSON 对象，不要写任何别的文字，也不要用代码块。ids 用上面方括号里的编号。格式如下：
+
+{&quot;ids&quot;:[&quot;c1&quot;],&quot;reason&quot;:&quot;…&quot;}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 205 字，一字不改。</p>
+  <pre class="raw" id="answer">
+{&quot;ids&quot;:[&quot;c69&quot;,&quot;c74&quot;,&quot;c75&quot;],&quot;reason&quot;:&quot;c69直接回答了“哪家做得最好”的问题，指出不存在各方面统一最优的平台，最佳选择取决于业务场景、容错要求和预算；c74和c75进一步给出了报告对整体使用策略的综合结论，即最优选方案是采用混合技术栈，按搜集、核查、私有数据整合、验证及成文等不同环节组合使用Kimi、Perplexity、Gemini、Claude与ChatGPT。&quot;}
+</pre>
+</section>
+<section class="block" id="config" aria-labelledby="config-h">
+  <h2 class="heading-5" id="config-h">调用前写进临时目录的设置文件</h2>
+  
+  <div class="file"><h3 class="title-3"><code>work/.agents/agents/materials-only/agent.md</code></h3><pre class="raw" id="config-1">
+---
+name: materials-only
+description: 模型调用层的单次调用（只给材料）
+mainAgent: true
+subagent: false
+excludeDefaultComponents: true
+inheritCustomizations: false
+inheritMcp: false
+tools: []
+---
+
+# materials-only
+
+按用户消息里的要求作答，只依据消息里给出的材料。
+</pre></div>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 5369 字</summary><pre class="raw" id="raw-output">
+{&quot;event&quot;:&quot;init&quot;,&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;init&quot;:{&quot;model&quot;:&quot;gemini-4-argon-medium&quot;,&quot;cwd&quot;:&quot;/private/var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmptej_gvsh/work&quot;,&quot;agent&quot;:&quot;materials-only&quot;,&quot;tools&quot;:[&quot;ask_custom_permission&quot;,&quot;ask_permission&quot;,&quot;ask_question&quot;,&quot;browser_click_element&quot;,&quot;browser_drag_pixel_to_pixel&quot;,&quot;browser_get_dom&quot;,&quot;browser_get_network_request&quot;,&quot;browser_input&quot;,&quot;browser_list_network_requests&quot;,&quot;browser_mouse_down&quot;,&quot;browser_mouse_up&quot;,&quot;browser_move_mouse&quot;,&quot;browser_press_key&quot;,&quot;browser_refresh_page&quot;,&quot;browser_resize_window&quot;,&quot;browser_scroll&quot;,&quot;browser_scroll_dom&quot;,&quot;browser_select_option&quot;,&quot;browser_subagent&quot;,&quot;call_mcp_tool&quot;,&quot;capture_browser_console_logs&quot;,&quot;capture_browser_screenshot&quot;,&quot;click_browser_pixel&quot;,&quot;command_status&quot;,&quot;define_subagent&quot;,&quot;delete_knowledge&quot;,&quot;execute_browser_javascript&quot;,&quot;find_by_name&quot;,&quot;finish&quot;,&quot;generate_image&quot;,&quot;grep_search&quot;,&quot;invoke_subagent&quot;,&quot;list_browser_pages&quot;,&quot;list_dir&quot;,&quot;list_permissions&quot;,&quot;list_plugin_accounts&quot;,&quot;list_resources&quot;,&quot;manage_inbox&quot;,&quot;manage_subagents&quot;,&quot;manage_task&quot;,&quot;multi_replace_file_content&quot;,&quot;notebook_edit&quot;,&quot;notebook_execution&quot;,&quot;open_browser_url&quot;,&quot;read_browser_page&quot;,&quot;read_resource&quot;,&quot;read_url_content&quot;,&quot;replace_file_content&quot;,&quot;run_command&quot;,&quot;run_workflow&quot;,&quot;schedule&quot;,&quot;search_marketplace&quot;,&quot;search_web&quot;,&quot;sed_file&quot;,&quot;send_command_input&quot;,&quot;send_message&quot;,&quot;view_file&quot;,&quot;wait&quot;,&quot;wait_5_seconds&quot;,&quot;write_to_file&quot;],&quot;permission_mode&quot;:&quot;request-review&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:0,&quot;state&quot;:&quot;DONE&quot;,&quot;step_type&quot;:&quot;user_input&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;{\&quot;ids\&quot;:[\&quot;c69\&quot;,\&quot;c74\&quot;,\&quot;c75\&quot;],\&quot;reason\&quot;:&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\&quot;c69&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;直接回答了“哪家做得最好&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;”的问题，指出不&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;存在各方面统一最&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;优的平台&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;，最佳选择取决于&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;业务场景&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;、容错要求和预算；c74和c75进一步给&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;出了报告对整体使&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;用策略的综合结论&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;，即最优选方案是采用混合技术栈，按搜集、&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;核查、私&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;有数据整合、验证&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;及成文&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;ACTIVE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;等不同环节组合使用Kimi、Perplexity、Gemini、Claude与ChatGPT。\&quot;}&quot;}}
+{&quot;event&quot;:&quot;step_update&quot;,&quot;step_update&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;step_index&quot;:1,&quot;state&quot;:&quot;DONE&quot;,&quot;step_type&quot;:&quot;agent_response&quot;,&quot;text_delta&quot;:&quot;\n&quot;,&quot;duration_seconds&quot;:5.371389,&quot;usage&quot;:{&quot;input_tokens&quot;:3693,&quot;output_tokens&quot;:117,&quot;thinking_tokens&quot;:0,&quot;cache_read_tokens&quot;:0,&quot;total_tokens&quot;:3810}}}
+{&quot;event&quot;:&quot;result&quot;,&quot;result&quot;:{&quot;conversation_id&quot;:&quot;76862072-3bf0-4468-b15c-ec46e4cdda8f&quot;,&quot;status&quot;:&quot;SUCCESS&quot;,&quot;response&quot;:&quot;{\&quot;ids\&quot;:[\&quot;c69\&quot;,\&quot;c74\&quot;,\&quot;c75\&quot;],\&quot;reason\&quot;:\&quot;c69直接回答了“哪家做得最好”的问题，指出不存在各方面统一最优的平台，最佳选择取决于业务场景、容错要求和预算；c74和c75进一步给出了报告对整体使用策略的综合结论，即最优选方案是采用混合技术栈，按搜集、核查、私有数据整合、验证及成文等不同环节组合使用Kimi、Perplexity、Gemini、Claude与ChatGPT。\&quot;}\n&quot;,&quot;duration_seconds&quot;:5.387719,&quot;num_turns&quot;:1,&quot;usage&quot;:{&quot;input_tokens&quot;:3693,&quot;output_tokens&quot;:117,&quot;thinking_tokens&quot;:0,&quot;cache_read_tokens&quot;:0,&quot;total_tokens&quot;:3810}}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>
