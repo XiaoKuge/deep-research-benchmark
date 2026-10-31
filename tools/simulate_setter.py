@@ -33,7 +33,9 @@ CUTOFF = "只使用截至〔运行当日〕已经公开的信息。"
 
 SETTER, MAP_A, MAP_B, LEAK, CLOSED = "出题人", "甲", "乙", "泄露检查人", "闭卷对照"
 ROLES = (SETTER, MAP_A, MAP_B, LEAK, CLOSED)
-DEFAULT_VENDORS = {SETTER: "claude", MAP_A: "claude", MAP_B: "kimi", LEAK: "codex", CLOSED: "codex"}
+# 写深度地图要读网页，google 不能用于只读网页一档（models.usable），所以两位出题人是 claude 和 codex；
+# google 做只给材料的泄露检查和闭卷对照，闭卷对照和写过地图的两家都不同。
+DEFAULT_VENDORS = {SETTER: "claude", MAP_A: "claude", MAP_B: "codex", LEAK: "google", CLOSED: "google"}
 
 LEAK_QUESTIONS = (
     ("暗示往哪里挖", "题面有没有暗示该往哪里挖？"),
@@ -1085,16 +1087,18 @@ def build_parser():
     given.add_argument("--id", help="题目标识，用作目录名；不给就用运行编号")
     given.add_argument("--out", default=DEFAULT_OUT, help="题目目录的上一级目录，默认 simulation/questions")
     who = parser.add_argument_group("各角色用哪家（%s）" % "、".join(models.VENDORS))
+    web = "要读网页；google 不能用于只读网页一档，配置了也会换一家"
     who.add_argument("--setter", choices=models.VENDORS, default=DEFAULT_VENDORS[SETTER],
-                     help="出题人：评委版、提问版和裸题版、两人对照、闭卷比对，默认 claude")
+                     help="出题人：评委版（%s）、提问版和裸题版、两人对照、闭卷比对，默认 %s"
+                          % (web, DEFAULT_VENDORS[SETTER]))
     who.add_argument("--map-a", choices=models.VENDORS, default=DEFAULT_VENDORS[MAP_A],
-                     help="写深度地图的甲，默认 claude")
+                     help="写深度地图的甲（%s），默认 %s" % (web, DEFAULT_VENDORS[MAP_A]))
     who.add_argument("--map-b", choices=models.VENDORS, default=DEFAULT_VENDORS[MAP_B],
-                     help="写深度地图的乙，默认 kimi")
+                     help="写深度地图的乙（%s），默认 %s" % (web, DEFAULT_VENDORS[MAP_B]))
     who.add_argument("--leak-checker", choices=models.VENDORS, default=DEFAULT_VENDORS[LEAK],
-                     help="泄露检查人，默认 codex")
+                     help="泄露检查人，只给材料，默认 %s" % DEFAULT_VENDORS[LEAK])
     who.add_argument("--closed-book", choices=models.VENDORS, default=DEFAULT_VENDORS[CLOSED],
-                     help="闭卷对照，必须和写深度地图的两家都不同，默认 codex")
+                     help="闭卷对照，只给材料，必须和写深度地图的两家都不同，默认 %s" % DEFAULT_VENDORS[CLOSED])
     who.add_argument("--model", action="append", metavar="厂商=模型",
                      help="给某一家指定模型，可以写多次；不给就用命令行的默认模型")
     how = parser.add_argument_group("怎样运行")

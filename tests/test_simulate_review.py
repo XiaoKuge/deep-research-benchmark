@@ -570,6 +570,13 @@ class PilotQuestionTest(unittest.TestCase):
         # 要点抽取 6 × 3 = 18；合并 1；写到核对 6；要点判定 6；环节评级 6 × 6 = 36；
         # 两两比较 15 对 × 两种先后 × 2 位 = 60；直接回答 6。合计 181。
         self.assertEqual(meta["calls"]["calls"], 181)
+        # 默认配置：断言核验、要点抽取、要点判定、环节评级用 claude、codex、google；E 那一组只读网页，
+        # 两位 google 核验员换成替代顺序（claude、codex、google、kimi）里这一步没配的 kimi。
+        self.assertEqual(meta["calls"]["by_vendor"], {"claude": 83, "codex": 64, "google": 32, "kimi": 2})
+        self.assertEqual(meta["config"]["substitutes"], ["claude", "codex", "google", "kimi"])
+        self.assertEqual(meta["config"]["steps"]["verify"]["vendors"], ["claude", "codex", "google"])
+        self.assertEqual([(s["任务"], s["改用的厂商"]) for s in meta["substitutions"]],
+                         [("评审-断言核验：报告 E，只读网页，评委 %d" % n, "kimi") for n in (5, 6)])
 
 
 class GuideTest(unittest.TestCase):

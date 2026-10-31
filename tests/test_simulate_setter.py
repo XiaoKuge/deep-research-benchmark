@@ -21,7 +21,8 @@ import simulate_setter  # noqa: E402
 HANDBOOK = os.path.join(ROOT, "research-plan", "question-handbook.src.html")
 RULES = os.path.join(ROOT, "research-plan", "rules.md")
 
-# 默认的角色分工：出题人 claude，甲 claude，乙 kimi，泄露检查 codex，闭卷对照 codex。
+# 默认的角色分工：出题人 claude，甲 claude，乙 codex，泄露检查 google，闭卷对照 google。
+# 写深度地图要读网页，google 不能用于只读网页一档，所以两位出题人是 claude 和 codex。
 CARD = {
     "话题": "城市里的萤火虫", "题型": "看似简单型", "选题理由": "人人见过，挖深要靠理解",
     "浅答案": "城市里萤火虫少了，是因为污染。", "挖深会改变结论": True,
@@ -120,12 +121,12 @@ def material(rounds=None, overrides=None, extra=()):
     for number, (map_a, map_b, comparison) in enumerate(rounds, 1):
         entries += [
             ("出题-深度地图-甲-第%d轮" % number, "claude", map_a),
-            ("出题-深度地图-乙-第%d轮" % number, "kimi", map_b),
+            ("出题-深度地图-乙-第%d轮" % number, "codex", map_b),
             ("出题-两人对照-第%d轮" % number, "claude", comparison),
         ]
     entries += [
-        ("出题-泄露检查", "codex", LEAK_OK),
-        ("出题-闭卷对照-作答", "codex", "闭卷的回答：萤火虫少了是因为农药。"),
+        ("出题-泄露检查", "google", LEAK_OK),
+        ("出题-闭卷对照-作答", "google", "闭卷的回答：萤火虫少了是因为农药。"),
         ("出题-闭卷对照-比对", "claude", {"答到的核心要点": [{"编号": 1, "理由": "提到了"}],
                                      "建议": "改题", "说明": "只答到一条"}),
     ]
@@ -217,8 +218,11 @@ class QuestionFolderTest(SetterCase):
         self.assertRegex(meta["生成时间"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}")
         self.assertEqual(meta["方式"], "回放")
         used = {role: info["用到的厂商"] for role, info in meta["角色"].items()}
-        self.assertEqual(used, {"出题人": ["claude"], "甲": ["claude"], "乙": ["kimi"],
-                                "泄露检查人": ["codex"], "闭卷对照": ["codex"]})
+        self.assertEqual(used, {"出题人": ["claude"], "甲": ["claude"], "乙": ["codex"],
+                                "泄露检查人": ["google"], "闭卷对照": ["google"]})
+        self.assertEqual({role: info["配置的厂商"] for role, info in meta["角色"].items()},
+                         {"出题人": "claude", "甲": "claude", "乙": "codex", "泄露检查人": "google",
+                          "闭卷对照": "google"})
         records = self.calls()
         self.assertEqual(len(records), 8)
         self.assertTrue(all(record["mode"] == "回放" for record in records))
@@ -357,7 +361,7 @@ class ClosedBookTest(SetterCase):
         self.assertEqual(code, 0, printed)
         record = self.call("出题-闭卷对照-作答")
         map_vendors = {r["vendor"] for r in self.calls() if r["task"].startswith("出题-深度地图-")}
-        self.assertEqual(map_vendors, {"claude", "kimi"})
+        self.assertEqual(map_vendors, {"claude", "codex"})
         self.assertNotIn(record["vendor"], map_vendors)
         self.assertEqual(record["tools"], "只给材料")
         self.assertEqual(record["prompt"], self.read("提问版.txt"))
@@ -376,7 +380,7 @@ class ClosedBookTest(SetterCase):
         self.assertFalse(self.metadata()["检查结果"]["全部通过"])
 
     def test_configuring_the_closed_book_with_a_map_writer_vendor_is_refused(self):
-        code, printed = self.run_setter("--closed-book", "kimi")
+        code, printed = self.run_setter("--closed-book", "codex")
         self.assertEqual(code, 2)
         self.assertIn("闭卷对照要换一家与写深度地图不同的厂商", printed)
         self.assertFalse(os.path.exists(self.folder()))
@@ -384,6 +388,7 @@ class ClosedBookTest(SetterCase):
 
 KIMI_401 = "退出状态 1；标准输出最后几行：Error code: 401 - The API Key appears to be invalid or may have expired"
 AGY_LOGIN = "退出状态 1；标准错误最后几行：agy 还没有登录"
+CODEX_LIMIT = "退出状态 1；标准错误最后几行：额度用完，请稍后再试"
 
 
 def failed(task, vendor, error=KIMI_401):
@@ -393,35 +398,35 @@ def failed(task, vendor, error=KIMI_401):
 
 class UnavailableVendorTest(SetterCase):
     def test_an_unavailable_map_writer_is_replaced_and_the_replacement_is_recorded(self):
-        # 本机现在的情况：kimi 登录过期；google（agy）不能用于只读网页一档，写地图时根本不试它，
-        # 所以回放材料里录下的 google 失败用不上，google 也不记为不可用
+        # 乙配置成 kimi（登录过期），替代顺序里的 codex 也失败；google 不能用于只读网页一档，排在最后，
+        # 闭卷对照的 google 也要留着，于是换成 claude，和甲同一家
         lines = material(overrides={"出题-深度地图-乙-第1轮": ("claude", depth_map("乙", 4))},
                          extra=[failed("出题-深度地图-乙-第1轮", "kimi"),
-                                failed("出题-深度地图-乙-第1轮", "google", AGY_LOGIN)])
-        code, printed = self.run_setter("--map-b", "kimi", "--leak-checker", "codex", "--closed-book", "codex",
-                                        lines=lines)
+                                failed("出题-深度地图-乙-第1轮", "codex", CODEX_LIMIT)])
+        code, printed = self.run_setter("--map-b", "kimi", lines=lines)
         self.assertEqual(code, 0, printed)
         meta = self.metadata()
         b = meta["角色"]["乙"]
         self.assertEqual(b["配置的厂商"], "kimi")
-        # 不换成 codex：codex 要留给闭卷对照
         self.assertEqual(b["用到的厂商"], ["claude"])
         self.assertEqual(len(b["替代"]), 1)
         self.assertEqual(list(b["替代"][0]), ["步骤", "任务", "原来的厂商", "改用的厂商", "原因"])
         self.assertEqual(b["替代"][0]["改用的厂商"], "claude")
+        self.assertEqual(b["替代"][0]["原来的厂商"], "kimi")
         self.assertEqual(b["替代"][0]["任务"], "出题-深度地图-乙-第1轮")
         self.assertEqual(b["替代"][0]["步骤"], "深度地图")
         self.assertIn("401", b["替代"][0]["原因"])
-        self.assertIn("google：Google（agy）不能用于只读网页一档", b["替代"][0]["原因"])
-        self.assertEqual([item["厂商"] for item in meta["厂商不可用"]], ["kimi"])
+        self.assertIn("额度用完", b["替代"][0]["原因"])
+        self.assertEqual([item["厂商"] for item in meta["厂商不可用"]], ["kimi", "codex"])
         self.assertTrue(any("两位出题人用了同一家" in note for note in meta["说明"]))
-        self.assertEqual(meta["角色"]["闭卷对照"]["用到的厂商"], ["codex"])
-        self.assertFalse([r for r in self.calls() if r["vendor"] in ("kimi", "google")])
+        self.assertEqual(meta["角色"]["闭卷对照"]["用到的厂商"], ["google"])
+        self.assertFalse([r for r in self.calls() if r["vendor"] in ("kimi", "codex")])
         self.assertIn("乙：claude（Anthropic）（配置的是 kimi", self.read("深度地图.txt"))
         self.assertIn("改用 claude", printed)
 
     def test_closed_book_is_recorded_as_not_done_when_only_map_writers_are_left(self):
-        lines = material(overrides={"出题-深度地图-乙-第1轮": ("codex", depth_map("乙", 4))},
+        lines = material(overrides={"出题-深度地图-乙-第1轮": ("codex", depth_map("乙", 4)),
+                                    "出题-闭卷对照-作答": ("codex", "写过地图的厂商不会被问到")},
                          extra=[failed("出题-闭卷对照-作答", "kimi"),
                                 failed("出题-闭卷对照-作答", "google", AGY_LOGIN)])
         code, printed = self.run_setter("--map-b", "codex", "--closed-book", "kimi", lines=lines)
@@ -478,7 +483,7 @@ class EstimateTest(SetterCase):
         self.assertEqual(code, 0, printed)
         self.assertIn("最多 14 次", printed)
         self.assertIn("第一轮就写全时 8 次", printed)
-        for count in ("claude 9 次", "kimi 3 次", "codex 2 次"):
+        for count in ("claude 9 次", "codex 3 次", "google 2 次"):
             self.assertIn(count, printed)
         self.assertIn("会超过上限", printed)
         self.assertFalse(os.path.exists(self.out))

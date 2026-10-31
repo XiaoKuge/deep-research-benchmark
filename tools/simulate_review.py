@@ -62,20 +62,21 @@ STEPS = [("claims_list", "结论清单"), ("verify", "断言核验"), ("extract"
 STEP_NAMES = dict(STEPS)
 SINGLE_JUDGE_STEPS = ("claims_list", "merge")  # 细则：清单由一人抽出；要点池由一位评委合并
 
+# 默认用 Claude（Anthropic）、Codex（OpenAI）、Gemini（Google）三家，Kimi（月之暗面）作备用，与资料站写明的一致。
 DEFAULT_CONFIG = {
     "steps": {
         "claims_list": {"vendors": ["claude"], "times": 1},
-        "verify": {"vendors": ["claude", "codex", "kimi"], "times": 2},
-        "extract": {"vendors": ["claude", "codex", "kimi"], "times": 1},
+        "verify": {"vendors": ["claude", "codex", "google"], "times": 2},
+        "extract": {"vendors": ["claude", "codex", "google"], "times": 1},
         "merge": {"vendors": ["claude"], "times": 1},
         "reach": {"vendors": ["claude"], "times": 1},
-        "judge": {"vendors": ["claude", "codex", "kimi"], "times": 2},
-        "rating": {"vendors": ["claude", "codex", "kimi"], "times": 2},
+        "judge": {"vendors": ["claude", "codex", "google"], "times": 2},
+        "rating": {"vendors": ["claude", "codex", "google"], "times": 2},
         "pairwise": {"vendors": ["claude", "codex"], "times": 1},
         "direct": {"vendors": ["claude"], "times": 1},
     },
     "models": {vendor: None for vendor in models.VENDORS},
-    "substitutes": list(models.VENDORS),
+    "substitutes": ["claude", "codex", "google", "kimi"],
     "source_chars": 12000,
     "workers": 4,
     "seed": 0,
