@@ -4,7 +4,7 @@
 
 **Blocked by:** 无（与 18 号并行，文件不重叠）
 
-**Status:** ready-for-agent
+**Status:** resolved
 
 只改这些文件：`research-plan/stage5-pilot/score.py` 及其输出 `results-v1.2.json`、`site/build_results.py` 及生成的 `site/results/`、`research-plan/question-handbook.src.html` 及生成的 `notes/question-handbook.html`、`site/` 下手写的网页（index、brief、news、faq、start、teams、walkthrough）、`site/starter-kit/` 下的文字文件、相应的测试。不改 `tools/` 和 `site/build_simulation.py`（18 号在改）；`build_results.py` 里被 `build_simulation.py` 用到的函数和常量（build、esc、href、interval、join_cn、model_name、num、read_jsonl、repo_path、STYLE、table、tag、task_text）不改名、不改参数。
 
