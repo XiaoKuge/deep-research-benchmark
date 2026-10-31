@@ -323,6 +323,45 @@ class FishEstimateTest(SetterCase):
         self.assertIn("乙9 不是乙的核心要点", self.read("两人对照记录.md"))
 
 
+class CompletionStandardTest(SetterCase):
+    """深度地图写完标准里的两条按事实记：四层都查过，要看要点表里每一层有没有要点，没有的层是否写明
+    查过、没有（不只是提到层的名字）；两人对过，要看每一轮两张地图是否真的都写出了要点、并做了对照。"""
+
+    def standard(self, rows, note, map_b=None, *options):
+        pairs = [["甲%d" % i, "乙%d" % i] for i in range(1, 5)]
+        comparison = merged(pairs, rows)
+        comparison["找不到要点的层"] = note
+        rounds = [(depth_map("甲", 4), map_b if map_b is not None else depth_map("乙", 4), comparison)]
+        code, printed = self.run_setter(*options, lines=material(rounds=rounds))
+        self.assertEqual(code, 0, printed)
+        return self.metadata()["检查结果"]
+
+    def three_levels(self):
+        return [point("合并后的核心要点%d号" % n, level=level) for n, level in
+                enumerate(("现象", "内部联系", "本质", "现象"), 1)]
+
+    def test_naming_every_level_without_saying_it_was_checked_is_not_enough(self):
+        checks = self.standard(self.three_levels(), "现象、全体、内部联系、本质四层都查过")
+        self.assertEqual(checks["四层里没有要点的层"], ["全体"])
+        self.assertFalse(checks["写完标准"]["四层都查过"])
+
+    def test_a_level_without_points_counts_when_the_note_says_it_was_checked_and_nothing_found(self):
+        checks = self.standard(self.three_levels(), "全体层查了市政绿化年报和两篇综述，没有找到要点。")
+        self.assertTrue(checks["写完标准"]["四层都查过"])
+
+    def test_four_levels_with_points_need_no_note(self):
+        self.assertTrue(self.standard(merged_rows(4), "")["写完标准"]["四层都查过"])
+
+    def test_two_maps_with_points_that_were_compared_count_as_compared(self):
+        self.assertTrue(self.standard(merged_rows(4), "")["写完标准"]["两人对过"])
+
+    def test_a_map_without_points_does_not_count_as_compared(self):
+        empty = {"浅答案": "乙写的浅答案", "转折点": "", "转折点用到的要点": [], "要点": [], "找不到要点的层": ""}
+        checks = self.standard(merged_rows(4), "", empty, "--max-extra-rounds", "0")
+        self.assertFalse(checks["写完标准"]["两人对过"])
+        self.assertFalse(checks["全部通过"])
+
+
 # 深度地图和出题人调研笔记里的文字：交给泄露检查人的提示词里一个也不能有
 MAP_MARKERS = ("甲的核心要点", "乙的核心要点", "甲写的浅答案", "乙写的浅答案", "甲写的转折点", "乙写的转折点",
                "合并后的核心要点", "合并后的浅答案", "合并后的转折点", "https://example.org/a",

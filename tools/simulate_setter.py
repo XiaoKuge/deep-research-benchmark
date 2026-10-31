@@ -780,20 +780,42 @@ class Setter:
 
 # ---- 自查：写完标准五条和两项检查 ------------------------------------------------------
 
+# "找不到要点的层"里一句话写明某一层查过、没有：要有层的名字、查了什么，以及没有找到。
+CHECKED = re.compile(r"查|检索|搜索")
+NOTHING_FOUND = re.compile(r"没有|找不到|未找到|查不到|未发现|没发现|不存在")
+
+
+def levels_checked(final):
+    """四层都查过（写完标准第 3 条）：每一层要么要点表里有这一层的要点，要么"找不到要点的层"里有一句
+    写明这一层查过、没有（一句里有层的名字、查了什么、没有找到）。只提到层的名字不算。
+    返回 (要点表里没有要点的层, 其中没有写明查过的层)。"""
+    present = {row["层级"] for row in final["要点"] if row["要点"]}
+    missing = [level for level in LEVELS if level not in present]
+    sentences = [part for part in re.split(r"[。；;！!\n]", final["找不到要点的层"]) if part.strip()]
+    unexplained = [level for level in missing
+                   if not any(level in part and CHECKED.search(part) and NOTHING_FOUND.search(part)
+                              for part in sentences)]
+    return missing, unexplained
+
+
+def compared_by_two(result):
+    """两人对过（写完标准第 5 条）：每一轮甲和乙的地图都真的写出了要点，并且做了对照。"""
+    return all(item[MAP_A]["要点"] and item[MAP_B]["要点"] and item["调用序号"].get("对照") is not None
+               for item in result["轮"])
+
+
 def self_check(result):
     final = result["地图"]
     rows = {row["编号"]: row for row in final["要点"]}
     turning = [rows[n] for n in final["转折点用到的要点"] if n in rows]
-    present = {row["层级"] for row in final["要点"]}
-    missing = [level for level in LEVELS if level not in present]
-    note = final["找不到要点的层"]
+    missing, unexplained = levels_checked(final)
     standard = {
         "浅答案": bool(final["浅答案"]),
         "转折点": bool(final["转折点"]) and any(row["层级"] in DEEP_LEVELS for row in turning)
                  and all(row["依据"] for row in turning),
-        "四层都查过": all(level in note for level in missing),
+        "四层都查过": not unexplained,
         "核心要点写全": result["轮"][-1]["数鱼"]["写全了"],
-        "两人对过": True,
+        "两人对过": compared_by_two(result),
     }
     closed = result["闭卷对照"]["结论"]
     leak = "通过" if result["泄露检查"]["通过"] else "未通过"
