@@ -55,6 +55,7 @@
 <li><a href="#_7">六、从别家借来、要补进规则的四条</a></li>
 <li><a href="#_8">七、按先后排的待办</a></li>
 <li><a href="#implement-spec">八、关于 implement-spec</a></li>
+<li><a href="#2026-10-30">九、2026 年 10 月 30 日完成情况</a></li>
 </ul>
 </li>
 </ul>
@@ -88,23 +89,23 @@
 <tr>
 <td>首页</td>
 <td>赛事一句话、主按钮、入口</td>
-<td>本地资料站 <code>site/index.html</code></td>
+<td>本地资料站 <code>site/index.html</code>；导航、手机菜单和资料库的“比赛”一组接入全部新页面</td>
 <td>已有</td>
-<td>加赛事日程和"现在处在哪个阶段"</td>
+<td>日程定下后，在首页标出现在处在哪个阶段</td>
 </tr>
 <tr>
 <td>上手</td>
 <td>新人第一步</td>
-<td>出题手册（给出题同学）；评审细则（给评委）</td>
-<td>部分</td>
-<td>按三类人分别写第一步：出题同学、参赛队伍、评委</td>
+<td>上手页 <code>site/start.html</code>：出题同学、参赛队伍、评委各自的第一步；现阶段出题和评审由大模型程序模拟，页上有运行命令</td>
+<td>已有</td>
+<td>—</td>
 </tr>
 <tr>
 <td>完整赛事说明</td>
 <td>时间线、阶段、奖项、报名条件</td>
-<td>一页总结 <code>notes/plan-summary.html</code>（是研究总结，不是赛事说明）</td>
-<td>部分</td>
-<td>写赛事说明：日程、两道题、运行日、名次怎么公布、奖项</td>
+<td>赛事说明 <code>site/brief.html</code>：比什么、练习和正式两个阶段、运行、评审、名次与公布、申诉、封闭组和开放组、随机抽查</td>
+<td>已有</td>
+<td>日程、奖项和报名方式〔待定〕，定下后补上</td>
 </tr>
 <tr>
 <td>愿景</td>
@@ -116,23 +117,23 @@
 <tr>
 <td>规则</td>
 <td>规则全文</td>
-<td>比赛规则手册 <code>notes/rules.html</code>，草案第 2 版</td>
+<td>比赛规则手册 <code>notes/rules.html</code>，草案第 3 版：已加入申诉期内互查、每届随机抽查、一届一版规则、封闭组和开放组四条〔默认〕规则，以及附录五《版本变更记录》</td>
 <td>已有</td>
-<td>确认标〔默认〕的条款；加互查、随机抽查、规则版本（见第六节）</td>
+<td>确认标〔默认〕的条款</td>
 </tr>
 <tr>
 <td>任务卡</td>
 <td>每个任务的说明卡</td>
-<td>淡水湖题的题目卡和深度地图（出题手册实例一）；欧盟法规题只有题目卡；"一道题走完全程"</td>
+<td>淡水湖题的题目卡和深度地图（出题手册实例一）；欧盟法规题只有题目卡；“一道题走完全程”；题库页 <code>site/simulation/questions.html</code>（练习题公开全文，正式题公开之前只显示深度地图的校验值）</td>
 <td>部分</td>
-<td>公开练习题卡：淡水湖完整，欧盟法规补写深度地图；正式题保密，赛后公开</td>
+<td>欧盟法规题补写深度地图（等运行日期定下）；正式题由两位出题人独立出、保密，赛后公开</td>
 </tr>
 <tr>
 <td>文档</td>
 <td>技术文档、接口</td>
-<td>评审细则第 1.2 版；规则手册附录一的交付要求原文</td>
-<td>部分</td>
-<td>给参赛队伍的技术文档：智能体怎样交、主办方怎样调用、运行环境和时长上限</td>
+<td>参赛队伍技术文档 <code>site/teams.html</code>：申报、两种调用方式（命令行和网络接口）、反问和统一答复、运行环境、时长上限、交付要求；评审细则第 1.2 版</td>
+<td>已有</td>
+<td>等〔默认〕的“主办方统一运行”确认；主办方运行机器的配置〔待定〕</td>
 </tr>
 <tr>
 <td>资源</td>
@@ -144,23 +145,23 @@
 <tr>
 <td>常见问题</td>
 <td>问答</td>
-<td>资料站问答 9 条；出题手册常见问题</td>
+<td>常见问题页 <code>site/faq.html</code>：资料站问答和出题手册常见问题合成一页，按出题、参赛、评审分组；首页保留最常问的几条</td>
 <td>已有</td>
-<td>两处合并成一页，按出题、参赛、评审分组</td>
+<td>—</td>
 </tr>
 <tr>
 <td>排行榜</td>
 <td>按阶段的榜单，带分项</td>
-<td>第五阶段试评的名次 <code>stage5-pilot/results-v1.1.json</code>；"一道题走完全程"里的示意名次</td>
-<td>部分</td>
-<td>名次页：每份报告的名次区间画成横条，附三种权重下的分数、严重问题、环节评级</td>
+<td>名次页 <code>site/results/index.html</code>：第五阶段试评六份报告的名次区间横条，三种权重下的分数、严重问题、环节档位（评法第 1.2 版），由 <code>site/build_results.py</code> 生成</td>
+<td>已有</td>
+<td>正式比赛时用正式题的结果重新生成</td>
 </tr>
 <tr>
 <td>公告</td>
 <td>赛事动态</td>
-<td>无</td>
-<td>缺</td>
-<td>公告页：日程变动、规则版本变更记录（评法已有 1.0、1.1、1.2 三个版本）</td>
+<td>公告页 <code>site/news.html</code>：日程、练习题、规则版本变更；详细的变更记录在规则手册附录五</td>
+<td>已有</td>
+<td>—</td>
 </tr>
 <tr>
 <td>找队友</td>
@@ -172,9 +173,9 @@
 <tr>
 <td>页脚</td>
 <td>行为准则、联系、数据许可</td>
-<td>无</td>
-<td>缺</td>
-<td>行为准则、联系方式、题目和数据的使用许可</td>
+<td>首页页脚列出行为准则、联系方式、数据使用许可三项，内容都〔待定〕</td>
+<td>部分</td>
+<td>主办方定下行为准则、联系方式和题目与数据的使用许可</td>
 </tr>
 </tbody>
 </table></div>
@@ -208,23 +209,23 @@
 <tr>
 <td>队伍</td>
 <td>队伍信息</td>
-<td>冻结申报表模板（规则手册附录三）</td>
-<td>部分</td>
-<td>申报表改成固定格式的文件，能存档、能算校验值</td>
+<td>申报表模板 <code>site/starter-kit/申报表模板.json</code>：固定格式，字段对应规则手册附录三，统一运行程序直接读取，题目文件的校验值写在运行计划里</td>
+<td>已有</td>
+<td>真办赛时沿用巡天的队伍页面</td>
 </tr>
 <tr>
 <td>参赛</td>
 <td>上传智能体程序包</td>
-<td>规则第二节写明要交什么</td>
+<td>技术文档写明两种调用方式：命令行和网络接口；统一运行程序按申报的方式调用</td>
 <td>部分</td>
-<td>定下提交方式：程序包、接口地址，还是由主办方在指定账号下操作；取决于〔默认〕的"主办方统一运行"是否确认</td>
+<td>真办赛时的上传方式随巡天平台；“主办方统一运行”〔默认〕待确认</td>
 </tr>
 <tr>
 <td>比赛记录、提交详情</td>
 <td>每次运行的评分报告、决策文件、运行日志、回放页面</td>
-<td>第五阶段试评的全部数据：6 份匿名报告，单独评审用的原版加三个扰动版（改错、注水、编造来源），评委输出（环节评级、断言核验、两两比较、要点池）、计分结果</td>
-<td>部分</td>
-<td>做成可以点着看的复核包页面：点一份报告，看每条结论的标签和来源；点一条要点，看谁写到了</td>
+<td>每份报告的复核页 <code>site/results/report-A.html</code> 至 <code>report-F.html</code>（每条主要结论的来源标签、对错标签和依据，写到了要点池里的哪几条）、要点池页 <code>site/results/points.html</code>；评审记录页 <code>site/simulation/reviews.html</code>，每一次模型调用都能点开看原文；统一运行程序按附录四写运行记录</td>
+<td>已有</td>
+<td>过程回放见第四节“回放页面”</td>
 </tr>
 <tr>
 <td>通知</td>
@@ -251,9 +252,9 @@
 <tr>
 <td>管理后台</td>
 <td>阶段、场景、提交、异常监控</td>
-<td>运行记录表模板（规则手册附录四）</td>
+<td>运行记录表：统一运行程序按规则手册附录四的列，每次运行写一行</td>
 <td>部分</td>
-<td>本地先用一个运行记录文件；真办赛时沿用巡天后台</td>
+<td>真办赛时沿用巡天后台</td>
 </tr>
 <tr>
 <td>数据库</td>
@@ -265,44 +266,44 @@
 <tr>
 <td>评测进程</td>
 <td>在隔离环境里运行参赛智能体</td>
-<td>无；第五阶段的报告是事后收集的，<code>stage5-pilot/prep.py</code> 负责匿名化和生成扰动版本</td>
-<td>缺</td>
-<td>统一运行的程序：按申报的方式调用智能体，记录输入校验值、起止时间和日志</td>
+<td>统一运行程序 <code>tools/run_agents.py</code>：按申报的方式调用，原样交题，记输入校验值、起止时间、退出状态和是否超时，反问时给统一答复，到时长上限就停</td>
+<td>已有</td>
+<td>真办赛时放进巡天平台的隔离环境</td>
 </tr>
 <tr>
 <td>比赛环境</td>
 <td>场景数据</td>
-<td>题目卡、截止日期；被引网页的存档在规则里有要求</td>
-<td>部分</td>
-<td>网页存档程序：运行后 24 小时内把报告引用的网页存下来，附时间和校验值</td>
+<td>题目卡、截止日期；网页存档程序 <code>tools/archive_sources.py</code>：提取报告里的网址，逐个取回，按校验值保存，写清单，单个网址失败只记原因不中断</td>
+<td>已有</td>
+<td>—</td>
 </tr>
 <tr>
 <td>计分程序</td>
 <td>独立、可复算的打分</td>
-<td><code>stage5-pilot/score.py</code>（第 1.1 版规则）；<code>site/walkthrough_example.py</code>（按第 1.2 版规则算示意数据）</td>
-<td>部分</td>
-<td><code>score.py</code> 升到第 1.2 版：有争议的标注按最不利计分，重抽只在有报告写到的要点里进行</td>
+<td><code>stage5-pilot/score.py</code> 第 1.2 版（第 1.0、1.1 版的行为不变）：有争议的标注按对领先一方最不利的方式计分，重抽只在有报告写到的要点里进行；能导出结果文件供页面读取</td>
+<td>已有</td>
+<td>—</td>
 </tr>
 <tr>
 <td>评委（巡天没有）</td>
 <td>判定对错、层级、重要性</td>
-<td>评委输出已存；评委提示词没有存成文件，在会话记录里可以原样找回；把输出整理成文件的三个脚本留在会话临时目录</td>
-<td>部分</td>
-<td>把评委提示词和整理脚本存进 <code>stage5-pilot/</code>，这是复核包要公开的内容</td>
+<td>第五阶段的评委提示词、清单和整理脚本存在 <code>stage5-pilot/judges/</code>，<code>tools/judge_prompts.py</code> 能与会话记录逐字核对；还没有真人评委时，用模拟评审 <code>tools/simulate_review.py</code> 让多家模型按评审细则评审</td>
+<td>已有</td>
+<td>真人评委</td>
 </tr>
 <tr>
 <td>新手包</td>
 <td>参赛者下载的起步材料</td>
-<td>出题手册的题目卡模板、深度地图模板、自查清单（给出题同学）；交付要求原文</td>
-<td>部分</td>
-<td>给参赛队伍的新手包：交付要求、练习题、本地自查办法</td>
+<td>新手包 <code>site/starter-kit/</code>：申报表模板、示例系统提示词、练习题、交付要求原文、示例智能体、示例运行计划、检查报告五个必备部分的小程序；出题手册的模板和自查清单（给出题同学）</td>
+<td>已有</td>
+<td>—</td>
 </tr>
 <tr>
 <td>自动测试</td>
 <td>每次改动后自动检查</td>
-<td>第五阶段的扰动检验（改错、注水、编造来源）和 8 条验收标准，<code>score.py</code> 会逐条检查</td>
-<td>部分</td>
-<td>把验收标准变成每次改计分程序后都要跑的测试</td>
+<td>仓库根目录 <code>tests/</code>，用 Python 自带的 <code>unittest</code>：计分程序（含第五阶段 8 条验收标准）、各页面的必备章节和本地链接、运行程序、存档程序、模型调用层、模拟出题者、模拟评审、评委提示词</td>
+<td>已有</td>
+<td>—</td>
 </tr>
 <tr>
 <td>回放页面</td>
@@ -314,7 +315,7 @@
 <tr>
 <td>运维脚本</td>
 <td>部署、发布</td>
-<td><code>render_plan.py</code>、<code>render_pdf.py</code>、<code>build_explained.py</code>、<code>serve.py</code></td>
+<td><code>render_plan.py</code>、<code>render_pdf.py</code>、<code>build_explained.py</code>、<code>serve.py</code>；页面生成器 <code>site/build_results.py</code>、<code>site/build_simulation.py</code></td>
 <td>已有</td>
 <td>—</td>
 </tr>
@@ -330,7 +331,7 @@
 </ol>
 <hr />
 <h2 id="_7">六、从别家借来、要补进规则的四条</h2>
-<p>上一轮比较外部评测网站时，选定主要学 MLPerf 的流程，配合 HELM 的透明做法。落到我们这里是四条，都还没写进规则：</p>
+<p>上一轮比较外部评测网站时，选定主要学 MLPerf 的流程，配合 HELM 的透明做法。落到我们这里是四条，已于 2026 年 10 月 30 日以〔默认〕写进规则手册草案第 3 版：</p>
 <ol>
 <li>申诉期内各队可以看到所有队伍的报告和判定，也可以对别家的判定提异议；</li>
 <li>每届随机抽一支队伍，主办方用它冻结的版本重跑一道题，核对是否与申报一致；</li>
@@ -353,6 +354,34 @@
 <h2 id="implement-spec">八、关于 implement-spec</h2>
 <p>Matt Pocock 的 <code>implement-spec</code> 是"实施一份已经写好的需求说明"的技能：先要运行 <code>setup-matt-pocock-skills</code> 选定任务管理方式（可以只用本地文件），再用 <code>to-spec</code> 写需求说明、<code>to-tickets</code> 拆成带先后依赖的任务单，然后由它在一个集成分支上派多个子任务并行实现，最后做代码审查。</p>
 <p>这份对照表相当于需求说明之前的盘点。它适合在第七节的第 3、4、7、8 项上使用；第 1、2 项各是一两处改动，直接做更快。这几个工程类技能目前没有装，上次只装了效率类。用它要在 <code>mofa-research</code> 仓库里建分支、提交代码；这个目录目前还没有加入版本管理，开始前需要你同意。</p>
+<hr />
+<h2 id="2026-10-30">九、2026 年 10 月 30 日完成情况</h2>
+<p>按第七节的待办和需求说明（<code>.scratch/xuntian-site/spec.md</code>），当天在 <code>xuntian-site</code> 分支上做了下面这些，上面三张表已经照此更新：29 项里已有 19 项、部分 6 项、缺 3 项、不适用 1 项；盘点时已有的只有 6 项。</p>
+<h3 id="_9">做了什么</h3>
+<ol>
+<li><strong>评委提示词存档。</strong> 第五阶段每一次评委运行收到的提示词原文、一份清单（每个评委输出文件对应哪份提示词、哪个模型、哪一天）和三个整理脚本，存在 <code>research-plan/stage5-pilot/judges/</code>；<code>tools/judge_prompts.py</code> 能从会话记录里重新取出提示词，与存档逐字核对。</li>
+<li><strong>计分程序第 1.2 版。</strong> <code>score.py</code> 增加第 1.2 版：有争议的标注按对领先一方最不利的方式计分，重抽样只在至少一份报告写到的要点里进行；第 1.0、1.1 版的行为不变；能导出结果文件供页面读取。</li>
+<li><strong>规则手册草案第 3 版。</strong> 第六节的四条以〔默认〕写进规则手册，另加附录五《版本变更记录》，列出规则草案第 1 至 3 版和评法第 1.0、1.1、1.2 版各改了什么、为什么改。</li>
+<li><strong>名次页和复核页。</strong> <code>site/results/</code>：名次页、六份报告各自的复核页、要点池页，用第五阶段试评的真实数据，由 <code>site/build_results.py</code> 生成，页上写明是试评演示，不是对产品的评价。</li>
+<li><strong>四个说明页面。</strong> 赛事说明 <code>site/brief.html</code>、上手 <code>site/start.html</code>、公告 <code>site/news.html</code>、常见问题 <code>site/faq.html</code>。</li>
+<li><strong>参赛队伍技术文档和新手包。</strong> <code>site/teams.html</code> 和 <code>site/starter-kit/</code>。</li>
+<li><strong>统一运行程序和网页存档程序。</strong> <code>tools/run_agents.py</code> 和 <code>tools/archive_sources.py</code>，各有使用说明。</li>
+<li><strong>模型调用层。</strong> <code>tools/models.py</code> 调用本机已登录的四家命令行：Anthropic 的 Claude、OpenAI 的 Codex、月之暗面的 Kimi、Google 的 Antigravity；两档工具限定（只给材料、只读网页；Google 的只读网页一档暂不可用，程序直接判为不可用）；每次调用写完整的调用记录；有回放方式供测试，有调用次数上限和只估算模式。</li>
+<li><strong>模拟出题者和模拟评审。</strong> <code>tools/simulate_setter.py</code> 按出题手册七步出一道题；<code>tools/simulate_review.py</code> 按评审细则评审一组报告，没有一种意见达到三分之二的判定记为有争议，再调用计分程序第 1.2 版。</li>
+<li><strong>题库页和评审记录页。</strong> <code>site/simulation/questions.html</code> 和 <code>site/simulation/reviews.html</code>，由 <code>site/build_simulation.py</code> 从输出目录生成，每一次模型调用都能点开看原文。</li>
+<li><strong>资料站接入。</strong> 首页的导航、手机菜单和资料库新增的“比赛”一组，接入以上全部页面和新手包；页脚列出行为准则、联系方式、数据使用许可，都标〔待定〕；首页上规则手册的版本改为草案第 3 版，首页问答补上开放组和模拟评委两条补充，与常见问题页一致。</li>
+<li><strong>测试。</strong> 以上每一项都在仓库根目录 <code>tests/</code> 下有测试，用 Python 自带的 <code>unittest</code>，运行 <code>python3 -I -m unittest discover -s tests</code>。</li>
+</ol>
+<h3 id="_10">还缺什么</h3>
+<ol>
+<li><strong>欧盟法规题的深度地图。</strong> 出题手册规定要等运行日期定下以后，按截止日写。</li>
+<li><strong>正式题。</strong> 要由两位出题人独立出题、保密，赛后公开。</li>
+<li><strong>真人出题与评审。</strong> 现在出题和评审都由大模型程序模拟，还没有真人出题者和评委。</li>
+<li><strong>账号与组队。</strong> 报名与登录、控制台、通知都要服务器，本地资料站不做，真办赛时用巡天平台的。</li>
+<li><strong>在巡天平台代码上改造。</strong> 账号、提交、数据库、管理后台沿用，换掉比赛环境和计分部分；这涉及另一个仓库。</li>
+<li><strong>演示运行。</strong> 用模拟出题者出一道淡水湖以外的新练习题、用多家模型重评试评的六份报告，还没有做（任务单 14）。题库页现在只有由试评转来的一道题，评审记录页还没有记录。</li>
+<li><strong>等主办方决定的事。</strong> 日程、奖项、报名方式、行为准则、联系方式、数据使用许可都〔待定〕；规则手册里标〔默认〕的条款待确认。</li>
+</ol>
 <footer>源文件：<code>research-plan/site-mapping.md</code></footer>
 </div>
 </body>
