@@ -90,15 +90,16 @@ def read_records(path):
         return [json.loads(line) for line in f if line.strip()]
 
 
-def build_inputs(tmp):
-    """在 tmp 下写出题目目录、三份报告、名称表、网页存档和配置，返回命令行参数里要用的路径。"""
+def build_inputs(tmp, reports_text=None):
+    """在 tmp 下写出题目目录、三份报告、名称表、网页存档和配置，返回命令行参数里要用的路径。
+    reports_text 换掉 REPORTS 里的报告原文（{代号: 原文}，没给的照旧）。"""
     question = os.path.join(tmp, "questions", "test-question")
     write(os.path.join(question, "题目卡.txt"), QUESTION_CARD)
     write(os.path.join(question, "深度地图.json"), json.dumps(DEPTH_MAP, ensure_ascii=False, indent=2))
     reports = []
     for label in LABELS:
         path = os.path.join(tmp, "reports", label + ".md")
-        write(path, REPORTS[label])
+        write(path, dict(REPORTS, **(reports_text or {}))[label])
         reports.append(path)
     names = os.path.join(tmp, "names.json")
     write(names, json.dumps(NAMES, ensure_ascii=False))
@@ -455,11 +456,13 @@ def merge_with(texts):
 
 class MergeHidesSourcesTest(unittest.TestCase):
     """合并时隐去出处要有程序检查：合并后的要点文字里出现报告代号或产品名（取自名称表），
-    这次合并判为回答无效，按已有的无效回答处理（只有一位评委合并，评审停止）。"""
+    这次合并判为回答无效，按已有的无效回答处理（只有一位评委合并，评审停止）。
+    产品名出现在两份以上报告的原文里时，它是题目本身的内容（例如题目就是比较这几家产品），
+    提到它透露不了要点出自哪份报告，不算。"""
 
-    def run_with(self, texts):
+    def run_with(self, texts, reports_text=None):
         with tempfile.TemporaryDirectory() as tmp:
-            inputs = build_inputs(tmp)
+            inputs = build_inputs(tmp, reports_text)
             replay = write_replay(os.path.join(tmp, "replay.jsonl"), merge_with(texts))
             out = os.path.join(tmp, "review")
             result = run_tool(inputs, out, "--replay", replay)
@@ -478,6 +481,21 @@ class MergeHidesSourcesTest(unittest.TestCase):
 
     def test_a_product_name_in_a_merged_point_makes_the_merge_invalid(self):
         self.assertRejected(["产品乙说引用多不等于引用准"] + POINT_TEXT[1:], "产品乙")
+
+    def test_a_product_name_that_two_reports_discuss_is_topic_content_and_passes(self):
+        discussed = {"Alpha": REPORTS["Alpha"] + "\n产品乙的引用最多。\n",
+                     "Charlie": REPORTS["Charlie"] + "\n产品乙最慢。\n"}
+        result, meta, has_results = self.run_with(["产品乙说引用多不等于引用准"] + POINT_TEXT[1:],
+                                                  discussed)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(meta["invalid_answers"], [])
+        self.assertTrue(has_results)
+
+    def test_a_product_name_only_its_own_report_mentions_still_makes_the_merge_invalid(self):
+        own = {"Bravo": REPORTS["Bravo"] + "\n产品乙认为引用要准。\n"}
+        result, meta, has_results = self.run_with(["产品乙说引用多不等于引用准"] + POINT_TEXT[1:], own)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("产品乙", meta["invalid_answers"][0]["problem"])
 
     def test_a_report_code_in_a_merged_point_makes_the_merge_invalid(self):
         self.assertRejected(POINT_TEXT[:3] + ["报告 Bravo 认为定义各家不同"] + POINT_TEXT[4:], "Bravo")

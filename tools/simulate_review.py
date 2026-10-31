@@ -769,8 +769,9 @@ def step_extract(ctx):
 
 def source_hints(ctx, text, entry_ids):
     """要点文字里透露出处的地方：报告代号（"报告 A"，两个字以上的代号单独出现也算）、条目编号
-    （例如 claude-1:A-3、A-c2）、产品名（取自名称表）。题目卡或深度地图要点里本来就有的产品名不算：
-    评委本来就看得到，透露不了要点出自哪份报告。"""
+    （例如 claude-1:A-3、A-c2）、产品名（取自名称表）。两种产品名不算，它们是题目本身的内容，提到它们
+    透露不了要点出自哪份报告：题目卡或深度地图要点里本来就有的；两份以上报告的原文里都提到的
+    （例如题目就是比较这几家产品）。"""
     found = []
     given = (ctx.question["card"] + "\n" + "\n".join(m["content"] for m in ctx.question["map_points"])).lower()
     for report in ctx.reports:
@@ -780,7 +781,9 @@ def source_hints(ctx, text, entry_ids):
             code += r"|(?<![A-Za-z0-9])%s(?![A-Za-z0-9])" % re.escape(label)
         if re.search(code, text):
             found.append("报告代号 %s" % label)
-        if name and name != label and name.lower() not in given and name.lower() in text.lower():
+        if not name or name == label or name.lower() not in text.lower() or name.lower() in given:
+            continue
+        if sum(name.lower() in r["text"].lower() for r in ctx.reports) < 2:
             found.append("产品名 %s" % name)
     found += ["条目编号 %s" % i for i in sorted(entry_ids) if i in text]
     return found
