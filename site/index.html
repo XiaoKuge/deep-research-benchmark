@@ -470,7 +470,7 @@
     <div class="group" data-group>
       <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg>比赛</h3>
       <ul class="res-list">
-        <li class="res"><a href="brief.html"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><span><span class="name title-3">赛事说明</span><span class="desc body-6">比什么，练习和正式两个阶段，运行、评审、名次和申诉怎样进行，封闭组和开放组。日程、奖项和报名方式〔待定〕。</span></span></a></li>
+        <li class="res"><a href="brief.html"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><span><span class="name title-3">赛事说明</span><span class="desc body-6">总则，比什么，练习和正式两个阶段，运行、评审、名次和申诉怎样进行，封闭组和开放组。日程、奖项和报名方式〔待定〕。</span></span></a></li>
         <li class="res"><a href="start.html"><svg class="i" aria-hidden="true"><use href="#i-path"/></svg><span><span class="name title-3">上手</span><span class="desc body-6">按身份找第一步：出题同学、参赛队伍、评委各一条路。现阶段出题和评审由大模型程序模拟。</span></span></a></li>
         <li class="res"><a href="news.html"><svg class="i" aria-hidden="true"><use href="#i-notebook"/></svg><span><span class="name title-3">公告</span><span class="desc body-6">日程变动和规则版本变更，新的在上面。</span></span></a></li>
         <li class="res"><a href="faq.html"><svg class="i" aria-hidden="true"><use href="#i-check-circle"/></svg><span><span class="name title-3">常见问题</span><span class="desc body-6">本页问答和出题手册的常见问题合在一页，按出题、参赛、评审分成三组。</span></span></a></li>
@@ -485,7 +485,7 @@
     <div class="group" data-group>
       <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-scales"/></svg>规则与评审</h3>
       <ul class="res-list">
-        <li class="res"><a href="../notes/rules.html"><svg class="i" aria-hidden="true"><use href="#i-scales"/></svg><span><span class="name title-3">比赛规则手册</span><span class="desc body-6">草案第 3 版：冻结与申报、题目、深度地图、运行、评审、名次、申诉、违规，附版本变更记录。标〔默认〕的条款待确认。</span></span></a></li>
+        <li class="res"><a href="../notes/rules.html"><svg class="i" aria-hidden="true"><use href="#i-scales"/></svg><span><span class="name title-3">比赛规则手册</span><span class="desc body-6">草案第 4 版：总则、冻结与申报、题目、深度地图、运行、评审、名次、申诉、违规，附版本变更记录。标〔默认〕的条款待确认。</span></span></a></li>
         <li class="res"><a href="../notes/plan-stage4-rubric.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">评审细则 第 1.2 版</span><span class="desc body-6">给评委用的操作版本：环节评级、要点抽取、要点池、断言核验、硬伤。</span></span></a></li>
         <li class="res"><a href="../notes/plan-stage4-design.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">改进方案</span><span class="desc body-6">每个关键问题的候选办法、选择与理由，以及验收标准。</span></span></a></li>
       </ul>
@@ -578,7 +578,7 @@
       <details><summary class="title-3">评委是大模型，怎样保证判得对？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>评委至少来自三家厂商，每个评委评两次。关键判定，也就是反过来就会改变相邻名次的判定，全部人工审计，另外随机抽查一成。每个判定都要引报告原文或来源为证。</p><p><strong>补充：</strong>现阶段还没有真人评委，评审由大模型程序模拟，用 Claude（Anthropic）、Codex（OpenAI）、Gemini（Google）三家模型，Kimi（月之暗面）作备用，每一次调用的提示词和回答原文都留记录。见<a href="start.html#simulation">上手页</a>。</p></div></details>
       <details><summary class="title-3">为什么公布名次区间，不直接排第几名？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>两份报告要算分开，得过两道检查：换三种算分口径都领先；从要点池里随机换一批要点重新计分，重复一千次，至少九成仍然领先。分不开的就并列，公布成"第 1 至 2 名"这样的区间，不硬排。</p></div></details>
       <details><summary class="title-3">深度地图是什么？它会不会让评分不客观？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>它是出题人在看到报告之前写下的浅答案、转折点和核心要点，只给评委。它是必需的，但不是标准答案：地图上没有、但正确又切题的要点同样得分。</p><p>地图上写了而没人写到的要点，对每份报告都是零分，不影响名次；它影响分数只通过预先登记的层级和重要性，有争议的标注按对领先一方最不利的方式计分。</p></div></details>
-      <details><summary class="title-3">参赛队伍能不能看了题目再改提示词？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>不能。智能体在题目公布前冻结并申报，由主办方统一运行，题目文本原样作为唯一输入，运行日志里的输入要逐字核对。</p><p><strong>补充：</strong>规则手册草案第 3 版另设开放组〔默认〕，允许看到题目后调整智能体，但每一处调整都要在运行前申报，并随复核包公开；开放组的名次单独公布，不与封闭组比较。主名次只在封闭组内排，封闭组仍然不能改。见<a href="brief.html#groups">赛事说明：封闭组和开放组</a>。</p></div></details>
+      <details><summary class="title-3">参赛队伍能不能看了题目再改提示词？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>不能。智能体在题目公布前冻结并申报，由主办方统一运行，题目文本原样作为唯一输入，运行日志里的输入要逐字核对。</p><p><strong>补充：</strong>规则手册草案第 4 版另设开放组〔默认〕，允许看到题目后调整智能体，但每一处调整都要在运行前申报，并随复核包公开；开放组的名次单独公布，不与封闭组比较。主名次只在封闭组内排，封闭组仍然不能改。见<a href="brief.html#groups">赛事说明：封闭组和开放组</a>。</p></div></details>
       <details><summary class="title-3">真实用户很少写明自己是谁，题目为什么要写？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>评委要有参照，才能判断切不切题。交给智能体的提问版用提问者的口吻写成一两句话；另外每道题再跑一个只有问题本身的裸题版，名次单独公布，看两者是否一致。</p></div></details>
       <details><summary class="title-3">篇幅长、引用多，会加分吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>不会。篇幅、格式、引用条数、文笔都不进入名次；同一个要点写多遍也不加分。写作好坏单独公布。</p></div></details>
       <details><summary class="title-3">这套评法检验过了吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>只做过一次小规模试评，8 条验收标准通过 4 条，据此改成第 1.1 版。第 1.1 版的正式检验还要一批按规程新收集的报告；深度地图一节的第 1.2 版修订也还没有检验。</p></div></details>

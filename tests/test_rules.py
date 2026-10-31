@@ -1,6 +1,6 @@
 """规则手册：源文件 research-plan/rules.md 和生成的网页 notes/rules.html。
 
-检查草案第 3 版的四条〔默认〕新规则、状态行、附录五《版本变更记录》，
+检查草案第 3 版的四条〔默认〕新规则、草案第 4 版的总则、状态行、附录五《版本变更记录》，
 以及网页已经重新生成。运行：python3 -I -m unittest discover -s tests -v
 """
 import os
@@ -99,12 +99,60 @@ class NewRules(unittest.TestCase):
         self.assertEqual(len(rows), 1)
 
 
+class GeneralTerms(unittest.TestCase):
+    """总则两条：规则手册和赛事说明逐字一致，与它们矛盾的旧条款已经改掉。"""
+    LINES = ["组委会保留最终裁决权和解释权。", "参赛智能体需开源以供公众检测。"]
+    LABELS = ["组委会", "最终裁决和解释", "开源的范围", "公开的时间", "公众检测"]
+
+    def setUp(self):
+        self.text = read(RULES_MD)
+        self.terms = section_starting(self.text, 2, "总则")
+        brief = read(os.path.join(ROOT, "site", "brief.html"))
+        self.brief = re.search(r'<section class="block" id="general-terms".*?</section>', brief, re.S).group(0)
+
+    def test_both_lines_come_first_and_word_for_word_in_both_documents(self):
+        self.assertEqual(re.findall(r"^\d\. (.+)$", self.terms, re.M), self.LINES)
+        self.assertEqual(re.findall(r"<ol>.*?</ol>", self.brief, re.S)[0].count("<li>"), 2)
+        for line in self.LINES:
+            with self.subTest(line):
+                self.assertIn(f"<li><strong>{line}</strong></li>", self.brief)
+
+    def test_details_are_word_for_word_the_same_in_both_documents(self):
+        for label in self.LABELS:
+            with self.subTest(label):
+                m = re.search(r"^- \*\*" + label + r"。\*\* (.+)$", self.terms, re.M)
+                self.assertIsNotNone(m)
+                self.assertIn(f"<li><strong>{label}。</strong>{m.group(1)}</li>", self.brief)
+
+    def test_details_are_marked_default(self):
+        self.assertIn("都是〔默认〕", self.terms)
+        self.assertIn("都是〔默认〕", self.brief)
+
+    def test_trade_secret_exception_is_gone(self):
+        entry = section_starting(self.text, 2, "二、参赛智能体：冻结与申报")
+        self.assertNotIn("只向复核人公开", entry)
+        self.assertNotIn("商业秘密", read(os.path.join(ROOT, "site", "teams.html")))
+
+    def test_final_ruling_is_stated_where_appeals_are_ruled_on(self):
+        self.assertIn("组委会保留最终裁决权", section_starting(self.text, 2, "九、申诉与复核"))
+        self.assertIn("组委会保留最终裁决权", read(os.path.join(ROOT, "site", "brief.html")).split('id="appeals"')[1])
+
+    def test_not_open_sourcing_has_a_penalty(self):
+        body = section_starting(self.text, 2, "十、违规与处理")
+        rows = [l for l in body.splitlines() if l.startswith("| 没有按总则开源")]
+        self.assertEqual(len(rows), 1)
+
+    def test_review_package_keeps_a_copy_of_the_frozen_code(self):
+        self.assertIn("冻结版本的代码副本", section_starting(self.text, 2, "九、申诉与复核"))
+
+
 class VersionChangesAppendix(unittest.TestCase):
     # 日期取自各版的源文件：规则手册 rules.md，评法 stage4-design.md、stage4-rubric.md、stage5-report.md
     ENTRIES = [
         ("规则手册草案第 1 版", "2026 年 10 月 30 日"),
         ("规则手册草案第 2 版", "2026 年 10 月 30 日"),
         ("规则手册草案第 3 版", "2026 年 10 月 30 日"),
+        ("规则手册草案第 4 版", "2026 年 10 月 31 日"),
         ("评法第 1.0 版", "2026 年 10 月 29 日"),
         ("评法第 1.1 版", "2026 年 10 月 29 日"),
         ("评法第 1.2 版", "2026 年 10 月 30 日"),
@@ -129,11 +177,11 @@ class VersionChangesAppendix(unittest.TestCase):
 
 
 class StatusLine(unittest.TestCase):
-    def test_status_says_draft_three(self):
+    def test_status_says_draft_four(self):
         scope = section_starting(read(RULES_MD), 2, "范围、状态与依据")
         status = [l for l in scope.splitlines() if l.startswith("- **状态。**")]
         self.assertEqual(len(status), 1)
-        self.assertIn("草案第 3 版", status[0])
+        self.assertIn("草案第 4 版", status[0])
 
 
 class GeneratedPage(unittest.TestCase):
@@ -144,8 +192,8 @@ class GeneratedPage(unittest.TestCase):
         return {m.group(1): re.sub(r"<[^>]+>", "", m.group(2)).strip()
                 for m in re.finditer(r'<h[1-6] id="([^"]+)">(.*?)</h[1-6]>', self.html)}
 
-    def test_page_was_regenerated_from_draft_three(self):
-        for words in ["草案第 3 版", "互查〔默认〕", "附录五"]:
+    def test_page_was_regenerated_from_draft_four(self):
+        for words in ["草案第 4 版", "互查〔默认〕", "附录五", "参赛智能体需开源以供公众检测。"]:
             self.assertTrue(words in self.html, f"网页里没有“{words}”，请运行 render_plan.py")
 
     def test_table_of_contents_lists_the_version_changes_appendix(self):
@@ -158,7 +206,7 @@ class GeneratedPage(unittest.TestCase):
     def test_anchors_used_by_other_pages_still_point_to_the_same_sections(self):
         # 资料站的架构图和"一道题走完全程"页面用这些锚点链接规则手册
         expected = {
-            "_4": "二、参赛智能体：冻结与申报", "_5": "三、题目", "_6": "四、深度地图",
+            "_3": "一、比什么", "general-terms": "总则", "_4": "二、参赛智能体：冻结与申报", "_5": "三、题目", "_6": "四、深度地图",
             "_7": "五、运行", "_9": "七、评审", "_10": "八、名次与公布", "_11": "九、申诉与复核",
         }
         ids = self.heading_ids()

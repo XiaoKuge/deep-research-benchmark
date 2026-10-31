@@ -183,6 +183,7 @@ class BriefPage(CommonChecks, unittest.TestCase):
     NAME = "brief.html"
 
     SECTIONS = {
+        "general-terms": "总则",
         "what": "比什么",
         "stages": "练习阶段和正式阶段",
         "schedule": "日程、奖项与报名",
@@ -200,7 +201,7 @@ class BriefPage(CommonChecks, unittest.TestCase):
                 self.assertIn(title, self.page.heading(sid))
 
     def test_each_rule_section_points_to_the_rules_handbook(self):
-        for sid in ["what", "run", "review", "ranking", "appeals", "groups", "spot-check"]:
+        for sid in ["general-terms", "what", "run", "review", "ranking", "appeals", "groups", "spot-check"]:
             with self.subTest(sid):
                 links = self.page.block(sid)["links"]
                 self.assertTrue(any(l.startswith("../notes/rules.html") for l in links))
@@ -287,6 +288,15 @@ class NewsPage(CommonChecks, unittest.TestCase):
         hits = [a for a in self.announcements() if "草案第 3 版" in self.page.heading(a["id"])]
         self.assertEqual(len(hits), 1)
         self.assertIn("../notes/rules.html#version-changes", hits[0]["links"])
+
+    def test_rules_draft_four_announcement_is_newest_and_links_to_the_general_terms(self):
+        newest = self.page.of("article")
+        hits = [a for a in newest if "草案第 4 版" in self.page.heading(a["id"])]
+        self.assertEqual(len(hits), 1)
+        for link in ["brief.html#general-terms", "../notes/rules.html#general-terms", "../notes/rules.html#version-changes"]:
+            self.assertIn(link, hits[0]["links"])
+        raw = read(self.page.path)
+        self.assertLess(raw.index('id="n-rules-4"'), raw.index('id="n-schedule"'), "新公告在最上面")
 
     def test_schedule_announcement_marks_dates_undecided(self):
         hits = [a for a in self.announcements() if "日程" in self.page.heading(a["id"])]
@@ -381,7 +391,7 @@ class SharedStylesTest(unittest.TestCase):
 
 
 class RulesWordingTest(unittest.TestCase):
-    """说明页面转述规则的地方与规则手册草案第 3 版一致。"""
+    """说明页面转述规则的地方与规则手册草案第 4 版一致。"""
 
     def test_unseen_map_points_hide_which_and_how_many_reports_they_came_from(self):
         # 规则手册第七节第 3 条：地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告

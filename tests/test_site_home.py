@@ -205,12 +205,13 @@ class HomeIsCurrent(unittest.TestCase):
         cls.faq = Tree(FAQ).root
 
     def test_no_outdated_rules_draft(self):
-        self.assertFalse("草案第 2 版" in self.home.text(), "首页还写着规则手册“草案第 2 版”")
+        for old in ["草案第 2 版", "草案第 3 版"]:
+            self.assertFalse(old in self.home.text(), f"首页还写着规则手册“{old}”")
 
-    def test_rules_card_names_draft_three(self):
+    def test_rules_card_names_draft_four(self):
         cards = [a for a in self.home.by_id("library").anchors() if path_of(a.attrs["href"]) == "../notes/rules.html"]
         self.assertTrue(cards)
-        self.assertIn("草案第 3 版", cards[0].text())
+        self.assertIn("草案第 4 版", cards[0].text())
 
     def answers(self, root):
         """问题文字 → 答案元素。"""

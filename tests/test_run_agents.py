@@ -97,6 +97,7 @@ class Workspace:
             "格式转换方式": "题目原文原样交给智能体，不增删任何内容",
             "调用方式": call,
             "运行环境说明": "Python 3",
+            "开源代码地址和许可证": "https://example.org/测试队/智能体，MIT 许可证",
             "申报日期": "2026-10-23",
             "申报人": "测试人",
         }
@@ -315,6 +316,17 @@ class DeclarationTest(RunnerTestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("所用模型及其版本", result.stderr)
         self.assertIn("申报人", result.stderr)
+        self.assertFalse((self.space.day_folder / "运行记录.csv").exists())
+
+    def test_declaration_without_open_source_address_stops_everything(self):
+        closed = self.space.command_agent("闭源队", ECHO_AGENT)
+        declaration = json.loads(closed.read_text(encoding="utf-8"))
+        del declaration["开源代码地址和许可证"]
+        closed.write_text(json.dumps(declaration, ensure_ascii=False), encoding="utf-8")
+        self.space.question("淡水湖", "提问版")
+        result = self.space.run()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("开源代码地址和许可证", result.stderr)
         self.assertFalse((self.space.day_folder / "运行记录.csv").exists())
 
     def test_unknown_call_method_is_rejected(self):

@@ -40,14 +40,14 @@ GitHub Pages 直接从 `main` 分支的仓库根目录发布，推送后自动�
 
 [出题手册](notes/question-handbook.html)：给大学一年级同学的出题方法，含三个概念、出题七步、两个实例、红笔批改、自查清单和模板。源文件是 `research-plan/question-handbook.src.html`，运行 `python3 render_plan.py` 时加上网页的头尾，生成本地版。自 2026 年 10 月 30 日起以本地版为准，不再依赖在线版。
 
-[比赛规则手册](notes/rules.html)：源文件是 `research-plan/rules.md`，由 `render_plan.py` 生成网页；内容取自 2026 年 10 月 30 日在线文档的第 17 次修订，此后以本地版为准。深度研究赛项的出题、冻结与申报、运行、交付、评审、名次、申诉和违规处理。现为草案第 3 版，附录五是版本变更记录。标有〔默认〕的条款待主办方确认。它和出题手册第 2 版一起，回应了三个问题：开发者能否按题目改提示词、提问者和用途是否符合真实场景、深度地图的质量怎样保证。
+[比赛规则手册](notes/rules.html)：源文件是 `research-plan/rules.md`，由 `render_plan.py` 生成网页；内容取自 2026 年 10 月 30 日在线文档的第 17 次修订，此后以本地版为准。深度研究赛项的出题、冻结与申报、运行、交付、评审、名次、申诉和违规处理。现为草案第 4 版，附录五是版本变更记录。标有〔默认〕的条款待主办方确认。它和出题手册第 2 版一起，回应了三个问题：开发者能否按题目改提示词、提问者和用途是否符合真实场景、深度地图的质量怎样保证。
 
 [对照巡天网站结构](research-plan/site-mapping.md)：把现有资料和程序按巡天黑客松网站（create.gosim.org/survey26）的公开页面、参赛者页面、后台与程序逐项对照，列出已有、部分、缺和待办。
 
 [资料站](site/index.html)：把研究、规则、出题手册、文献和领域外资料收在一页，可筛选。首屏是用 Archify 画的[评测基准架构图](site/diagrams/architecture-dr-benchmark/benchmark-architecture-explained.html)，点任一环节会显示它是什么、做什么用。图的源文件是同一目录的 `candidate.json`，节点说明在 `node-notes.json`；改说明后运行 `build_explained.py` 生成讲解版，原图 `benchmark-architecture.html` 保持 Archify 生成的原样。[一道题走完全程](site/walkthrough.html)：以淡水湖这道题为例走完十一站，五份报告是虚构的示意，分数按真实规则算出，可用 `site/walkthrough_example.py` 复算。页面按 landing-page-design 技能的规则制作，大纲和与规则不一致之处见 `site/landing-plan.md`。
 
 **资料站的比赛页面**：都在 `site/`，双击即可打开；首页导航的"比赛"下拉、手机菜单和资料库的"比赛"一组都能进入。页脚的行为准则、联系方式和数据使用许可还没有定，标〔待定〕。
-- [赛事说明](site/brief.html)：比什么、练习和正式两个阶段、运行、评审、名次与公布、申诉、封闭组和开放组、随机抽查；日程、奖项和报名方式〔待定〕。
+- [赛事说明](site/brief.html)：总则、比什么、练习和正式两个阶段、运行、评审、名次与公布、申诉、封闭组和开放组、随机抽查；日程、奖项和报名方式〔待定〕。
 - [上手](site/start.html)：出题同学、参赛队伍、评委各自的第一步；现阶段出题和评审由大模型程序模拟，页上有运行命令。
 - [公告](site/news.html)：日程变动和规则版本变更，新的在上面。
 - [常见问题](site/faq.html)：资料站问答和出题手册的常见问题合在一页，按出题、参赛、评审分组。
