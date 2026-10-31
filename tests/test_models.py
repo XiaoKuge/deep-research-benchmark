@@ -278,18 +278,6 @@ class ToolLimitTest(FakeProgramCase):
         self.assertEqual(agent["mainAgent"], "true")
         self.assertEqual(seen["cwd_entries"], [".agents"])
 
-    def test_google_web_read_only_allows_only_web_search_and_url_reading(self):
-        seen = self.args_for("google", models.WEB_READ_ONLY)
-        args = seen["args"]
-        self.assertEqual(value_after(args, "--agent"), "web-read-only")
-        self.assertIn("--sandbox", args)
-        self.assertNotIn("--dangerously-skip-permissions", args)
-        agent = frontmatter(seen["agent_md"])
-        self.assertEqual(agent["name"], "web-read-only")
-        self.assertEqual(json.loads(agent["tools"]), ["search_web", "read_url_content"])
-        self.assertEqual(agent["excludeDefaultComponents"], "true")
-        self.assertEqual(agent["inheritCustomizations"], "false")
-
     def test_kimi_web_read_only_allows_only_search_and_fetch(self):
         seen = self.args_for("kimi", models.WEB_READ_ONLY)
         agent = json.loads(seen["--agent-file"])["agent"]
@@ -372,7 +360,7 @@ class CallRecordTest(FakeProgramCase):
     def test_google_record_has_company_reported_model_and_the_agent_file(self):
         run = self.live_run(reply="好")
         _, record = run.call(task="试探", vendor="google", prompt="你好",
-                             tools=models.WEB_READ_ONLY, model="gemini-4-argon-low")
+                             tools=models.MATERIALS_ONLY, model="gemini-4-argon-low")
         self.assertEqual(set(record), RECORD_FIELDS)
         self.assertEqual(read_log(self.log), [record])
         self.assertEqual(record["vendor"], "google")
@@ -384,9 +372,8 @@ class CallRecordTest(FakeProgramCase):
         self.assertEqual(record["reported_model"], "gemini-4-argon-low")
         # 启动事件列的是 agy 注册过的全部工具，不是这个智能体能用的工具，所以不记
         self.assertIsNone(record["reported_tools"])
-        agent_md = record["config_files"]["work/.agents/agents/web-read-only/agent.md"]
-        self.assertEqual(json.loads(frontmatter(agent_md)["tools"]),
-                         ["search_web", "read_url_content"])
+        agent_md = record["config_files"]["work/.agents/agents/materials-only/agent.md"]
+        self.assertEqual(json.loads(frontmatter(agent_md)["tools"]), [])
         self.assertEqual(record["command"][0], run.programs["google"])
         self.assertIn('"event": "result"', record["raw_output"])
 
@@ -581,20 +568,10 @@ class GoogleCheckTest(FakeProgramCase):
         self.assertIn("search_web、read_url_content", error)
         self.assertNotIn("agent_response", error)
 
-    def test_web_read_only_does_not_check_step_types(self):
-        programs = {"google": make_fake(self.fakes, "google", reply="找到三处来源",
-                                        google={"steps": ["user_input", "search_web",
-                                                          "agent_response"]})}
-        run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs)
-        answer, _ = run.call(task="出题-调研", vendor="google", prompt="调研",
-                             tools=models.WEB_READ_ONLY)
-        self.assertEqual(answer, "找到三处来源")
-
     def test_a_successful_result_with_an_empty_response_fails_the_call(self):
-        # 只读网页档被要求读网页时，agy 报告成功但回答是空串（读网页要人批准，非交互运行被拒）
-        error = self.google_call(limit=models.WEB_READ_ONLY, reply="")
+        # agy 报告成功但回答是空串时，不能当成功
+        error = self.google_call(reply="")
         self.assertIn("回答为空", error)
-        self.assertIn("只读网页", error)
 
     def test_a_missing_result_event_fails_the_call(self):
         error = self.google_call(no_result=True)
@@ -608,6 +585,24 @@ class GoogleCheckTest(FakeProgramCase):
         record = caught.exception.record
         self.assertEqual(record["exit_code"], 3)
         self.assertIn("没有登录", record["error"])
+
+
+class GoogleWebTierTest(FakeProgramCase):
+    """google 的只读网页一档读不了网页（非交互运行时读网页要人批准，一律被拒），
+    模型可能直接凭记忆作答而被当成成功；所以真实调用时直接判为不可用，不启动 agy。"""
+
+    def test_a_live_google_call_in_the_web_tier_fails_without_starting_agy(self):
+        programs = {"google": make_fake(self.fakes, "google", reply="8848.86")}
+        run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs)
+        with self.assertRaises(models.ModelCallError) as caught:
+            run.call(task="出题-深度地图", vendor="google", prompt="查一下珠峰高程",
+                     tools=models.WEB_READ_ONLY)
+        record = caught.exception.record
+        self.assertEqual(record["status"], "失败")
+        self.assertIn("只读网页", record["error"])
+        self.assertIsNone(record["command"])
+        self.assertEqual(invocations(self.fakes), [])
+        self.assertEqual(read_log(self.log), [record])
 
 
 class NoSecretsTest(unittest.TestCase):

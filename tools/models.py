@@ -411,6 +411,11 @@ class ModelRun:
         if self.mode == ESTIMATE:
             record["status"] = NOT_CALLED
             record["answer"] = placeholder
+        elif self.mode == LIVE and vendor == "google" and tools == WEB_READ_ONLY:
+            # agy 非交互运行时读网页要人批准，一律被拒；模型可能凭记忆作答而被当成成功，所以直接判为不可用
+            record["status"] = FAILED
+            record["error"] = ("Google（agy）不能用于只读网页一档：非交互运行时读取网页需要人批准，"
+                               "一律被拒，没有启动 agy")
         elif self.mode == REPLAY:
             with self._lock:
                 self._replay_into(record)
