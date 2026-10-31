@@ -339,6 +339,9 @@ class StandardRunTest(unittest.TestCase):
                 self.assertIn(text, record["prompt"])
 
     # 工具限定：评审各步只给材料；只有引了网址却没有存档的结论，核验时只读网页
+    def test_a_run_that_keeps_three_vendors_records_no_rule_problem(self):
+        self.assertEqual(self.meta["too_few_vendors"], [])
+
     def test_every_step_is_materials_only_except_checking_unarchived_links(self):
         web = [r for r in self.records() if r["tools"] == "只读网页"]
         self.assertEqual(sorted(r["task"] for r in web),
@@ -362,6 +365,19 @@ KIMI_ERROR = ("退出状态 1；标准输出最后几行：Error code: 401 - "
 GOOGLE_ERROR = "退出状态 1；标准错误最后几行：还没有登录"
 
 
+def unavailable_replay():
+    """标准场景，只是 kimi 和 google 都不可用：kimi 的回答都改由 claude 给出，另外录下两家各一次失败。"""
+    entries = standard_replay()
+    for e in entries:
+        if e["vendor"] == "kimi":
+            e["vendor"] = "claude"
+    entries.insert(0, {"task": "评审-要点判定：评委 3", "vendor": "kimi", "status": "失败",
+                       "error": KIMI_ERROR})
+    entries.insert(1, {"task": "评审-要点判定：评委 3", "vendor": "google", "status": "失败",
+                       "error": GOOGLE_ERROR})
+    return entries
+
+
 class UnavailableVendorTest(unittest.TestCase):
     """厂商不可用：回放材料里录下了 kimi 和 google 各一次失败（kimi 登录过期、agy 没有登录）。
     kimi 的评委位置先换这一步没用到的 google，google 也不可用，再按替代顺序换成 claude。"""
@@ -371,15 +387,7 @@ class UnavailableVendorTest(unittest.TestCase):
         cls._tmp = tempfile.TemporaryDirectory()
         tmp = cls._tmp.name
         cls.inputs = build_inputs(tmp)
-        entries = standard_replay()
-        for e in entries:
-            if e["vendor"] == "kimi":
-                e["vendor"] = "claude"
-        entries.insert(0, {"task": "评审-要点判定：评委 3", "vendor": "kimi", "status": "失败",
-                           "error": KIMI_ERROR})
-        entries.insert(1, {"task": "评审-要点判定：评委 3", "vendor": "google", "status": "失败",
-                           "error": GOOGLE_ERROR})
-        replay = write_replay(os.path.join(tmp, "replay.jsonl"), entries)
+        replay = write_replay(os.path.join(tmp, "replay.jsonl"), unavailable_replay())
         cls.out = os.path.join(tmp, "review")
         cls.result = run_tool(cls.inputs, cls.out, "--replay", replay)
         cls.meta = read_json(os.path.join(cls.out, "run.json"))
@@ -399,14 +407,33 @@ class UnavailableVendorTest(unittest.TestCase):
         expected = {("断言核验", "评审-断言核验：报告 %s，评委 3" % unit) for unit in
                     ("Alpha，只给材料", "Bravo，只给材料", "Charlie，只给材料", "Charlie，只读网页")}
         expected.add(("要点判定", "评审-要点判定：评委 3"))
-        self.assertEqual({(s["step"], s["task"]) for s in self.meta["substitutions"]}, expected)
-        self.assertTrue(all(s["planned_vendor"] == "kimi" and s["vendor"] == "claude"
-                            for s in self.meta["substitutions"]))
+        substitutions = self.meta["substitutions"]
+        self.assertEqual({(s["步骤"], s["任务"]) for s in substitutions}, expected)
+        self.assertTrue(all(list(s) == ["步骤", "任务", "原来的厂商", "改用的厂商", "原因"] for s in substitutions))
+        self.assertTrue(all(s["原来的厂商"] == "kimi" and s["改用的厂商"] == "claude" for s in substitutions))
+        for s in substitutions:
+            self.assertIn("kimi：", s["原因"])
+            if "只读网页" in s["任务"]:  # google 不能用于只读网页一档，没有试它
+                self.assertIn("google：Google（agy）不能用于只读网页一档", s["原因"])
+            else:
+                self.assertIn("google：", s["原因"])
 
     def test_no_result_is_attributed_to_the_unavailable_vendor(self):
         vendors = {r["vendor"] for r in read_records(os.path.join(self.out, "calls.jsonl"))}
         self.assertEqual(vendors, {"claude", "codex"})
         self.assertEqual(self.meta["steps"]["要点判定"]["by_vendor"], {"claude": 2, "codex": 1})
+
+    def test_steps_planned_for_three_vendors_that_used_fewer_are_recorded_against_the_rule(self):
+        # 断言核验和要点判定计划用 claude、codex、kimi 三家，kimi 换成 claude 之后只剩两家；
+        # 环节评级本来就只配了两家，不算在内。评审照样完成，不中止。
+        self.assertEqual(self.meta["status"], "完成")
+        found = {item["step"]: item for item in self.meta["too_few_vendors"]}
+        self.assertEqual(sorted(found), ["断言核验", "要点判定"])
+        for item in found.values():
+            self.assertEqual(item["planned_vendors"], ["claude", "codex", "kimi"])
+            self.assertEqual(item["used_vendors"], ["claude", "codex"])
+            self.assertIn("至少三家厂商的模型担任评委", item["rule"])
+        self.assertIn("至少三家", self.result.stdout)
 
     def test_the_review_still_finishes_with_the_substitute(self):
         self.assertEqual(self.result.returncode, 0, self.result.stdout + self.result.stderr)
@@ -414,6 +441,121 @@ class UnavailableVendorTest(unittest.TestCase):
         self.assertEqual({r["label"]: (r["rank_best"], r["rank_worst"]) for r in results["reports"]},
                          {"Alpha": (1, 1), "Bravo": (2, 2), "Charlie": (3, 3)})
         self.assertIn("kimi", self.result.stdout)
+
+
+def merge_with(texts):
+    """标准场景的回放材料，只是合并一步的要点文字换成 texts（按 MERGED 的顺序）。"""
+    entries = standard_replay()
+    for e in entries:
+        if e["task"] == "评审-要点池合并：评委 1":
+            e["answer"] = json.dumps({"points": [{"content": text, "sources": sources, "opposite": []}
+                                                 for text, sources in zip(texts, MERGED)]}, ensure_ascii=False)
+    return entries
+
+
+class MergeHidesSourcesTest(unittest.TestCase):
+    """合并时隐去出处要有程序检查：合并后的要点文字里出现报告代号或产品名（取自名称表），
+    这次合并判为回答无效，按已有的无效回答处理（只有一位评委合并，评审停止）。"""
+
+    def run_with(self, texts):
+        with tempfile.TemporaryDirectory() as tmp:
+            inputs = build_inputs(tmp)
+            replay = write_replay(os.path.join(tmp, "replay.jsonl"), merge_with(texts))
+            out = os.path.join(tmp, "review")
+            result = run_tool(inputs, out, "--replay", replay)
+            return result, read_json(os.path.join(out, "run.json")), os.path.exists(
+                os.path.join(out, "results-v1.2.json"))
+
+    def assertRejected(self, texts, shown):
+        result, meta, has_results = self.run_with(texts)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertEqual(meta["status"], "中止")
+        self.assertIn("要点池合并", meta["error"])
+        self.assertFalse(has_results)
+        problems = [p for p in meta["invalid_answers"] if p["step"] == "要点池合并"]
+        self.assertEqual(len(problems), 1)
+        self.assertIn(shown, problems[0]["problem"])
+
+    def test_a_product_name_in_a_merged_point_makes_the_merge_invalid(self):
+        self.assertRejected(["产品乙说引用多不等于引用准"] + POINT_TEXT[1:], "产品乙")
+
+    def test_a_report_code_in_a_merged_point_makes_the_merge_invalid(self):
+        self.assertRejected(POINT_TEXT[:3] + ["报告 Bravo 认为定义各家不同"] + POINT_TEXT[4:], "Bravo")
+
+    def test_an_entry_number_in_a_merged_point_makes_the_merge_invalid(self):
+        self.assertRejected(POINT_TEXT[:5] + ["中文与英文覆盖不同（见 claude-1:Alpha-6）"] + POINT_TEXT[6:],
+                            "claude-1:Alpha-6")
+
+    def test_points_without_codes_or_names_pass(self):
+        result, meta, has_results = self.run_with(POINT_TEXT)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(meta["invalid_answers"], [])
+        self.assertTrue(has_results)
+
+
+class ScorerTimeLimitTest(unittest.TestCase):
+    """计分程序有时长上限：到时停掉它，评审记为中止，写明原因，不会一直等下去。"""
+
+    def test_a_scorer_that_hangs_is_stopped_and_the_review_is_stopped(self):
+        import time
+        with tempfile.TemporaryDirectory() as tmp:
+            inputs = build_inputs(tmp)
+            replay = write_replay(os.path.join(tmp, "replay.jsonl"), standard_replay())
+            scorer = os.path.join(tmp, "slow_score.py")
+            write(scorer, "import time\ntime.sleep(60)\n")
+            out = os.path.join(tmp, "review")
+            began = time.monotonic()
+            result = run_tool(inputs, out, "--replay", replay, "--scorer", scorer, "--scorer-timeout", "1")
+            self.assertLess(time.monotonic() - began, 30)
+            meta = read_json(os.path.join(out, "run.json"))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertEqual(meta["status"], "中止")
+        self.assertIn("计分程序", meta["error"])
+        self.assertIn("1 秒", meta["error"])
+        self.assertTrue(meta["scorer"]["timed_out"])
+
+
+class WebTierTest(unittest.TestCase):
+    """google 不能用于只读网页一档：断言核验里所引网址没有存档的那一组（Charlie），计划给 google 的评委位置
+    直接按替代顺序换一家（先挑这一步没配的 kimi），记一条替代，不发调用，google 也不算不可用。
+    只估算时同样这样挑，估算的各家次数才与真实运行一致。"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls._tmp = tempfile.TemporaryDirectory()
+        cls.inputs = build_inputs(cls._tmp.name)
+        steps = dict(CONFIG["steps"], verify={"vendors": ["claude", "codex", "google"], "times": 1})
+        write(cls.inputs["config"], json.dumps(dict(CONFIG, steps=steps), ensure_ascii=False))
+        cls.out = os.path.join(cls._tmp.name, "review")
+        cls.result = run_tool(cls.inputs, cls.out, "--estimate")
+        cls.meta = read_json(os.path.join(cls.out, "run.json"))
+        cls.records = read_records(os.path.join(cls.out, "calls.jsonl"))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._tmp.cleanup()
+
+    def test_google_is_never_given_a_web_task(self):
+        self.assertEqual(self.result.returncode, 0, self.result.stderr)
+        web = [r for r in self.records if r["tools"] == "只读网页"]
+        self.assertEqual(sorted(r["vendor"] for r in web), ["claude", "codex", "kimi"])
+        google = [r for r in self.records if r["vendor"] == "google"]
+        self.assertEqual(len(google), 3)
+        self.assertTrue(all(r["tools"] == "只给材料" for r in google))
+
+    def test_the_substitution_names_the_tier_and_google_stays_available(self):
+        reason = "google：" + "Google（agy）不能用于只读网页一档"
+        self.assertEqual(len(self.meta["substitutions"]), 1)
+        item = self.meta["substitutions"][0]
+        self.assertEqual({k: item[k] for k in ("步骤", "任务", "原来的厂商", "改用的厂商")},
+                         {"步骤": "断言核验", "任务": "评审-断言核验：报告 Charlie，只读网页，评委 3",
+                          "原来的厂商": "google", "改用的厂商": "kimi"})
+        self.assertTrue(item["原因"].startswith(reason), item["原因"])
+        self.assertEqual(self.meta["unavailable"], [])
+
+    def test_the_estimate_counts_the_substitute(self):
+        self.assertEqual(self.meta["steps"]["断言核验"]["by_vendor"],
+                         {"claude": 4, "codex": 4, "google": 3, "kimi": 1})
 
 
 class EstimateTest(unittest.TestCase):
@@ -520,6 +662,13 @@ class PilotQuestionTest(unittest.TestCase):
         # 要点抽取 6 × 3 = 18；合并 1；写到核对 6；要点判定 6；环节评级 6 × 6 = 36；
         # 两两比较 15 对 × 两种先后 × 2 位 = 60；直接回答 6。合计 181。
         self.assertEqual(meta["calls"]["calls"], 181)
+        # 默认配置：断言核验、要点抽取、要点判定、环节评级用 claude、codex、google；E 那一组只读网页，
+        # 两位 google 核验员换成替代顺序（claude、codex、google、kimi）里这一步没配的 kimi。
+        self.assertEqual(meta["calls"]["by_vendor"], {"claude": 83, "codex": 64, "google": 32, "kimi": 2})
+        self.assertEqual(meta["config"]["substitutes"], ["claude", "codex", "google", "kimi"])
+        self.assertEqual(meta["config"]["steps"]["verify"]["vendors"], ["claude", "codex", "google"])
+        self.assertEqual([(s["任务"], s["改用的厂商"]) for s in meta["substitutions"]],
+                         [("评审-断言核验：报告 E，只读网页，评委 %d" % n, "kimi") for n in (5, 6)])
 
 
 class GuideTest(unittest.TestCase):

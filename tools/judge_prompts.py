@@ -22,6 +22,9 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+import common  # noqa: E402
+
 DEFAULT_JUDGES = os.path.join(ROOT, "research-plan", "stage5-pilot", "judges")
 
 
@@ -113,9 +116,7 @@ def cmd_extract(args):
             continue
         call = calls[run["tool_use_id"]]
         path = os.path.join(pilot, run["prompt"])
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8", newline="") as f:
-            f.write(call["input"]["prompt"])
+        common.write_text_atomic(path, call["input"]["prompt"])
         print("已写出", run["prompt"])
     return 0
 

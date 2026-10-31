@@ -4,7 +4,6 @@
 只用 Python 自带的标准库和同目录的 models.py（模型调用层）。
 """
 import argparse
-import hashlib
 import html
 import json
 import os
@@ -16,7 +15,9 @@ from fractions import Fraction
 from html.parser import HTMLParser
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import common  # noqa: E402
 import models  # noqa: E402
+import substitutes  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HANDBOOK = os.path.join(ROOT, "research-plan", "question-handbook.src.html")
@@ -32,7 +33,9 @@ CUTOFF = "只使用截至〔运行当日〕已经公开的信息。"
 
 SETTER, MAP_A, MAP_B, LEAK, CLOSED = "出题人", "甲", "乙", "泄露检查人", "闭卷对照"
 ROLES = (SETTER, MAP_A, MAP_B, LEAK, CLOSED)
-DEFAULT_VENDORS = {SETTER: "claude", MAP_A: "claude", MAP_B: "kimi", LEAK: "codex", CLOSED: "codex"}
+# 写深度地图要读网页，google 不能用于只读网页一档（models.usable），所以两位出题人是 claude 和 codex；
+# google 做只给材料的泄露检查和闭卷对照，闭卷对照和写过地图的两家都不同。
+DEFAULT_VENDORS = {SETTER: "claude", MAP_A: "claude", MAP_B: "codex", LEAK: "google", CLOSED: "google"}
 
 LEAK_QUESTIONS = (
     ("暗示往哪里挖", "题面有没有暗示该往哪里挖？"),
@@ -56,7 +59,7 @@ class NoVendor(Exception):
 
     def __init__(self, role, task, tried):
         super().__init__("%s（步骤「%s」）找不到可用的厂商：%s" % (
-            role, task, "；".join("%s %s" % pair for pair in tried) or "没有候选"))
+            role, task, substitutes.reasons(tried) or "没有候选"))
         self.tried = tried
 
 
@@ -191,10 +194,6 @@ def agent_delivery_block():
 
 # ---- 小工具 --------------------------------------------------------------------
 
-def _sha256(text):
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
 def _text(value):
     if value is None:
         return ""
@@ -244,45 +243,31 @@ def _vendor_label(vendor, model=None, reported=None):
     return label
 
 
-# ---- 回放材料里录下的失败 ----------------------------------------------------------
-
-class ReplayFailures:
-    """回放材料里状态为「失败」或「超时」的调用：回放时当作那一家在那一步不可用。"""
-
-    def __init__(self, sources):
-        self.slots = {}
-        for source in sources or []:
-            with open(source, encoding="utf-8") as f:
-                for line in f:
-                    if not line.strip():
-                        continue
-                    entry = json.loads(line)
-                    if entry.get("status") in (models.FAILED, models.TIMED_OUT):
-                        key = (entry.get("task"), entry.get("vendor"))
-                        self.slots.setdefault(key, []).append(
-                            "回放材料里录下这次调用「%s」：%s" % (entry["status"], entry.get("error") or "没有写原因"))
-
-    def take(self, task, vendor):
-        reasons = self.slots.get((task, vendor))
-        return reasons.pop(0) if reasons else None
-
-
 # ---- 角色和厂商 ------------------------------------------------------------------
 
-class Roles:
-    """每个角色先用配置的厂商；不可用时按 simulate_setter.md 写的规则换一家，并记下原因。"""
+def step_of(task):
+    """任务名里的步骤：出题-深度地图-乙-第1轮 的步骤是 深度地图，出题-闭卷对照-作答 的是 闭卷对照。"""
+    return task.split("-")[1]
 
-    def __init__(self, run, configured, model_of, replay_failures):
+
+class Roles:
+    """每个角色先用配置的厂商；不能用于这一档、或者不可用时，按 simulate_setter.md 写的规则换一家，并记下原因。
+
+    挑厂商和替代记录的格式用 substitutes.py，与模拟评审共用。某一家调用失败，就整次运行不再用它，
+    这个角色以后都用换来的这家；某一家只是不能用于这一档（google 不能用于只读网页一档），只换这一次，
+    这个角色在别的档里照常用它。
+    """
+
+    def __init__(self, run, configured, model_of):
         self.run = run
         self.configured = dict(configured)
         self.current = dict(configured)
         self.model_of = dict(model_of)
-        self.replay_failures = replay_failures
-        self.unavailable = {}   # 厂商 -> 原因
-        self.outages = []       # 每次发现不可用的记录
-        self.substitutions = []
+        self.vendors = substitutes.Vendors()
+        self.outages = []        # 每次发现不可用的记录
+        self.substitutions = []  # [(角色, 替代记录)]
         self.steps = []
-        self.map_vendors = []   # 写过深度地图的厂商
+        self.map_vendors = []    # 写过深度地图的厂商
 
     def _order(self, role):
         first = self.current[role]
@@ -300,19 +285,21 @@ class Roles:
 
         return [first] + sorted(rest, key=rank)
 
+    def _exclude(self, role):
+        if role != CLOSED:
+            return None
+        return lambda vendor: ("写过本题的深度地图，闭卷对照不能用它" if vendor in self.map_vendors else None)
+
     def _mark_unavailable(self, vendor, task, reason, call_index=None):
-        self.unavailable[vendor] = reason
-        self.outages.append({"厂商": vendor, "步骤": task, "原因": reason, "调用序号": call_index})
+        if self.vendors.mark_unavailable(vendor, reason):
+            self.outages.append({"厂商": vendor, "步骤": task, "原因": reason, "调用序号": call_index})
 
     def ask(self, role, task, prompt, tools, placeholder=""):
-        tried = []
-        for vendor in self._order(role):
-            if vendor in self.unavailable:
-                tried.append((vendor, "在本次运行前面的步骤里已经不可用"))
-                continue
-            if role == CLOSED and vendor in self.map_vendors:
-                tried.append((vendor, "写过本题的深度地图，闭卷对照不能用它"))
-                continue
+        failed = {}  # 这一步里调用失败了的厂商 -> 原因，写进替代记录
+        while True:
+            vendor, skipped = self.vendors.pick(self._order(role), tools, self._exclude(role), failed)
+            if vendor is None:
+                raise NoVendor(role, task, skipped)
             try:
                 answer, record = self.run.call(task, vendor, prompt, tools,
                                                model=self.model_of.get(vendor),
@@ -320,28 +307,28 @@ class Roles:
             except models.ModelCallError as error:
                 reason = error.record.get("error") or str(error)
                 self._mark_unavailable(vendor, task, reason, error.record.get("call_index"))
-                tried.append((vendor, "调用失败：" + reason))
+                failed[vendor] = "调用失败：" + reason
                 continue
             except models.ReplayMissing as missing:
-                reason = self.replay_failures.take(task, vendor)
-                if reason is None:
+                recorded = self.run.replay_failures.take(task, vendor)
+                if recorded is None:
                     raise Stop(str(missing)) from None
+                reason = "回放材料里录下这次调用「%s」：%s" % (recorded["status"],
+                                                      recorded.get("error") or "没有写原因")
                 self._mark_unavailable(vendor, task, reason)
-                tried.append((vendor, reason))
+                failed[vendor] = reason
                 continue
             except models.CallLimitExceeded as limit:
                 raise Stop(str(limit)) from None
-            self._used(role, task, vendor, tools, record, tried)
+            self._used(role, task, vendor, tools, record, skipped)
             return answer, record
-        raise NoVendor(role, task, tried)
 
-    def _used(self, role, task, vendor, tools, record, tried):
-        if vendor != self.current[role]:
-            self.substitutions.append({
-                "角色": role, "步骤": task, "配置的厂商": self.configured[role],
-                "原来用的厂商": self.current[role], "改用": vendor,
-                "原因": "；".join("%s：%s" % pair for pair in tried)})
-            self.current[role] = vendor
+    def _used(self, role, task, vendor, tools, record, skipped):
+        planned = self.current[role]
+        if vendor != planned:
+            self.substitutions.append((role, substitutes.record(step_of(task), task, planned, vendor, skipped)))
+            if self.vendors.is_unavailable(planned):
+                self.current[role] = vendor  # 原来的厂商整次运行都不可用：这个角色以后都用换来的这家
         if role in (MAP_A, MAP_B) and vendor not in self.map_vendors:
             self.map_vendors.append(vendor)
         self.steps.append({
@@ -369,11 +356,18 @@ class Roles:
             labels.append(_vendor_label(vendor, self.model_of.get(vendor),
                                         reported[-1] if reported else None))
         text = "、".join(labels)
-        for item in self.substitutions:
-            if item["角色"] == role:
-                text += "（配置的是 %s，在「%s」这一步换成了 %s，原因见%s）" % (
-                    item["原来用的厂商"], item["步骤"], item["改用"], META_FILE)
+        seen = set()
+        for item in self.substitutions_of(role):
+            pair = (item["原来的厂商"], item["改用的厂商"])
+            if pair in seen:  # 同一种替代在后面几轮又发生，只写第一次
+                continue
+            seen.add(pair)
+            text += "（配置的是 %s，在「%s」这一步换成了 %s，原因见%s）" % (
+                item["原来的厂商"], item["任务"], item["改用的厂商"], META_FILE)
         return text
+
+    def substitutions_of(self, role):
+        return [item for who, item in self.substitutions if who == role]
 
     def summary(self):
         result = {}
@@ -386,7 +380,7 @@ class Roles:
                 "命令行报告的模型": sorted({step["命令行报告的模型"] for step in steps
                                      if step["命令行报告的模型"]}),
                 "工具限定": sorted({step["工具限定"] for step in steps}),
-                "替代": [item for item in self.substitutions if item["角色"] == role],
+                "替代": self.substitutions_of(role),
             }
         return result
 
@@ -781,20 +775,42 @@ class Setter:
 
 # ---- 自查：写完标准五条和两项检查 ------------------------------------------------------
 
+# "找不到要点的层"里一句话写明某一层查过、没有：要有层的名字、查了什么，以及没有找到。
+CHECKED = re.compile(r"查|检索|搜索")
+NOTHING_FOUND = re.compile(r"没有|找不到|未找到|查不到|未发现|没发现|不存在")
+
+
+def levels_checked(final):
+    """四层都查过（写完标准第 3 条）：每一层要么要点表里有这一层的要点，要么"找不到要点的层"里有一句
+    写明这一层查过、没有（一句里有层的名字、查了什么、没有找到）。只提到层的名字不算。
+    返回 (要点表里没有要点的层, 其中没有写明查过的层)。"""
+    present = {row["层级"] for row in final["要点"] if row["要点"]}
+    missing = [level for level in LEVELS if level not in present]
+    sentences = [part for part in re.split(r"[。；;！!\n]", final["找不到要点的层"]) if part.strip()]
+    unexplained = [level for level in missing
+                   if not any(level in part and CHECKED.search(part) and NOTHING_FOUND.search(part)
+                              for part in sentences)]
+    return missing, unexplained
+
+
+def compared_by_two(result):
+    """两人对过（写完标准第 5 条）：每一轮甲和乙的地图都真的写出了要点，并且做了对照。"""
+    return all(item[MAP_A]["要点"] and item[MAP_B]["要点"] and item["调用序号"].get("对照") is not None
+               for item in result["轮"])
+
+
 def self_check(result):
     final = result["地图"]
     rows = {row["编号"]: row for row in final["要点"]}
     turning = [rows[n] for n in final["转折点用到的要点"] if n in rows]
-    present = {row["层级"] for row in final["要点"]}
-    missing = [level for level in LEVELS if level not in present]
-    note = final["找不到要点的层"]
+    missing, unexplained = levels_checked(final)
     standard = {
         "浅答案": bool(final["浅答案"]),
         "转折点": bool(final["转折点"]) and any(row["层级"] in DEEP_LEVELS for row in turning)
                  and all(row["依据"] for row in turning),
-        "四层都查过": all(level in note for level in missing),
+        "四层都查过": not unexplained,
         "核心要点写全": result["轮"][-1]["数鱼"]["写全了"],
-        "两人对过": True,
+        "两人对过": compared_by_two(result),
     }
     closed = result["闭卷对照"]["结论"]
     leak = "通过" if result["泄露检查"]["通过"] else "未通过"
@@ -994,12 +1010,11 @@ def map_json(result, meta, checksum):
 
 
 def _write(folder, name, text):
-    with open(os.path.join(folder, name), "w", encoding="utf-8") as f:
-        f.write(text)
+    common.write_text_atomic(os.path.join(folder, name), text)
 
 
 def _write_json(folder, name, data):
-    _write(folder, name, json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+    common.write_json_atomic(os.path.join(folder, name), data, indent=2)
 
 
 def notes(roles):
@@ -1023,7 +1038,7 @@ def write_folder(folder, result, meta, run):
     _write(folder, BARE_FILE, result["版本"]["裸题版全文"])
     map_text = render_map(result, meta)
     _write(folder, MAP_FILE, map_text)
-    checksum = _sha256(map_text)
+    checksum = common.sha256_text(map_text)
     _write(folder, MAP_SUM, "%s  %s\n" % (checksum, MAP_FILE))
     _write_json(folder, MAP_JSON, map_json(result, meta, checksum))
     _write(folder, PAIR_FILE, render_pairs(result, meta))
@@ -1088,16 +1103,18 @@ def build_parser():
     given.add_argument("--id", help="题目标识，用作目录名；不给就用运行编号")
     given.add_argument("--out", default=DEFAULT_OUT, help="题目目录的上一级目录，默认 simulation/questions")
     who = parser.add_argument_group("各角色用哪家（%s）" % "、".join(models.VENDORS))
+    web = "要读网页；google 不能用于只读网页一档，配置了也会换一家"
     who.add_argument("--setter", choices=models.VENDORS, default=DEFAULT_VENDORS[SETTER],
-                     help="出题人：评委版、提问版和裸题版、两人对照、闭卷比对，默认 claude")
+                     help="出题人：评委版（%s）、提问版和裸题版、两人对照、闭卷比对，默认 %s"
+                          % (web, DEFAULT_VENDORS[SETTER]))
     who.add_argument("--map-a", choices=models.VENDORS, default=DEFAULT_VENDORS[MAP_A],
-                     help="写深度地图的甲，默认 claude")
+                     help="写深度地图的甲（%s），默认 %s" % (web, DEFAULT_VENDORS[MAP_A]))
     who.add_argument("--map-b", choices=models.VENDORS, default=DEFAULT_VENDORS[MAP_B],
-                     help="写深度地图的乙，默认 kimi")
+                     help="写深度地图的乙（%s），默认 %s" % (web, DEFAULT_VENDORS[MAP_B]))
     who.add_argument("--leak-checker", choices=models.VENDORS, default=DEFAULT_VENDORS[LEAK],
-                     help="泄露检查人，默认 codex")
+                     help="泄露检查人，只给材料，默认 %s" % DEFAULT_VENDORS[LEAK])
     who.add_argument("--closed-book", choices=models.VENDORS, default=DEFAULT_VENDORS[CLOSED],
-                     help="闭卷对照，必须和写深度地图的两家都不同，默认 codex")
+                     help="闭卷对照，只给材料，必须和写深度地图的两家都不同，默认 %s" % DEFAULT_VENDORS[CLOSED])
     who.add_argument("--model", action="append", metavar="厂商=模型",
                      help="给某一家指定模型，可以写多次；不给就用命令行的默认模型")
     how = parser.add_argument_group("怎样运行")
@@ -1120,7 +1137,8 @@ def _estimate_report(run, max_extra_rounds):
              % (summary["calls"], max_extra_rounds, summary["calls"] - extra),
              "按厂商：%s" % "，".join("%s %d 次" % item for item in summary["by_vendor"].items()),
              "按步骤：%s" % "，".join("%s %d 次" % item for item in summary["by_task"].items()),
-             "这是假定配置的厂商都可用时的次数；某一家不可用时，每换一家会多一次失败的调用。"]
+             "这是假定配置的厂商都可用时的次数；不能用于某一档的厂商（google 不能用于只读网页一档）已经按替代规则换好。"
+             "某一家不可用时，每换一家会多一次失败的调用。"]
     if summary["max_calls"] is not None:
         lines.append("调用次数上限 %d 次：%s。" % (summary["max_calls"], "会超过上限" if summary["over_limit"]
                                                  else "不会超过"))
@@ -1151,7 +1169,7 @@ def main(argv=None):
     if mode == models.ESTIMATE:
         with tempfile.TemporaryDirectory() as scratch:
             run = models.ModelRun(os.path.join(scratch, LOG_FILE), mode=mode, max_calls=args.max_calls)
-            roles = Roles(run, configured, model_of, ReplayFailures(None))
+            roles = Roles(run, configured, model_of)
             Setter(roles, inputs, today, args.max_extra_rounds).make()
             print(_estimate_report(run, args.max_extra_rounds))
         return 0
@@ -1167,7 +1185,7 @@ def main(argv=None):
     os.makedirs(folder)
     run = models.ModelRun(os.path.join(folder, LOG_FILE), mode=mode, max_calls=args.max_calls,
                           replay_from=args.replay, run_id=run_id, timeout_seconds=args.timeout_seconds)
-    roles = Roles(run, configured, model_of, ReplayFailures(args.replay))
+    roles = Roles(run, configured, model_of)
     meta = {"id": question_id, "kind": args.kind, "inputs": inputs, "generated_at": now.isoformat(
         timespec="seconds"), "date": today, "roles": roles, "folder": folder}
     try:
@@ -1185,8 +1203,8 @@ def main(argv=None):
     print("写完标准：%s" % "；".join("%s %s" % (key, "满足" if value else "没有满足")
                                     for key, value in checks["写完标准"].items()))
     print("泄露检查：%s；闭卷对照：%s" % (checks["泄露检查"], checks["闭卷对照"]))
-    for item in roles.substitutions:
-        print("替代：%s 在「%s」改用 %s。原因：%s" % (item["角色"], item["步骤"], item["改用"], item["原因"]))
+    for role, item in roles.substitutions:
+        print("替代：%s 在「%s」改用 %s。原因：%s" % (role, item["任务"], item["改用的厂商"], item["原因"]))
     if not roles.used(CLOSED):
         print("闭卷对照没有做：%s" % result["闭卷对照"].get("原因", ""))
     return 0

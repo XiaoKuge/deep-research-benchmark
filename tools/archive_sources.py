@@ -7,8 +7,6 @@
 使用说明见 tools/archive_sources.md。只用 Python 标准库，不调用任何第三方存档服务。
 """
 import argparse
-import hashlib
-import json
 import mimetypes
 import os
 import re
@@ -19,6 +17,9 @@ from html.parser import HTMLParser
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urldefrag, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import common  # noqa: E402
 
 DEFAULT_TIMEOUT = 30.0
 DEFAULT_MAX_BYTES = 50 * 1024 * 1024
@@ -261,7 +262,7 @@ def fetch(url, timeout, max_bytes):
     entry["fetched_at"] = utc_now()
     if body is not None:
         entry["bytes"] = len(body)
-        entry["sha256"] = hashlib.sha256(body).hexdigest()
+        entry["sha256"] = common.sha256_bytes(body)
     return entry, body
 
 
@@ -290,7 +291,7 @@ def archive(report_path, out_dir, timeout, max_bytes):
     os.makedirs(os.path.join(out_dir, "content"), exist_ok=True)
     manifest = {
         "report": report_path,
-        "report_sha256": hashlib.sha256(raw).hexdigest(),
+        "report_sha256": common.sha256_bytes(raw),
         "started_at": utc_now(),
         "finished_at": None,
         "timeout_seconds": timeout,
@@ -306,9 +307,7 @@ def archive(report_path, out_dir, timeout, max_bytes):
         outcome = f"失败（{entry['error']}）" if entry["error"] else f"{entry['status']}"
         print(f"[{number}/{len(urls)}] {outcome} {url}", flush=True)
     manifest["finished_at"] = utc_now()
-    with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as f:
-        json.dump(manifest, f, ensure_ascii=False, indent=2)
-        f.write("\n")
+    common.write_json_atomic(os.path.join(out_dir, "manifest.json"), manifest, indent=2)
     return manifest
 
 

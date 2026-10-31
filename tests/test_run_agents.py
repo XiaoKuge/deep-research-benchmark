@@ -115,7 +115,7 @@ class Workspace:
             entry["校验值"] = checksum
         self.questions.append(entry)
 
-    def run(self, *options, minutes=1):
+    def run(self, *options, minutes=1, env=None):
         plan = {
             "时长上限分钟": minutes,
             "输出目录": "运行结果",
@@ -126,7 +126,7 @@ class Workspace:
         plan_path.write_text(json.dumps(plan, ensure_ascii=False, indent=2), encoding="utf-8")
         return subprocess.run(
             [sys.executable, "-I", str(RUNNER), str(plan_path), *options],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True, text=True, timeout=60, env=env,
         )
 
     @property
@@ -247,12 +247,32 @@ class NetworkAgentTest(RunnerTestCase):
         self.assertEqual(report.read_text(encoding="utf-8"), "收到答复：" + reply)
         self.assertEqual(self.space.records()[0]["智能体是否提问，问了什么"], "是：要不要先确认研究计划？")
 
-    def test_agent_that_only_ever_asks_is_stopped_after_twenty_questions(self):
+    def test_every_question_is_answered_however_many_there_are(self):
+        # 规则手册第五节：运行只在时长上限时结束，不设反问次数的上限
+        def respond(request, release):
+            if len(request["往来"]) < 25:
+                return 200, JSON_TYPE, {"反问": "第 %d 个问题" % (len(request["往来"]) + 1)}
+            return 200, JSON_TYPE, {"报告": "# 主要结论\n问完了"}
+
+        agent = self.network(respond)
+        self.space.network_agent("问得多队", agent.address)
+        self.space.question("淡水湖", "提问版")
+        self.run_ok()
+        self.assertEqual(len(agent.requests), 26)
+        self.assertTrue(all(item["答复"] == appendix_two_reply() for item in agent.requests[-1]["往来"]))
+        row = self.space.records()[0]
+        self.assertEqual(row["文件名"], "问得多队/淡水湖/提问版/报告.md")
+        self.assertEqual(row["智能体是否提问，问了什么"].count("个问题"), 25)
+
+    def test_an_agent_that_only_ever_asks_runs_until_the_time_limit(self):
         agent = self.network(lambda request, release: (200, JSON_TYPE, {"反问": "还有问题"}))
         self.space.network_agent("问不完队", agent.address)
         self.space.question("淡水湖", "提问版")
-        self.run_ok()
-        self.assertEqual(len(agent.requests), 20)
+        self.run_ok(minutes=SHORT_LIMIT_MINUTES)
+        self.assertGreater(len(agent.requests), 20)
+        log = json.loads((self.space.run_folder("问不完队", "淡水湖", "提问版") / "运行日志.json")
+                         .read_text(encoding="utf-8"))
+        self.assertTrue(log["是否超时"])
         self.assertEqual(self.space.records()[0]["文件名"], "未交付")
 
     def test_agent_that_does_not_answer_by_the_limit_is_recorded_as_not_delivered(self):
@@ -551,8 +571,29 @@ class RunLogTest(RunnerTestCase):
         self.assertLessEqual(start, end)
 
 
-class AskLimitTest(RunnerTestCase):
-    def test_command_line_agent_that_keeps_asking_is_stopped_after_twenty_questions(self):
+class NoAskLimitTest(RunnerTestCase):
+    """规则手册第五节：运行只在时长上限时结束。反问多少次都答，每次都回附录二的原文。"""
+
+    def test_command_line_agent_that_asks_many_times_gets_every_reply_and_delivers(self):
+        self.space.command_agent("问得多队", """
+            import os, sys
+            sys.stdin.read()
+            for n in range(1, 26):
+                print("[[反问]] 第 %d 个问题" % n, flush=True)
+                reply = open(os.environ["REPLY_PIPE"], encoding="utf-8").read().strip()
+            print("# 主要结论")
+            print("最后一次答复：" + reply)
+        """)
+        self.space.question("淡水湖", "提问版")
+        self.run_ok()
+        folder = self.space.run_folder("问得多队", "淡水湖", "提问版")
+        self.assertEqual((folder / "报告.md").read_text(encoding="utf-8"),
+                         "# 主要结论\n最后一次答复：" + appendix_two_reply() + "\n")
+        log = json.loads((folder / "运行日志.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(log["反问"]), 25)
+        self.assertFalse(log["是否超时"])
+
+    def test_command_line_agent_that_keeps_asking_is_stopped_only_by_the_time_limit(self):
         self.space.command_agent("问不完队", """
             import os, sys
             sys.stdin.read()
@@ -563,10 +604,70 @@ class AskLimitTest(RunnerTestCase):
         """)
         self.space.question("淡水湖", "提问版")
         began = time.monotonic()
-        self.run_ok()
+        self.run_ok(minutes=SHORT_LIMIT_MINUTES)
         self.assertLess(time.monotonic() - began, 30)
-        cell = self.space.records()[0]["智能体是否提问，问了什么"]
-        self.assertEqual(cell, "是：" + "；".join(["还有问题"] * 20))
+        folder = self.space.run_folder("问不完队", "淡水湖", "提问版")
+        log = json.loads((folder / "运行日志.json").read_text(encoding="utf-8"))
+        self.assertTrue(log["是否超时"])
+        self.assertGreater(len(log["反问"]), 20)
+        self.assertEqual((folder / "报告.md").read_text(encoding="utf-8"), "# 主要结论\n")
+
+
+ENVIRONMENT_AGENT = """
+import json, os, sys
+sys.stdin.read()
+print(json.dumps({"names": sorted(os.environ), "search": os.environ.get("SEARCH_KEY_FOR_TEST")}))
+"""
+
+BASE_NAMES = {"PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "USER", "SHELL", "TERM"}
+
+
+class EnvironmentTest(RunnerTestCase):
+    """交给队伍智能体的环境变量：固定的最小集合，加上申报里点名要的；不整份复制主办方的环境。"""
+
+    def run_agent(self, declared):
+        path = self.space.command_agent("环境队", ENVIRONMENT_AGENT)
+        declaration = json.loads(path.read_text(encoding="utf-8"))
+        declaration["需要的环境变量"] = declared
+        path.write_text(json.dumps(declaration, ensure_ascii=False), encoding="utf-8")
+        self.space.question("淡水湖", "提问版")
+        env = {name: value for name, value in __import__("os").environ.items() if name in BASE_NAMES}
+        env.update({"ORGANIZER_ONLY_FOR_TEST": "不该交出去", "SEARCH_KEY_FOR_TEST": "测试用的值"})
+        result = self.space.run(env=env)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        folder = self.space.run_folder("环境队", "淡水湖", "提问版")
+        seen = json.loads((folder / "报告.md").read_text(encoding="utf-8"))
+        return seen, (folder / "运行日志.json").read_text(encoding="utf-8")
+
+    def test_only_the_fixed_names_and_the_declared_ones_reach_the_agent(self):
+        seen, log_text = self.run_agent(["SEARCH_KEY_FOR_TEST", "NOT_SET_FOR_TEST"])
+        names = set(seen["names"])
+        self.assertNotIn("ORGANIZER_ONLY_FOR_TEST", names)
+        self.assertIn("SEARCH_KEY_FOR_TEST", names)
+        self.assertIn("REPLY_PIPE", names)
+        self.assertLessEqual(names - {"__CF_USER_TEXT_ENCODING"},
+                             BASE_NAMES | {"REPLY_PIPE", "SEARCH_KEY_FOR_TEST"})
+        self.assertEqual(seen["search"], "测试用的值")
+        log = json.loads(log_text)
+        self.assertIn("SEARCH_KEY_FOR_TEST", log["交给智能体的环境变量"])
+        self.assertNotIn("ORGANIZER_ONLY_FOR_TEST", log["交给智能体的环境变量"])
+        self.assertEqual(log["申报要的、主办方环境里没有的环境变量"], ["NOT_SET_FOR_TEST"])
+        self.assertNotIn("测试用的值", log_text)  # 只记名字，不记值
+
+    def test_without_the_item_only_the_fixed_names_are_given(self):
+        seen, _ = self.run_agent([])
+        self.assertNotIn("SEARCH_KEY_FOR_TEST", seen["names"])
+        self.assertNotIn("ORGANIZER_ONLY_FOR_TEST", seen["names"])
+
+    def test_the_item_takes_names_only(self):
+        path = self.space.command_agent("写了值队", ECHO_AGENT)
+        declaration = json.loads(path.read_text(encoding="utf-8"))
+        declaration["需要的环境变量"] = ["SEARCH_KEY=abc"]
+        path.write_text(json.dumps(declaration, ensure_ascii=False), encoding="utf-8")
+        self.space.question("淡水湖", "提问版")
+        result = self.space.run()
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("需要的环境变量", result.stderr)
 
 
 class TimeLimitTest(RunnerTestCase):
@@ -635,6 +736,14 @@ class GuideTest(unittest.TestCase):
             self.assertIn(phrase, self.text)
         for column in appendix_four_columns():
             self.assertIn(column, self.text)
+
+    def test_guide_follows_section_five_on_asking_and_states_the_environment(self):
+        for phrase in ["运行只在时长上限时结束", "没有“批准计划”这种消息", "需要的环境变量",
+                       " ".join(["PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "USER", "SHELL", "TERM"])]:
+            self.assertIn(phrase, self.text)
+        self.assertNotIn("20 次", self.text)
+        self.assertNotIn("全部环境变量", self.text)
+        self.assertIn("需要的环境变量", json.loads(guide_block("申报文件", "json")))
 
     def test_examples_in_the_guide_run_through_the_program(self):
         with tempfile.TemporaryDirectory() as tmp:

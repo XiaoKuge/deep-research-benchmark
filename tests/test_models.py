@@ -656,6 +656,114 @@ class GoogleWebTierTest(FakeProgramCase):
         self.assertEqual(read_log(self.log), [record])
 
 
+class CapabilityTest(FakeProgramCase):
+    """按档判断哪家能用：目前只有 google 不能用于只读网页一档。call() 的拒绝用的是同一处判断。"""
+
+    def test_only_google_in_the_web_tier_is_unusable(self):
+        for vendor in models.VENDORS:
+            self.assertTrue(models.usable(vendor, models.MATERIALS_ONLY), vendor)
+            self.assertIsNone(models.unusable_reason(vendor, models.MATERIALS_ONLY), vendor)
+        for vendor in ("claude", "codex", "kimi"):
+            self.assertTrue(models.usable(vendor, models.WEB_READ_ONLY), vendor)
+        self.assertFalse(models.usable("google", models.WEB_READ_ONLY))
+        self.assertIn("不能用于只读网页一档", models.unusable_reason("google", models.WEB_READ_ONLY))
+
+    def test_the_refusal_in_call_uses_the_same_reason(self):
+        programs = {"google": make_fake(self.fakes, "google")}
+        run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs=programs)
+        with self.assertRaises(models.ModelCallError) as caught:
+            run.call(task="核验", vendor="google", prompt="好", tools=models.WEB_READ_ONLY)
+        self.assertTrue(caught.exception.record["error"].startswith(
+            models.unusable_reason("google", models.WEB_READ_ONLY)))
+
+
+CHILD_TEMPLATE = r'''#!{python}
+import os, subprocess, sys
+here = os.path.dirname(os.path.abspath(__file__))
+sys.stdin.read()
+child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"],
+                         stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL)
+with open(os.path.join(here, "child.pid"), "w") as f:
+    f.write(str(child.pid))
+print({line!r})
+'''
+
+
+def gone_within(pid, seconds):
+    """pid 这个进程在 seconds 秒内是否已经不在了（被停掉、并由系统收走）。"""
+    import time
+    end = time.monotonic() + seconds
+    while time.monotonic() < end:
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            return True
+        time.sleep(0.05)
+    return False
+
+
+class ChildProcessTest(FakeProgramCase):
+    """命令行正常退出以后，它启动的子进程也一并停掉，不留在后台。"""
+
+    def check(self, vendor, line):
+        path = os.path.join(self.fakes, vendor)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(CHILD_TEMPLATE.format(python=sys.executable, line=line))
+        os.chmod(path, 0o755)
+        run = models.ModelRun(self.log, mode=models.LIVE, max_calls=1, programs={vendor: path})
+        try:
+            run.call(task="试探", vendor=vendor, prompt="好", tools=models.MATERIALS_ONLY)
+        except models.ModelCallError:
+            pass
+        with open(os.path.join(self.fakes, "child.pid"), encoding="utf-8") as f:
+            pid = int(f.read())
+        try:
+            self.assertTrue(gone_within(pid, 5), "命令行退出以后，它启动的子进程还在")
+        finally:
+            try:
+                os.kill(pid, 9)
+            except ProcessLookupError:
+                pass
+
+    def test_a_child_left_by_a_program_that_exits_normally_is_stopped(self):
+        self.check("claude", json.dumps({"type": "result", "is_error": False, "result": "好"}))
+
+    def test_a_child_left_by_agy_is_stopped_too(self):
+        self.check("google", json.dumps({"event": "result", "result": {"status": "SUCCESS",
+                                                                       "response": "好"}}))
+
+
+class RecordedFailuresTest(FakeProgramCase):
+    """回放时，录好的调用记录里状态为失败或超时的调用由 run.replay_failures 给出，供调用方重现"这一家不可用"。"""
+
+    def test_failed_and_timed_out_records_are_kept_in_order(self):
+        source = os.path.join(self.tmp, "录好的.jsonl")
+        with open(source, "w", encoding="utf-8") as f:
+            for entry in ({"task": "甲", "vendor": "kimi", "status": "失败", "error": "401"},
+                          {"task": "甲", "vendor": "kimi", "status": "超时", "error": None},
+                          {"task": "乙", "vendor": "google", "status": "失败", "error": "没有登录"},
+                          {"task": "甲", "vendor": "claude", "answer": "好"}):
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            f.write("\n")
+        run = models.ModelRun(self.log, mode=models.REPLAY, replay_from=source)
+        failures = run.replay_failures
+        self.assertEqual(failures.take("甲", "kimi")["error"], "401")
+        self.assertEqual(failures.take("甲", "kimi")["status"], "超时")
+        self.assertIsNone(failures.take("甲", "kimi"))
+        self.assertIsNone(failures.take("甲", "claude"))
+        self.assertEqual(failures.first_for("google")["error"], "没有登录")
+        self.assertEqual(failures.first_for("google")["error"], "没有登录")  # 不取走
+        self.assertIsNone(failures.first_for("codex"))
+        self.assertEqual(run.call(task="甲", vendor="claude", prompt="好",
+                                  tools=models.MATERIALS_ONLY)[0], "好")
+
+    def test_other_modes_have_no_recorded_failures(self):
+        run = models.ModelRun(self.log, mode=models.ESTIMATE)
+        self.assertIsNone(run.replay_failures.take("甲", "kimi"))
+        self.assertIsNone(run.replay_failures.first_for("kimi"))
+
+
 class NoSecretsTest(unittest.TestCase):
     """模块只用本机已登录的账号：不碰环境变量、不读任何凭据文件或钥匙串。"""
 

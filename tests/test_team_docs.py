@@ -237,7 +237,7 @@ class TeamDocsTest(unittest.TestCase):
             '{"反问": "问题"}',
             '{"题目": "题目原文", "往来": [{"反问": "你的问题", "答复": "' + appendix_two_reply() + '"}]}',
             "%PDF", "<!doctype html", "<html", "报告.pdf", "报告.html", "报告.md",
-            "20 次", "未交付", "SHA-256",
+            "未交付", "SHA-256",
         ]
         for phrase in phrases:
             with self.subTest(phrase):

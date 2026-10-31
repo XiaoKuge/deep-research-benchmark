@@ -9,7 +9,6 @@
 模型调用一律经过 models.py，评委提示词的模板在 review_prompts/。
 """
 import argparse
-import hashlib
 import json
 import os
 import random
@@ -32,7 +31,9 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
 import archive_sources  # noqa: E402
+import common  # noqa: E402
 import models  # noqa: E402
+import substitutes  # noqa: E402
 
 PROMPTS = os.path.join(HERE, "review_prompts")
 RUBRIC = os.path.join(ROOT, "research-plan", "stage4-rubric.md")
@@ -40,6 +41,7 @@ SCORER = os.path.join(ROOT, "research-plan", "stage5-pilot", "score.py")
 REVIEWS = os.path.join(ROOT, "simulation", "reviews")
 SCORER_VERSION = "1.2"
 RESULTS_NAME = "results-v%s.json" % SCORER_VERSION
+SCORER_TIMEOUT = 600  # 计分程序的时长上限，秒；试评的六份报告几秒就算完
 
 LEVELS = ["现象", "全体", "内部联系", "本质"]          # 由浅到深
 IMPORTANCE = ["一般", "核心"]
@@ -60,21 +62,24 @@ STEPS = [("claims_list", "结论清单"), ("verify", "断言核验"), ("extract"
          ("rating", "环节评级"), ("pairwise", "两两比较"), ("direct", "直接回答")]
 STEP_NAMES = dict(STEPS)
 SINGLE_JUDGE_STEPS = ("claims_list", "merge")  # 细则：清单由一人抽出；要点池由一位评委合并
+MIN_VENDORS = 3
+THREE_VENDORS_RULE = '规则手册第七节"评委组"第 1 条：至少三家厂商的模型担任评委'
 
+# 默认用 Claude（Anthropic）、Codex（OpenAI）、Gemini（Google）三家，Kimi（月之暗面）作备用，与资料站写明的一致。
 DEFAULT_CONFIG = {
     "steps": {
         "claims_list": {"vendors": ["claude"], "times": 1},
-        "verify": {"vendors": ["claude", "codex", "kimi"], "times": 2},
-        "extract": {"vendors": ["claude", "codex", "kimi"], "times": 1},
+        "verify": {"vendors": ["claude", "codex", "google"], "times": 2},
+        "extract": {"vendors": ["claude", "codex", "google"], "times": 1},
         "merge": {"vendors": ["claude"], "times": 1},
         "reach": {"vendors": ["claude"], "times": 1},
-        "judge": {"vendors": ["claude", "codex", "kimi"], "times": 2},
-        "rating": {"vendors": ["claude", "codex", "kimi"], "times": 2},
+        "judge": {"vendors": ["claude", "codex", "google"], "times": 2},
+        "rating": {"vendors": ["claude", "codex", "google"], "times": 2},
         "pairwise": {"vendors": ["claude", "codex"], "times": 1},
         "direct": {"vendors": ["claude"], "times": 1},
     },
     "models": {vendor: None for vendor in models.VENDORS},
-    "substitutes": list(models.VENDORS),
+    "substitutes": ["claude", "codex", "google", "kimi"],
     "source_chars": 12000,
     "workers": 4,
     "seed": 0,
@@ -102,14 +107,11 @@ def read_json(path):
 
 
 def write_json(path, data):
-    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-        f.write("\n")
+    """本程序写的 JSON 文件一律缩进 1、末尾换行，先写临时文件再整份替换。"""
+    common.write_json_atomic(path, data, indent=1)
 
 
-def sha256_text(text):
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+sha256_text = common.sha256_text
 
 
 def shown(path):
@@ -120,7 +122,7 @@ def shown(path):
 
 
 def now():
-    return datetime.now().astimezone().isoformat(timespec="seconds")
+    return common.now_iso("seconds")
 
 
 def load_config(path):
@@ -430,36 +432,27 @@ def candidates(value):
 
 # ---- 调用模型：不可用时如实记录，并按替代顺序换一家 -------------------------
 
-def replay_failures(paths):
-    """回放材料里状态为失败或超时的记录：{厂商: 失败原因}。回放时据此重现"这家不可用"。"""
-    found = {}
-    for path in paths or []:
-        with open(path, encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                entry = json.loads(line)
-                if entry.get("status") in (models.FAILED, models.TIMED_OUT) and entry.get("vendor"):
-                    found.setdefault(entry["vendor"], entry.get("error") or entry["status"])
-    return found
-
-
 class _NowUnavailable(Exception):
-    """等着发第一个调用时，这一家已经被别的调用判为不可用。"""
+    """这一家刚被判为不可用：等着发第一个调用时已经被别的调用判为不可用（reason 为空），
+    或者回放时取不到它的回答、回放材料里又录下过它的失败（reason 写明）。"""
+
+    def __init__(self, reason=None):
+        super().__init__(reason or "")
+        self.reason = reason
 
 
 class Context:
-    def __init__(self, run, config, question, reports, archive, out, rubric, failures):
+    def __init__(self, run, config, question, reports, archive, out, rubric):
         self.run, self.config, self.question, self.reports = run, config, question, reports
         self.archive, self.out = archive, out
         self.estimate = run.mode == models.ESTIMATE
         self.workers = max(1, int(config["workers"]))
         self.seed = int(config["seed"])
-        self.failures = failures
         self.lock = threading.Lock()
         # 每一家在第一次调用成功之前，同一时间只发一个调用：这家不可用时，只白费一次失败的调用。
         self.first_call = {vendor: threading.Lock() for vendor in models.VENDORS}
         self.confirmed = set()
+        self.vendors = substitutes.Vendors()
         self.unavailable, self.substitutions, self.invalid = {}, [], []
         self.usage = {name: [] for _, name in STEPS}
         self.notes = {"evidence_not_found": [], "not_merged": [], "unknown_sources": [],
@@ -485,22 +478,20 @@ class Context:
         return item if item and item["text"] is not None else None
 
     # 调用
-    def vendor_for(self, step, planned):
-        """计划的厂商可用就用它；不可用时按替代顺序换一家，先挑这一步没配的厂商（尽量保持评委来自不同厂商）。"""
-        with self.lock:
-            if planned not in self.unavailable:
-                return planned
-            usable = [v for v in self.config["substitutes"] if v != planned and v not in self.unavailable]
-            in_step = set(self.config["steps"][step]["vendors"])
-            for vendor in [v for v in usable if v not in in_step] + [v for v in usable if v in in_step]:
-                return vendor
-        raise ReviewError("没有可用的厂商了：%s 都不可用" % "、".join(self.unavailable))
+    def pick(self, step, planned, tools, failed):
+        """先看计划的厂商；它不能用于这一档或已经不可用时，按替代顺序换一家，先挑这一步没配的厂商
+        （尽量让评委来自不同厂商）。返回 (厂商或 None, 跳过的各家和原因)。"""
+        in_step = set(self.config["steps"][step]["vendors"])
+        rest = [v for v in self.config["substitutes"] if v != planned]
+        order = [planned] + [v for v in rest if v not in in_step] + [v for v in rest if v in in_step]
+        return self.vendors.pick(order, tools, failed=failed)
 
     def mark_unavailable(self, vendor, task, error):
-        with self.lock:
-            self.unavailable.setdefault(vendor, {
-                "vendor": vendor, "company": models.COMPANIES[vendor], "first_failed_task": task,
-                "error": error, "noticed_at": now()})
+        if self.vendors.mark_unavailable(vendor, error):
+            with self.lock:
+                self.unavailable[vendor] = {
+                    "vendor": vendor, "company": models.COMPANIES[vendor], "first_failed_task": task,
+                    "error": error, "noticed_at": now()}
 
     def call_once(self, vendor, task, prompt, tools):
         """调用一次。失败时先把这一家记为不可用，再抛出异常；回放时取不到回答、又录下过这家失败的，同样处理。"""
@@ -512,14 +503,16 @@ class Context:
                 self.mark_unavailable(vendor, task, error.record.get("error"))
                 raise
             except models.ReplayMissing:
-                if vendor not in self.failures:
+                recorded = self.run.replay_failures.first_for(vendor)
+                if recorded is None:
                     raise
-                self.mark_unavailable(vendor, task, "回放材料里这家的调用失败：%s" % self.failures[vendor])
-                raise _NowUnavailable()
+                reason = "回放材料里这家的调用失败：%s" % (recorded.get("error") or recorded.get("status"))
+                self.mark_unavailable(vendor, task, reason)
+                raise _NowUnavailable(reason)
         if vendor in self.confirmed:
             return call()
         with self.first_call[vendor]:
-            if vendor in self.unavailable:
+            if self.vendors.is_unavailable(vendor):
                 raise _NowUnavailable()
             result = call()
             self.confirmed.add(vendor)
@@ -528,15 +521,21 @@ class Context:
     def ask(self, step, slot, planned, task, prompt, tools):
         """调用一次，返回 (实际用的厂商, 解析出的 JSON 对象)。只估算或回答无效时对象为 None。"""
         name = STEP_NAMES[step]
+        failed = {}  # 这一次调用里失败了的厂商 -> 原因，写进替代记录
         while True:
-            vendor = self.vendor_for(step, planned)
+            vendor, skipped = self.pick(step, planned, tools, failed)
+            if vendor is None:
+                raise ReviewError("没有可用的厂商了（任务「%s」）：%s" % (task, substitutes.reasons(skipped)))
             try:
                 answer, record = self.call_once(vendor, task, prompt, tools)
-            except _NowUnavailable:
+            except _NowUnavailable as gone:
+                if gone.reason:
+                    failed[vendor] = gone.reason
                 continue
             except models.ModelCallError as error:
                 with self.lock:
                     self.usage[name].append({"slot": slot, "vendor": vendor, "status": error.record["status"]})
+                failed[vendor] = "调用失败：%s" % (error.record.get("error") or error.record["status"])
                 continue
             break
         with self.lock:
@@ -544,8 +543,7 @@ class Context:
                                      "model": record.get("model"),
                                      "reported_model": record.get("reported_model")})
             if vendor != planned:
-                self.substitutions.append({"step": name, "slot": slot, "task": task,
-                                           "planned_vendor": planned, "vendor": vendor})
+                self.substitutions.append(substitutes.record(name, task, planned, vendor, skipped))
         if self.estimate:
             return vendor, None
         try:
@@ -769,6 +767,25 @@ def step_extract(ctx):
     return points
 
 
+def source_hints(ctx, text, entry_ids):
+    """要点文字里透露出处的地方：报告代号（"报告 A"，两个字以上的代号单独出现也算）、条目编号
+    （例如 claude-1:A-3、A-c2）、产品名（取自名称表）。题目卡或深度地图要点里本来就有的产品名不算：
+    评委本来就看得到，透露不了要点出自哪份报告。"""
+    found = []
+    given = (ctx.question["card"] + "\n" + "\n".join(m["content"] for m in ctx.question["map_points"])).lower()
+    for report in ctx.reports:
+        label, name = report["label"], report["name"]
+        code = r"报告\s*%s(?![A-Za-z0-9])" % re.escape(label)
+        if len(label) >= 2:
+            code += r"|(?<![A-Za-z0-9])%s(?![A-Za-z0-9])" % re.escape(label)
+        if re.search(code, text):
+            found.append("报告代号 %s" % label)
+        if name and name != label and name.lower() not in given and name.lower() in text.lower():
+            found.append("产品名 %s" % name)
+    found += ["条目编号 %s" % i for i in sorted(entry_ids) if i in text]
+    return found
+
+
 def step_merge(ctx, points, verified):
     """一位评委把地图要点、抽取的要点和主要结论合并成要点池；写到哪份报告由来源推出。"""
     (slot, planned), = ctx.slots("merge")
@@ -791,6 +808,18 @@ def step_merge(ctx, points, verified):
     raw = (data or {}).get("points", [])
     if not ctx.estimate and (data is None or not isinstance(raw, list)):
         raise ReviewError("要点池合并的回答无效，评审无法继续")
+    if not ctx.estimate:
+        # 合并时隐去出处：要点文字里出现报告代号、条目编号或产品名，这次合并判为回答无效
+        leaks = []
+        for item in raw:
+            content = str(item.get("content", "")) if isinstance(item, dict) else ""
+            hints = source_hints(ctx, content, owner)
+            if hints:
+                leaks.append("「%s」（%s）" % (content, "、".join(hints)))
+        if leaks:
+            ctx.problem("merge", task, vendor, "合并后的要点文字里出现了报告代号、条目编号或产品名，透露了出处：%s"
+                        % "；".join(leaks))
+            raise ReviewError("要点池合并的回答无效：要点文字里透露了出处（见 invalid_answers），评审无法继续")
     pool, used = [], set()
     for item in raw if isinstance(raw, list) else []:
         if not isinstance(item, dict) or not str(item.get("content", "")).strip():
@@ -1112,13 +1141,21 @@ def write_data(ctx, verified, pool, ratings, pairwise, direct):
     return data
 
 
-def run_scorer(scorer, mapping, data, results):
+def run_scorer(scorer, mapping, data, results, timeout=SCORER_TIMEOUT):
+    """调用计分程序；超过 timeout 秒没有结束就停掉它，记为超时（timed_out 为是，退出状态为空）。"""
     command = [sys.executable, "-I", scorer, mapping, SCORER_VERSION, "--data", data, "--output", results]
-    done = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
-    return {"program": os.path.relpath(scorer, ROOT), "version": SCORER_VERSION,
+    meta = {"program": os.path.relpath(scorer, ROOT), "version": SCORER_VERSION,
             "command": [os.path.basename(sys.executable), "-I"] + [
                 os.path.relpath(a, ROOT) if os.path.isabs(a) else a for a in command[2:]],
-            "exit_code": done.returncode, "stderr": done.stderr[-4000:]}
+            "timeout_seconds": timeout, "timed_out": False}
+    try:
+        done = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", timeout=timeout)
+    except subprocess.TimeoutExpired as expired:
+        stderr = expired.stderr or ""
+        if isinstance(stderr, bytes):
+            stderr = stderr.decode("utf-8", errors="replace")
+        return dict(meta, exit_code=None, timed_out=True, stderr=stderr[-4000:])
+    return dict(meta, exit_code=done.returncode, stderr=done.stderr[-4000:])
 
 
 # ---- 一次运行 ----------------------------------------------------------------
@@ -1140,14 +1177,29 @@ def summarize_steps(ctx):
     return steps
 
 
+def too_few_vendors(ctx):
+    """计划用三家以上的步骤，替代之后实际用到的厂商不足三家的：记下来，不中止运行。
+    只算拿到回答的调用（只估算时是未调用的记录）；一次也没有调用的步骤不算。"""
+    found = []
+    for key, name in STEPS:
+        planned = list(dict.fromkeys(ctx.config["steps"][key]["vendors"]))
+        if len(planned) < MIN_VENDORS:
+            continue
+        used = sorted({u["vendor"] for u in ctx.usage[name]
+                       if u["status"] in (models.SUCCEEDED, models.NOT_CALLED)}, key=models.VENDORS.index)
+        if used and len(used) < MIN_VENDORS:
+            found.append({"step": name, "planned_vendors": planned, "used_vendors": used,
+                          "rule": THREE_VENDORS_RULE})
+    return found
+
+
 def execute(args, config, question, reports, archive, manifests, mode, out, rubric):
     """跑一遍全部步骤；返回运行元数据（同时写进 out/run.json）。"""
     os.makedirs(out, exist_ok=True)
     run = models.ModelRun(os.path.join(out, "calls.jsonl"), mode=mode, max_calls=args.max_calls,
                           replay_from=args.replay if mode == models.REPLAY else None,
                           run_id=args.run_id)
-    failures = replay_failures(args.replay) if mode == models.REPLAY else {}
-    ctx = Context(run, config, question, reports, archive, out, rubric, failures)
+    ctx = Context(run, config, question, reports, archive, out, rubric)
     meta = {
         "run_id": run.run_id, "mode": mode, "started_at": now(), "finished_at": None,
         "status": None, "error": None,
@@ -1166,8 +1218,7 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
     }
     os.makedirs(os.path.join(out, "reports"), exist_ok=True)
     for r in reports:  # 匿名化：副本只用编号命名，原名只在 mapping.json 里
-        with open(os.path.join(out, "reports", r["label"] + r["ext"]), "w", encoding="utf-8") as f:
-            f.write(r["text"])
+        common.write_text_atomic(os.path.join(out, "reports", r["label"] + r["ext"]), r["text"])
     write_json(os.path.join(out, "mapping.json"), {
         "reports": {r["label"]: r["name"] for r in reports},
         "files": {r["label"]: shown(r["path"]) for r in reports}})
@@ -1185,7 +1236,10 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
         if mode != models.ESTIMATE:
             data = write_data(ctx, verified, pool, ratings, pairwise, direct)
             results = os.path.join(out, RESULTS_NAME)
-            meta["scorer"] = run_scorer(args.scorer, os.path.join(out, "mapping.json"), data, results)
+            meta["scorer"] = run_scorer(args.scorer, os.path.join(out, "mapping.json"), data, results,
+                                        args.scorer_timeout)
+            if meta["scorer"]["timed_out"]:
+                raise ReviewError("计分程序超过 %g 秒没有结束，已停止" % args.scorer_timeout)
             if meta["scorer"]["exit_code"] != 0:
                 raise ReviewError("计分程序出错（退出状态 %d）" % meta["scorer"]["exit_code"])
         meta["status"] = "完成"
@@ -1199,8 +1253,9 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
                          "by_step": {name: len(ctx.usage[name]) for _, name in STEPS},
                          "max_calls": summary["max_calls"], "over_limit": summary["over_limit"]}
         meta["steps"] = summarize_steps(ctx)
+        meta["too_few_vendors"] = too_few_vendors(ctx)
         meta["unavailable"] = list(ctx.unavailable.values())
-        meta["substitutions"] = sorted(ctx.substitutions, key=lambda s: (s["step"], s["task"]))
+        meta["substitutions"] = sorted(ctx.substitutions, key=lambda s: (s["步骤"], s["任务"]))
         meta["invalid_answers"] = ctx.invalid
         meta["disputed_points"] = [p["pid"] for p in pool if p.get("disputed")]
         meta["audit_points"] = [p["pid"] for p in pool if p.get("audit")]
@@ -1234,6 +1289,7 @@ def parse_args(argv):
     ap.add_argument("--seed", type=int, help="随机种子（报告编号、两两比较的先后、要点判定的排列），默认按配置（0）")
     ap.add_argument("--rubric", default=RUBRIC, help=argparse.SUPPRESS)
     ap.add_argument("--scorer", default=SCORER, help=argparse.SUPPRESS)
+    ap.add_argument("--scorer-timeout", type=float, default=SCORER_TIMEOUT, help=argparse.SUPPRESS)
     return ap.parse_args(argv)
 
 
@@ -1249,6 +1305,9 @@ def describe(meta):
         lines.append("不可用：%s（%s），原因：%s" % (item["vendor"], item["company"], item["error"]))
     if meta["substitutions"]:
         lines.append("替代：%d 次调用换了厂商，见 run.json 的 substitutions" % len(meta["substitutions"]))
+    for item in meta["too_few_vendors"]:
+        lines.append("不合规则：%s计划用 %s，实际只用了 %s，不合%s" % (
+            item["step"], "、".join(item["planned_vendors"]), "、".join(item["used_vendors"]), item["rule"]))
     if meta["error"]:
         lines.append("中止原因：%s" % meta["error"])
     return "\n".join(lines)

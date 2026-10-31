@@ -19,8 +19,11 @@
 题目卡、深度地图、话题和调用原文都不显示，也不链接到这些文件。用这种题做的模拟评审，同样只显示调用次数和厂商，
 不显示调用原文、报告和名次页。
 
-页面里的链接按页面实际写到的目录来写。每次运行先清空输出目录再写，所以删掉的题目和评审不会留下旧页面；
+页面里的链接按页面实际写到的目录来写。每次运行先在输出目录旁边、同一层的新目录里把全部页面写完，
+再换下旧目录，所以删掉的题目和评审不会留下旧页面；中途出错时旧的页面原样留着，新目录删掉。
 输出目录里如果有不是本程序写的东西（没有 questions.html），就拒绝运行。
+
+替代记录只读一种格式（tools/substitutes.py 的五个字段：步骤、任务、原来的厂商、改用的厂商、原因）。
 """
 import argparse
 import json
@@ -28,12 +31,15 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 import build_results as results  # noqa: E402
+import models  # noqa: E402
 
 DEFAULT_QUESTIONS = os.path.join(ROOT, "simulation", "questions")
 DEFAULT_REVIEWS = os.path.join(ROOT, "simulation", "reviews")
@@ -87,6 +93,8 @@ EXTRA_STYLE = """
   .card .fields { margin-top: 8px; border-top: 0; }
   .card .fields > div { padding: 4px 0; border-bottom: 0; }
   .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
 """
 
 
@@ -183,13 +191,22 @@ def day(text):
     return f"{y} 年 {mo} 月 {d} 日"
 
 
+def zone_words(zone):
+    """时区的白话写法，与 tools/archive_sources.py 一样称协调世界时：
+    -07:00 写成"协调世界时减 7 小时"，+05:30 写成"协调世界时加 5 小时 30 分"，Z 写成"协调世界时"。"""
+    m = re.fullmatch(r"([+-])(\d{2}):(\d{2})", zone)
+    if zone == "Z" or not m or m.group(2) == m.group(3) == "00":
+        return "协调世界时"
+    hours, minutes = int(m.group(2)), int(m.group(3))
+    return f"协调世界时{'加' if m.group(1) == '+' else '减'} {hours} 小时" + (f" {minutes} 分" if minutes else "")
+
+
 def when(text):
-    """2026-10-30T20:03:45.125-07:00 写成 2026 年 10 月 30 日 20:03:45.125（UTC−07:00）。"""
+    """2026-10-30T20:03:45.125-07:00 写成 2026 年 10 月 30 日 20:03:45.125（协调世界时减 7 小时）。"""
     m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?)(Z|[+-]\d{2}:\d{2})?", text or "")
     if not m:
         return text or "没有记下"
-    zone = m.group(3)
-    zone = "" if not zone else "（UTC）" if zone == "Z" else f"（UTC{zone.replace('-', '−')}）"
+    zone = f"（{zone_words(m.group(3))}）" if m.group(3) else ""
     return f"{day(m.group(1))} {m.group(2)}{zone}"
 
 
@@ -216,8 +233,8 @@ def vendor_summary(calls):
         key = (c.get("company") or c["vendor"], c["vendor"])
         row = rows.setdefault(key, {"n": 0, "ok": 0, "models": []})
         row["n"] += 1
-        row["ok"] += c.get("status") == "成功"
-        if c.get("status") == "成功":
+        row["ok"] += c.get("status") == models.SUCCEEDED
+        if c.get("status") == models.SUCCEEDED:
             m = model_text(c)
             if m not in row["models"]:
                 row["models"].append(m)
@@ -286,10 +303,12 @@ class Site:
     def add(self, page, text):
         self.pages[page] = text
 
-    def write(self):
+    def write(self, folder):
+        """把全部页面写进 folder；folder 与输出目录同一层，页面在里面的位置与在输出目录里相同。"""
         for page, text in self.pages.items():
-            os.makedirs(os.path.dirname(page), exist_ok=True)
-            with open(page, "w", encoding="utf-8") as f:
+            path = os.path.join(folder, os.path.relpath(page, self.output))
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
                 f.write(text)
 
     def header(self, page, back, back_text, eyebrow, title_html, lede_html, current=None):
@@ -339,10 +358,6 @@ def raw_block(text, pre_id, fold_at, what):
     return pre
 
 
-def tag(text, tone=""):
-    return results.tag(text, tone)
-
-
 # ---------- 调用原文页 ----------
 
 def call_page(site, page, record, n, total, owner, back, back_text, raw_file):
@@ -356,7 +371,7 @@ def call_page(site, page, record, n, total, owner, back, back_text, raw_file):
         pager.append(f'<li><a class="caption-1" href="{call_link(n + 1)}">下一次调用</a></li>')
     pager.append(f'<li><a class="caption-1" href="{back}#calls">全部调用</a></li>')
     status = record.get("status") or "没有记下"
-    tone = {"成功": "ok", "失败": "bad", "超时": "bad"}.get(status, "")
+    tone = {models.SUCCEEDED: "ok", models.FAILED: "bad", models.TIMED_OUT: "bad"}.get(status, "")
     rows = [
         ("任务名", f'<code>{esc(record.get("task", ""))}</code>'),
         ("厂商", esc(f'{record.get("company") or ""}（{record.get("vendor", "")}）')),
@@ -368,7 +383,7 @@ def call_page(site, page, record, n, total, owner, back, back_text, raw_file):
          else "没有报告"),
         ("工具限定", esc(record.get("tools") or "没有记下")),
         ("方式", esc(record.get("mode") or "没有记下")),
-        ("状态", tag(status, tone)),
+        ("状态", results.tag(status, tone)),
     ]
     if record.get("error"):
         rows.append(("失败的原因", f'<code>{esc(record["error"])}</code>'))
@@ -376,8 +391,8 @@ def call_page(site, page, record, n, total, owner, back, back_text, raw_file):
         ("开始时间", esc(when(record.get("started_at")))),
         ("结束时间", esc(when(record.get("ended_at")))),
         ("耗时", esc(seconds(record.get("duration_seconds")))),
-        ("提示词校验值", f'<code>{esc(record.get("prompt_sha256") or "")}</code>（<code>SHA-256</code>）'),
-        ("回答校验值", f'<code>{esc(record.get("answer_sha256") or "")}</code>（<code>SHA-256</code>）'),
+        ("提示词校验值", f'<code>{esc(record.get("prompt_sha256") or "")}</code>'),
+        ("回答校验值", f'<code>{esc(record.get("answer_sha256") or "")}</code>'),
     ]
     if record.get("command"):
         rows.append(("命令行参数", f'<code>{esc(" ".join(str(x) for x in record["command"]))}</code>'))
@@ -447,7 +462,7 @@ def question_page(site, q):
     if not q.public:
         rows = [("题目标识", f"<code>{esc(q.id)}</code>"), ("类别", esc(kind)), ("是否公开", "未公开"),
                 ("状态", esc(meta.get("状态") or "没有记下")), ("写成日期", esc(day(q.date()))),
-                ("调用次数", f"{len(q.calls)} 次"), ("深度地图校验值", checksum + "（<code>SHA-256</code>）"),
+                ("调用次数", f"{len(q.calls)} 次"), ("深度地图校验值", checksum),
                 ("用这道题的模拟评审", reviews)]
         sections = [section("summary", "这道题", [
             "正式题赛前只公开深度地图的校验值。比赛结束、主办方在这道题的元数据里写明 <code>\"已公开\": true</code> 之后，"
@@ -474,7 +489,7 @@ def question_page(site, q):
         rows.append(("方式", esc(meta["方式"])))
     calls_n = (meta.get("调用次数") or {}).get("按厂商")
     rows += [("调用次数", f"{len(q.calls)} 次" + (f"：{esc(counts_text(calls_n))}" if calls_n else "")),
-             ("深度地图校验值", checksum + "（<code>SHA-256</code>）"),
+             ("深度地图校验值", checksum),
              ("题目目录", f'<a href="{site.link(q.folder, page)}/元数据.json">元数据.json</a>，目录 <code>{esc(results.repo_path(q.folder))}</code>'),
              ("用这道题的模拟评审", reviews)]
     notes = meta.get("说明") or []
@@ -485,7 +500,7 @@ def question_page(site, q):
     if checks:
         standard = checks.get("写完标准") or {}
         items = [f'<li class="card"><div class="card-head"><span class="title-3">{esc(k)}</span>'
-                 f'{tag("满足", "ok") if v else tag("没有满足", "bad")}</div></li>' for k, v in standard.items()]
+                 f'{results.tag("满足", "ok") if v else results.tag("没有满足", "bad")}</div></li>' for k, v in standard.items()]
         crows = [("四层里没有要点的层", esc(join_cn(checks.get("四层里没有要点的层") or []) or "没有")),
                  ("泄露检查", esc(str(checks.get("泄露检查", "没有记下")))),
                  ("闭卷对照", esc(str(checks.get("闭卷对照", "没有记下")))),
@@ -496,7 +511,8 @@ def question_page(site, q):
     if roles:
         trows = []
         for role, info in roles.items():
-            subs = "；".join(f"{task_text(s.get('步骤', ''))}：{s.get('原来用的厂商', '')} 改用 {s.get('改用', '')}" for s in info.get("替代", []))
+            subs = "；".join(f"{task_text(s['任务'])}：{s['原来的厂商']} 改用 {s['改用的厂商']}（{s['原因']}）"
+                            for s in info.get("替代", []))
             models = info.get("命令行报告的模型") or [m for m in (info.get("指定的模型") or {}).values() if m]
             trows.append([esc(role), esc(info.get("配置的厂商") or ""), esc(join_cn(info.get("用到的厂商") or [])),
                           esc(join_cn(model_name(m) for m in models) or "命令行默认模型"), esc(join_cn(info.get("工具限定") or [])),
@@ -538,7 +554,8 @@ def bank_page(site, questions):
     for q in questions:
         link = site.link(site.path("questions", q.id, "index.html"), page)
         kind = q.meta.get("类别") or "类别不明"
-        tags = [tag(kind, "plain"), tag("公开", "ok") if q.public else tag("未公开", "warn"), tag(q.meta.get("状态") or "状态不明", "plain")]
+        tags = [results.tag(kind, "plain"), results.tag("公开", "ok") if q.public else results.tag("未公开", "warn"),
+                results.tag(q.meta.get("状态") or "状态不明", "plain")]
         rows = []
         if q.public:
             if q.meta.get("话题"):
@@ -558,7 +575,7 @@ def bank_page(site, questions):
     sections = [
         section("all", "全部题目", f"共 {len(questions)} 道，其中练习题 {practice} 道。点题目看详情。", listing),
         section("checksum", "校验值怎样用", [
-            "深度地图写成之后、任何报告出现之前，先公开它的 <code>SHA-256</code> 校验值。比赛结束公开地图全文时，任何人都能算一遍校验值，"
+            "深度地图写成之后、任何报告出现之前，先公开它的校验值。比赛结束公开地图全文时，任何人都能算一遍校验值，"
             "核对地图在看到报告之后没有改过。",
             "核对的办法：在题目目录里运行 <code>shasum -a 256 -c 深度地图校验值.txt</code>（Linux 上用 <code>sha256sum -c</code>）。"
             f'题目目录的格式见<a href="{site.link(os.path.join(ROOT, "tools", "simulate_setter.md"), page)}">模拟出题者使用说明</a>。'], ""),
@@ -582,7 +599,7 @@ def result_state(review):
         return False, "这道题是还没有公开的正式题：名次页、复核页和调用原文等题目公开后再显示。"
     if review.has_results:
         return True, ""
-    if review.run.get("mode") == "只估算":
+    if review.run.get("mode") == models.ESTIMATE:
         return False, "只估算，没有调用模型，也没有结果。"
     if review.run.get("status") != "完成":
         return False, f"评审中止，没有结果。原因：<code>{esc(review.run.get('error') or '没有记下')}</code>"
@@ -602,7 +619,7 @@ def review_rows(site, review, page):
     rows = [("题目", qtext), ("报告", f"{len(review.labels())} 份：{reports}"),
             ("时间", f"{esc(when(run.get('started_at')))} 至 {esc(when(run.get('finished_at')))}"),
             ("调用次数", f"共 {calls.get('calls', len(review.calls))} 次：{esc(counts_text(calls.get('by_vendor') or {}))}")]
-    if run.get("mode") == "只估算":
+    if run.get("mode") == models.ESTIMATE:
         rows[-1] = ("将要发起的调用次数", rows[-1][1] + "。只估算，没有真的调用")
         rows.append(("配置的厂商", esc("、".join(f"{c}（{v}）" for c, v, *_ in vendor_summary(review.calls)) or "没有")))
     else:
@@ -619,6 +636,17 @@ def review_rows(site, review, page):
     return rows
 
 
+def rule_warning(run):
+    """计划用三家以上、替代之后不足三家的步骤（run.json 的 too_few_vendors）：放在评审页最前面的醒目的一句话。"""
+    found = run.get("too_few_vendors") or []
+    if not found:
+        return ""
+    steps = "；".join(f"{item['step']}计划用 {'、'.join(item['planned_vendors'])}，实际只用了 {'、'.join(item['used_vendors'])}"
+                     for item in found)
+    return (f'<div class="alert" id="rule-warning" role="note"><p class="body-3"><strong>这次评审有 {len(found)} 步不合'
+            f'{esc(found[0]["rule"])}：{esc(steps)}。</strong>评审照样做完了，结果只能当演示看。</p></div>')
+
+
 def reviews_page(site, reviews):
     page = site.path("reviews.html")
     head = site.header(page, f"{site.to_site(page)}index.html", "回到资料站", "模拟评审 · 评审记录", "评审记录",
@@ -627,8 +655,8 @@ def reviews_page(site, reviews):
     cards = []
     for r in reviews:
         link = site.link(site.path("reviews", r.id, "index.html"), page)
-        tags = [tag(r.run.get("mode") or "方式不明", "plain"),
-                tag(r.run.get("status") or "状态不明", "ok" if r.run.get("status") == "完成" else "bad")]
+        tags = [results.tag(r.run.get("mode") or "方式不明", "plain"),
+                results.tag(r.run.get("status") or "状态不明", "ok" if r.run.get("status") == "完成" else "bad")]
         cards.append(f'<li class="card" id="review-{esc(r.id)}"><div class="card-head"><a class="title-3" href="{link}">{esc(shown(r.id))}</a>'
                      f'{"".join(tags)}</div>{fields(review_rows(site, r, page))}</li>')
     listing = f'<ul class="cards">{"".join(cards)}</ul>' if cards else '<p class="empty body-6">还没有模拟评审的记录。</p>'
@@ -663,7 +691,7 @@ def review_page(site, review):
         rows.append(("输出目录", f'<a href="{site.link(os.path.join(folder, "run.json"), page)}">run.json</a>、'
                                 f'<a href="{site.link(os.path.join(folder, "calls.jsonl"), page)}">calls.jsonl</a>，'
                                 f'目录 <code>{esc(results.repo_path(folder))}</code>'))
-    sections = [section("summary", "这次评审", "", fields(rows))]
+    sections = [rule_warning(run), section("summary", "这次评审", "", fields(rows))]
 
     ok, why = result_state(review)
     if ok:
@@ -701,9 +729,9 @@ def review_page(site, review):
     subs = run.get("substitutions") or []
     if subs:
         extra += (f'<div class="sub"><h3 class="heading-6">替代</h3>'
-                  + results.table(["步骤", "评委编号", "任务", "配置的厂商", "实际用的厂商"],
-                                  [[esc(s.get("step", "")), esc(str(s.get("slot", ""))), esc(task_text(s.get("task", ""))),
-                                    esc(s.get("planned_vendor", "")), esc(s.get("vendor", ""))] for s in subs]) + "</div>")
+                  + results.table(["步骤", "任务", "原来的厂商", "改用的厂商", "原因"],
+                                  [[esc(s["步骤"]), esc(task_text(s["任务"])), esc(s["原来的厂商"]), esc(s["改用的厂商"]),
+                                    esc(s["原因"])] for s in subs]) + "</div>")
     sections.append(section("vendors", "厂商和模型", "按调用记录统计：每一家调用了几次、成功几次、用的是什么模型（命令行报告的模型优先，其次是指定的模型）。",
                             results.table(["公司", "厂商", "调用次数", "成功", "模型"], vrows, numeric=(2, 3)) + extra))
 
@@ -718,7 +746,7 @@ def review_page(site, review):
     intro = [f"实际调用 {calls.get('calls', len(review.calls))} 次"
              + (f"，开始前估算 {est.get('calls')} 次" if est else "")
              + (f"，上限 {calls.get('max_calls')} 次" if calls.get("max_calls") else "") + "。"]
-    if run.get("mode") == "只估算":
+    if run.get("mode") == models.ESTIMATE:
         intro.append("这次只估算：下面是将要发起的调用次数，调用记录里每一条的状态都是未调用。")
     sections.append(section("steps", "每一步的调用", intro,
                             results.table(["步骤", "配置的评委", "调用次数", "按厂商", "模型"], srows, numeric=(2,)) if srows else ""))
@@ -782,20 +810,33 @@ def build(questions_dir, reviews_dir, output):
     for r in reviews:
         review_page(site, r)
 
-    if os.path.isdir(output):
-        if os.listdir(output) and not os.path.isfile(os.path.join(output, "questions.html")):
-            raise SystemExit(f"输出目录里有不是本程序写的东西，不覆盖：{output}")
-        shutil.rmtree(output)
-    site.write()
-    for r in reviews:
-        ok, _ = result_state(r)
-        if ok:
-            results_dir = site.path("reviews", r.id, "results")
-            q = r.question
-            results.build(results_dir, r.folder, links={
-                "review": site.path("reviews", r.id, "index.html"),
-                "calls": site.path("reviews", r.id, "calls"),
-                "question": site.path("questions", q.id, "index.html") if q is not None else None})
+    if os.path.isdir(output) and os.listdir(output) and not os.path.isfile(os.path.join(output, "questions.html")):
+        raise SystemExit(f"输出目录里有不是本程序写的东西，不覆盖：{output}")
+    # 先在旁边同一层的新目录里写完（相对链接因此与写在输出目录里完全相同），再换下旧目录。
+    parent, name = os.path.split(output)
+    os.makedirs(parent, exist_ok=True)
+    fresh = tempfile.mkdtemp(dir=parent, prefix=f".{name}-new-")
+    try:
+        site.write(fresh)
+        for r in reviews:
+            ok, _ = result_state(r)
+            if ok:
+                q = r.question
+                in_fresh = lambda *parts: os.path.join(fresh, "reviews", r.id, *parts)  # noqa: E731
+                results.build(in_fresh("results"), r.folder, links={
+                    "review": in_fresh("index.html"), "calls": in_fresh("calls"),
+                    "question": os.path.join(fresh, "questions", q.id, "index.html") if q is not None else None})
+        old = None
+        if os.path.exists(output):
+            old = tempfile.mkdtemp(dir=parent, prefix=f".{name}-old-")
+            os.rmdir(old)
+            os.rename(output, old)
+        os.rename(fresh, output)
+    except BaseException:
+        shutil.rmtree(fresh, ignore_errors=True)
+        raise
+    if old:
+        shutil.rmtree(old)
     return site
 
 

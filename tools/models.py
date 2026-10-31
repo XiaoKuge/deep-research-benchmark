@@ -2,7 +2,6 @@
 
 用法、调用记录的字段和各家命令行参数的依据见同目录 models.md。
 """
-import hashlib
 import json
 import os
 import shutil
@@ -12,6 +11,8 @@ import tempfile
 import threading
 import time
 from datetime import datetime
+
+import common
 
 VENDORS = ("claude", "codex", "kimi", "google")
 COMPANIES = {"claude": "Anthropic", "codex": "OpenAI", "kimi": "月之暗面", "google": "Google"}
@@ -35,6 +36,24 @@ NOT_CALLED = "未调用"
 
 STDERR_KEPT = 20000  # 标准错误只留最后这么多字
 
+# 某一家不能用于某一档：(厂商, 档位) -> 原因。真实调用时 call() 据此直接记为失败、不启动命令行；
+# 模拟出题和模拟评审挑厂商时先查它，直接换一家，不发注定失败的调用，也不把这一家判为整次运行都不可用。
+# google：agy 非交互运行时读网页要人批准，一律被拒；模型可能凭记忆作答而被当成成功（见 models.md）。
+UNUSABLE = {
+    ("google", WEB_READ_ONLY): ("Google（agy）不能用于只读网页一档：非交互运行时读取网页需要人批准，"
+                                "一律被拒"),
+}
+
+
+def unusable_reason(vendor, tools):
+    """这一家不能用于这一档时返回原因，能用时返回 None。"""
+    return UNUSABLE.get((vendor, tools))
+
+
+def usable(vendor, tools):
+    """这一家能不能用于这一档（MATERIALS_ONLY 或 WEB_READ_ONLY）。"""
+    return unusable_reason(vendor, tools) is None
+
 
 class ModelCallError(Exception):
     """命令行调用失败、超时或找不到命令行。调用记录已经写进记录文件，也挂在 .record 上。"""
@@ -52,28 +71,52 @@ class CallLimitExceeded(Exception):
     """真实调用的次数已经到了上限；这一次没有启动任何命令行。"""
 
 
-def _load_replay(sources):
+def read_call_log(sources):
+    """读调用记录文件（一个路径或路径列表）：按先后返回 [(文件, 记录)]，空行跳过。"""
     if isinstance(sources, (str, os.PathLike)):
         sources = [sources]
-    entries = []
+    found = []
     for source in sources or []:
         with open(source, encoding="utf-8") as f:
             for line in f:
-                if not line.strip():
-                    continue
-                entry = json.loads(line)
-                if entry.get("status", SUCCEEDED) != SUCCEEDED:
-                    continue
-                entries.append({"file": str(source), "entry": entry, "used": False})
-    return entries
+                if line.strip():
+                    found.append((str(source), json.loads(line)))
+    return found
 
 
-def _sha256(text):
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+def _load_replay(sources):
+    return [{"file": source, "entry": entry, "used": False}
+            for source, entry in read_call_log(sources)
+            if entry.get("status", SUCCEEDED) == SUCCEEDED]
 
 
-def _now():
-    return datetime.now().astimezone().isoformat(timespec="milliseconds")
+class RecordedFailures:
+    """录好的调用记录里状态为失败或超时的调用。回放时调用方据此重现"这一家不可用"。
+
+    take(任务, 厂商)：取走这个任务、这一家的下一条失败记录（模拟出题按一次调用重现）。
+    first_for(厂商)：这一家录下的第一条失败记录，不取走（模拟评审按厂商重现）。
+    找不到时都返回 None。记录原样返回，原因在 error 字段，状态在 status 字段。
+    """
+
+    def __init__(self, sources=None):
+        self._lock = threading.Lock()
+        self._slots = [{"entry": entry, "used": False} for _, entry in read_call_log(sources)
+                       if entry.get("status") in (FAILED, TIMED_OUT) and entry.get("vendor")]
+
+    def take(self, task, vendor):
+        with self._lock:
+            for slot in self._slots:
+                entry = slot["entry"]
+                if not slot["used"] and entry.get("task") == task and entry["vendor"] == vendor:
+                    slot["used"] = True
+                    return entry
+        return None
+
+    def first_for(self, vendor):
+        for slot in self._slots:
+            if slot["entry"]["vendor"] == vendor:
+                return slot["entry"]
+        return None
 
 
 def _json_lines(stdout):
@@ -157,8 +200,7 @@ KIMI_TOOLS = {
 
 
 def _write_json(path, data):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    common.write_text_atomic(path, json.dumps(data, ensure_ascii=False, indent=2))
 
 
 def _kimi_args(tools, model, scratch, work):
@@ -228,8 +270,7 @@ def _google_args(tools, model, scratch, work):
     """提示词走流式输入（见 _google_stdin）；-p 必须带值，流式输入时给空串，命令行上不放提示词。"""
     folder = os.path.join(work, ".agents", "agents", GOOGLE_AGENTS[tools])
     os.makedirs(folder)
-    with open(os.path.join(folder, "agent.md"), "w", encoding="utf-8") as f:
-        f.write(_google_agent_md(tools))
+    common.write_text_atomic(os.path.join(folder, "agent.md"), _google_agent_md(tools))
     return (["--input-format", "stream-json", "--output-format", "stream-json",
              "--agent", GOOGLE_AGENTS[tools], "--sandbox", "--disable-slash-commands"]
             + _model_args(model) + ["-p", ""])
@@ -335,11 +376,13 @@ def _collect(process, stdin, timeout, finished=None, grace=15):
     if finished is None:
         try:
             stdout, stderr = process.communicate(stdin, timeout=timeout)
-            return stdout, stderr, False, False
+            timed_out = False
         except subprocess.TimeoutExpired:
             _stop(process)
             stdout, stderr = process.communicate()
-            return stdout, stderr, True, False
+            timed_out = True
+        _stop(process)  # 正常退出以后也停掉整个进程组，免得留下它启动的子进程
+        return stdout, stderr, timed_out, False
     out, err, answered = [], [], threading.Event()
 
     def write_stdin():
@@ -372,8 +415,7 @@ def _collect(process, stdin, timeout, finished=None, grace=15):
             except subprocess.TimeoutExpired:
                 stopped = True
             break
-    if timed_out or stopped:
-        _stop(process)
+    _stop(process)  # 超时、答完不退出要停掉它；正常退出以后也停掉进程组里留下的子进程
     process.wait()
     for thread in threads:
         thread.join()
@@ -422,6 +464,8 @@ class ModelRun:
     run_id          运行编号，不给就用开始时间。
     timeout_seconds 单次调用的时长上限，到了就停止该命令行并记为超时。
     exit_grace_seconds google 写完结果事件后等它自己退出的秒数，过了就停掉它，回答照常取用。
+
+    replay_failures 回放时录好的记录里失败和超时的调用（RecordedFailures）；其他方式下是空的。
     """
 
     def __init__(self, log_path, mode=LIVE, max_calls=None, replay_from=None, programs=None,
@@ -442,6 +486,7 @@ class ModelRun:
         self._started = 0
         self._lock = threading.Lock()
         self._replay = _load_replay(replay_from) if mode == REPLAY else []
+        self.replay_failures = RecordedFailures(replay_from if mode == REPLAY else None)
         self._by_vendor = {}
         self._by_task = {}
 
@@ -477,7 +522,7 @@ class ModelRun:
             "vendor": vendor, "company": COMPANIES[vendor], "model": model,
             "reported_model": None, "reported_tools": None, "tools": tools,
             "mode": self.mode, "status": None, "error": None,
-            "prompt": prompt, "prompt_sha256": _sha256(prompt),
+            "prompt": prompt, "prompt_sha256": common.sha256_text(prompt),
             "answer": "", "answer_sha256": None,
             "started_at": None, "ended_at": None, "duration_seconds": None,
             "command": None, "config_files": {}, "exit_code": None,
@@ -487,17 +532,15 @@ class ModelRun:
         if self.mode == ESTIMATE:
             record["status"] = NOT_CALLED
             record["answer"] = placeholder
-        elif self.mode == LIVE and vendor == "google" and tools == WEB_READ_ONLY:
-            # agy 非交互运行时读网页要人批准，一律被拒；模型可能凭记忆作答而被当成成功，所以直接判为不可用
+        elif self.mode == LIVE and not usable(vendor, tools):
             record["status"] = FAILED
-            record["error"] = ("Google（agy）不能用于只读网页一档：非交互运行时读取网页需要人批准，"
-                               "一律被拒，没有启动 agy")
+            record["error"] = "%s，没有启动 %s" % (unusable_reason(vendor, tools), COMMANDS[vendor])
         elif self.mode == REPLAY:
             with self._lock:
                 self._replay_into(record)
         else:
             self._run_program(record)
-        record["answer_sha256"] = _sha256(record["answer"])
+        record["answer_sha256"] = common.sha256_text(record["answer"])
         self._write(record)
         if record["status"] in (FAILED, TIMED_OUT):
             raise ModelCallError("%s 调用%s（任务「%s」）：%s" % (
@@ -514,7 +557,7 @@ class ModelRun:
             if entry.get("prompt_sha256") not in (None, record["prompt_sha256"]):
                 continue
             slot["used"] = True
-            record["started_at"] = record["ended_at"] = _now()
+            record["started_at"] = record["ended_at"] = common.now_iso("milliseconds")
             record["duration_seconds"] = 0
             record["answer"] = entry.get("answer") or ""
             record["reported_model"] = entry.get("reported_model")
@@ -541,7 +584,7 @@ class ModelRun:
             argv = [program] + build_args(tools, model, scratch, work)
             record["command"] = argv
             record["config_files"] = _config_files(scratch)
-            record["started_at"] = _now()
+            record["started_at"] = common.now_iso("milliseconds")
             clock = time.monotonic()
             process = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE, text=True, encoding="utf-8",
@@ -551,7 +594,7 @@ class ModelRun:
                 process, stdin, self.timeout_seconds, finished, self.exit_grace_seconds)
             record["stopped_after_answer"] = stopped
             record["duration_seconds"] = round(time.monotonic() - clock, 3)
-            record["ended_at"] = _now()
+            record["ended_at"] = common.now_iso("milliseconds")
             record["exit_code"] = process.returncode
             record["raw_output"] = stdout
             record["stderr"] = stderr[-STDERR_KEPT:]

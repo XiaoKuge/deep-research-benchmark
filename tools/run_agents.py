@@ -8,10 +8,10 @@ import concurrent.futures
 import csv
 import datetime
 import errno
-import hashlib
 import json
 import os
 import queue
+import re
 import shutil
 import shlex
 import signal
@@ -24,6 +24,9 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import common  # noqa: E402
+
 # 规则手册附录二的统一答复原文，一字不改。
 UNIFIED_REPLY = "题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。"
 
@@ -31,11 +34,16 @@ UNIFIED_REPLY = "题目已包含全部信息，请按你的理解直接进行，
 ASK_MARK = "[[反问]]"
 ASK_MARK_BYTES = ASK_MARK.encode("utf-8")
 
-# 一次运行里最多记录这么多次反问；到这个数还在问，就停止这次运行（防止无休止地一问一答）。
-MAX_ASKS = 20
+# 反问不设次数上限：问多少次答多少次，运行只在时长上限时结束（规则手册第五节）。
 
 # 命令行方式里，统一答复通过这个环境变量给出的管道文件交给智能体。
 REPLY_PIPE_VARIABLE = "REPLY_PIPE"
+
+# 交给队伍智能体的环境变量：只有这个固定的最小集合，加上申报里“需要的环境变量”点名要的，
+# 不整份复制主办方的环境（主办方环境里可能有别的密钥）。只复制名字和值，从不打印值。
+BASE_ENVIRONMENT = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "USER", "SHELL", "TERM")
+ENVIRONMENT_FIELD = "需要的环境变量"
+VARIABLE_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 # 申报文件必须填写的项目，对应规则手册附录三（“主办方计算的校验值”由本程序算出写进日志）。
 DECLARATION_FIELDS = [
@@ -65,7 +73,16 @@ def now():
 
 
 def sha256(data):
-    return hashlib.sha256(data).hexdigest()
+    return common.sha256_bytes(data)
+
+
+def agent_environment(requested):
+    """交给智能体的环境：固定的最小集合，加上申报里点名要的；主办方环境里没有的就不给。
+    返回 (环境, 申报要的、主办方环境里没有的名字)。"""
+    names = list(BASE_ENVIRONMENT) + [name for name in requested if name not in BASE_ENVIRONMENT]
+    environment = {name: os.environ[name] for name in names if name in os.environ}
+    missing = [name for name in requested if name not in os.environ]
+    return environment, missing
 
 
 def feed_input(stream, data, given):
@@ -85,15 +102,12 @@ def feed_input(stream, data, given):
             pass
 
 
-def read_output(stream, report, asks, pending, too_many_asks):
+def read_output(stream, report, asks, pending):
     """逐行读标准输出：反问行交给答复线程，其余行都是报告内容。"""
     for line in iter(stream.readline, b""):
         if line.startswith(ASK_MARK_BYTES):
             question = line[len(ASK_MARK_BYTES):].decode("utf-8", errors="replace").strip()
             asks.append({"问题": question, "时间": now().isoformat(timespec="seconds")})
-            if len(asks) >= MAX_ASKS:
-                too_many_asks.set()
-                break
             pending.put(question)
         else:
             report.extend(line)
@@ -131,12 +145,14 @@ def stop_process_group(process):
         pass
 
 
-def run_command(call, folder, question_bytes, deadline, run_folder):
+def run_command(call, folder, question_bytes, deadline, run_folder, requested=()):
     """命令行方式：启动申报的命令，题目原文从标准输入交给它，标准输出就是报告。"""
     pipe_folder = tempfile.mkdtemp(prefix="unified-reply-")
     pipe_path = os.path.join(pipe_folder, "reply")
     os.mkfifo(pipe_path)
-    environment = dict(os.environ, **{REPLY_PIPE_VARIABLE: pipe_path})
+    environment, missing = agent_environment(requested)
+    environment[REPLY_PIPE_VARIABLE] = pipe_path
+    given_names = sorted(environment)
     try:
         with open(run_folder / "标准错误.txt", "wb") as error_file:
             try:
@@ -149,20 +165,19 @@ def run_command(call, folder, question_bytes, deadline, run_folder):
                 return {
                     "报告": b"", "输入": b"", "反问": [], "是否超时": False, "退出状态": None,
                     "标准错误文件": "标准错误.txt", "错误": f"无法启动申报的命令：{error}",
+                    "环境变量": given_names, "缺少的环境变量": missing,
                 }
             given, report, asks, pending = bytearray(), bytearray(), [], queue.Queue()
-            too_many_asks = threading.Event()
             threads = [
                 threading.Thread(target=feed_input, args=(process.stdin, question_bytes, given)),
-                threading.Thread(target=read_output,
-                                 args=(process.stdout, report, asks, pending, too_many_asks)),
+                threading.Thread(target=read_output, args=(process.stdout, report, asks, pending)),
                 threading.Thread(target=send_replies, args=(pipe_path, pending, process)),
             ]
             for thread in threads:
                 thread.daemon = True
                 thread.start()
             timed_out = False
-            while process.poll() is None and not too_many_asks.is_set():
+            while process.poll() is None:
                 if time.monotonic() >= deadline:
                     timed_out = True
                     break
@@ -181,12 +196,11 @@ def run_command(call, folder, question_bytes, deadline, run_folder):
         "是否超时": timed_out,
         "退出状态": process.returncode,
         "标准错误文件": "标准错误.txt",
+        "环境变量": given_names,
+        "缺少的环境变量": missing,
     }
     if timed_out:
         outcome["退出状态"] = "到时长上限，由运行程序停止"
-    elif too_many_asks.is_set():
-        outcome["退出状态"] = "反问次数到上限，由运行程序停止"
-        outcome["错误"] = f"反问到了 {MAX_ASKS} 次，运行程序停止了这次运行"
     return outcome
 
 
@@ -236,9 +250,6 @@ def run_network(call, question_bytes, deadline):
         if isinstance(answer, dict) and "反问" in answer:
             question = str(answer["反问"]).strip()
             asks.append({"问题": question, "时间": now().isoformat(timespec="seconds")})
-            if len(asks) >= MAX_ASKS:
-                outcome["错误"] = f"反问到了 {MAX_ASKS} 次，运行程序停止了这次运行"
-                break
             exchanges.append({"反问": question, "答复": UNIFIED_REPLY})
             continue
         if isinstance(answer, dict) and isinstance(answer.get("报告"), str):
@@ -313,6 +324,12 @@ def load_agent(path, problems):
             prompt_checksum = sha256(prompt_path.read_bytes())
         else:
             problems.append(f"{path}：找不到系统提示词文件 {prompt_path}")
+    requested = declaration.get(ENVIRONMENT_FIELD, [])
+    if not (isinstance(requested, list)
+            and all(isinstance(name, str) and VARIABLE_NAME.match(name) for name in requested)):
+        problems.append(f"{path}：“{ENVIRONMENT_FIELD}”只写变量名的列表，例如 [\"SEARCH_KEY\"]，"
+                        f"名字由字母、数字和下划线组成，不写值；现在是 {requested!r}")
+        requested = []
     call = declaration.get("调用方式")
     if call and not isinstance(call, dict):
         problems.append(f"{path}：调用方式应当是一个 JSON 对象")
@@ -335,6 +352,7 @@ def load_agent(path, problems):
     return {
         "队伍": declaration.get("队伍名称"),
         "调用方式": call,
+        "需要的环境变量": requested,
         "工作目录": folder / (call or {}).get("工作目录", "."),
         "申报文件": str(path),
         "申报文件校验值": sha256(path.read_bytes()),
@@ -421,7 +439,8 @@ def run_once(agent, question, limit_seconds, day_folder, run_folder, rerun_reaso
     if call["方式"] == "网络接口":
         outcome = run_network(call, question["文本"], deadline)
     else:
-        outcome = run_command(call, agent["工作目录"], question["文本"], deadline, run_folder)
+        outcome = run_command(call, agent["工作目录"], question["文本"], deadline, run_folder,
+                              agent["需要的环境变量"])
     ended = now()
 
     delivered = bool(outcome["报告"].strip())
@@ -452,6 +471,8 @@ def run_once(agent, question, limit_seconds, day_folder, run_folder, rerun_reaso
         "输入校验值是否一致": consistent,
         "反问": [dict(ask, 答复=UNIFIED_REPLY) for ask in outcome["反问"]],
         "标准错误文件": outcome.get("标准错误文件"),
+        "交给智能体的环境变量": outcome.get("环境变量"),
+        "申报要的、主办方环境里没有的环境变量": outcome.get("缺少的环境变量"),
         "错误": outcome.get("错误"),
         "是否重跑": bool(rerun_reason),
         "重跑原因": rerun_reason,
@@ -459,8 +480,8 @@ def run_once(agent, question, limit_seconds, day_folder, run_folder, rerun_reaso
         "申报文件校验值": agent["申报文件校验值"],
         "系统提示词文件校验值": agent["系统提示词文件校验值"],
     }
-    (run_folder / "运行日志.json").write_text(
-        json.dumps(log, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    common.write_text_atomic(run_folder / "运行日志.json",
+                             json.dumps(log, ensure_ascii=False, indent=2, default=str))
     append_record(day_folder / "运行记录.csv", {
         "题目": question["题目"],
         "版本": question["版本"],

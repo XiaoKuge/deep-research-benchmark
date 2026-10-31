@@ -5,8 +5,10 @@
 - 题库：练习题「萤火虫」；正式题「保密题」（没有「已公开」字段，赛前不公开）；正式题「已公开题」（元数据写明已公开）；
   模拟评审用的练习题 test-question。正式题的题目卡和深度地图里每一处文字都带着记号「机密」，
   所以生成的任何文件里出现「机密」，就是泄露了。
+  练习题「替代题」把乙配置成 google：写深度地图要读网页，google 不能用于只读网页一档，换成了 codex。
 - 评审记录：test-run（回放，三份报告，有结果文件）；estimate-run（只估算，没有结果）；
-  secret-run（对正式题「保密题」只估算，提示词里有题目卡全文和深度地图的要点）。
+  secret-run（对正式题「保密题」只估算，提示词里有题目卡全文和深度地图的要点）；
+  few-run（回放，kimi 和 google 都不可用，kimi 的评委位置换成 claude，断言核验和要点判定只剩两家）。
 期望值来自独立来源：调用记录文件、题目目录里的文件、模拟评审测试里手算的名次区间。
 """
 import contextlib
@@ -86,11 +88,11 @@ def formal_material(mark):
     return lines
 
 
-def run_setter(base, questions, qid, kind, lines, topic):
+def run_setter(base, questions, qid, kind, lines, topic, *extra):
     material = os.path.join(base, qid + "-回放材料.jsonl")
     write(material, "".join(json.dumps(line, ensure_ascii=False) + "\n" for line in lines))
     argv = ["--topic", topic, "--asker", "小区物业的绿化主管", "--kind", kind, "--id", qid, "--out", questions,
-            "--replay", material]
+            "--replay", material, *extra]
     printed = io.StringIO()
     with contextlib.redirect_stdout(printed), contextlib.redirect_stderr(printed):
         code = setter_material.simulate_setter.main(argv)
@@ -119,6 +121,10 @@ class Fixture:
         run_setter(base, self.questions, "萤火虫", "练习题", setter_material.material(), "城市里的萤火虫")
         run_setter(base, self.questions, "保密题", "正式题", formal_material(SECRET), SECRET + "话题")
         run_setter(base, self.questions, "已公开题", "正式题", formal_material(PUBLISHED), PUBLISHED + "话题")
+        substituted = setter_material.material(overrides={
+            "出题-闭卷对照-作答": ("kimi", "闭卷的回答：萤火虫少了是因为农药。")})
+        run_setter(base, self.questions, "替代题", "练习题", substituted, "城市里的萤火虫",
+                   "--map-b", "google", "--closed-book", "kimi")
         meta_path = os.path.join(self.questions, "已公开题", "元数据.json")
         write(meta_path, json.dumps(dict(read_json(meta_path), 已公开=True), ensure_ascii=False, indent=2))
         # 模拟评审的输入：题目目录 questions/test-question，三份报告、名称表、网页存档、配置
@@ -130,6 +136,8 @@ class Fixture:
         run_review(self.inputs, os.path.join(self.reviews, "estimate-run"), "--estimate", "--run-id", "estimate-run")
         secret = dict(self.inputs, question=os.path.join(self.questions, "保密题"))
         run_review(secret, os.path.join(self.reviews, "secret-run"), "--estimate", "--run-id", "secret-run")
+        few = review_material.write_replay(os.path.join(base, "few-replay.jsonl"), review_material.unavailable_replay())
+        run_review(self.inputs, os.path.join(self.reviews, "few-run"), "--replay", few, "--run-id", "few-run")
         self.result = generate(self.questions, self.reviews, self.out)
 
     def cleanup(self):
@@ -399,6 +407,106 @@ class ReviewRecordsTest(unittest.TestCase):
             self.assertIn(step, page.by_id["steps"])
         self.assertIn("第 1 名", page.by_id["results"])
         self.assertIn("results/report-Alpha.html", [unquote(x) for x in page.links])
+
+
+def zone_text(iso):
+    """时间里的时区在页面上的白话写法，与 tools/archive_sources.py 一样称协调世界时：
+    -07:00 写成「协调世界时减 7 小时」，+05:30 写成「协调世界时加 5 小时 30 分」，Z 写成「协调世界时」。"""
+    m = re.search(r"(Z|([+-])(\d{2}):(\d{2}))$", iso)
+    if m.group(1) == "Z":
+        return "（协调世界时）"
+    hours, minutes = int(m.group(3)), int(m.group(4))
+    if hours == minutes == 0:
+        return "（协调世界时）"
+    return "（协调世界时%s %d 小时%s）" % ("加" if m.group(2) == "+" else "减", hours,
+                                         " %d 分" % minutes if minutes else "")
+
+
+class PlainWordsTest(unittest.TestCase):
+    """页面上的可见文字用白话：时区写成"协调世界时减 7 小时"，校验值不写算法名"SHA-256"。"""
+
+    def test_times_name_the_time_zone_in_plain_words(self):
+        record = FX.calls("reviews", "test-run")[0]
+        text = FX.page("reviews", "test-run", "calls", "1.html").by_id["info"]
+        self.assertIn(shown_time(record["started_at"]) + zone_text(record["started_at"]), text)
+        for parts in (("reviews", "test-run", "calls", "1.html"), ("reviews", "test-run", "index.html"),
+                      ("questions", "萤火虫", "index.html")):
+            with self.subTest(page="/".join(parts)):
+                self.assertNotIn("UTC", FX.page(*parts).text)
+
+    def test_checksums_are_called_checksums_without_the_algorithm_name(self):
+        for parts in (("questions.html",), ("reviews", "test-run", "calls", "1.html"), ("questions", "萤火虫", "index.html"),
+                      ("questions", "保密题", "index.html"), ("questions", "萤火虫", "calls", "1.html")):
+            with self.subTest(page="/".join(parts)):
+                self.assertNotIn("SHA-256", FX.page(*parts).text)
+
+    def test_the_generator_compares_with_the_model_layer_constants(self):
+        source = read(GENERATOR)
+        for status in ("成功", "失败", "超时", "只估算"):  # 与 models 里的常量比较，不写字面的状态
+            self.assertNotRegex(source, r'(==|!=)\s*"%s"|"%s"\s*(:|==)' % (status, status))
+        self.assertNotIn("def tag(", source)
+
+
+class SubstitutionPagesTest(unittest.TestCase):
+    """替代记录只有一种格式（步骤、任务、原来的厂商、改用的厂商、原因），出题页和评审页都照它显示。"""
+
+    def test_the_review_page_lists_each_substitution_with_its_reason(self):
+        meta = read_json(os.path.join(FX.reviews, "few-run", "run.json"))
+        self.assertTrue(meta["substitutions"])
+        text = FX.page("reviews", "few-run", "index.html").by_id["vendors"]
+        for item in meta["substitutions"]:
+            with self.subTest(task=item["任务"]):
+                self.assertIn(squash(item["原因"]), text)
+        self.assertIn("原来的厂商", text)
+        self.assertIn("改用的厂商", text)
+
+    def test_the_question_page_shows_the_substitution_of_a_role(self):
+        meta = read_json(os.path.join(FX.questions, "替代题", "元数据.json"))
+        item = meta["角色"]["乙"]["替代"][0]
+        self.assertEqual((item["原来的厂商"], item["改用的厂商"]), ("google", "codex"))
+        text = FX.page("questions", "替代题", "index.html").by_id["roles"]
+        self.assertIn("google 改用 codex", text)
+        self.assertIn("不能用于只读网页一档", text)
+
+
+class ThreeVendorRuleTest(unittest.TestCase):
+    """规则手册第七节"评委组"第 1 条：至少三家厂商。替代之后不足三家的步骤，评审页上用醒目的一句话写明。"""
+
+    def test_the_review_page_warns_about_steps_with_fewer_than_three_vendors(self):
+        page = FX.page("reviews", "few-run", "index.html")
+        warning = page.by_id["rule-warning"]
+        for text in ("至少三家厂商的模型担任评委", "断言核验", "要点判定", "claude、codex"):
+            self.assertIn(text, warning)
+        self.assertNotIn("环节评级", warning)
+        raw = read(page.path)
+        self.assertLess(raw.index('id="rule-warning"'), raw.index('id="summary"'))
+
+    def test_a_review_that_kept_three_vendors_has_no_warning(self):
+        self.assertNotIn("rule-warning", FX.page("reviews", "test-run", "index.html").by_id)
+
+
+class OutputSwapTest(unittest.TestCase):
+    """输出目录先在旁边的新目录里写完，再换下旧目录：中途出错时旧的页面原样留着，旁边不留下写了一半的目录。"""
+
+    def test_a_failure_while_writing_keeps_the_old_pages(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as tmp:
+            reviews = os.path.join(tmp, "reviews")
+            shutil.copytree(os.path.join(FX.reviews, "test-run"), os.path.join(reviews, "test-run"))
+            out = os.path.join(tmp, "site", "simulation")
+            first = generate(FX.questions, reviews, out)
+            self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
+            before = {os.path.relpath(os.path.join(d, n), out): read(os.path.join(d, n))
+                      for d, _, names in os.walk(out) for n in names}
+            broken = os.path.join(reviews, "broken-run")
+            shutil.copytree(os.path.join(FX.reviews, "test-run"), broken)
+            os.remove(os.path.join(broken, "data", "pool.json"))  # 名次页要读它，写到一半会出错
+            second = generate(FX.questions, reviews, out)
+            self.assertNotEqual(second.returncode, 0)
+            after = {os.path.relpath(os.path.join(d, n), out): read(os.path.join(d, n))
+                     for d, _, names in os.walk(out) for n in names}
+            self.assertEqual(after, before)
+            self.assertEqual(os.listdir(os.path.join(tmp, "site")), ["simulation"])
 
 
 class SimulatedResultsTest(unittest.TestCase):
