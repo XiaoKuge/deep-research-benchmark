@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：BrowseComp-Plus（arXiv 2508.06600）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2508.06600_BrowseComp-Plus.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#browsecomp-plusarxiv-250806600">审视记录：BrowseComp-Plus（arXiv 2508.06600）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="browsecomp-plusarxiv-250806600">审视记录：BrowseComp-Plus（arXiv 2508.06600）</h1>
+<p>2026-10-29。证据等级标注：【复算】我们根据公开的数据、代码或论文表格亲自算过；【自述】只有论文自己的说法；【推断】我们根据原文推出、原文没有直接说。凡引用精读页此前对公开数据所做的核对、而本次按规则未重做的，标为【复算（精读页前次，本次未重做）】。</p>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>论文</strong>：BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent。arXiv 2508.06600 第 1 版，2025-08-08 提交；截至 2026-10-29 仍只有第 1 版【复算：arXiv 接口查询】。PDF 第 1 页页脚标"Technical Report. Work in progress."</li>
+<li><strong>作者及机构</strong>：Zijian Chen、Xueguang Ma、Shengyao Zhuang（三人并列）等共 20 人，末两位为 Wenhu Chen、Jimmy Lin；通讯作者 Xueguang Ma。机构以滑铁卢大学为主，另有澳大利亚联邦科学与工业研究组织、独立研究者、卡内基梅隆大学、昆士兰大学（第 1 页）。</li>
+<li><strong>发表情况</strong>：预印本（技术报告）。精读页抬头写"ACL 2026"，本次在 PDF 和 arXiv 元数据中没有找到录用信息，未能核实。</li>
+<li><strong>数据和代码</strong>（论文只给出项目页 https://texttron.github.io/BrowseComp-Plus/ ，第 1 页；以下其余链接来自精读页，本次逐一确认存在）：</li>
+<li>代码：https://github.com/texttron/BrowseComp-Plus ，MIT 许可；许可文件 2026-05-28 才加入，这也是最后一次提交【复算：GitHub 接口】。</li>
+<li>题目：https://huggingface.co/datasets/Tevatron/browsecomp-plus ，MIT，最后修改 2025-12-20（修改内容未查）。</li>
+<li>语料库：https://huggingface.co/datasets/Tevatron/browsecomp-plus-corpus ，MIT，最后修改 2025-08-23。</li>
+<li>排行榜结果：https://huggingface.co/datasets/Tevatron/BrowseComp-Plus-results ，没有许可标注，最后修改 2026-10-20【以上均为复算：Hugging Face 接口，只读元数据，未下载数据】。</li>
+<li>防泄漏：题目加密发布，代码仓库提供解密脚本和逐题运行记录的下载脚本，解密口令就是写在脚本里的公开 canary 字符串【复算：仓库文件名与脚本开头；口令本身不转录】。论文正文没有提到加密、canary 或记忆问题。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2508.06600_BrowseComp-Plus.html</code>，2026-10-28）加原文全文核对（含附录 A 至 H）。没有解密、没有下载数据集。唯一引用的例题是论文图 2 已印出的那一道。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li><strong>公平与透明。</strong> 现有基准依赖黑箱的实时网络搜索接口，"have notable limitations in (1) fairness ... (2) transparency"；固定、人工核验的语料库"enabling controlled experimentation"（摘要，第 1 页）。</li>
+<li><strong>区分力。</strong> "The benchmark is shown to be effective in distinguishing the performance of deep research systems"（摘要）。</li>
+<li><strong>能把检索器和大语言模型分开评。</strong> "allows researchers to evaluate the retrieval and LLM agent components independently"（第 1 节，第 2 页）；能提供"insights into the capability of underlying deep research LLMs"（摘要）。</li>
+<li><strong>语料质量。</strong> 全知测试（oracle：把全部证据文档直接交给模型）下 GPT-4.1 答对 93.49%，"it validates the quality of the BrowseComp-Plus corpus itself"（第 4.8.1 节，第 10 页）。</li>
+<li><strong>语料规模足够。</strong> "expanding the corpus size by a factor of 10 does not lead to different conclusions about the ranking or effectiveness level among the retrievers and LLM search agents, supporting our claim that the original 100K corpus offers both strong positive coverage and sufficient challenge for robust evaluation"（第 4.8.4 节，第 13 页）。</li>
+<li><strong>实质发现。</strong> 检索器越强，准确率越高、搜索次数越少（第 4.7 节）；开源模型的主要短板在"interleaved reasoning with the search tool"（第 4.8.1 节）；推理力度越高越好，且"calibration error tends to decrease with higher reasoning effort"（第 4.8.2 节，第 11 页）；读全文工具有帮助（第 4.8.3 节）。</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong>：830 道，取自 OpenAI BrowseComp 的 1,266 道，属于复用（第 3.1 节）。筛选过程（第 3.2 节，第 4 至 6 页）：</li>
+<li>让 o3 联网为每道题找证据，124 道没有给出证据（格式错误或因把握低而弃答）；</li>
+<li>其余 1,142 道中，137 道至少有一个网址抓不下来（包括 o3 编造的网址）；</li>
+<li>1,005 道交人工核验，830 道通过。附录 C（第 23 页）列出的排除类别包括原题本身有错、42 道需要谷歌地图查距离、13 道答案有歧义或不唯一。</li>
+<li>合计排除 436 道，占 34.4%【复算】。抽样方式属于按标准筛选（标准抽样），其中第一道筛子是"o3 能否找到证据"【推断】。</li>
+<li><strong>判分标准</strong>：唯一的短答案。</li>
+<li><strong>判卷方式</strong>：</li>
+<li>准确率：GPT-4.1 作为大语言模型评委，沿用 BrowseComp 原提示词（附录 F，第 24 页）。代码仓库后来改用 Qwen3-32B 作评委，仓库文档称两种评委"differ by &lt; 1% on average"【复算：仓库文档；"小于 1%"为仓库自述】。</li>
+<li>检索效果：按文本检索会议（Text REtrieval Conference）的惯例，用人工标注的相关性文件计算 Recall@k 和 nDCG@k（第 4.4 节）。</li>
+<li>过程指标：智能体整个过程中检索到的证据文档占全部证据文档的比例（文中称 Recall）、平均搜索次数、校准误差（自报信心与实际正确率之间的差距，按 Humanity's Last Exam 的算法），以及答案中引用文档的覆盖率、精确率、召回率（表 3，第 10 页）。</li>
+<li><strong>运行环境</strong>：固定语料库 100,195 份文档；每道题平均 6.1 份证据文档、76.28 份困难负例（hard negative：与题目表面相关、但不能支撑答案的文档）、2.9 份金文档（直接含有答案的证据文档）（第 3.4 节，第 6 页）。困难负例的来源：GPT-4o 把每道题拆成约 7 个子问题，每个子问题经 SerpAPI 取谷歌搜索前 100 条结果再抓取（第 3.3 节）。检索工具每次返回前 5 条，每条只截取文档开头 512 个词元（第 4.3 节，第 7 页）。时间点：抓取在 2025 年年中，语料从此冻结【推断】。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<ul>
+<li><strong>声称</strong>：准确率沿用 BrowseComp 的评委做法；检索效果按克兰菲尔德范式（固定文档集加人工相关性判断）评价（第 4.4 节）。</li>
+<li><strong>证据</strong>：评委提示词（附录 F）；标注员交叉抽查"showing over 80% of agreement on average"（第 3.2.2 节，第 6 页）【自述】。</li>
+<li><strong>我们的复核</strong>：
+  1. 论文没有报告评委与人工判定的一致率【自述：全文查找】。答案是一个短词，判定大概不难【推断】，但这是推测，不是证据。
+  2. 标注一致性只有"平均 80% 以上"一句，没有说明抽查了多少、一致是按什么单位算的、分歧怎样处理，也没有卡帕系数一类的指标【自述：全文查找】。
+  3. 证据召回率、引用精确率和召回率都以人工标注的证据文档为准。证据文档主要来自 o3 找到的那条证据链加标注员补搜；语料库中其他同样能支撑答案、但没被标注的文档，一律按"不相关"计。论文在扩大语料的实验里自己承认"these additional documents are unjudged, they are treated as non-relevant"（第 13 页），同样的问题在原语料内部也存在，只是程度较轻【推断】。这会低估引用精确率。
+  4. 检索工具的设置影响分数：只有 86.5% 的题，答案出现在至少一份金文档的前 512 个词元里（第 4.3 节）；给 GPT-4.1 加上读全文工具，准确率从 35.42% 升到 43.61%，提高 8.19 个百分点（表 5，第 11 页）【复算】。所以分数有一部分反映的是工具设置，而不只是模型本身。
+  5. 表 1 和表 4 的准确率绝大多数是"答对题数除以 830"，与单次运行、830 道题相符；有 4 个数不是（例如 9.43%、4.11%），可能这几次运行的分母不是 830（个别题运行失败被剔除？），论文没有说明【复算加推断】。</li>
+<li><strong>判断</strong>：短答案准确率的评分大概可靠，但缺证据。检索侧和引用侧的指标依赖不完整的标注，属于设计局限；标注一致性的证据很薄（缺证据）。</li>
+</ul>
+<h3 id="42">4.2 推广环节</h3>
+<ul>
+<li><strong>声称</strong>：语料规模足以支持可靠的结论；基准能有效区分系统（第 4.8.4 节、摘要）。</li>
+<li><strong>证据</strong>：表 6、表 7（第 12 页）：混入 FineWeb-edu 后，语料扩大到 9,771,311 份，"roughly 10 times larger than the original"【自述】。</li>
+<li><strong>我们的复核</strong>：
+  1. 9,771,311 除以 100,195 约等于 97.5，是约 100 倍，不是"约 10 倍"【复算】。
+  2. 端到端准确率的检验只用了 Search-R1-32B 和 Qwen3-32B 两个模型，两者在原语料上最高只有 10.36%，接近地板；GPT-5、o3 等强模型没有检验【自述】。
+  3. 即便在这两个模型上，扩大语料后 BM25 的准确率上升（3.86% 到 4.72%，3.49% 到 5.42%），向量检索下降（10.36% 到 8.33%，10.36% 到 7.11%），两者的差距从约 6.5 至 6.9 个百分点缩小到约 1.7 至 3.6 个百分点。排序没有变，但"effectiveness level"不变的说法与它自己的数字不符【复算】。
+  4. 830 道题是经 o3 筛过的子集。o3 找不到证据或给出不可抓取网址的 261 道直接排除；而 o3 和同一家的 GPT-5 恰好是榜上成绩最好的。这个子集相对 BrowseComp 全集有多大代表性，论文没有分析【推断】。另外，排除 42 道地图题意味着某一类题型整体缺席【自述加推断】。
+  5. 困难负例只有一个来源：GPT-4o 拆题加谷歌前 100 条结果（第 3.3 节）【自述】。
+  6. 每个设置只运行一次，表中没有误差范围【自述】。830 道题、准确率在 10% 至 70% 之间时，单个系统 95% 置信区间的半宽约 2.0 至 3.4 个百分点；Opus 4 与 Sonnet 4（向量检索）相差 0.61 个百分点，而不配对时两者之差的区间半宽约 4.6 个百分点【复算：二项分布估算】。</li>
+<li><strong>判断</strong>：在这间固定"图书馆"里，结果可重复。推广到网络规模和强模型，缺证据；830 道子集的代表性，缺证据。</li>
+</ul>
+<h3 id="43">4.3 外推环节</h3>
+<p>按共同规则第 4 条，先分开两种情况：论文声称了而没有做到的；论文本来就不打算做的。</p>
+<p><strong>A. 论文自己的主张</strong></p>
+<p>论文的主要主张是"公平、透明、可以分开评检索器和模型"，范围本来就比"评深度研究"窄。但标题叫"Evaluation Benchmark of Deep-Research Agent"，摘要也说能洞察"the capability of underlying deep research LLMs"。在这个层面上有两处缺证据：</p>
+<ol>
+<li><strong>没有控制记忆。</strong> 论文没有做闭卷基线（不给检索工具、只凭模型自身知识作答能答对多少）【自述：全文没有"memoriz""contamination"等讨论】。BrowseComp 2025 年 4 月公开，答案迟早进入训练数据；固定语料库控制的是"搜"这一侧，管不住模型的记忆。一个记得答案的模型可以直接用答案去搜、找几份文档引用【推断】。后来的 LiveBrowseComp 报告，前沿模型在 BrowseComp 上闭卷 pass@4 最高达 44.5%（LiveBrowseComp 第 2.1 节），在 BrowseComp-Plus 的索引上删去证据文档后成绩跌到 2.3% 至 9.4%（同文表 1）。这说明本基准的准确率里混有"本来就知道"的成分【自述（LiveBrowseComp）加推断】。</li>
+<li><strong>只能走语料库里有的那条路。</strong> 语料库里的证据主要是 o3 那条证据链上的网页。一个本来会走另一条同样正确路径的智能体，在这里可能找不到所需文档【推断】。标注员可以补搜文档，这缓解了一部分。</li>
+</ol>
+<p>全知测试（第 4.8.1 节）确实说明了"语料里的证据足以答题"，并且剩下 6.51% 的错题经人工逐题看过，"the errors stem solely from gpt-4.1's failure to reason correctly"【自述】。这一点证据扎实。</p>
+<p><strong>B. 按第一阶段的定义，它测到的是深度调研的哪一部分</strong></p>
+<p>它的交付形式是一个短答案加一段带文档编号的解释，评分只看短答案。按第一阶段第 5.2 节，短答案看不出"深"。下面说的是它的各项指标能外推到深度调研的哪些部分。</p>
+<ol>
+<li><strong>测到了：由此及彼。</strong> BrowseComp 的题是"先定一个冷门答案，再叠加条件"倒着出的；直接拿整道题去检索，最好的检索器前 5 条只含 14.5% 的证据文档，BM25 只有 1.2%（表 2，第 9 页），必须拆开、多轮地搜。这对应"由一条线索推出下一步该查什么"【自述加推断】。</li>
+<li><strong>测到了：查找的过程指标。</strong> 过程中的证据召回率（表 1）衡量的是智能体"翻到了多少关键证据"，是现有评测里少见的过程指标，对应"查找系统而全面"。但它是相对人工标注的证据而言的，标注不全时会低估【自述加推断】。</li>
+<li><strong>测到了：如实说明把握。</strong> 校准误差衡量自报信心与实际正确率是否相符，例如 GPT-4.1 加 BM25 只答对 14.58%，校准误差却高达 68.96%（表 1）。这是本组三篇中唯一评"把握"的指标，对应"好的调研"第七环"如实说明有多大把握"，只是落在单个短答案上【自述加推断】。</li>
+<li><strong>部分测到：有据。</strong> 表 3 统计答案中引用的文档有多少是标注过的证据文档。它核对"引的是不是证据文档"，不核对"所引文档是否支撑这句话"；而且不进入准确率【自述加推断】。</li>
+<li><strong>没有测到：甄别。</strong> 困难负例是"表面相关、但不含答案"的文档，考的是相关性辨别，即"去粗取精"；不是低可信度来源或互相矛盾的说法，考不到"去伪存真"。题目答案唯一、证据经人工核验，按设计不存在需要权衡的矛盾信息【推断】。</li>
+<li><strong>没有测到：本质、全体、内部联系，分析整合，切题，时效。</strong> 题目是谜题式的，背后没有提问者的真实需要；语料冻结，没有时效可言【推断】。精读页第 6.1 节指出真实用户很少这样提问，这一点同意【推断】。</li>
+</ol>
+<ul>
+<li><strong>判断</strong>：BrowseComp-Plus 是一个"受控检索环境下的多步查找加短答案推理"的组件测试，在它自己声称的范围内（公平、透明、分开评检索器）基本成立。按第一阶段的定义，它的分数可以外推到"由此及彼"、查找的全面程度和"说明把握"三个部分；但由于没有控制记忆，连这几部分的测量也混有记忆成分（设计缺陷：缺闭卷基线）。</li>
+</ul>
+<h3 id="44">4.4 决策环节</h3>
+<ul>
+<li><strong>声称</strong>：所有模型换用更强的检索器都会提高准确率；GPT-5 加 Qwen3-Embedding-8B 最高（70.12%）；gpt-oss-120B 高推理档超过 Opus 4；更强的检索器使大多数商业模型"reduces search calls by approximately 1–3"；推理力度越高，校准误差越小（第 4.6 至 4.8 节）。</li>
+<li><strong>证据</strong>：表 1 至表 7；没有误差范围，没有显著性检验【自述】。</li>
+<li><strong>我们的复核</strong>：
+  1. 检索器的效应大（例如 Sonnet 4 从 14.34% 到 36.75%，o3 从 49.28% 到 63.49%），远超约 3 个百分点的噪声，这个结论站得住【复算】。
+  2. gpt-oss-120B 高推理档 42.89% 对 Opus 4 的 36.14%，差 6.75 个百分点，超过不配对时约 4.7 个百分点的区间，大致站得住；Sonnet 4 与 Opus 4 相差 0.61 个百分点，分不出先后【复算】。
+  3. 搜索次数的减少：按表 1，7 个商业模型分别减少 0.79 至 1.96 次，其中 3 个不到 1 次，"约 1 至 3 次"的说法偏高【复算】。
+  4. 校准误差：gpt-oss-20B 随推理力度提高而下降；但 gpt-oss-120B 用 BM25 时从 43.59% 升到 45.78% 再到 46.48%，用向量检索时基本持平（40.96%、41.77%、40.34%）（表 4，第 11 页）。"tends to decrease"只对 20B 成立【复算】。
+  5. 逐题运行记录可以通过仓库脚本下载【复算：文件列表】，所以配对检验是可以做的，但论文没有做【推断】。
+  6. 排行榜：精读页记录，排行榜上的方案设置差别很大（例如每题平均 209 次搜索、最多 8 个智能体协作），与论文的标准设置（每次 5 条、每条 512 个词元）已不可比；评委也从 GPT-4.1 换成了 Qwen3-32B【前半为复算（精读页前次，本次未重做）；评委更换为复算：仓库文档】。这会削弱论文自己"公平比较"的主张。</li>
+<li><strong>判断</strong>：大效应（检索器的作用）可以作决策；模型之间的细排序需要配对检验，论文没有提供；排行榜层面的比较已偏离论文设定的公平条件。</li>
+</ul>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：语料冻结在 2025 年年中，题目来自 2025 年 4 月公开的 BrowseComp。冻结有利于复现，但不考时效【推断】。精读页记录，排行榜头部已到 95.18%，高于全知测试的 93.49%，区分力接近用完【复算（精读页前次，本次未重做）】。</li>
+<li><strong>污染</strong>：论文完全没有讨论记忆或污染【自述：全文查找】。题目加密，但解密口令就是公开的 canary 字符串，只能防爬虫【复算：仓库脚本】。BrowseComp 公开已逾一年半，LiveBrowseComp 的诊断表明闭卷就能答对相当一部分（见 4.3 A 第 1 条）【推断】。</li>
+<li><strong>可复现</strong>：三篇中最好。固定语料库、索引、相关性标注、代码、逐题运行记录、各设置的应用程序接口费用（附录表 8）都公开【复算：链接和文件列表】。但被测的商业模型会更新；评委已从 GPT-4.1 换成 Qwen3-32B，新旧成绩不完全可比【复算：仓库文档】。</li>
+<li><strong>利益关系</strong>：作者团队开发的 Pyserini 和 Tevatron 工具包被用来提供检索服务（第 4.2 节）【自述】；论文没有评测作者自己的大语言模型。排行榜由作者所在的 Tevatron 组织维护，精读页记录 87 条成绩中 52 条由作者团队自己跑【复算（精读页前次，本次未重做）】。利益关系较弱。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一、弄清真实需要，审视前提和概念边界，切题</td>
+<td>否</td>
+<td>谜题式题目，"verifiable, concise answers"（第 3.1 节）</td>
+</tr>
+<tr>
+<td>二、材料截至规定的时间点，并且足够新</td>
+<td>否</td>
+<td>语料固定；不评时效</td>
+</tr>
+<tr>
+<td>三、查找系统而全面；查找过程交代清楚</td>
+<td>部分</td>
+<td>过程中的证据召回率，"how many human-verified evidence documents the agent retrieved during its entire interaction"（第 4.4 节）；作为单独指标报告，不计入准确率；查找过程的交代不评</td>
+</tr>
+<tr>
+<td>四、甄别来源质量，处理互相矛盾的信息</td>
+<td>否</td>
+<td>困难负例只考相关性辨别；按设计没有矛盾信息（推断）</td>
+</tr>
+<tr>
+<td>五、分析与整合</td>
+<td>否</td>
+<td>只判短答案；全知测试把"找"与"想"分开，但"想"仍只看短答案对错</td>
+</tr>
+<tr>
+<td>六、每个结论都能追到依据，引用准确</td>
+<td>部分</td>
+<td>引用覆盖率、精确率、召回率（表 3）；只核对是否引了标注过的证据文档</td>
+</tr>
+<tr>
+<td>七、结论准确、具体、清楚，敢下判断，如实说明把握</td>
+<td>部分</td>
+<td>准确率；校准误差，"how closely a model's predicted confidence matches the actual accuracy"（第 4.4 节）</td>
+</tr>
+<tr>
+<td>深：本质、全体、内部联系</td>
+<td>否</td>
+<td>短答案</td>
+</tr>
+<tr>
+<td>推进工夫：去粗取精、去伪存真、由此及彼、由表及里</td>
+<td>部分</td>
+<td>"由此及彼"体现在多步拆解检索；"去粗取精"体现在困难负例；"去伪存真""由表及里"不评</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>没有混入</td>
+<td>只判"Exact Answer"（附录 E）</td>
+</tr>
+<tr>
+<td>是否把各项加成总分</td>
+<td>否</td>
+<td>准确率、证据召回率、搜索次数、校准误差分别报告（表 1）</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>无</td>
+<td>单个短答案对错本身是二值的，不存在加总掩盖问题</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>没有闭卷基线，准确率混有记忆成分</td>
+<td>全文没有记忆或污染的讨论；LiveBrowseComp 第 2 节的诊断</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>830 道题经 o3 筛选，语料主要是 o3 证据链上的网页，可能偏向 o3 一类系统、堵住其他正确路径</td>
+<td>第 3.2.1 节，第 4 至 5 页</td>
+<td>推断</td>
+<td>测对了东西；测得稳</td>
+<td>缺证据（论文未分析）</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>语料规模检验只用了两个弱模型；"约 10 倍"实为约 97.5 倍；扩大后检索器差距明显缩小，与"结论不变"的说法不完全相符</td>
+<td>表 6、表 7；第 12 至 13 页</td>
+<td>复算</td>
+<td>测得稳（推广）</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>每个设置只运行一次，没有误差范围和显著性检验</td>
+<td>表 1 至表 7</td>
+<td>自述加复算</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>P5</td>
+<td>标注一致性只有"平均 80% 以上"一句；没有评委与人工的一致率</td>
+<td>第 3.2.2 节，第 6 页</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>P6</td>
+<td>证据标注不完整时，未标注的有效文档按不相关计，低估证据召回率和引用精确率</td>
+<td>第 4.8.4 节（第 13 页）对扩大语料的说明</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计局限</td>
+</tr>
+<tr>
+<td>P7</td>
+<td>前 5 条、512 个词元的工具设置影响分数，读全文工具可提高 8.19 个百分点</td>
+<td>第 4.3 节；表 5</td>
+<td>复算</td>
+<td>测对了东西（测的是模型还是工具设置）</td>
+<td>设计取舍</td>
+</tr>
+<tr>
+<td>P8</td>
+<td>排行榜设置不统一，评委更换，削弱"公平比较"</td>
+<td>精读页；仓库文档</td>
+<td>复算（部分为精读页前次）</td>
+<td>经得起复核</td>
+<td>设计缺陷（排行榜规则）</td>
+</tr>
+<tr>
+<td>P9</td>
+<td>困难负例只考相关性辨别，不考来源可信度和矛盾处理</td>
+<td>第 3.3 节；附录 D</td>
+<td>推断</td>
+<td>测对了东西（相对第一阶段的构念）</td>
+<td>设计取舍</td>
+</tr>
+<tr>
+<td>P10</td>
+<td>两处结论与自己的表格不符：搜索次数减少实为 0.79 至 1.96 次；校准误差随推理力度下降只对 20B 成立</td>
+<td>表 1、表 4</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>报告错误</td>
+</tr>
+<tr>
+<td>P11</td>
+<td>小的文字错误：第 4.4 节说"four metrics"只列了三个；BM25 的 Recall@1000 在表 2 为 13.7、表 6 为 13.6</td>
+<td>第 7、9、12 页</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>报告错误</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>本次是否复算</th>
+<th>数据或代码是否足以复算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>筛选漏斗 1,266、1,142、1,005、830</td>
+<td>第 3.2 节</td>
+<td>已复算算术，共排除 436 道</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>扩大语料的倍数</td>
+<td>第 4.8.4 节</td>
+<td>已复算，约 97.5 倍</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>830 道题的置信区间</td>
+<td>表 1</td>
+<td>已复算，约 2.0 至 3.4 个百分点</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>搜索次数减少量、校准误差趋势、读全文工具的增益</td>
+<td>表 1、表 4、表 5</td>
+<td>已复算</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>每题证据文档 6.1 份、金文档 2.9 份及其分布</td>
+<td>第 3.4 节</td>
+<td>未重做（精读页前次用相关性标注文件复核过，吻合）</td>
+<td>足够：标注文件在代码仓库</td>
+</tr>
+<tr>
+<td>模型之间的配对检验</td>
+<td>无</td>
+<td>未做</td>
+<td>足够：仓库提供逐题运行记录（需下载解密，本轮不做）</td>
+</tr>
+<tr>
+<td>闭卷基线</td>
+<td>无</td>
+<td>不能</td>
+<td>需要实际运行模型</td>
+</tr>
+<tr>
+<td>排行榜上两种评委的差异</td>
+<td>排行榜</td>
+<td>未重做（精读页前次在 47 条上算得约 0.7 个百分点；仓库自称小于 1%）</td>
+<td>足够：结果文件公开</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>以下针对 5 个智能体、比赛评审、第一轮只对报告排名的场景。都是候选，留到第四阶段论证。</p>
+<ol>
+<li><strong>不能作为主评分。</strong> 它评的是短答案，不是报告。</li>
+<li><strong>值得借用的候选做法：</strong>
+   - <strong>统一检索环境。</strong> 如果 5 个智能体可以换检索后端，给它们同一个检索接口、同样的返回条数和读全文规则；如果是商业产品、换不了，至少把每家访问和引用过的网页存档，事后核验以存档为准。比赛规则中要写死这些设置，排行榜的教训是设置一旦不统一，比的就是配置而不是智能体（P8）。
+   - <strong>全知测试的思路。</strong> 把 5 份报告中核验为真的证据汇总起来，交给同一个模型写报告，作为"资料齐全时能写多好"的参照，用来区分"没找到"和"没写好"。
+   - <strong>证据召回。</strong> 若能拿到搜索记录，统计每个智能体翻到了汇总证据中的多少份关键证据。
+   - <strong>校准。</strong> 要求关键结论标注把握程度，事后检查"说很有把握的结论"是否真的更常对。这与第一阶段第 5.2 节"把握程度"这一必须看得见的部分直接相关。</li>
+<li><strong>需要回避的做法：</strong>
+   - 不做闭卷基线（P1）。参赛智能体的底座模型可能记得相关事实，评"查找"时需要先知道哪些是本来就知道的。
+   - 把"困难负例"当作甄别能力的测试（P9）。甄别要考的是低可信度来源和互相矛盾的说法，需要另行设计。</li>
+</ol>
+<hr />
+<h2 id="_1">精读页勘误</h2>
+<ol>
+<li>精读页第 3 节筛选表在"人工核验"一行写"175 道没通过……另有 42 道要用谷歌地图查距离；13 道答案不唯一或有歧义"。"另有"容易读成 175 道之外另排除了 55 道。按论文数字，1,005 减 830 等于 175，附录 C 的这几类是在这一阶段一并排除的，应包含在 175 道之内（推断：论文没有给出各类的分项数目之和）。建议把"另有"改为"其中包括"。</li>
+<li>精读页第 5 节"发现 2"写"大多数模型每道题少搜 1–3 次"，这是照录论文的说法。按表 1，7 个商业模型的减少量是 0.79 至 1.96 次，其中 3 个不到 1 次，应改为"少搜约 1 至 2 次"。</li>
+<li>精读页抬头写"ACL 2026"，本次在 PDF 和 arXiv 元数据中没有找到录用信息，应标为"未核实"。</li>
+<li>精读页抬头写"GitHub（MIT 许可）"。许可文件是 2026-05-28 才加入仓库的，此前仓库没有许可文件。不影响现在的结论，补注即可。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2508.06600_BrowseComp-Plus.md</code></footer>
+</div>
+</body>
+</html>

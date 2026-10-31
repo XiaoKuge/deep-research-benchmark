@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：MiroEval（arXiv 2603.28407）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2603.28407_MiroEval.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#miroevalarxiv-260328407">审视记录：MiroEval（arXiv 2603.28407）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="miroevalarxiv-260328407">审视记录：MiroEval（arXiv 2603.28407）</h1>
+<p>2026-10-29 写。审视框架见 <code>../stage2-framework.md</code>。</p>
+<p>证据等级的写法：</p>
+<ul>
+<li>"复算（本次）"：本记录写作时亲自算过或查过。包括对论文表格数字的算术核对，以及用 GitHub 接口查看仓库的元数据、提交记录和文件清单。本次没有下载逐题评分数据。</li>
+<li>"复算（精读页 2026-10-28）"：精读页那次依据仓库 <code>data/detail_results/</code> 的逐题评分数字和 <code>data/input_queries/</code> 的题库算过，本次没有重做。</li>
+<li>"自述"：只有论文自己的说法。</li>
+<li>"推断"：我们根据原文推出来的，原文没有直接说。</li>
+</ul>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>全称</strong>：MiroEval: Benchmarking Multimodal Deep Research Agents in Process and Outcome。</li>
+<li><strong>日期</strong>：arXiv 第 1 版，2026-03-30。arXiv 接口显示至今只有这一版（本次核对）。</li>
+<li><strong>作者及机构</strong>：署名"MiroMind Team"，贡献者名单列 22 人，主要来自 MiroMind AI，另有新加坡国立大学的 Bryan Hooi、颜水成，南洋理工大学的安波（同时署 MiroMind），以及 MiroMind 的邴立东（贡献者名单）。</li>
+<li><strong>发表情况</strong>：预印本，未见会议或期刊信息。</li>
+<li><strong>数据和代码</strong>：论文首页给出博客、项目页和 <code>https://github.com/MiroMindAI/MiroEval</code>，三个链接本次都能访问（返回 200）。本次核对：</li>
+<li>许可证 Apache-2.0；</li>
+<li>主分支最后一次提交 2026-03-31；另有一个 <code>feat/api-service</code> 分支在 2026-07-06 有推送，但其中最新提交的日期是 2026-03-14，看不到新题库；</li>
+<li>仓库包含三层评测和出题流程的代码（<code>point_quality</code>、<code>factual_eval</code>、<code>process_eval</code>、<code>task_generation</code>），题库（<code>data/input_queries</code>）和逐题评分数字（<code>data/detail_results/</code> 下 <code>report</code>、<code>factuality</code>、<code>process</code> 各两份）；</li>
+<li>文件清单里没有各系统的报告原文和过程记录。</li>
+<li><strong>它是什么</strong>：100 道研究题（70 道纯文本、30 道带附件）加一套三层评测：综合质量（报告本身）、事实性（拆成断言逐条核验）、过程（读研究过程记录）。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2603.28407_MiroEval.html</code>，2026-10-28）加原文核对。原文核对读的是抽取的纯文本，表 3、表 4 和附录 E.2 对照了 PDF 页面图像。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li><strong>题目来自真实需求，可以定期更新</strong>：摘要说 100 道题"all grounded in real user needs and constructed via a dual-path pipeline that supports periodic updates, enabling a live and evolving setting"。</li>
+<li><strong>三层各有信息</strong>："the three evaluation dimensions capture complementary aspects of system capability"（摘要）。</li>
+<li><strong>过程能预测结果</strong>："process quality serves as a reliable predictor of overall outcome while revealing weaknesses invisible to output-level metrics"（摘要）；Pearson 相关 0.88（第 4.4 节）。</li>
+<li><strong>自家系统最均衡、排第一</strong>："The MiroThinker series achieves the most balanced performance, with MiroThinker-H1 ranking the highest overall in both settings"（摘要）。</li>
+<li><strong>多模态更难，H1 最稳</strong>："most systems declining by 3 to 10 points"（摘要）；"MiroThinker-H1 proves the most resilient with a decline of only 3.0 points"（第 4.2 节）。</li>
+<li><strong>评测可靠</strong>："Human verification by three expert annotators confirms benchmark quality at 92.0% precision. Extensive robustness experiments and a human ranking study (Kendall's τ = 0.91) further confirm the reliability of the evaluation framework"（摘要）。</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong>（第 2 节，表 1）：</li>
+<li>路线一，65 道（35 道纯文本、30 道多模态）：素材是"a closed internal testing phase of the MiroMind deep research system"中的用户提问。先过滤隐私内容、替换实体名，再由大语言模型分类，分派到 6 种改写策略之一重写（表 9），其中两种专门设陷阱：嵌入矛盾、嵌入错误前提。原文说"no original user query appears in the benchmark in any form"。抽样方式：来自自家产品内测日志的便利样本，经大语言模型按特征配额改写。</li>
+<li>路线二，35 道纯文本：12 个主题各 3 个子主题，用 Serper 搜近期新闻，大语言模型每个主题生成 15 道，共 180 道；依次过滤为 152（搜得到资料）、96（需要深度研究）、50（不联网答不好）；最后人工挑出 35 道。最后一步没有说明挑选标准（第 2.3 节："35 queries are selected from the filtered pool"）。生成时参考的"anonymized seed exemplars drawn from a broader pool of real user queries"，没有说明这个池子是谁的。</li>
+<li>不复用已有数据集。</li>
+<li><strong>判分标准</strong>：无标准答案。</li>
+<li>综合质量：4 个固定维度（覆盖、洞见、指令遵循、清晰），每题另由大语言模型生成 1 到 3 个专门维度，并给各维度和各条标准分配权重；带附件的题先从附件中抽取"关键事实"，再生成具体检查点（第 3.1 节）。评分方案按题生成，与具体报告无关。</li>
+<li>事实性：断言逐条标为对、错、冲突、查不到四类（第 3.2 节）。表 4 说得分是"average right ratio"。</li>
+<li>过程：5 项过程本身的指标（搜索广度、分析深度、逐步修正、批判思维、效率）和 3 项过程与报告是否对得上的指标（过程到报告、报告到过程、矛盾处理）（第 3.3 节）。</li>
+<li><strong>判卷方式</strong>：全部是大语言模型评委。综合质量用 GPT-5.1，过程用 GPT-5.2，事实性用 GPT-5-mini（第 4.1 节）；事实性的核验智能体建在 MiroFlow 框架上，能上网检索，也能查询附件（第 3.2 节）。</li>
+<li><strong>运行环境</strong>：实时网络。所有报告"were collected in March 2026 within a controlled time window"，从各家官方界面用自动化工具生成并下载（附录 A）。过程记录是怎样取得的，原文没有说明。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>它声称了什么</strong>：三层评分稳定，换评委、换提示词名次不变，与人类排名一致。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li><strong>同一评委重跑</strong>（附录 D.1，表 12）：只在多模态组、只对 4 个系统再跑两次。总分标准差 0.3 到 0.6，名次三次相同；事实性单项最多波动约 3 分（Gemini：73.7、70.0、72.7）。证据等级：自述。</li>
+<li><strong>换评委</strong>（附录 D.2，表 13）：在纯文本组对 6 个系统改用 Gemini 系列重评。总分整体上涨 13.2 到 16.9 分，过程分上涨 16.6 到 21.3 分；6 个系统的名次不变，τ = 1.0。证据等级：自述。</li>
+<li><strong>换提示词</strong>（表 13 下半部分）：多模态组 4 个系统，总分变化 −0.5 到 −1.6，名次不变。证据等级：自述。</li>
+<li><strong>人类排名研究</strong>（第 4.5 节，附录 D.3，表 14）：随机抽 5 道题，请 5 人给 10 个支持多模态的系统排序，评分人同时拿到报告和过程记录。论文报告 τ = 0.91、ρ = 0.95。
+   - 按表 14 重算：有 3 对顺序颠倒（Claude 与 Gemini、Qwen 与 ChatGLM、Qwen 与 Manus），τ = (42 − 3) ÷ 45 = 0.867；ρ = 0.952 与论文一致。复算（本次）；与精读页 2026-10-28 的结果一致。
+   - 表 14 中"MiroEval 名次"一列，与表 3 最右"Overall"列（纯文本 70% 加多模态 30%，共 100 题）的名次完全相同，与多模态组单独的名次不同（例如多模态组 MiroThinker-1.7 排第 2、OpenAI 排第 3，表 14 是 OpenAI 第 2）。也就是说，人在 5 道题上的排序，对照的是 MiroEval 在 100 道题上的总排名。复算（本次）。
+   - 附录 D.3 称评分人是"5 volunteers"，第 4.5 节称"5 expert annotators"，身份和单位都没有交代，也没有说是否匿名。证据等级：自述。</li>
+<li><strong>事实性判定与人工对照</strong>：只有附录 E.2 的 5 个案例，其中 2 个判错，论文说"such cases only occur occasionally"，没有给出错误率。第一个"判对"的案例（2014 年油价），核验智能体判"Wrong"，人工标注栏写"Right"，结论栏却说"The model judgment is correct"，三处自相矛盾（附录 E.2，PDF 第 36 页，本次对照页面图像确认）。证据等级：自述加核对。</li>
+<li><strong>公开数字能否对上</strong>：精读页用仓库逐题评分重算了表 3 的 13 个系统、两组的三层分和总分，全部一致到小数点后一位（复算（精读页 2026-10-28））。本次核对：表 3 各行总分等于三层平均（舍入差不超过 0.07）；表 5 各行过程总分等于"过程本身"和"对得上"两部分的平均，与仓库 2026-03-30 的提交"Use mean of intrinsic and alignment as process overall score"相符，而论文公式（4）没有给出权重 α。复算（本次）。</li>
+<li><strong>各系统实际有分的题数不同</strong>：精读页查得，Claude 多模态综合质量只有 25 道有分，Grok 多模态过程分只有 21 道，MiroThinker-1.7-mini 纯文本只有 67 道；没交出结果的题既不计 0 分，也不另行报告（复算（精读页 2026-10-28））。论文正文没有提到。</li>
+</ol>
+<p><strong>我们的判断</strong>：不够，主要是缺证据，也有设计缺陷。</p>
+<ul>
+<li>缺证据：稳健性检查证明的是"名次在几种评委设置下不变"，不是"分数判得对"。换成 Gemini，绝对分涨 13 到 17 分而名次不变，说明各系统之间差距大到足以压过评委差异，但也说明绝对分没有意义。三层评分都没有逐项与人工判断对照；唯一的人类研究只有 5 题、5 人，对照口径还不一致，相关系数也报高了。</li>
+<li>设计缺陷：过程层依赖各家交出的过程记录，而这些记录的完整程度没有交代，也无法检验（见 4.3）。</li>
+</ul>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>它声称了什么</strong>：题目"grounded in real user needs"，两条路线可以定期重跑，保持常新（第 2 节）。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li>题目构建流程（第 2.2、2.3 节，表 1）。</li>
+<li>人工核验（第 2.4 节，表 2）：3 名"with graduate-level research experience"的标注员判断题目是否合格、是否需要上网。弗莱斯卡帕系数（Fleiss' κ）0.74 到 0.83，多数票合格率内测改写题 94.0%、自动生成题 90.0%，合计 92.0%。</li>
+<li>两类题的对比（第 4.5 节，表 6）："the relative ranking of systems remains largely stable across the two subsets"。</li>
+</ol>
+<p><strong>证据等级</strong>：自述；以下核对为复算。</p>
+<p><strong>我们的判断</strong>：不够，既有设计缺陷，也有缺证据。</p>
+<ul>
+<li>人工核验的样本不是最终题库。表 2 的四个百分比（94%、86%、90%、82%）与之相容的最小分母都是 50，而最终题库中自动生成题只有 35 道。所以至少自动生成那一组核验的不是最终的 35 道，很可能是人工挑选前的 50 道（复算（本次，算术）；"是挑选前的 50 道"为推断）。论文正文只说"a sample of queries"，图 2 却写"100 queries"。8% 不合格的题在最终题库里是否还在，无从得知。</li>
+<li>65% 的题来自自家产品内测用户，30 道多模态题全部来自这一路（第 2.2 节）。这是便利样本，代表的是 MiroMind 内测用户的需求（自述加推断）。</li>
+<li>领域标签有两套：图 3 是 12 个领域，附录 C 表 11 是 11 个标签（自述）；精读页查得数据文件里实际出现 15 种（复算（精读页 2026-10-28））。</li>
+<li>自动生成题比内测改写题容易：按表 6，13 个系统中有 12 个在自动生成题上总分更高，Grok 是例外（低 5.2 分）；事实性平均高约 5 分。复算（本次），与论文"approximately 4 to 5 points"一致。</li>
+</ul>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>它声称了什么</strong>：三层分数共同刻画深度研究能力；过程分能预测结果分，因而过程评估有效。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li>过程分与"结果分"的 Pearson 相关 0.88（第 4.4 节）。</li>
+<li>三层名次不一致的案例：Kimi 综合质量 75.7、事实性 65.4；Manus 综合质量 55.4、事实性 72.6（第 4.2 节，表 3）。</li>
+<li>人类排名研究（见 4.1）。</li>
+</ol>
+<p><strong>证据等级</strong>：自述；以下为复算与推断。</p>
+<p><strong>我们的判断</strong>：不够，既有设计缺陷，也有缺证据。</p>
+<ul>
+<li><strong>0.88 算不出来，而且有共同评委的问题。</strong> 按表 3 纯文本组 13 个系统，以综合质量和事实性的平均作为结果分，相关系数为 0.859；去掉 3 个 MiroThinker 后为 0.771（复算（本次），与精读页一致）。三层评委都是 GPT 系列，共同的评委偏好也可能抬高相关（推断）。拿"过程分与结果分相关"来证明过程评估有效，还有一个前提没有证据：结果分本身是对的。</li>
+<li><strong>过程记录的可比性没有交代。</strong> 局限性一节承认"Our process evaluation relies on systems exposing their intermediate reasoning traces"。被测的有 OpenAI、Gemini、Claude 等闭源商业产品，论文没有说明它们的过程记录从哪里来、有多完整（附录 A 只说报告是从官方界面下载的）。"报告到过程"一项衡量"报告里的结论在过程记录里有没有来处"，记录越全越占便宜；MiroThinker-H1 恰好在这一项（63.3）和矛盾处理（86.4）上领先最多（表 5）。附录 E.3 的两个过程案例只拿自家三个 MiroThinker 版本相互比较。这些都是推断，原始记录没有公开，无法检验。</li>
+<li><strong>报告越长，综合质量分越高的迹象。</strong> 按表 7 与表 3，10 个非自家系统的报告长度与综合质量的 Spearman 相关为 0.61；加上 3 个 MiroThinker 是 0.21（复算（本次），前者与精读页一致）。只有 10 个点，不能下结论，但论文没有控制篇幅，表 7 也没有写长度单位。</li>
+<li><strong>表 4 的子维度含义不清。</strong> 表 4 题注称第五个子维度为"Query Specification"，正文第 4.3 节称之为"Specificity"，并解释为"granular, evidence-grounded details"。而每个系统的"Avg"都比五个子维度的简单平均低 1.7 到 4.2 分，论文没有交代子维度怎样合成 Avg。复算（本次）。如果这一列其实是按题生成的专门维度的合计，"具体性是普遍短板"这一结论就站不住；本记录无法判断是哪一种（不确定）。</li>
+</ul>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>它声称了什么</strong>：MiroThinker-H1 在纯文本和多模态两组都排第一；H1 在多模态下降幅最小（第 4.2 节）。</p>
+<p><strong>拿出了什么证据</strong>：表 3。</p>
+<p><strong>证据等级</strong>：自述；以下为复算。</p>
+<p><strong>我们的判断</strong>：不够，既有设计缺陷，也有缺证据。</p>
+<ul>
+<li><strong>纯文本组的"第一"分不出高下。</strong> H1 77.5，OpenAI 76.7（表 3）。精读页对两家逐题分做配对重抽样（5,000 次，只用两家都有三层分数的 68 题），平均分差 +0.65，95% 区间 [−0.69, +1.98]，跨过 0；68 题中 H1 更好的只有 31 题（复算（精读页 2026-10-28））。论文没有给出任何区间。</li>
+<li><strong>H1 的纯文本领先来自内测改写那一半。</strong> 按表 6，在内测改写题上 H1 76.0、OpenAI 74.2；在自动生成题上 OpenAI 79.3、H1 79.0。复算（本次）。</li>
+<li><strong>多模态组的领先站得住。</strong> H1 74.5，OpenAI 70.2；精读页的配对重抽样区间为 [+1.45, +7.61]（复算（精读页 2026-10-28））。而这 30 道题全部来自自家内测用户一路。</li>
+<li><strong>"降幅最小"与表格不符。</strong> 按表 3，10 个两组都有分的系统从纯文本到多模态的总分变化是：Grok +0.3、Claude −1.3、Gemini −1.8、Manus −2.0、ChatGLM −2.2、H1 −3.0、MiroThinker-1.7 −3.9、MiniMax −4.1、OpenAI −6.5、Qwen −8.6。有 5 个系统降得比 H1 少。降幅在 3 到 10 分之间的只有 5 个，不是"most"。正文说"eight systems"平均降 3.1 分；实际 10 个系统平均降 3.31 分，只算 8 个非自家系统也是 3.27 分。复算（本次）；与精读页一致。</li>
+<li>精读页查得，逐题数据里有 15 个系统，论文只报了 13 个；多出的 deepseek 有完整纯文本成绩，总分 65.2（复算（精读页 2026-10-28））。论文图 5 右图和附录 A 都出现了 DeepSeek，表 3 却没有（本次对照原文确认）。</li>
+</ul>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：报告在 2026 年 3 月一次性收集（附录 A）；精读页查得自动生成的 35 题中有 19 题标为时效敏感，锚定 2026 年初的事件（复算（精读页 2026-10-28））。事实性在评测时现场上网核验，隔一段时间重评，同一份报告的分数可能变化（推断）。论文强调可以定期更新，截至 2026-10-29 主分支没有新题库（复算（本次），提交记录）。</li>
+<li><strong>污染</strong>：题目以明文公开，没有防泄漏标记（精读页 2026-10-28 查得）。自动生成题经过"不联网答不好"的过滤（第 2.3 节，公式 1），内测改写题没有这一步，只在人工核验中判断"是否需要上网"（第 2.4 节）。证据等级：自述。</li>
+<li><strong>可复现</strong>：代码、题库和逐题评分数字公开，所以表格能复核，这一点值得肯定。报告原文、过程记录和评委理由没有公开，所以不能重评，也不能检验过程记录的完整性（复算（本次），文件清单）。商业产品的界面和模型版本都会变化，重新收集报告得到的是另一批作品。</li>
+<li><strong>利益关系</strong>：利益关联很强，而且多处叠加，都是原文可查的事实：</li>
+<li>被测系统中有 3 个是自家的 MiroThinker，H1 排第一（表 3）；</li>
+<li>65 道题改写自自家产品内测阶段的用户提问模式（第 2.2 节）；</li>
+<li>事实性核验建在自家的 MiroFlow 框架上，MiroFlow 论文作者与本文贡献者有重叠（参考文献 [27] 与贡献者名单中的 Bin Wang、Yue Deng、Pengxiang Zhu）；方法沿用同一团队的 DeepResearchEval（参考文献 [26]，作者含 Yibo Wang、Lei Wang、Yue Deng、Lidong Bing）；</li>
+<li>发布时间与 MiroThinker-1.7 和 H1 的技术报告同在 2026 年 3 月（参考文献 [37]，arXiv 2603.15726）。</li>
+<li>反方向的事实：三层评委都是 OpenAI 的 GPT 系列，若有偏向也该偏向 OpenAI Deep Research；换成 Gemini 评委，名次不变（表 13）。所以问题主要不在评委，而在题目来源和过程记录（推断）。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明：MiroEval 没有声称要评"说明把握程度"或"区分事实和判断"。下表只记录"评了什么、怎么评"。另外，第一阶段第 5.3 节已决定研究过程记录第一轮不进排名，所以 MiroEval 的过程层对我们第一轮只有参考价值。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弄清真实需要，审视前提和概念边界，回答的正是所问</td>
+<td>部分</td>
+<td>固定维度"Instruction-following"；改写策略 D"Embed false premises or ambiguous expressions in the query. The system should identify the erroneous premise, correct it, and still complete the core task"（表 9）。这是靠出题设陷阱，评分仍由按题生成的维度完成。</td>
+</tr>
+<tr>
+<td>材料截至规定时间点，并且足够新</td>
+<td>部分</td>
+<td>自动生成题锚定近期新闻；事实性按评测时的网页核验。没有截止时间，也没有"信息是否够新"的单独指标。</td>
+</tr>
+<tr>
+<td>查找系统全面，查找过程交代清楚</td>
+<td>部分</td>
+<td>报告层有"Coverage"；过程层有"Search Breadth"。"过程交代"是读过程记录评的，不是看报告本身有没有交代。</td>
+</tr>
+<tr>
+<td>甄别来源质量，处理矛盾信息</td>
+<td>评（过程层）</td>
+<td>"Critical Thinking assesses the system's ability to evaluate source reliability, identify limitations in retrieved evidence, and respond appropriately to conflicting or weak information"；"Contradiction Detection"（第 3.3 节）；事实性的"冲突"标签；改写策略 C 嵌入矛盾。</td>
+</tr>
+<tr>
+<td>分析：历史和全部现状、性质和内在联系、推理清楚、区分事实和判断、考虑其他解释、不迎合</td>
+<td>部分</td>
+<td>报告层"Insight"；过程层"Analytical Depth measures whether the system goes beyond surface-level retrieval to conduct multi-step reasoning, follow-up investigation"（第 3.3 节）。"区分事实和判断""考虑其他解释""不迎合"未见。</td>
+</tr>
+<tr>
+<td>每个结论都能追到依据，引用准确</td>
+<td>部分</td>
+<td>事实性逐条核验断言本身，与有没有引用无关；"报告到过程"检查结论在过程记录中有没有来处。不核对"所引来源是否支持该句"。</td>
+</tr>
+<tr>
+<td>结论准确、具体、清楚、无歧义，敢于下判断，如实说明把握</td>
+<td>部分</td>
+<td>"准确"：事实性，"查不到"计入分母，按表 4 合计数近似可验证（如 OpenAI 3,335 ÷ 4,001 ≈ 83.4，表中 83.3）。"清楚"：Clarity。"具体"：表 4 第五列，含义不清（见 4.3）。"说明把握"只在个别按题生成的维度中出现，例如附录 E.1 案例 2 的"Uncertainty-Aware Data Gap Governance"，权重 0.04。</td>
+</tr>
+<tr>
+<td>深：本质、全体、内部联系</td>
+<td>未单独评</td>
+<td>与之最接近的是报告层"Insight"和过程层"Analytical Depth"，两者都没有区分"多而不连"和"联成整体"。</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>混入，权重小</td>
+<td>"Clarity"是综合质量 4 个固定维度之一；附录 E.1 两个案例中权重为 0.09 和 0.10。综合质量占总分三分之一。</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>加</td>
+<td>总分是三层的简单平均（表 3）；综合质量是加权和（公式 3）；过程分是两部分的平均（表 5）。</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>无</td>
+<td>编造数字只在按题生成的低权重维度里扣分。附录 E.1 案例 1 中，捕捉"凭空编造增长率"的维度权重 0.08；案例 2 中捕捉"编造营养数值"的维度权重 0.04。</td>
+</tr>
+<tr>
+<td>交付形式（主要结论、论证、出处、把握程度、查找与来源说明）</td>
+<td>不要求版式，另要过程记录</td>
+<td>要求报告，过程层还要求过程记录。没有要求报告中写"把握程度"或"查找与来源说明"。</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>人类排名研究规模太小（5 题、5 人），评分人身份不明，看了过程记录；对照的是 100 题总排名；τ 报为 0.91，实为 0.867。</td>
+<td>第 4.5 节；附录 D.3；表 14；表 3</td>
+<td>复算（本次）</td>
+<td>测对了东西；经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>纯文本组"H1 第一"在统计上分不出高下，论文不给区间。</td>
+<td>表 3；仓库逐题分</td>
+<td>复算（精读页 2026-10-28）</td>
+<td>测得稳（决策）</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>"H1 多模态降幅最小""大多数降 3 到 10 分""8 个系统平均降 3.1 分"均与表 3 不符。</td>
+<td>第 4.2 节、第 4.5 节、摘要；表 3</td>
+<td>复算（本次）</td>
+<td>经得起复核</td>
+<td>文字与数据不一致</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>题目来源、核验框架、参赛系统同属一家，发布时间与自家产品报告同月。</td>
+<td>第 2.2 节；第 3.2 节；参考文献 [26]、[27]、[37]；贡献者名单</td>
+<td>自述（事实）</td>
+<td>测对了东西</td>
+<td>设计缺陷（利益未回避）</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>过程记录的来源和完整程度没有交代，闭源系统尤其不清楚；"报告到过程"等指标对记录完整的系统有利。</td>
+<td>局限性一节；附录 A；表 5</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>人工核验题目的样本不是最终题库，最小相容分母为每组 50，而最终自动生成题只有 35 道。</td>
+<td>第 2.4 节；表 2；图 2</td>
+<td>复算（本次，算术）；样本身份为推断</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M7</td>
+<td>"过程预测结果"的 0.88 算不出（按表 3 为 0.859），三层共用 GPT 系列评委。</td>
+<td>第 4.4 节；表 3</td>
+<td>复算（本次）</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M8</td>
+<td>稳健性检查范围小：重跑只做 4 个系统、只在多模态组；换评委只做 6 个系统。绝对分随评委变化 13 到 17 分。</td>
+<td>附录 D.1、D.2；表 12、表 13</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M9</td>
+<td>事实性判定的准确率没有报告，只有 5 个案例，其中一例标签自相矛盾。</td>
+<td>附录 E.2</td>
+<td>自述加核对</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M10</td>
+<td>各系统有分的题数不同，缺失不计，分数实际在不同题集上算出。</td>
+<td>仓库逐题分</td>
+<td>复算（精读页 2026-10-28）</td>
+<td>测得稳</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>M11</td>
+<td>没有控制篇幅；非自家系统中长度与综合质量正相关。</td>
+<td>表 7；表 3</td>
+<td>复算（本次）</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>M12</td>
+<td>编造数字等严重错误只在低权重维度中扣分，没有致命缺陷机制。</td>
+<td>附录 E.1 两个案例的权重表</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>M13</td>
+<td>表 4 第五个子维度名称不一，子维度与 Avg 的关系未交代。</td>
+<td>表 4 题注"Query Specification"；第 4.3 节"Specificity"</td>
+<td>复算（本次）；含义不确定</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M14</td>
+<td>公式（4）没有给出过程分的权重，靠仓库提交记录才知道是平均。</td>
+<td>第 3.3 节公式（4）；仓库 2026-03-30 提交</td>
+<td>复算（本次）</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>M15</td>
+<td>数据中有 15 个系统，论文只报 13 个；DeepSeek 出现在图 5 和附录 A，不在表 3。</td>
+<td>图 5；附录 A；仓库逐题分</td>
+<td>自述；系统数为复算（精读页 2026-10-28）</td>
+<td>经得起复核</td>
+<td>整理疏漏</td>
+</tr>
+<tr>
+<td>M16</td>
+<td>说可以定期更新，7 个月里没有更新。</td>
+<td>摘要；第 2.4 节；仓库提交记录</td>
+<td>复算（本次）</td>
+<td>测对了东西（时效）</td>
+<td>声称未兑现</td>
+</tr>
+<tr>
+<td>M17</td>
+<td>报告原文、过程记录和评委理由不公开，无法重评。</td>
+<td>仓库文件清单</td>
+<td>复算（本次）</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>能否复算</th>
+<th>本轮状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>13 个系统两组的三层分和总分</td>
+<td>表 3</td>
+<td>能，逐题评分公开</td>
+<td>精读页 2026-10-28 已重算，全部一致；本次核对了总分与三层平均、合并总分的算术</td>
+</tr>
+<tr>
+<td>过程总分</td>
+<td>表 5</td>
+<td>能</td>
+<td>本次核对：等于两部分平均</td>
+</tr>
+<tr>
+<td>H1 与 OpenAI 的分差区间</td>
+<td>论文未报告</td>
+<td>能，逐题评分公开</td>
+<td>精读页 2026-10-28 已做配对重抽样</td>
+</tr>
+<tr>
+<td>纯文本到多模态的降幅</td>
+<td>表 3</td>
+<td>能</td>
+<td>本次已算</td>
+</tr>
+<tr>
+<td>Kendall τ</td>
+<td>表 14</td>
+<td>能</td>
+<td>本次已算：0.867</td>
+</tr>
+<tr>
+<td>过程与结果的相关 0.88</td>
+<td>第 4.4 节</td>
+<td>能，口径不明</td>
+<td>本次按表 3 算得 0.859</td>
+</tr>
+<tr>
+<td>人工核验的样本量</td>
+<td>表 2</td>
+<td>只能做分母推算</td>
+<td>本次推算为每组 50</td>
+</tr>
+<tr>
+<td>长度与综合质量的相关</td>
+<td>表 7、表 3</td>
+<td>能，长度单位不明</td>
+<td>本次已算</td>
+</tr>
+<tr>
+<td>事实性的合计数与比例</td>
+<td>表 4</td>
+<td>能近似核对；逐题数据可精确核对</td>
+<td>本次按合计数近似核对</td>
+</tr>
+<tr>
+<td>换评委、换提示词、重跑</td>
+<td>表 12、表 13</td>
+<td>需要重新调用评委，并需要报告原文和过程记录</td>
+<td>不能，报告原文和过程记录未公开</td>
+</tr>
+<tr>
+<td>任何一份报告的任何一项分数的来由</td>
+<td>—</td>
+<td>评委理由未公开</td>
+<td>不能</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>场景：5 个智能体，比赛评审，第一轮只对报告排名。</p>
+<ol>
+<li><strong>可以借的</strong>：
+   - 事实性用四类标签，"冲突"和"查不到"分开报告，并公开各类条数（表 4）。这比只给一个比例更能看出"说得多"和"说得准"之间的取舍。
+   - 按题生成评分方案，带附件的题先抽关键事实再生成检查点（第 3.1 节）。第一轮是基础级，不含附件；思路可留给多模态进阶形态。
+   - 出题时专门设"嵌入矛盾""嵌入错误前提"的陷阱（表 9），这直接对应第一阶段"审视问题的前提"和"处理互相矛盾的信息"。
+   - "报告到过程"的思路可以改造成"报告到出处"：拿运行时存档的网页，逐条核对报告里的结论有没有来处，不依赖各家过程记录是否完整。</li>
+<li><strong>要避免的</strong>：
+   - 第一轮不用过程层打分。第一阶段已决定过程记录第一轮不进排名；而且 5 个智能体如果有商业产品，过程记录的完整程度无法统一。
+   - 分差必须给区间。MiroEval 0.8 分的总分差在统计上分不出高下。
+   - 人类对照要独立、要够大：评分人看不到自动评分，也看不到能暴露身份的过程记录格式；对照的范围要与自动排名一致。
+   - 如果 5 个参赛智能体中有主办方或评测方自己的，题目不要取自自家用户日志，评测工具链也不要用自家的智能体框架；做不到就单独列出、单独说明。
+   - 编造来源、编造数字这类问题，应考虑作为致命缺陷处理，而不是放在一个权重 0.04 的维度里扣分。这一条留给第四阶段决定。</li>
+<li><strong>它的稳健性检查告诉我们的</strong>：换评委，绝对分变化 13 到 17 分。所以比赛只能公布名次和区间，不宜公布绝对分并让人跨评委比较。</li>
+</ol>
+<hr />
+<h2 id="_1">精读页勘误</h2>
+<p>对照 <code>notes/2603.28407_MiroEval.html</code>（2026-10-28）。能用原文核对的说法逐条核对过，没有发现确定的错误。以下两条需要注意：</p>
+<ol>
+<li><strong>"具体性是共同短板"一条可能需要修改。</strong> 精读页第 4 节沿用了论文正文的说法，说"OpenAI DR 覆盖面 78.2，具体性只有 69.1"。表 4 题注把这一列称为"Query Specification"，与正文的"Specificity"不一致，而且各系统的 Avg 都比五个子维度的简单平均低 1.7 到 4.2 分，说明这一列在合成时的分量与其他维度不同。如果它其实是按题生成的专门维度，"具体性是共同短板"就不成立。本记录无法确定，建议精读页把这一条改为存疑。</li>
+<li><strong>补充说明。</strong> 精读页说"人是在 5 道题上排序，拿来对比的却是 MiroEval 在全部 100 道题上的总排名"。本次确认：表 14 的"MiroEval 名次"与表 3 最右"Overall"列（纯文本与多模态合并）的名次完全相同，与多模态组单独的名次不同。精读页的判断成立。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2603.28407_MiroEval.md</code></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：LiveDRBench（arXiv 2508.04183）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2508.04183_LiveDRBench.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#livedrbencharxiv-250804183">审视记录：LiveDRBench（arXiv 2508.04183）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="livedrbencharxiv-250804183">审视记录：LiveDRBench（arXiv 2508.04183）</h1>
+<p>2026-10-29。证据等级标注：【复算】我们根据公开的数据、代码或论文表格亲自算过；【自述】只有论文自己的说法；【推断】我们根据原文推出、原文没有直接说。凡引用精读页此前对公开数据所做的核对、而本次按规则未重做的，标为【复算（精读页前次，本次未重做）】。</p>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>论文</strong>：Characterizing Deep Research: A Benchmark and Formal Definition。arXiv 2508.04183 第 1 版，2025-08-06 提交。截至 2026-10-29，arXiv 上仍只有第 1 版【复算：arXiv 接口查询】。</li>
+<li><strong>作者及机构</strong>：Abhinav Java、Ashmit Khandelwal、Sukruta Midigeshi（三人并列第一作者）、Aaron Halfaker、Amit Deshpande、Navin Goyal、Ankur Gupta、Nagarajan Natarajan、Amit Sharma，共 9 人；机构为微软研究院（印度班加罗尔）和微软（美国雷德蒙德）（第 1 页）。</li>
+<li><strong>发表情况</strong>：预印本。精读页抬头写"ICLR 2026"，但 PDF 正文、arXiv 元数据（没有期刊或会议字段）和 GitHub 说明文件中都没有找到录用信息，本次未能核实。</li>
+<li><strong>数据和代码</strong>：</li>
+<li>代码：https://github.com/microsoft/LiveDRBench （论文第 1、3 页给出），MIT 许可。共 4 次提交：2025-08-08 首次提交，2025-10-14 和 2025-10-16 修代码与说明文件。仓库只有评测代码，没有三个被测系统的原始输出【复算：GitHub 接口，只读文件列表和提交记录】。</li>
+<li>数据：https://huggingface.co/datasets/microsoft/LiveDRBench （论文正文没有写这个链接，链接来自精读页和 GitHub 说明文件），CDLA-Permissive-2.0 许可，最后修改 2025-08-08，含 <code>v1-full</code> 和 <code>preview</code> 两个子集【复算：Hugging Face 接口，只读元数据，未下载数据】。</li>
+<li>防泄漏：GitHub 说明文件写明"we encrypt the answers in the benchmark, following the procedure of BrowseComp benchmark's release"。论文正文没有提到加密。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2508.04183_LiveDRBench.html</code>，2026-10-28）加原文逐节核对。全文含附录 A 至 D 已读；表 2、表 3 与表 4、表 11 的数字对照 PDF 渲染页面核对过。按共同规则第 1 条，没有解密、没有下载数据集、没有转录题目和答案；下文举例只用论文正文和附录里已经印出的例子。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li><strong>给出深度研究的形式定义。</strong> "We argue that the core defining feature of deep research is not the production of lengthy report-style outputs, but rather the high fan-out over concepts required during the search process, i.e., broad and reasoning-intensive exploration"（摘要，第 1 页）。定义 1（第 3.1 节，第 7 页）：给定语料库和"an ideal human expert who does not already know the answer to any query"，一个查询如果需要处理大量信息单元（搜索强度），并且查找、处理、组合信息单元三步中至少有一步需要不简单的推理（推理强度），就是深度研究查询。</li>
+<li><strong>找断言是深度研究的定义性环节，写报告可以另外评。</strong> "we posit that the defining element of a DR problem is the first sub-task: synthesis of relevant information that could answer a user's question, given a document corpus"（第 1 节，第 2 页）；"Writing a report given a set of claims is a long-form text generation problem ... that can be independently studied"（第 3 节，第 5 至 6 页）。</li>
+<li><strong>评测客观、可靠。</strong> "To enable objective evaluation"（摘要）；人工判分与 GPT-4o 判分"closely match ... This indicates that our benchmark can be used to reliably evaluate any new model using the evaluation prompts in Appendix B"（第 5.2 节，第 14 页）。</li>
+<li><strong>题目足够难，确实属于深度研究。</strong> "100 challenging queries that qualify as deep research assuming the entire web as the retrieval corpus"（第 1 节，第 3 页）。</li>
+<li><strong>可以持续更新以防污染。</strong> "our benchmark construction enables easy addition of new problems to adapt to the changing web and new model releases"（第 3 页）；"We also provide a mechanism to refresh the questions in our benchmark to guard against contamination by latest models"（第 2 节，第 5 页）。</li>
+<li><strong>系统排名。</strong> "OpenAI's model performs the best with an overall F1 score of 0.55"（摘要）；"Perplexity exhibits stronger average performance compared to Gemini"（第 5.2 节，第 14 页）。</li>
+<li><strong>搜索行为分析。</strong> 分岔和回溯次数多的系统得分高；翻的来源多不等于得分高（第 5.3 节，第 14 至 16 页）。</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong>：100 道，分 8 类（表 1，第 4 页）。</li>
+<li>科研事实·材料 17 道、科研事实·地理 19 道：由 CURIE 数据集的长文阅读题"倒置"而来，即从"读一篇文章、列出其中的信息"改为"给出这些信息、找出是哪篇文章"（第 4.1、4.2.1 节）。</li>
+<li>新数据集·识别 6 道、识别加提取 11 道、同类检索 3 道：取自 ICLR 2025 的数据集论文和作者自己的领域知识（第 4.2.2 节）。</li>
+<li>先前工作检索 17 道：作者根据 ICLR 2025、ICML 2025 在 OpenReview 上的审稿讨论，手写"合成摘要"，要求找出其中各项想法已经出现在哪些论文里（第 4.2.3 节）。</li>
+<li>实体列举 20 道：电影、图书、国际数学奥林匹克、奥运会四类定期发生的事件（第 4.2.5、4.3 节）。</li>
+<li>航空事件 7 道：取自美国国家运输安全委员会、英国航空事故调查处、法国民航安全调查分析局的官方调查报告（第 4.2.4 节）。</li>
+<li>抽样方式：作者按自己列的五条要求（第 4.1 节，第 8 页）挑选领域和素材，属于目标抽样，并夹带便利抽样（CURIE 有现成标注，ICLR 和 ICML 是作者熟悉的领域）；没有抽样框，没有随机抽样【推断】。</li>
+<li>复用：科研事实两类复用 CURIE 数据集的现成标注【自述，第 4.2.1 节】。</li>
+<li>正文第 4.2.1 节写"We create 31 queries"，但其下两小类是 17 加 19 等于 36，与表 1 一致，正文的"31"是笔误【复算】。</li>
+<li><strong>判分标准</strong>：结论清单。每道题的标准答案是一组相互独立的主断言，每条主断言下挂子断言（例如材料名下挂出处论文标题）。一条断言的得分等于主断言是否正确（0 或 1）乘以子断言的正确比例；精确率和召回率按公式 (1) 计算，再求 F1 分数，即精确率与召回率的调和平均（第 3.2 节，第 7 页）。另有"严格"版本取各断言得分的最小值（第 7 至 8 页）。公式允许给断言加权，但论文没有说明实验中是否用了权重，各结果表也没有报告严格版本【推断】。标准答案先由作者构造，再把"all claims generated by all DR systems under evaluation"中经人工判为正确的补进去（第 4.4 节，第 12 页），即汇总裁决（pooling：把各被测系统的答案合在一起人工判定，判为正确的补入标准答案）。</li>
+<li><strong>判卷方式</strong>：GPT-4o 作为大语言模型评委（以大语言模型对照标准答案判定对错），按类别用三套提示词（附录 B，第 23 至 26 页）：科研事实逐个字段判"是否正确"；新数据集和航空事件先按主键找到对应的标准答案字典，再对整个字典逐字段给 0 至 3 分；先前工作检索和实体列举判"预测的字符串是否在标准答案列表中"。被测系统按要求输出 JSON 格式；Gemini Deep Research 不按格式输出，作者"decided to do it manually"，手工从报告里抄出各字段（第 4.4 节，第 12 页）。作者另外人工判分一遍作为对照（附录 D 表 11，第 27 页）。</li>
+<li><strong>运行环境</strong>：实时网络。三个深度研究产品当时没有应用程序接口，作者在网页聊天界面手工提交题目；遇到产品反问澄清问题时，统一回复"Go Ahead"。对照模型走应用程序接口，推理预算限制在约 30 秒（第 5.1 节，第 13 页）。论文没有写运行日期，只写"At the time of writing this paper"；参考文献的访问日期为 2025-07-31 至 2025-08-04，推测运行在 2025 年 7 月前后【推断】。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<ul>
+<li><strong>声称</strong>：评分客观；GPT-4o 判分与人工判分接近，因此可以用附录 B 的提示词可靠地评测"any new model"（第 5.2 节，第 14 页）。</li>
+<li><strong>证据</strong>：表 11（第 27 页）作者人工判分的三家平均 F1 为 0.556、0.361、0.261；表 2（第 13 页）GPT-4o 判分为 0.555、0.355、0.263【自述；两组平均值已用表中八类数字复算，吻合】。</li>
+<li><strong>我们的复核</strong>：
+  1. 一致性只在"三个系统、每类平均"的层面报告，没有逐题或逐断言的一致率，也没有卡帕系数一类的指标【复算：附录 D 只有表 11】。
+  2. 八类中有三类（地理、材料、实体列举，合计 56 道题）两张表的精确率、召回率、F1 完全相同，其余五类有差异。完全相同的三类，判定对象都是名称或标题（材料名、论文标题、实体名），判定接近字符串匹配【复算；"接近字符串匹配"为推断】。
+  3. 差异最大的是先前工作检索中的 Gemini Deep Research：GPT-4o 判 0.082，人工判 0.133。在"新数据集·识别加提取"（11 道）中，两种判法下 Perplexity 与 Gemini 的名次相反：GPT-4o 判 Gemini 0.345 高于 Perplexity 0.333；人工判 Perplexity 0.358 高于 Gemini 0.319。正文依据 GPT-4o 的结果写"Gemini outperforms Perplexity on specific tasks, such as ... NovelDS Identification and Extraction"（第 14 页），按人工判分，这一句不成立【复算】。
+  4. 人工判分由作者本人完成，而补全标准答案的汇总裁决，也是作者对同一批输出完成的。在补全后的标准答案上 GPT-4o 与作者判得一致，有一部分是构造使然，不能说明它对"新系统给出的、标准答案里没有的断言"同样可靠【推断】。
+  5. 评委提示词相当宽松：字符串"similar in meaning, or if one is a subset of the other"即算等同；示例里把"CNN"和"ResNet"判为等同（附录 B，第 25 页）。0 至 3 分如何换算成公式中的一致分数 s，论文没有写【自述；"没有写"为本次全文查找结果】。
+  6. Gemini Deep Research 的断言由作者手工抽取，其他两家由 JSON 直接读取，三家走的不是同一条判卷流程（第 4.4 节）。对一个只交报告的新系统，第 3.2 节建议用大语言模型把报告转成断言清单，但这一步的准确性没有检验【自述；"没有检验"为推断】。
+  7. 一处内部不一致：正文说 Perplexity 在材料题上的整体 F1 是 0.158（第 14 页），表 2 是 0.150【复算】。</li>
+<li><strong>判断</strong>：对这三个系统的总体平均分而言，换评委影响不大，这一点有证据。"可以可靠评测任何新模型"缺证据。汇总裁决只覆盖当时的被测系统，又没有给新系统的新答案提供人工裁决的通道，这是评分环节的设计缺陷：新系统找到标准答案之外的正确断言，会被判错，同时拉低精确率【推断】。</li>
+</ul>
+<h3 id="42">4.2 推广环节</h3>
+<ul>
+<li><strong>声称</strong>：基准"diverse"，覆盖科研人员和普通公众两类用户，题型从"大海捞针"到列举都有（第 1 节，第 3 页）。</li>
+<li><strong>证据</strong>：8 类，每类 3 至 20 道（表 1）【自述】。</li>
+<li><strong>我们的复核</strong>：
+  1. 领域偏向机器学习：新数据集三类加先前工作检索共 37 道，全部取自 ICLR、ICML 的论文和审稿讨论【复算：6 加 11 加 3 加 17】。
+  2. 每个系统只跑了一次，结果表没有误差范围【自述：第 5.1 节及表 2 至表 10】。按 100 道题、每题得分在 0 到 1 之间作最保守的估计，三家加权平均 F1 的 95% 置信区间半宽不超过约 0.08 至 0.10【复算：标准差上界取 √(m(1−m))】。类别层面更粗："新数据集·识别"只有 6 道题，多对或少对一道就差约 0.167；"同类检索"只有 3 道【复算】。
+  3. 精读页记录，20 道实体列举题中有 10 道没有写截止时间（国际数学奥林匹克类 5 道、烂番茄评分类 5 道），符合条件的答案会随时间增加或变化【复算（精读页前次，本次未重做）】。论文表 1 印出的缩略例题（动画片、烂番茄评分、片长）中看不到截止时间，但省略号部分是否含日期，无法从正文判断【推断】。</li>
+<li><strong>判断</strong>：作为"这 100 道精选题上的表现"，结果可以复述；推广到"深度研究题目总体"缺乏抽样依据（缺证据）。第一阶段第 1.2 节已定，第一轮只对报告排名，推广环节不需要我们自己提供证据；但如果借用它的题目或结论，类别层面的比较几乎没有统计依据。</li>
+</ul>
+<h3 id="43">4.3 外推环节</h3>
+<p>这是本记录的重点。按共同规则第 4 条，先分开两种情况：论文声称了而没有做到的；论文本来就不打算做的。</p>
+<p><strong>A. 论文自己的构念：搜索强度加推理强度</strong></p>
+<ul>
+<li><strong>声称</strong>：100 道题都"qualify as deep research"（第 3 页），即都满足定义 1。</li>
+<li><strong>证据</strong>：两条门槛都是假定。"we posit that a problem is reasoning-intensive if the expected time taken by the expert to solve the task using available tools such as web search is more than ten minutes. Similarly, for search intensity, a typical threshold may be 20 information units (through at least 10 search queries)"（第 3.1 节，第 7 页）【自述】。</li>
+<li><strong>我们的复核</strong>：论文没有请人实际做题计时，也没有统计每道题需要多少信息单元；只对实体列举类描述了"typically between 80 and 140"个候选、最终 8 至 30 项（第 4.2.5 节，第 12 页）【自述；"没有计时"为全文查找结果】。搜索行为分析只做了新数据集类的 19 道题；分岔和回溯的次数，是让 GPT-4o 从产品界面给出的摘要式轨迹里数出来的（第 5.3 节、附录 C），这种计数是否准确没有验证【自述；"没有验证"为推断】。</li>
+<li><strong>判断</strong>：按论文自己的定义，这 100 道题是否都属于深度研究，缺证据。</li>
+</ul>
+<p><strong>B. 按第一阶段的定义，它测到的是深度调研的哪一部分</strong></p>
+<p>LiveDRBench 有意不评报告，这是它的取舍，不是缺陷。GitHub 说明文件也写明，它"not as representative of all kinds of Deep Research queries, especially those that require assessing the writing quality of long reports"。下面的分析回答"它的分数能外推到我们所说的深度调研的哪一部分"，不是指责它没有按我们的定义去做。</p>
+<ol>
+<li><strong>测到了：材料层面的"全"和"对"。</strong> 召回率衡量预定的断言找全了多少，精确率衡量说出来的断言有多少是对的。论文摘要说的"high fan-out over concepts"、实体列举类"focus on search intensity"（第 11 页），在第一阶段的术语里属于"广"，而不是"深"；按第一阶段第 4.3b 节，"材料的丰富是深的基础"【推断；与第一阶段第 4.2 节第 3 条的判断一致】。</li>
+<li><strong>测到了：断言要追到依据，一部分要求追到原始出处。</strong> 主断言对、子断言全错，记 0 分，"This is to avoid high precision by simply memorizing the answer"（第 3.2 节，第 7 页）。材料题要求给出出处论文，先前工作检索要求论文标题和链接，航空事件取材于官方调查报告。这对应"好的调研"第六环"每个结论都能追到依据"，也对应"深"的推进工夫"去伪存真"中"追到原始出处"的那一部分【推断】。但它只核对出处是否与标准答案里的出处相同，不核对引文是否准确、出处是否真的支撑这条断言：先前工作检索要求输出一个说明关联的"connection"字段，评分却只看"the overlap of the model-reported references with that of the ground-truth"（第 4.2.3 节，第 11 页）【自述】。</li>
+<li><strong>测到了一部分：由此及彼。</strong> 倒置题要从一组性质反推对象，"identifying the right search queries based on previous queries' results is the key subproblem to be solved"（第 3.1 节，第 6 页）。这对应第一阶段"由一条线索推出下一步该查什么"【推断】。</li>
+<li><strong>没有测到：本质、全体、内部联系。</strong> 第 3.1 节把断言设定为"independent top-level claims"（第 6 页），评分逐条求平均或取最小值，断言之间的联系不进入评分。按第一阶段第 5.2 节，结论清单"最多只到分级的第三级（多而不连）"。航空事件题的提示词要求"critically examine the underlying causes"（附录 A，第 22 页），但评分时被还原成时间戳、参数、记录值、异常描述等字段的匹配，解释本身的质量不评【自述加推断】。</li>
+<li><strong>没有测到：甄别来源，处理矛盾信息。</strong> 答案按设计是唯一的，或经人工补全，题目里不存在需要权衡的互相矛盾的来源【推断】。</li>
+<li><strong>没有测到：说明把握、交代查找过程、弄清真实需要。</strong> 输出格式固定为 JSON，不要求说明把握；搜索轨迹只用于事后分析，不计分；产品反问澄清时一律回复"Go Ahead"（第 5.1 节），"弄清问题背后的真实需要"这一环被排除在外【自述】。</li>
+</ol>
+<p><strong>论文声称了而缺证据的一处</strong>：论文主张"找断言"是深度研究的定义性环节，写报告"can be independently studied"，但没有任何证据表明断言层面的 F1 能预测报告层面的质量，例如没有把断言得分与报告的人工评价对照【推断：全文没有此类分析】。这里与第一阶段的分歧在构念本身：第一阶段认为"深"体现为从现象推进到本质的连贯解释，只能在报告里看到；LiveDRBench 认为"深"体现为搜索与推理的强度，可以在断言清单里看到。两者的差别应当如实记录，不能简单判为谁对谁错。</p>
+<ul>
+<li><strong>判断</strong>：LiveDRBench 的分数可以外推到"深度调研中找到断言并给出出处"这一部分，即第一阶段所说的"广"这个基础，加上"由此及彼"和"追到出处"的一部分；不能外推到"深"本身。断言层面能否预测报告层面，缺证据。</li>
+</ul>
+<h3 id="44">4.4 决策环节</h3>
+<ul>
+<li><strong>声称</strong>：OpenAI Deep Research 最好（平均 F1 0.55）；Perplexity 平均优于 Gemini；o4-mini 在不少类别上与 Perplexity、Gemini 的深度研究产品相当（第 5.2 节，第 13 至 14 页）。</li>
+<li><strong>证据</strong>：表 2 至表 10；没有误差范围；每个系统运行一次【自述】。</li>
+<li><strong>我们的复核</strong>：
+  1. 简单平均和按题数加权平均的数值不同（0.555、0.355、0.263 对 0.550、0.331、0.236），但三家名次不变【复算】。
+  2. 按 4.2 节第 2 条同样的保守估计，两家之差（不配对）的 95% 区间半宽约 0.12 至 0.13。OpenAI 比 Perplexity 高约 0.22、比 Gemini 高约 0.31，都超出这个范围，名列第一大致站得住。Perplexity 与 Gemini 的加权平均相差约 0.095，落在范围之内，"Perplexity 优于 Gemini"缺统计证据；没有逐题数据，做不了配对检验【复算加推断】。
+  3. 比较条件不一致：深度研究产品在聊天界面手工提交，对照模型走应用程序接口，推理预算限制在约 30 秒；Gemini Deep Research 的断言手工抽取（第 4.4、5.1 节）【自述】。"不带深度研究模式的模型很吃力"，有一部分可能是预算设置造成的【推断】。
+  4. 换评委后，一个类别内的名次翻转（见 4.1 第 3 条）【复算】。</li>
+<li><strong>判断</strong>：只能支持"OpenAI Deep Research 当时明显领先"这一粗粒度结论；其余排序缺证据。</li>
+</ul>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：名字里的"Live"指"可以更新"：第 4.3 节给出了各类题目的扩展办法（第 12 页），但没有承诺更新周期。截至 2026-10-29，数据集只有 2025-08-08 的一版，代码仓库最后一次提交是 2025-10-16，内容是修代码【复算：两处接口的元数据】。标准答案停在 2025 年年中；没有截止时间的列举题会随时间漂移（见 4.2 第 3 条）。论文的定义本身承认难度是相对的："may not qualify as DR if there's a webpage providing exactly this information"（第 2 页），这一点已被第一阶段第 4.3 节吸收。</li>
+<li><strong>污染</strong>：答案按 BrowseComp 的办法加密（GitHub 说明文件）；BrowseComp 的解密方法是公开的，所以只能防爬虫，防不了人【推断】。精读页记录，<code>preview</code> 子集 10 道题的标准答案是明文，而且这 10 道全部在正式的 100 道之中【复算（精读页前次，本次未重做）】。论文唯一的防记忆机制是"子断言全错记 0 分"；没有做闭卷基线（不给检索工具时能答对多少），出处论文的标题本身也可能被记住【自述加推断】。</li>
+<li><strong>可复现</strong>：数据、评测代码和评委提示词都公开【复算：链接均存在】。三个深度研究产品是在网页界面手工运行的，产品版本会变，原始输出没有公开（代码仓库文件列表中没有）【复算：文件列表】，因此论文的数字无法复现，人工判分也无法复核。评委 GPT-4o 是会更新、会下线的商业模型【推断】。</li>
+<li><strong>利益关系</strong>：作者全部来自微软，被测系统中没有微软自己的产品。但论文写明 OpenAI Deep Research "was also integrated with Microsoft Copilot's deep research agent"（第 2 节，第 4 页），而它在本基准上排第一【自述】。当时其他基准上 OpenAI Deep Research 也大多领先，不能据此说结果有偏，但这层关系应当记下【推断】。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一、弄清真实需要，审视前提和概念边界，回答的正是要问的问题</td>
+<td>否</td>
+<td>答案事先确定；产品反问澄清时统一回复"Go Ahead"（第 5.1 节）</td>
+</tr>
+<tr>
+<td>二、材料截至规定的时间点，并且足够新</td>
+<td>否</td>
+<td>不评；部分列举题没有截止时间（精读页记录）</td>
+</tr>
+<tr>
+<td>三、查找系统而全面；查找过程交代清楚</td>
+<td>部分：只评"全"的结果</td>
+<td>召回率，"completeness (recall) of those claims"（第 4.4 节）；搜索过程只做事后分析（第 5.3 节），不计分</td>
+</tr>
+<tr>
+<td>四、甄别来源质量，处理互相矛盾的信息</td>
+<td>否</td>
+<td>答案唯一，题目中没有需要权衡的矛盾来源（推断）</td>
+</tr>
+<tr>
+<td>五、分析：交代历史和全部现状，讲清性质和内在联系，推理清楚，区分事实和判断，考虑其他解释，不迎合</td>
+<td>否</td>
+<td>断言被设定为"independent top-level claims"（第 6 页）；推理只体现在题目难度里，不计分</td>
+</tr>
+<tr>
+<td>六、每个结论都能追到依据，引用准确</td>
+<td>部分</td>
+<td>子断言（出处）全错，该断言记 0 分（第 3.2 节）；只核对出处是否与标准答案相同，不核对引文是否支撑断言（第 4.2.3 节）</td>
+</tr>
+<tr>
+<td>七、结论准确、具体、清楚，敢下判断，如实说明把握</td>
+<td>部分：只评"准确"</td>
+<td>精确率，"correctness (precision) of the stated claims"（第 4.4 节）；不要求说明把握</td>
+</tr>
+<tr>
+<td>深：本质（性质和内在联系）</td>
+<td>否</td>
+<td>结论清单不含解释；按第一阶段第 5.2 节，最多到第三级</td>
+</tr>
+<tr>
+<td>深：全体（历史和全部现状）</td>
+<td>否</td>
+<td>实体列举要求"列全"，是现状的"全"，不涉及历史和来龙去脉（推断）</td>
+</tr>
+<tr>
+<td>深：内部联系</td>
+<td>否</td>
+<td>断言之间相互独立（第 6 页）</td>
+</tr>
+<tr>
+<td>推进工夫：去粗取精、去伪存真、由此及彼、由表及里</td>
+<td>部分</td>
+<td>"由此及彼"体现在倒置题的反复搜索；"去伪存真"只做到"出处要对"；"由表及里"不评</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>没有混入，权重为零</td>
+<td>"we evaluate a DR output only on the substantive claims that it generates"（第 1 节，第 3 页）</td>
+</tr>
+<tr>
+<td>是否把各项加成总分</td>
+<td>是</td>
+<td>题内各断言得分求平均（标准版）或取最小值（严格版）；跨类别求简单平均和按题数加权平均（表 2）</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>有，在断言层面</td>
+<td>主断言错，或子断言全错，该断言记 0 分；严格版中任何一条断言错或漏，整题记 0 分（第 7 至 8 页）。实验结果没有报告严格版（推断）</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>汇总裁决只覆盖当时的被测系统；新系统给出的、标准答案里没有的正确断言会被判错，且没有补充裁决的通道</td>
+<td>"we manually evaluate all claims generated by all DR systems under evaluation"（第 4.4 节，第 12 页）</td>
+<td>自述加推断</td>
+<td>测得稳；经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>评委与人工的一致性只在类别平均层面报告，人工判分者就是作者本人；有一个类别名次翻转</td>
+<td>表 2 对表 11：新数据集·识别加提取中 Perplexity 与 Gemini 名次相反；先前工作检索中 Gemini 0.082 对 0.133</td>
+<td>复算</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>评委提示词宽松（"CNN"与"ResNet"等同、子串即等同）；0 至 3 分如何换算未说明</td>
+<td>附录 B，第 25 页</td>
+<td>自述</td>
+<td>测对了东西；测得稳</td>
+<td>设计缺陷加缺证据</td>
+</tr>
+<tr>
+<td>L4</td>
+<td>定义中的两条门槛（专家 10 分钟、20 个信息单元）是假定，没有逐题检验</td>
+<td>"we posit"（第 3.1 节，第 7 页）</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>L5</td>
+<td>断言层面的得分能否预测报告层面的深度，没有检验</td>
+<td>全文没有此类分析；断言被设为相互独立（第 6 页）</td>
+<td>推断</td>
+<td>测对了东西（相对第一阶段的构念）</td>
+<td>缺证据（属构念分歧）</td>
+</tr>
+<tr>
+<td>L6</td>
+<td>"可以更新"没有执行：14 个月没有新题；部分列举题没有截止时间，答案漂移</td>
+<td>Hugging Face 最后修改 2025-08-08；精读页逐题核对</td>
+<td>复算；后半条为复算（精读页前次，本次未重做）</td>
+<td>测得稳；经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>L7</td>
+<td>10% 的标准答案以明文公开；没有闭卷基线</td>
+<td>精读页记录；论文没有闭卷实验</td>
+<td>复算（精读页前次，本次未重做）；自述</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>L8</td>
+<td>每个系统只运行一次，没有误差范围；每类只有 3 至 20 道</td>
+<td>第 5.1 节；表 1 至表 10</td>
+<td>自述加复算</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>L9</td>
+<td>比较条件不一致：聊天界面对应用程序接口、约 30 秒推理预算、Gemini 手工抽取</td>
+<td>第 4.4、5.1 节</td>
+<td>自述</td>
+<td>测得稳；经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>L10</td>
+<td>被测产品的原始输出未公开，人工判分无法复核</td>
+<td>GitHub 文件列表只有评测代码</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>L11</td>
+<td>领域偏向机器学习：37 道取自 ICLR、ICML</td>
+<td>表 1；第 4.2.2、4.2.3 节</td>
+<td>复算</td>
+<td>测对了东西（代表性）</td>
+<td>设计取舍</td>
+</tr>
+<tr>
+<td>L12</td>
+<td>正文笔误：第 4.2.1 节"31 queries"应为 36；Perplexity 材料题整体 F1 正文 0.158、表 2 为 0.150</td>
+<td>第 9、14 页；表 2</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>报告错误</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>本次是否复算</th>
+<th>数据或代码是否足以复算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>三家平均 F1 0.555、0.355、0.263；按题数加权 0.550、0.331、0.236</td>
+<td>表 2</td>
+<td>已复算，吻合</td>
+<td>足够（论文表格）</td>
+</tr>
+<tr>
+<td>人工判分平均 F1 0.556、0.361、0.261</td>
+<td>表 11</td>
+<td>已复算，吻合</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>GPT-4o 与人工判分的逐题一致率</td>
+<td>无</td>
+<td>不能</td>
+<td>不足：三个产品的原始输出和逐题判定没有公开</td>
+</tr>
+<tr>
+<td>每道题的专家耗时、所需信息单元数</td>
+<td>无</td>
+<td>不能</td>
+<td>不足：论文没有采集</td>
+</tr>
+<tr>
+<td>没有截止时间的列举题数目（精读页记为 10 道）</td>
+<td>精读页</td>
+<td>未重做</td>
+<td>题目是明文，可以复核，但需要下载数据集，本轮规则不允许</td>
+</tr>
+<tr>
+<td><code>preview</code> 子集答案是否明文、是否与正式集重合</td>
+<td>精读页</td>
+<td>未重做</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>用当前系统重跑，检验汇总裁决造成的偏差</td>
+<td>无</td>
+<td>不能</td>
+<td>需要重新运行和人工裁决</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>以下针对 5 个智能体、比赛评审、第一轮只对报告排名的场景。都是候选，留到第四阶段论证。</p>
+<ol>
+<li><strong>不能直接作为主评分。</strong> 交付形式是结论清单，按第一阶段第 5.2 节看不出"深"；它也不评切题、甄别、说明把握和查找说明。</li>
+<li><strong>值得借用的候选做法：</strong>
+   - "断言乘以出处"的计分结构，可以作为报告中"有理有据"一环的子评分：结论对而出处错、或出处不存在，这条结论不得分。这是本组三篇中唯一的致命缺陷机制，与 AMSTAR 2 反对用加总掩盖关键缺陷的思路相通。
+   - 汇总裁决：把 5 份报告的断言合在一起人工裁决，判为正确的补入标准答案。5 个智能体规模小，全量人工裁决可行。但要吸取 L1 的教训：比赛规则里写明，后加入的参赛者的新断言同样先经人工裁决再计分。</li>
+<li><strong>需要回避的做法：</strong>
+   - 评委提示词中"子串即等同""CNN 等于 ResNet"一类宽松规则（L3）。规则一旦公布，参赛队伍会照着优化，宽松的匹配会被利用。
+   - 只在平均层面报告评委与人工的一致（L2）。比赛名次要公开、会被质疑，需要逐项一致率；人工判定者也不宜同时是标准答案的补充者。</li>
+<li><strong>一个需要讨论的问题。</strong> LiveDRBench 把"找断言"和"写报告"分开，与第一阶段把写作语言定为二级指标的方向一致；但第一阶段认为"深"在连贯的解释里，不在断言清单里。如果把断言层面作为一个子评分，需要说明它在总体判断中的位置，并检验"广不能替代深"这一约束（第一阶段第 4.3a 节）。</li>
+</ol>
+<hr />
+<h2 id="_1">精读页勘误</h2>
+<ol>
+<li>精读页第 7 节"弱在哪"把"① 判分"评为"强"，理由是"GPT-4o 判的和作者人工判的几乎一致"。这个评价偏乐观：表 11 与表 2 有三类完全相同、一类名次翻转；一致性只在类别平均层面；人工判分者是作者本人（见本记录 4.1）。建议改为"中"，并注明一致性证据只到总体平均。</li>
+<li>精读页第 4 节说"权重：公式允许给重要的断言加权，论文的实验里没有用"。论文没有明说实验是否用了权重，应改为"论文没有说明是否使用"。</li>
+<li>精读页抬头写"ICLR 2026"。本次在 PDF、arXiv 元数据和 GitHub 说明文件中都没有找到录用信息，应标为"未核实"。</li>
+<li>精读页第 9 节对照表把时效一栏写成"声称会更新，实际没有"。论文的说法是"enables easy addition"和"provide a mechanism to refresh"，即提供了更新办法，没有承诺定期更新。建议改为"提供了更新办法，没有执行"。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2508.04183_LiveDRBench.md</code></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+ "reports": {
+  "A": "ChatGPT",
+  "B": "Claude",
+  "C": "Kimi",
+  "D": "Gemini",
+  "E": "Perplexity",
+  "F": "DeepSeek"
+ },
+ "perturb": {
+  "P1": "fabricated",
+  "P2": "errors",
+  "P3": "original",
+  "P4": "padding"
+ }
+}

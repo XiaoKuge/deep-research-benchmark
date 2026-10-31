@@ -1,0 +1,6 @@
+# 本地生成或自动备份的文件，不进版本管理
+__pycache__/
+*.pyc
+*.tmp
+.DS_Store
+.backups/

@@ -1,0 +1,110 @@
+{
+ "verifier": "sonnet",
+ "claims": [
+  {
+   "id": "E-c2",
+   "source_label": "支持",
+   "source_note": "所引Perplexity官方博客原文写有'performs dozens of searches, reads hundreds of sources'和'21.1% accuracy score on Humanity's Last Exam'。",
+   "correct": "正确",
+   "correct_basis": "Perplexity 2025年2月发布时公布的数字即为21.1%，早于截止时间。"
+  },
+  {
+   "id": "E-c5",
+   "source_label": "支持",
+   "source_note": "所引clickittech原文：'ChatGPT Plus users get 10 Deep Research queries per month (and free users get 2)'。",
+   "correct": "有误",
+   "correct_basis": "该数字是2025年2月发布时的额度；2025年4月后改为Plus/Team等每月25次（完整版）、免费用户5次轻量版，截至2026-03已过时，报告以现在时陈述。"
+  },
+  {
+   "id": "E-c6",
+   "source_label": "支持",
+   "source_note": "clickittech原文：'OpenAI is also not entirely accurate, but it is vastly more reliable for now'，对比对象是Perplexity，与'显著更可靠'基本一致（原文限定'for now'）。",
+   "correct": "无法判断",
+   "correct_basis": "这是单一第三方评测的主观评价；DRACO等后续评测显示Perplexity在准确性上领先，各评测互相矛盾，无统一结论。"
+  },
+  {
+   "id": "E-c9",
+   "source_label": "部分支持",
+   "source_note": "报告所引清华/深圳大学图书馆PDF第146行写'Claude 3.5 sonnet暂不支持'联网查询，支持前半句；'因此深度研究体验天然弱于Perplexity和ChatGPT'是报告自己的推断，来源未写。",
+   "correct": "有误",
+   "correct_basis": "Claude已于2025年3月上线网页搜索（5月起全球可用），之后又推出Research功能；到2026-03再说Claude需外接工具、深度研究天然更弱，已过时。"
+  },
+  {
+   "id": "E-c10",
+   "source_label": "没有出处",
+   "source_note": "该句只有'enago+2'这样的缩写标签，报告里没有对应网址，也没有文末来源列表，无法打开核对。",
+   "correct": "有误",
+   "correct_basis": "Gemini Deep Research于2024年12月推出，是最早的专门深度研究模式之一，2025年11月又接入Gmail、Drive、Chat；说它没有专门的深度调研模式不对。"
+  },
+  {
+   "id": "D-c1",
+   "source_label": "没有出处",
+   "source_note": "这是报告结论部分自己的综合判断，没有对应到具体来源；文末来源列表是域名级列表，无法对应到这条结论。",
+   "correct": "正确",
+   "correct_basis": "DRACO（Perplexity领先）、LiveDRBench（OpenAI最佳）、MMDR-Bench（Gemini领先）等评测结论互不相同，'没有统一赢家'的说法与证据一致。"
+  },
+  {
+   "id": "D-c3",
+   "source_label": "支持",
+   "source_note": "文末来源（文末来源）中的gemini.google页面写：'draw context from your Gmail, Drive and even Chat in addition to the web'，可与公网同时检索。",
+   "correct": "正确",
+   "correct_basis": "Google于2025-11-05宣布Deep Research可选择Gmail、Drive、Chat与网页作为来源，早于截止时间。"
+  },
+  {
+   "id": "D-c5",
+   "source_label": "部分支持",
+   "source_note": "文末来源（文末来源）中的Anthropic Opus 4.6发布页脚注写'Adding a multi-agent harness increased scores to 86.8%'，但那是BrowseComp，页面完全没有提到BrowseComp-Plus。",
+   "correct": "有误",
+   "correct_basis": "86.8%是Anthropic报告的BrowseComp（多智能体框架）成绩，不是BrowseComp-Plus；我没找到Opus 4.6在BrowseComp-Plus上86.8%的出处，基准名称被混用。"
+  },
+  {
+   "id": "D-c8",
+   "source_label": "支持",
+   "source_note": "文末来源（文末来源）中的OpenAI帮助中心称ChatGPT可先提澄清问题并生成可审阅、可修改的研究计划；2026-02-10 OpenAI官方发布称深度研究改由GPT-5.2驱动。",
+   "correct": "正确",
+   "correct_basis": "2026年2月10日OpenAI宣布深度研究升级为GPT-5.2驱动，并增加进度跟踪、指定站点等；澄清提问与可编辑计划在帮助中心有记载。'o系列'等细节未逐项核实。"
+  },
+  {
+   "id": "A-c2",
+   "source_label": "没有出处",
+   "source_note": "该句在表格单元格内，只有同格其他条目带【25†…】形式的引注标记，这一句没有网址，按细则记为没有出处。",
+   "correct": "有误",
+   "correct_basis": "2025年2月起ChatGPT已有会自主规划多步检索的Deep Research，并有Agent模式；到2026-03仍说研究能力只是GPT-4o搜索式聊天，已过时。"
+  },
+  {
+   "id": "A-c6",
+   "source_label": "没有出处",
+   "source_note": "相关句子（无消费者界面、无内置搜索）没有网址，只有【40†…】形式的标记出现在邻近句子，记为没有出处。",
+   "correct": "有误",
+   "correct_basis": "DeepSeek自有官网和App聊天界面，并提供联网搜索开关，面向普通用户；说没有消费者界面和内置搜索不对。"
+  },
+  {
+   "id": "C-c4",
+   "source_label": "没有出处",
+   "source_note": "报告C全文没有网址、引注或来源列表，这条断言无出处。",
+   "correct": "有误",
+   "correct_basis": "Gemini Deep Research通常需要数分钟，复杂任务可达十几分钟，官方也只说'几分钟'；1-2分钟以及'不到ChatGPT十分之一'与实际不符。"
+  },
+  {
+   "id": "C-c10",
+   "source_label": "没有出处",
+   "source_note": "报告C全文没有网址、引注或来源列表，这条断言无出处。",
+   "correct": "正确",
+   "correct_basis": "DeepSeek-R1模型本身不带联网检索，知识截止于训练数据（约2024年中，报告写'年初'略有偏差），做深度研究需外接搜索；官方App的联网搜索不属于模型本身。"
+  },
+  {
+   "id": "F-c3",
+   "source_label": "没有出处",
+   "source_note": "报告F全文没有网址、引注或来源列表，这条断言无出处。",
+   "correct": "正确",
+   "correct_basis": "Perplexity的DRACO论文（arXiv 2602.11685，2026年2月）含100个任务、10个领域，Perplexity Deep Research在总分和通过率上居首。"
+  },
+  {
+   "id": "F-c4",
+   "source_label": "没有出处",
+   "source_note": "报告F全文没有网址、引注或来源列表，这条断言无出处。",
+   "correct": "正确",
+   "correct_basis": "LiveDRBench（ICLR 2026，Characterizing Deep Research）摘要写明OpenAI的深度研究系统表现最佳，总体F1约0.55。"
+  }
+ ]
+}

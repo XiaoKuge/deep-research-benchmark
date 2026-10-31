@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第五阶段：小规模检验与修订</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">用三月那批六份真实报告试跑的结果、发现的问题和第 1.1 版修订。本页由 <code>research-plan/stage5-report.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#_1">第五阶段：小规模检验与修订</a><ul>
+<li><a href="#_2">一句话结论</a></li>
+<li><a href="#_3">一、验收结果（第一版）</a></li>
+<li><a href="#_4">二、从检验中学到的</a></li>
+<li><a href="#11">三、修订（第 1.1 版）</a></li>
+<li><a href="#_5">四、这批报告的名次区间</a></li>
+<li><a href="#_6">五、这次检验的局限</a></li>
+<li><a href="#_7">六、下一步：正式检验</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="_1">第五阶段：小规模检验与修订</h1>
+<p>2026-10-29。检验设计见 <code>stage5-pilot/design.md</code>，验收标准见第四阶段方案第十节（检验之前写定）。全部原始材料、评委输出和计分程序都在 <code>stage5-pilot/</code> 下，用 <code>python3 -I score.py mapping.json 1.0</code>（或 <code>1.1</code>）可以重算。</p>
+<hr />
+<h2 id="_2">一句话结论</h2>
+<p>方案的核心部件能用：故意改错的地方全部查了出来，编造的来源被识别，注水的背景没有得分，评委重评的一致性也够。但 8 条验收标准中有 4 条没有通过，原因都已查清。据此做了四处修订，形成第 1.1 版。第 1.1 版还需要用一批按规程新收集的报告来正式检验，这一步需要你。</p>
+<hr />
+<h2 id="_3">一、验收结果（第一版）</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>标准</th>
+<th>结果</th>
+<th>实际情况</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>复算一致</td>
+<td>通过</td>
+<td>计分程序重算两次，结果完全相同</td>
+</tr>
+<tr>
+<td>2</td>
+<td>扰动：改错</td>
+<td>通过</td>
+<td>故意改错的 3 处全部被查出（3/3），改错版的深度净分在三种权重下都低于原版</td>
+</tr>
+<tr>
+<td>3</td>
+<td>扰动：注水</td>
+<td><strong>没有通过</strong></td>
+<td>注水版比原版高 0.5 分。原因不是注水得了分：加入的背景被判为"不切题"，没有计分。差额来自断言核验的抽样，原版的核验员抽到了一条"来源不支持"的结论并扣了 0.5 分，注水版的核验员没有抽到这一条</td>
+</tr>
+<tr>
+<td>4</td>
+<td>扰动：编造来源</td>
+<td>通过</td>
+<td>编造的网址被标为"找不到（疑似编造）"，第二次核查也确认了</td>
+</tr>
+<tr>
+<td>5</td>
+<td>已知组</td>
+<td><strong>没有通过</strong></td>
+<td>两份看起来是普通对话模式的回答，并没有都排在深度研究报告后面。原因见第二节第 2 条</td>
+</tr>
+<tr>
+<td>6</td>
+<td>判定稳定</td>
+<td>通过</td>
+<td>同一个评委两次环节评级的完全一致率为 83%；两个评委对 15 条断言的核验，来源标签和对错标签的一致率都是 93%</td>
+</tr>
+<tr>
+<td>7</td>
+<td>位置偏向</td>
+<td><strong>没有通过</strong></td>
+<td>15 对中有 4 对交换先后后判定改变（27%），略高于 25% 的界线；改变的多是质量接近的几对</td>
+</tr>
+<tr>
+<td>8</td>
+<td>路线不矛盾</td>
+<td><strong>没有通过</strong></td>
+<td>分项计分把一份对话回答排在一份深度研究报告前面，两两比较交换位置后两次都判反。原因见第二节第 1 条</td>
+</tr>
+</tbody>
+</table></div>
+<p>附带的数字：不同模型的评委（Opus 与 Sonnet）之间，环节评级的完全一致率为 67% 至 70%，低于同一模型重评的 83%。</p>
+<hr />
+<h2 id="_4">二、从检验中学到的</h2>
+<ol>
+<li><strong>"硬伤"定得太宽，反而奖励少说。</strong> 第一版规定"任何一条核心结论有误"就算硬伤，结果六份报告中有五份被判了硬伤，只有一份很短的对话回答没有。说得越多，越可能有一条说错，所以这条规则惩罚的是覆盖面。这正是第三阶段关键问题五担心的"计分只看一侧"，只不过方向相反。分项计分与两两比较的那一处矛盾（标准 8），也是这条规则造成的。</li>
+<li><strong>"对话模式一定比深度研究模式差"这个预设，在这批报告上不成立。</strong> 那份很短的对话回答，核心结论全部正确，时效最好。它还是唯一指出"有的评测是厂商自己发布的，自家排第一"的报告，这一条是深度地图中的核心要点。反过来，两份深度研究报告依据的是过时的信息，例如把一年前的产品状态当作现状。两两比较这条路线完全没有用到核验结果，却也得出了同样的判断。所以这次没有通过的，是已知组的预设本身，不是评法。这也说明，产品用的是什么模式，不能代替对报告本身的检查。</li>
+<li><strong>断言核验的抽样会带来噪声。</strong> 每份报告只核验至多 10 条主要结论，由核验员自己挑。不同的核验员挑的不同，"来源不支持"的扣分就跟着变。注水测试没有通过，就是这个原因。</li>
+<li><strong>两两比较的评委不查事实，就会被看起来深入、但数字过时或有误的报告说服。</strong> 第 1.1 版中，两两比较判定某份报告胜过另外两份，而这份报告对题目的总体回答，已被核验证明有误，全篇也没有可追溯的出处。只看文字的整体判断，分辨不了"看起来深"和"真的对"。</li>
+<li><strong>评委内部的稳定性够用，跨模型的稳定性较弱。</strong> 同一模型重评的一致率是 83%，不同模型之间是 67% 至 70%。所以正式比赛采用多家族评委组、取中位数，是有必要的。</li>
+</ol>
+<hr />
+<h2 id="11">三、修订（第 1.1 版）</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>修订</th>
+<th>针对</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>第二节第 1 条，标准 8</td>
+<td>"主要结论与证据相反"这一硬伤，只看报告对题目的直接回答，即至多 3 条总体判断。支撑性事实的错误，照常在深度净分中扣分，不再升格为硬伤</td>
+</tr>
+<tr>
+<td>2</td>
+<td>第二节第 3 条，标准 3</td>
+<td>断言核验改为：凡是带来源的结论全部核验，另加至多 10 条不带来源的主要结论；结论清单由一人按固定规则抽出，所有核验员都用同一份清单。扰动测试中，原版和扰动版使用同一份清单</td>
+</tr>
+<tr>
+<td>3</td>
+<td>第二节第 4 条</td>
+<td>两两比较的否决权，不适用于由核验确认的硬伤（编造来源、直接回答有误、没有可追溯的出处）。两两比较至少由两个评委各按两种先后各比一次，否决要求四次中至少三次一致</td>
+</tr>
+<tr>
+<td>4</td>
+<td>第二节第 2 条，标准 5</td>
+<td>已知组不再按"产品模式"来定，改为只用人为构造的已知组，即扰动版本。标准 5 改为："一份报告的扰动版本，不排在它自己的原版前面。"</td>
+</tr>
+</tbody>
+</table></div>
+<p>修订 1 和修订 3 的前半（两两比较不能否决硬伤）可以直接在本次的数据上重算。修订 2、修订 3 的后半和修订 4 需要重新运行评委，要等下一次检验。</p>
+<p><strong>在本次数据上重算的效果。</strong> 这只是敏感性检查，不能算作检验通过，因为修订是看了这批数据之后才做的。</p>
+<ul>
+<li>四个扰动版本中，只有编造来源的那一份被判了硬伤，其余三份都没有，符合预期。</li>
+<li>只用修订 1 时，原来那处矛盾消失了，但又出现了两处新的：两两比较判定某份报告胜出，而核验已经证明这份报告的总体回答有误、并且没有出处。再加上修订 3 的前半，这两处也不再算矛盾，标准 8 通过。</li>
+<li>标准 3、5、7 仍然没有通过。它们要靠修订 2、修订 3 的后半和修订 4，重新运行评委之后才能检验。</li>
+</ul>
+<hr />
+<h2 id="_5">四、这批报告的名次区间</h2>
+<p>这一节只用来说明方案会给出什么样的结果，<strong>不是对这几个产品的评价</strong>。理由有四点：报告是 2026 年 3 月的；题目是还原的；评委都来自同一家族；而且其中一个产品本身就是评委所属的家族。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>报告</th>
+<th>产品</th>
+<th>第一版</th>
+<th>第 1.1 版</th>
+<th>硬伤（第 1.1 版）</th>
+<th>写作（单独报告）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D</td>
+<td>Gemini</td>
+<td>第 1–4 名</td>
+<td>第 1–2 名</td>
+<td>无</td>
+<td>1</td>
+</tr>
+<tr>
+<td>F</td>
+<td>DeepSeek（看起来是普通联网问答）</td>
+<td>第 1–2 名</td>
+<td>第 1–2 名</td>
+<td>无</td>
+<td>2</td>
+</tr>
+<tr>
+<td>A</td>
+<td>ChatGPT</td>
+<td>第 3–6 名</td>
+<td>第 3–4 名</td>
+<td>无</td>
+<td>1</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Perplexity</td>
+<td>第 5–6 名</td>
+<td>第 3–4 名</td>
+<td>无</td>
+<td>2</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Kimi</td>
+<td>第 2–5 名</td>
+<td>第 5–6 名</td>
+<td>总体回答有误；导出后没有出处</td>
+<td>1</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Claude（看起来是普通对话）</td>
+<td>第 2–5 名</td>
+<td>第 5–6 名</td>
+<td>没有可追溯的出处</td>
+<td>2</td>
+</tr>
+</tbody>
+</table></div>
+<p>第 1.1 版一列，包括修订 1 和修订 3 的前半。</p>
+<p>读法：第 1–2 名，表示在现有证据下，它只能确定排在前两名之内，与另一份并列。第 1.1 版下，六份报告分成清楚的三档，每档两份。这符合第三阶段的预期：只有一道题时，名次分不到一个一个的那么细。</p>
+<p>要点池共 122 条，其中现象 80 条、全体 13 条、内部联系 23 条、本质 6 条。出题人深度地图中的 8 条，有 2 条没有任何报告写到，包括"'深度研究'不是一个标准化的能力，各家定义不同"。还有 4 条只有一两份报告写到。</p>
+<hr />
+<h2 id="_6">五、这次检验的局限</h2>
+<ol>
+<li>评委都是 Claude 家族的模型，而被评的六份报告中有一份来自 Claude，所以检验不了跨家族的稳定性和同源偏向。</li>
+<li>题目是还原的，深度地图是在读过部分报告之后写的。</li>
+<li>要点池由一个评委合并判定，没有人工复核。</li>
+<li>两两比较的评委在一个上下文中读完了全部六份报告，各对之间的判断并不完全独立。</li>
+<li>人工审计和独立专家判断（验收标准 9 至 11）都没有做。</li>
+<li>第 1.1 版的修订是看过这批数据之后做的，在这批数据上重算的结果，不能算作通过检验。</li>
+</ol>
+<hr />
+<h2 id="_7">六、下一步：正式检验</h2>
+<p>按第三稿第 8.3 节，没有通过验收标准的部分，修订后要重新检验。第 1.1 版的正式检验需要一批新报告，按收集规程（<code>collection-protocol.md</code>）收集：两道题，同一天在 3 到 6 个产品上用深度研究模式运行，导出时保留链接。</p>
+<p>这一步要用你的产品账号，所以需要你来决定：用哪几个产品，由谁来运行（你自己，或者授权我用浏览器操作），哪一天运行。报告收齐之后，其余步骤可以照这次的方式自动完成。正式比赛前，还需要安排人工审计和独立专家，并接入至少三家厂商的评委。</p>
+<footer>源文件：<code>research-plan/stage5-report.md</code></footer>
+</div>
+</body>
+</html>

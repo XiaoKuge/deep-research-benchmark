@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一页总结</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">研究计划五个阶段的结论。本页由 <code>research-plan/summary.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#5">一页总结：怎样给 5 份深度研究报告排名次</a><ul>
+<li><a href="#_1">我们要解决的问题</a></li>
+<li><a href="#23">现有的 23 篇文献能不能直接用？不能</a></li>
+<li><a href="#_2">我们的评法</a></li>
+<li><a href="#_3">拿三月那批真实报告试了一次</a></li>
+<li><a href="#_4">需要你做的一件事</a></li>
+<li><a href="#_5">文档在哪里</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="5">一页总结：怎样给 5 份深度研究报告排名次</h1>
+<p>2026-10-29。这是研究计划五个阶段的结论。细节都在各阶段的文档里，这里只说结论。</p>
+<hr />
+<h2 id="_1">我们要解决的问题</h2>
+<p>给 5 个智能体同一道研究题，它们各自交一份报告，我们要排出一个<strong>经得起质疑的名次</strong>。</p>
+<h2 id="23">现有的 23 篇文献能不能直接用？不能</h2>
+<p>我们逐一审视了 18 个现有的评测工具，没有一个能直接拿来用。最常见的三个问题是：</p>
+<ol>
+<li><strong>评委打分对不对，没人认真核对过。</strong> 18 个工具都是这样。</li>
+<li><strong>名次之间的差距，常常比误差还小。</strong> 但它们照样排出了第一、第二。</li>
+<li><strong>只奖励"说中了"，不惩罚"说错了"。</strong> 结果写得越长，分越高。</li>
+</ol>
+<h2 id="_2">我们的评法</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>出题</td>
+<td>写清提问者是谁、要拿结果做什么、截止到哪天；出题人另写一份"深度地图"，确认这道题挖深了结论会变</td>
+</tr>
+<tr>
+<td>查对错</td>
+<td>把每份报告的主要结论逐条拿去对照来源，查对错、查时效、查来源是不是编的</td>
+</tr>
+<tr>
+<td>要点池</td>
+<td>把几份报告提到的要点合在一起，逐条判定：对不对、切不切题、深到哪一层（现象、全体、内部联系、本质）</td>
+</tr>
+<tr>
+<td>排名次</td>
+<td>先看有没有硬伤（来源造假、总体回答错了、全篇没出处）；再比"深而正确的内容"减去"错误"；分不开的，就并列</td>
+</tr>
+<tr>
+<td>公布</td>
+<td>公布的是名次区间，例如"第 1–2 名"；全部材料公开，设申诉渠道</td>
+</tr>
+</tbody>
+</table></div>
+<p>篇幅、格式、文笔，都不进入名次。写作好坏单独报告。</p>
+<h2 id="_3">拿三月那批真实报告试了一次</h2>
+<p>我们用三月份 6 个产品对同一道题写的报告，把整套评法跑了一遍，评委全部由 AI 担任。</p>
+<p><strong>能用的部分：</strong>
+- 故意改错的 3 处，全部查出；
+- 编造的来源，被识别出来；
+- 硬塞进去的无关背景，没有得分；
+- 同一个评委重评一次，结果 83% 相同。</p>
+<p><strong>发现的问题，已经修订：</strong>
+- 第一版的"硬伤"定得太宽，长报告几乎都被判了硬伤，等于奖励少说。现在只看报告对题目的总体回答对不对。
+- 两两比较的评委不查事实，会被"看起来很深"、其实数字过时的报告说服。现在不允许它推翻已经查实的问题。
+- 一个意外的发现：一份很短的普通对话回答，比两份长篇深度研究报告更准确、更新。所以"用了深度研究模式"不等于"调研做得好"，还是要看报告本身。</p>
+<p><strong>试出来的名次（只是演示，不是对产品的评价）：</strong> 六份报告分成三档，每档两份。Gemini 和 DeepSeek 并列第一档，ChatGPT 和 Perplexity 在第二档，Kimi 和 Claude 在第三档：Kimi 的总体回答有误，而且导出后没有出处；Claude 那份短回答没有出处。</p>
+<h2 id="_4">需要你做的一件事</h2>
+<p>正式检验需要一批<strong>按规则新收集的报告</strong>：两道题，同一天在 3 到 6 个产品上用深度研究模式运行，导出时保留链接。要用你的账号，所以请你定三件事：</p>
+<ol>
+<li>用哪几个产品；</li>
+<li>由谁来运行：你自己，或者授权我用浏览器操作；</li>
+<li>哪一天运行。</li>
+</ol>
+<p>报告收齐之后，其余步骤我可以照这次的方式自动完成。</p>
+<h2 id="_5">文档在哪里</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>内容</th>
+<th>文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>概念定义（调研、好的调研、深）</td>
+<td><code>stage1-concepts.md</code></td>
+</tr>
+<tr>
+<td>18 个现有工具的审视</td>
+<td><code>stage2-summary.md</code></td>
+</tr>
+<tr>
+<td>8 个关键问题</td>
+<td><code>stage3-problems.md</code></td>
+</tr>
+<tr>
+<td>评法（第 1.1 版）和评审细则</td>
+<td><code>stage4-design.md</code>、<code>stage4-rubric.md</code></td>
+</tr>
+<tr>
+<td>试跑结果与修订</td>
+<td><code>stage5-report.md</code>；原始数据和计分程序在 <code>stage5-pilot/</code></td>
+</tr>
+</tbody>
+</table></div>
+<footer>源文件：<code>research-plan/summary.md</code></footer>
+</div>
+</body>
+</html>

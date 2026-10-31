@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>深度研究评测基准 · 本地资料站</title>
+<meta name="description" content="给深度研究报告排名次的评测方法：定义、规则、出题手册、试评结果和全部参考资料。">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="深度研究评测基准 · 本地资料站">
+<meta property="og:description" content="先定义深度研究，再据此出题、核验、计分，名次按区间公布。">
+<meta property="og:image" content="assets/architecture-light.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 视觉规则来自 landing-page-design 技能第 B 部分：字号只用 Tailwind 档位，间距只用表内数值，动效统一用减速曲线 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00;
+    --btn-bg: #111111; --btn-fg: #ffffff; --btn-hover: #333333;
+    --hero-from: #000000; --hero-to: #666666;
+    --nav-bg: rgba(255, 255, 255, .72); --word-muted: rgba(17, 17, 17, .3);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a;
+      --btn-bg: #f2f2f2; --btn-fg: #111111; --btn-hover: #d9d9d9;
+      --hero-from: #ffffff; --hero-to: #9b9b9b;
+      --nav-bg: rgba(31, 31, 31, .72); --word-muted: rgba(242, 242, 242, .3);
+      color-scheme: dark;
+    }
+  }
+
+  /* 命名文字样式（技能 B1 的表） */
+  .heading-1 { font-size: 60px; line-height: 60px; font-weight: 600; }
+  .heading-2 { font-size: 48px; line-height: 48px; font-weight: 600; }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-4 { font-size: 30px; line-height: 36px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-1 { font-size: 20px; line-height: 28px; font-weight: 500; }
+  .title-2 { font-size: 18px; line-height: 28px; font-weight: 500; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-1 { font-size: 16px; line-height: 24px; font-weight: 600; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .button-md { font-size: 16px; line-height: 24px; font-weight: 600; }
+  .button-sm { font-size: 14px; line-height: 20px; font-weight: 600; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4, p { margin: 0; }
+  h1, h2, h3, h4, .reveal-words { text-wrap: balance; }
+  p, li, dd { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .i { width: 20px; height: 20px; flex: none; fill: currentColor; }
+  .i-sm { width: 16px; height: 16px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .muted { color: var(--ink-2); }
+  .eyebrow { color: var(--ink-3); }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--btn-bg); color: var(--btn-fg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+
+  /* 按钮 */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; border: 1px solid transparent; cursor: pointer;
+    transition: background-color 300ms var(--ease), transform 300ms var(--ease); }
+  .btn-primary { background: var(--btn-bg); color: var(--btn-fg); }
+  .btn-primary:hover { background: var(--btn-hover); }
+  .btn:active { transform: scale(0.98); }
+
+  /* 导航：悬浮、半透明、背景模糊 */
+  .nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 40; width: max-content; max-width: calc(100% - 32px);
+    display: flex; align-items: center; gap: 4px; padding: 4px 4px 4px 16px; border-radius: 9999px; border: 1px solid var(--line);
+    background: var(--nav-bg); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4); }
+  .brand { display: flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; margin-right: 12px; white-space: nowrap; }
+  .brand svg { width: 20px; height: 20px; }
+  .nav-links { display: flex; gap: 2px; }
+  .nav-links a { color: var(--ink-2); text-decoration: none; padding: 4px 12px; border-radius: 9999px; transition: background-color 300ms var(--ease), color 300ms var(--ease); white-space: nowrap; }
+  .nav-links a:hover { background: var(--surface); color: var(--ink); }
+  .nav-links a[aria-current="true"] { background: var(--surface); color: var(--ink); }
+  .nav .btn { border-radius: 9999px; padding: 4px 12px; margin-left: 8px; white-space: nowrap; }
+  .menu-btn { display: none; width: 40px; height: 40px; border-radius: 9999px; border: 0; background: transparent; color: var(--ink); position: relative; cursor: pointer; }
+  .menu-btn span { position: absolute; left: 12px; right: 12px; height: 2px; background: currentColor; border-radius: 2px; transition: transform 500ms var(--ease); }
+  .menu-btn span:first-child { transform: translateY(-4px); }
+  .menu-btn span:last-child { transform: translateY(4px); }
+  .menu-open .menu-btn span:first-child { transform: rotate(45deg); }
+  .menu-open .menu-btn span:last-child { transform: rotate(-45deg); }
+  .menu-panel { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; gap: 8px; padding: 96px 24px 32px;
+    background: rgba(255, 255, 255, .92); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    opacity: 0; pointer-events: none; transition: opacity 500ms var(--ease); }
+  @media (prefers-color-scheme: dark) { .menu-panel { background: rgba(24, 24, 24, .92); } }
+  .menu-open .menu-panel { opacity: 1; pointer-events: auto; }
+  .menu-panel a { color: var(--ink); text-decoration: none; padding: 12px 0; border-bottom: 1px solid var(--line); opacity: 0; transform: translateY(24px);
+    transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+  .menu-open .menu-panel a { opacity: 1; transform: none; }
+  .menu-panel .btn { justify-content: center; margin-top: 16px; border-bottom: 0; color: var(--btn-fg); padding: 12px; }
+  @media (max-width: 879px) {
+    .nav { left: 16px; right: 16px; width: auto; transform: none; justify-content: space-between; }
+    .nav-links, .nav > .btn { display: none; }
+    .menu-btn { display: block; }
+  }
+  @media (min-width: 880px) { .menu-panel { display: none; } }
+
+  section { padding-block: 64px; }
+  @media (min-width: 768px) { section { padding-block: 96px; } }
+  .section-head { max-width: 680px; margin-bottom: 40px; }
+  .section-head .caption-1 { color: var(--ink-3); margin-bottom: 12px; }
+  .section-head .body-3 { margin-top: 16px; color: var(--ink-2); }
+
+  /* 首屏 */
+  .hero { padding-top: 96px; }
+  .hero-inner { padding-top: 48px; }
+  .hero-title { max-width: 680px; margin-top: 16px; background: linear-gradient(90deg, var(--hero-from), var(--hero-to)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero-sub { max-width: 680px; margin-top: 24px; color: var(--ink-2); }
+  .hero-cta { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .proof { margin-top: 16px; display: flex; align-items: center; gap: 8px; color: var(--ink-2); }
+  .proof .i { color: var(--ok); }
+  .hero-visual { margin: 48px 0 0; }
+  .shot { display: block; padding: 8px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); transition: transform 500ms var(--ease); }
+  .shot:hover { transform: translateY(-2px); }
+  .shot img { display: block; width: 100%; height: auto; border-radius: 8px; }
+  .hero-visual figcaption { margin-top: 12px; color: var(--ink-3); display: flex; gap: 8px; align-items: flex-start; }
+  @media (max-width: 639px) {
+    .hero-title { font-size: 30px; line-height: 36px; } /* 窄屏改用 Heading 4，让"给深度研究报告排名次，"留在一行 */
+  }
+
+  /* 标语：逐词点亮（技能 B11） */
+  .tagline { background: var(--surface); }
+  .tagline .caption-1 { color: var(--ink-3); margin-bottom: 24px; }
+  .reveal-words { max-width: 680px; }
+  .reveal-words .w { color: var(--word-muted); transition: color 500ms var(--ease); }
+  .reveal-words .w.on { color: var(--ink); }
+  .tag-note { margin-top: 32px; max-width: 680px; color: var(--ink-2); }
+  @media (max-width: 639px) { .reveal-words { font-size: 30px; line-height: 36px; } } /* 窄屏改用 Heading 4 */
+
+  /* 问题到办法 */
+  .pairs { display: grid; gap: 16px; }
+  .pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch; }
+  .pair .prob, .pair .fix { border-radius: 16px; padding: 24px; border: 1px solid var(--line); }
+  .pair .prob { background: var(--bg); }
+  .pair .fix { background: var(--surface); }
+  .pair .tag { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+  .pair .prob .tag { color: var(--warn); }
+  .pair .fix .tag { color: var(--ok); }
+  .pair .arrow { display: grid; place-items: center; color: var(--ink-3); }
+  @media (max-width: 767px) { .pair { grid-template-columns: 1fr; gap: 8px; } .pair .arrow svg { transform: rotate(90deg); } }
+
+  /* 利益点 */
+  .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .benefit { border: 1px solid var(--line); border-radius: 16px; padding: 24px; background: var(--raised); }
+  .benefit .i { width: 24px; height: 24px; color: var(--accent); margin-bottom: 16px; }
+  .benefit p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 三步 */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; counter-reset: s; list-style: none; padding: 0; margin: 0; }
+  .step { counter-increment: s; border-radius: 16px; padding: 24px; background: var(--surface); }
+  .step::before { content: counter(s); display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--btn-bg); color: var(--btn-fg); font-size: 14px; line-height: 20px; font-weight: 600; margin-bottom: 16px; }
+  .step p { margin-top: 8px; color: var(--ink-2); }
+  .step a { display: inline-flex; align-items: center; gap: 4px; margin-top: 16px; text-decoration: none; }
+  .step a:hover { text-decoration: underline; }
+
+  /* 试评证据 */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .stat { border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+  .stat .heading-3 { font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 8px; color: var(--ink-2); }
+  .stat.bad .heading-3 { color: var(--warn); }
+  .finding { margin-top: 16px; border-radius: 16px; padding: 24px; background: var(--surface); display: grid; gap: 8px; }
+  .finding .row { display: flex; gap: 12px; align-items: flex-start; }
+  .finding .i { color: var(--accent); margin-top: 2px; }
+
+  /* 全部材料 */
+  .lib-tools { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 32px; }
+  .search { display: flex; align-items: center; gap: 8px; flex: 1 1 280px; max-width: 420px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; background: var(--raised); }
+  .search:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .search input { border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 16px; line-height: 24px; width: 100%; }
+  .search .i { color: var(--ink-3); }
+  .lib-count { color: var(--ink-3); }
+  .group { margin-top: 40px; }
+  .group:first-of-type { margin-top: 0; }
+  .group-title { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .group-title .i { color: var(--ink-3); }
+  .res-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; list-style: none; padding: 0; margin: 0; }
+  .res a { display: flex; gap: 12px; height: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); text-decoration: none;
+    transition: background-color 300ms var(--ease), transform 300ms var(--ease), border-color 300ms var(--ease); }
+  .res a:hover { background: var(--surface); transform: translateY(-2px); }
+  .res a:active { transform: translateY(1px); }
+  .res .i { color: var(--ink-3); margin-top: 2px; }
+  .res .name { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .res .desc { display: block; margin-top: 4px; color: var(--ink-2); }
+  .badge { display: inline-block; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-3); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none; background: var(--raised); transition: background-color 300ms var(--ease); }
+  .chip:hover { background: var(--surface); }
+  .empty { display: none; border: 1px dashed var(--line); border-radius: 16px; padding: 32px 24px; text-align: center; }
+  .empty.show { display: block; }
+  .empty p { color: var(--ink-2); margin: 8px 0 16px; }
+  .empty button { font: inherit; }
+  .lib-note { margin-top: 24px; color: var(--ink-3); }
+  [hidden] { display: none !important; }
+
+  /* 常见问题 */
+  .faq { max-width: 760px; }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary .i { color: var(--ink-3); transition: transform 300ms var(--ease); margin-top: 2px; }
+  .faq details[open] summary .i { transform: rotate(45deg); }
+  .faq .ans { padding-bottom: 16px; color: var(--ink-2); }
+  .faq .ans p + p { margin-top: 8px; }
+
+  /* 可复算、可申诉 */
+  .open-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .open-item { display: flex; gap: 12px; padding: 24px; border-radius: 16px; background: var(--surface); }
+  .open-item .i { color: var(--ok); margin-top: 2px; }
+  .open-item p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 结尾 */
+  .final { text-align: center; }
+  .final .wrap { display: flex; flex-direction: column; align-items: center; }
+  .final p { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
+  .final .btn { margin-top: 32px; }
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+  footer a { color: var(--ink-2); }
+
+  /* 进场：上移 32px 并淡入，只播一次 */
+  .rv { opacity: 0; transform: translateY(32px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); }
+  .rv.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .rv, .rv.in { opacity: 1; transform: none; transition: opacity 300ms linear; }
+    .reveal-words .w { color: var(--ink); transition: none; }
+    .menu-panel a { transform: none; }
+    .shot:hover, .res a:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="i-archive" viewBox="0 0 256 256"><path d="M224,48H32A16,16,0,0,0,16,64V88a16,16,0,0,0,16,16v88a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V104a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM208,192H48V104H208ZM224,88H32V64H224V88ZM96,136a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,136Z"/></symbol><symbol id="i-arrow-right" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol><symbol id="i-arrow-up-right" viewBox="0 0 256 256"><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></symbol><symbol id="i-book-open" viewBox="0 0 256 256"><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></symbol><symbol id="i-books" viewBox="0 0 256 256"><path d="M231.65,194.55,198.46,36.75a16,16,0,0,0-19-12.39L132.65,34.42a16.08,16.08,0,0,0-12.3,19l33.19,157.8A16,16,0,0,0,169.16,224a16.25,16.25,0,0,0,3.38-.36l46.81-10.06A16.09,16.09,0,0,0,231.65,194.55ZM136,50.15c0-.06,0-.09,0-.09l46.8-10,3.33,15.87L139.33,66Zm6.62,31.47,46.82-10.05,3.34,15.9L146,97.53Zm6.64,31.57,46.82-10.06,13.3,63.24-46.82,10.06ZM216,197.94l-46.8,10-3.33-15.87L212.67,182,216,197.85C216,197.91,216,197.94,216,197.94ZM104,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V48A16,16,0,0,0,104,32ZM56,48h48V64H56Zm0,32h48v96H56Zm48,128H56V192h48v16Z"/></symbol><symbol id="i-check-circle" viewBox="0 0 256 256"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></symbol><symbol id="i-file-pdf" viewBox="0 0 256 256"><path d="M224,152a8,8,0,0,1-8,8H192v16h16a8,8,0,0,1,0,16H192v16a8,8,0,0,1-16,0V152a8,8,0,0,1,8-8h32A8,8,0,0,1,224,152ZM92,172a28,28,0,0,1-28,28H56v8a8,8,0,0,1-16,0V152a8,8,0,0,1,8-8H64A28,28,0,0,1,92,172Zm-16,0a12,12,0,0,0-12-12H56v24h8A12,12,0,0,0,76,172Zm88,8a36,36,0,0,1-36,36H112a8,8,0,0,1-8-8V152a8,8,0,0,1,8-8h16A36,36,0,0,1,164,180Zm-16,0a20,20,0,0,0-20-20h-8v40h8A20,20,0,0,0,148,180ZM40,112V40A16,16,0,0,1,56,24h96a8,8,0,0,1,5.66,2.34l56,56A8,8,0,0,1,216,88v24a8,8,0,0,1-16,0V96H152a8,8,0,0,1-8-8V40H56v72a8,8,0,0,1-16,0ZM160,80h28.69L160,51.31Z"/></symbol><symbol id="i-file-text" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></symbol><symbol id="i-flask" viewBox="0 0 256 256"><path d="M221.69,199.77,160,96.92V40h8a8,8,0,0,0,0-16H88a8,8,0,0,0,0,16h8V96.92L34.31,199.77A16,16,0,0,0,48,224H208a16,16,0,0,0,13.72-24.23ZM110.86,103.25A7.93,7.93,0,0,0,112,99.14V40h32V99.14a7.93,7.93,0,0,0,1.14,4.11L183.36,167c-12,2.37-29.07,1.37-51.75-10.11-15.91-8.05-31.05-12.32-45.22-12.81ZM48,208l28.54-47.58c14.25-1.74,30.31,1.85,47.82,10.72,19,9.61,35,12.88,48,12.88a69.89,69.89,0,0,0,19.55-2.7L208,208Z"/></symbol><symbol id="i-link" viewBox="0 0 256 256"><path d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/></symbol><symbol id="i-list-checks" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H128a8,8,0,0,1,0-16h88A8,8,0,0,1,224,128ZM128,72h88a8,8,0,0,0,0-16H128a8,8,0,0,0,0,16Zm88,112H128a8,8,0,0,0,0,16h88a8,8,0,0,0,0-16ZM82.34,42.34,56,68.69,45.66,58.34A8,8,0,0,0,34.34,69.66l16,16a8,8,0,0,0,11.32,0l32-32A8,8,0,0,0,82.34,42.34Zm0,64L56,132.69,45.66,122.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Zm0,64L56,196.69,45.66,186.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Z"/></symbol><symbol id="i-magnifying-glass" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></symbol><symbol id="i-notebook" viewBox="0 0 256 256"><path d="M184,112a8,8,0,0,1-8,8H112a8,8,0,0,1,0-16h64A8,8,0,0,1,184,112Zm-8,24H112a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm48-88V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48ZM48,208H72V48H48Zm160,0V48H88V208H208Z"/></symbol><symbol id="i-path" viewBox="0 0 256 256"><path d="M200,168a32.06,32.06,0,0,0-31,24H72a32,32,0,0,1,0-64h96a40,40,0,0,0,0-80H72a8,8,0,0,0,0,16h96a24,24,0,0,1,0,48H72a48,48,0,0,0,0,96h97a32,32,0,1,0,31-40Zm0,48a16,16,0,1,1,16-16A16,16,0,0,1,200,216Z"/></symbol><symbol id="i-plus" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></symbol><symbol id="i-scales" viewBox="0 0 256 256"><path d="M239.43,133l-32-80h0a8,8,0,0,0-9.16-4.84L136,62V40a8,8,0,0,0-16,0V65.58L54.26,80.19A8,8,0,0,0,48.57,85h0v.06L16.57,165a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32a7.92,7.92,0,0,0-.57-3L66.92,93.77,120,82V208H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V78.42L187,67.1,160.57,133a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32A7.92,7.92,0,0,0,239.43,133ZM56,184c-7.53,0-22.76-3.61-23.93-14.64L56,109.54l23.93,59.82C78.76,180.39,63.53,184,56,184Zm144-32c-7.53,0-22.76-3.61-23.93-14.64L200,77.54l23.93,59.82C222.76,148.39,207.53,152,200,152Z"/></symbol><symbol id="i-seal-check" viewBox="0 0 256 256"><path d="M225.86,102.82c-3.77-3.94-7.67-8-9.14-11.57-1.36-3.27-1.44-8.69-1.52-13.94-.15-9.76-.31-20.82-8-28.51s-18.75-7.85-28.51-8c-5.25-.08-10.67-.16-13.94-1.52-3.56-1.47-7.63-5.37-11.57-9.14C146.28,23.51,138.44,16,128,16s-18.27,7.51-25.18,14.14c-3.94,3.77-8,7.67-11.57,9.14C88,40.64,82.56,40.72,77.31,40.8c-9.76.15-20.82.31-28.51,8S41,67.55,40.8,77.31c-.08,5.25-.16,10.67-1.52,13.94-1.47,3.56-5.37,7.63-9.14,11.57C23.51,109.72,16,117.56,16,128s7.51,18.27,14.14,25.18c3.77,3.94,7.67,8,9.14,11.57,1.36,3.27,1.44,8.69,1.52,13.94.15,9.76.31,20.82,8,28.51s18.75,7.85,28.51,8c5.25.08,10.67.16,13.94,1.52,3.56,1.47,7.63,5.37,11.57,9.14C109.72,232.49,117.56,240,128,240s18.27-7.51,25.18-14.14c3.94-3.77,8-7.67,11.57-9.14,3.27-1.36,8.69-1.44,13.94-1.52,9.76-.15,20.82-.31,28.51-8s7.85-18.75,8-28.51c.08-5.25.16-10.67,1.52-13.94,1.47-3.56,5.37-7.63,9.14-11.57C232.49,146.28,240,138.44,240,128S232.49,109.73,225.86,102.82Zm-11.55,39.29c-4.79,5-9.75,10.17-12.38,16.52-2.52,6.1-2.63,13.07-2.73,19.82-.1,7-.21,14.33-3.32,17.43s-10.39,3.22-17.43,3.32c-6.75.1-13.72.21-19.82,2.73-6.35,2.63-11.52,7.59-16.52,12.38S132,224,128,224s-9.15-4.92-14.11-9.69-10.17-9.75-16.52-12.38c-6.1-2.52-13.07-2.63-19.82-2.73-7-.1-14.33-.21-17.43-3.32s-3.22-10.39-3.32-17.43c-.1-6.75-.21-13.72-2.73-19.82-2.63-6.35-7.59-11.52-12.38-16.52S32,132,32,128s4.92-9.15,9.69-14.11,9.75-10.17,12.38-16.52c2.52-6.1,2.63-13.07,2.73-19.82.1-7,.21-14.33,3.32-17.43S70.51,56.9,77.55,56.8c6.75-.1,13.72-.21,19.82-2.73,6.35-2.63,11.52-7.59,16.52-12.38S124,32,128,32s9.15,4.92,14.11,9.69,10.17,9.75,16.52,12.38c6.1,2.52,13.07,2.63,19.82,2.73,7,.1,14.33.21,17.43,3.32s3.22,10.39,3.32,17.43c.1,6.75.21,13.72,2.73,19.82,2.63,6.35,7.59,11.52,12.38,16.52S224,124,224,128,219.08,137.15,214.31,142.11ZM173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34Z"/></symbol><symbol id="i-stack" viewBox="0 0 256 256"><path d="M230.91,172A8,8,0,0,1,228,182.91l-96,56a8,8,0,0,1-8.06,0l-96-56A8,8,0,0,1,36,169.09l92,53.65,92-53.65A8,8,0,0,1,230.91,172ZM220,121.09l-92,53.65L36,121.09A8,8,0,0,0,28,134.91l96,56a8,8,0,0,0,8.06,0l96-56A8,8,0,1,0,220,121.09ZM24,80a8,8,0,0,1,4-6.91l96-56a8,8,0,0,1,8.06,0l96,56a8,8,0,0,1,0,13.82l-96,56a8,8,0,0,1-8.06,0l-96-56A8,8,0,0,1,24,80Zm23.88,0L128,126.74,208.12,80,128,33.26Z"/></symbol><symbol id="i-target" viewBox="0 0 256 256"><path d="M221.87,83.16A104.1,104.1,0,1,1,195.67,49l22.67-22.68a8,8,0,0,1,11.32,11.32l-96,96a8,8,0,0,1-11.32-11.32l27.72-27.72a40,40,0,1,0,17.87,31.09,8,8,0,1,1,16-.9,56,56,0,1,1-22.38-41.65L184.3,60.39a87.88,87.88,0,1,0,23.13,29.67,8,8,0,0,1,14.44-6.9Z"/></symbol><symbol id="i-tree-structure" viewBox="0 0 256 256"><path d="M160,112h48a16,16,0,0,0,16-16V48a16,16,0,0,0-16-16H160a16,16,0,0,0-16,16V64H128a24,24,0,0,0-24,24v32H72v-8A16,16,0,0,0,56,96H24A16,16,0,0,0,8,112v32a16,16,0,0,0,16,16H56a16,16,0,0,0,16-16v-8h32v32a24,24,0,0,0,24,24h16v16a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V160a16,16,0,0,0-16-16H160a16,16,0,0,0-16,16v16H128a8,8,0,0,1-8-8V88a8,8,0,0,1,8-8h16V96A16,16,0,0,0,160,112ZM56,144H24V112H56v32Zm104,16h48v48H160Zm0-112h48V96H160Z"/></symbol><symbol id="i-warning-circle" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"/></symbol></svg>
+<a class="skip button-sm" href="#main">跳到正文</a>
+
+<header class="nav" id="nav">
+  <a class="brand title-4" href="#top" aria-label="回到页首">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M8 11h16M10 16h12M12 21h8" stroke="var(--bg)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    深度研究评测
+  </a>
+  <nav class="nav-links body-5" aria-label="页内导航">
+    <a href="#definition">定义</a>
+    <a href="#method">评法</a>
+    <a href="#pilot">试评</a>
+    <a href="#library">全部材料</a>
+    <a href="#faq">问答</a>
+  </nav>
+  <a class="btn btn-primary button-sm" href="../notes/question-handbook.html">打开出题手册</a>
+  <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu-panel" aria-label="打开菜单"><span></span><span></span></button>
+</header>
+<div class="menu-panel title-2" id="menu-panel" aria-hidden="true">
+  <a href="#definition">定义</a>
+  <a href="#method">评法</a>
+  <a href="#pilot">试评</a>
+  <a href="#library">全部材料</a>
+  <a href="#faq">问答</a>
+  <a class="btn btn-primary button-md" href="../notes/question-handbook.html">打开出题手册</a>
+</div>
+
+<main id="main">
+
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <p class="caption-1 eyebrow">深度研究评测基准 · 本地资料站</p>
+    <h1 class="heading-1 hero-title">给深度研究报告排名次，<br>只排站得住的先后</h1>
+    <p class="body-3 hero-sub">先给"深度研究"一个严格的定义，再据此出题、核验、计分。名次按区间公布，每一分都能追到出处。研究、规则、出题手册和参考资料，都收在这一页。</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary button-md" href="../notes/question-handbook.html">打开出题手册 <svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+    </div>
+    <p class="proof caption-1"><svg class="i i-sm" aria-hidden="true"><use href="#i-seal-check"/></svg>试评 6 份真实报告，故意改错的 3 处全部查出</p>
+    <figure class="hero-visual">
+      <a class="shot" href="diagrams/architecture-dr-benchmark/benchmark-architecture-explained.html" aria-label="打开架构图">
+        <picture>
+          <source srcset="assets/architecture-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="assets/architecture-light.png" width="1440" height="664" alt="评测基准架构图：题目卡经统一运行交给五个参赛智能体，报告进入断言核验、要点池和环节评级，计分程序给出名次区间，复核包公开。深度地图只在要点池接入。">
+        </picture>
+      </a>
+      <figcaption class="caption-2"><svg class="i i-sm" aria-hidden="true"><use href="#i-tree-structure"/></svg><span>点图打开架构图，再点图上任一环节，就能看到它是什么、做什么用。想看一道题怎样走完全程，读<a href="walkthrough.html">这个例子</a>。</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="tagline" id="definition" aria-labelledby="def-label">
+  <div class="wrap">
+    <p class="caption-1" id="def-label">什么是深度研究</p>
+    <p class="heading-2 reveal-words" id="tagline-text"><span class="w">深度研究，</span><span class="w">是</span><span class="w">以</span><span class="w">推进到</span><br><span class="w">本质、</span><span class="w">全体</span><span class="w">和</span><span class="w">内部联系</span><br><span class="w">为目标</span><span class="w">的</span><span class="w">调研。</span></p>
+    <p class="body-6 tag-note">"深"的说法来自《实践论》：认识从事物的现象、片面和外部联系，推进到事物的本质、全体和内部联系。调研，是为了回答提问者的一个具体问题，用截至某一天已有的信息，系统地查找、甄别、分析和整合。<a href="../notes/paper.html">读论文里的三层定义</a></p>
+  </div>
+</section>
+
+<section id="why" aria-labelledby="why-title">
+  <div class="wrap">
+    <div class="section-head rv">
+      <p class="caption-1">为什么要另做一套</p>
+      <h2 class="heading-3" id="why-title">现有的评测，为什么不能直接拿来用</h2>
+      <p class="body-3">我们逐一审视了 23 篇文献里的 18 个评测工具，没有一个能直接用来给 5 份报告排名次。三个最常见的问题，各对应一个办法。</p>
+    </div>
+    <div class="pairs">
+      <div class="pair rv">
+        <div class="prob"><p class="tag caption-3"><svg class="i i-sm" aria-hidden="true"><use href="#i-warning-circle"/></svg>问题</p><p class="title-3">评委打分对不对，没人认真核对过。18 个工具都是这样。</p></div>
+        <div class="arrow" aria-hidden="true"><svg class="i"><use href="#i-arrow-right"/></svg></div>
+        <div class="fix"><p class="tag caption-3"><svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>办法</p><p class="title-3">主要结论逐条对照来源。评委至少来自三家，关键判定全部人工审计。</p></div>
+      </div>
+      <div class="pair rv">
+        <div class="prob"><p class="tag caption-3"><svg class="i i-sm" aria-hidden="true"><use href="#i-warning-circle"/></svg>问题</p><p class="title-3">名次之间的差距常常比误差还小，却照样排出第一、第二。</p></div>
+        <div class="arrow" aria-hidden="true"><svg class="i"><use href="#i-arrow-right"/></svg></div>
+        <div class="fix"><p class="tag caption-3"><svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>办法</p><p class="title-3">只公布名次区间。换三种算分口径、随机换一批要点重算一千次，先后都不变，才算分开。</p></div>
+      </div>
+      <div class="pair rv">
+        <div class="prob"><p class="tag caption-3"><svg class="i i-sm" aria-hidden="true"><use href="#i-warning-circle"/></svg>问题</p><p class="title-3">只奖励说中，不惩罚说错，写得越长分越高。</p></div>
+        <div class="arrow" aria-hidden="true"><svg class="i"><use href="#i-arrow-right"/></svg></div>
+        <div class="fix"><p class="tag caption-3"><svg class="i i-sm" aria-hidden="true"><use href="#i-check-circle"/></svg>办法</p><p class="title-3">比深度净分：写错要扣分；篇幅、格式和引用条数都不计分。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="method" aria-labelledby="method-title">
+  <div class="wrap">
+    <div class="section-head rv">
+      <p class="caption-1">评法</p>
+      <h2 class="heading-3" id="method-title">这套评法做了五件事</h2>
+    </div>
+    <div class="benefits">
+      <article class="benefit rv"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><h3 class="heading-6">先定义，再评测</h3><p class="body-3">调研、深、深度研究三层定义。"深"是从现象推进到本质、全体和内部联系，名次比的就是这个。</p></article>
+      <article class="benefit rv"><svg class="i" aria-hidden="true"><use href="#i-link"/></svg><h3 class="heading-6">每一分都追得到出处</h3><p class="body-3">主要结论逐条打开来源核对，分支持、不支持、找不到等六种情况。编造来源算硬伤。</p></article>
+      <article class="benefit rv"><svg class="i" aria-hidden="true"><use href="#i-file-text"/></svg><h3 class="heading-6">题目不替智能体思考</h3><p class="body-3">题目分评委版、提问版、裸题版。往哪里挖只写在深度地图里，智能体看不到。</p></article>
+      <article class="benefit rv"><svg class="i" aria-hidden="true"><use href="#i-scales"/></svg><h3 class="heading-6">只排站得住的先后</h3><p class="body-3">权重换一种、样本换一批，先后都不变才算分开。有争议的判定只能让名次并列，不能拉开。</p></article>
+      <article class="benefit rv"><svg class="i" aria-hidden="true"><use href="#i-seal-check"/></svg><h3 class="heading-6">可复算，可申诉</h3><p class="body-3">评委输出和计分代码全部公开，另一人重算结果必须相同。名次公布后有 7 天申诉期。</p></article>
+    </div>
+
+    <div class="section-head rv" style="margin-top: 96px;">
+      <p class="caption-1">流程</p>
+      <h2 class="heading-3">三步走完一届</h2>
+    </div>
+    <ol class="steps">
+      <li class="step rv"><h3 class="heading-6">出题</h3><p class="body-3">按出题手册写题目卡和深度地图，再经另一位同学的泄露检查和闭卷对照。</p><a class="body-5" href="../notes/question-handbook.html">出题手册 <svg class="i i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></li>
+      <li class="step rv"><h3 class="heading-6">运行</h3><p class="body-3">参赛智能体在题目公布前冻结。主办方在同一天统一运行，每家 2 道题 × 2 个版本。</p><a class="body-5" href="../notes/rules.html">比赛规则手册 <svg class="i i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></li>
+      <li class="step rv"><h3 class="heading-6">评审与名次</h3><p class="body-3">断言核验、要点池、环节评级之后，计分程序给出名次区间，复核包随之公开。</p><a class="body-5" href="../notes/plan-stage4-rubric.html">评审细则 <svg class="i i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></li>
+    </ol>
+  </div>
+</section>
+
+<section id="pilot" aria-labelledby="pilot-title" class="tagline">
+  <div class="wrap">
+    <div class="section-head rv">
+      <p class="caption-1">证据</p>
+      <h2 class="heading-3" id="pilot-title">拿真实报告试过一次</h2>
+      <p class="body-3">三月份 6 个产品对同一道题写的报告，整套评法跑了一遍，评委全部由 AI 担任。</p>
+    </div>
+    <div class="stats">
+      <div class="stat rv"><p class="heading-3">3 / 3</p><p class="body-6">故意改错的地方，全部查出</p></div>
+      <div class="stat rv"><p class="heading-3">83%</p><p class="body-6">同一评委重评一次，环节评级完全相同</p></div>
+      <div class="stat rv"><p class="heading-3">93%</p><p class="body-6">两个评委核验 15 条断言，标签一致</p></div>
+      <div class="stat bad rv"><p class="heading-3">4 / 8</p><p class="body-6">条验收标准没有通过，原因已查清，并据此修订</p></div>
+    </div>
+    <div class="finding rv">
+      <p class="row body-3"><svg class="i" aria-hidden="true"><use href="#i-flask"/></svg><span>一个意外的发现：一份很短的普通对话回答，比两份长篇深度研究报告更准确、更新。用了深度研究模式，不等于调研做得好。</span></p>
+      <p class="caption-2 muted">试出来的名次只是演示，不是对产品的评价。<a href="../notes/plan-stage5-report.html">看试评报告</a></p>
+    </div>
+  </div>
+</section>
+
+<section id="library" aria-labelledby="lib-title">
+  <div class="wrap">
+    <div class="section-head rv">
+      <p class="caption-1">全部材料</p>
+      <h2 class="heading-3" id="lib-title">研究、规则、出题和参考资料</h2>
+      <p class="body-3">按用途分成六组。输入几个字就能筛选，例如"规则""精读""实践论"。</p>
+    </div>
+    <div class="lib-tools">
+      <label class="search"><svg class="i" aria-hidden="true"><use href="#i-magnifying-glass"/></svg><span class="sr" hidden>筛选材料</span><input id="lib-filter" type="search" placeholder="筛选材料" aria-label="筛选材料" autocomplete="off"></label>
+      <span class="lib-count caption-2" id="lib-count" aria-live="polite"></span>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-path"/></svg>从这里开始</h3>
+      <ul class="res-list">
+        <li class="res"><a href="../notes/plan-summary.html"><svg class="i" aria-hidden="true"><use href="#i-file-text"/></svg><span><span class="name title-3">一页总结</span><span class="desc body-6">要解决的问题、评法、试评结果和下一步，五分钟读完。</span></span></a></li>
+        <li class="res"><a href="../notes/paper.html"><svg class="i" aria-hidden="true"><use href="#i-file-text"/></svg><span><span class="name title-3">论文工作稿 <span class="badge caption-5">网页</span></span><span class="desc body-6">《什么是智能体的"深度研究"》：三层定义，以及据此排名次的方法与检验。</span></span></a></li>
+        <li class="res"><a href="../research-plan/paper.pdf"><svg class="i" aria-hidden="true"><use href="#i-file-pdf"/></svg><span><span class="name title-3">论文工作稿 <span class="badge caption-5">PDF</span></span><span class="desc body-6">同一篇论文的 A4 排版，参考文献 45 条。</span></span></a></li>
+        <li class="res"><a href="walkthrough.html"><svg class="i" aria-hidden="true"><use href="#i-path"/></svg><span><span class="name title-3">一道题走完全程</span><span class="desc body-6">以"中国最大的淡水湖"为例，跟着一道题从出题走到名次公布，架构图随着阅读一站站亮起。</span></span></a></li>
+        <li class="res"><a href="diagrams/architecture-dr-benchmark/benchmark-architecture-explained.html"><svg class="i" aria-hidden="true"><use href="#i-tree-structure"/></svg><span><span class="name title-3">评测基准架构图</span><span class="desc body-6">从题目到名次的十一个环节。点任一环节，看它是什么、做什么用。</span></span></a></li>
+      </ul>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-scales"/></svg>规则与评审</h3>
+      <ul class="res-list">
+        <li class="res"><a href="../notes/rules.html"><svg class="i" aria-hidden="true"><use href="#i-scales"/></svg><span><span class="name title-3">比赛规则手册</span><span class="desc body-6">草案第 2 版：冻结与申报、题目、深度地图、运行、评审、名次、申诉、违规。标〔默认〕的条款待确认。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage4-rubric.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">评审细则 第 1.2 版</span><span class="desc body-6">给评委用的操作版本：环节评级、要点抽取、要点池、断言核验、硬伤。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage4-design.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">改进方案</span><span class="desc body-6">每个关键问题的候选办法、选择与理由，以及验收标准。</span></span></a></li>
+      </ul>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-book-open"/></svg>出题</h3>
+      <ul class="res-list">
+        <li class="res"><a href="../notes/question-handbook.html"><svg class="i" aria-hidden="true"><use href="#i-book-open"/></svg><span><span class="name title-3">出题手册 第 3 版</span><span class="desc body-6">给大一同学：三个词、出题七步、两道实例、红笔批改、自查清单、模板和常见问题。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-collection-protocol.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">对照报告收集规程</span><span class="desc body-6">按基础级规则收集真实报告的步骤，附两道题目草稿。</span></span></a></li>
+      </ul>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-stack"/></svg>研究过程</h3>
+      <ul class="res-list">
+        <li class="res"><a href="../notes/plan-site-mapping.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">对照巡天网站结构</span><span class="desc body-6">现有资料和程序按巡天黑客松网站的页面与程序逐项对照，哪些已有、哪些缺，以及待办。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-v3.html"><svg class="i" aria-hidden="true"><use href="#i-path"/></svg><span><span class="name title-3">研究计划 第三稿</span><span class="desc body-6">以文献为起点，分五个阶段推进。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage1-concepts.html"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><span><span class="name title-3">第一阶段：概念说明</span><span class="desc body-6">调研、好的调研、深、交付形式、范围的定义与讨论经过。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage2-framework.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">第二阶段：审视框架</span><span class="desc body-6">论证式效度与构念效度检查清单相结合的审视方法和记录模板。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage2-records.html"><svg class="i" aria-hidden="true"><use href="#i-notebook"/></svg><span><span class="name title-3">第二阶段：18 份审视记录</span><span class="desc body-6">每个评测工具一份，另有三篇测量研究的标尺要点。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage2-summary.html"><svg class="i" aria-hidden="true"><use href="#i-file-text"/></svg><span><span class="name title-3">第二阶段：汇总</span><span class="desc body-6">18 个工具的总表、覆盖表、共同问题、统计和勘误。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage3-problems.html"><svg class="i" aria-hidden="true"><use href="#i-warning-circle"/></svg><span><span class="name title-3">第三阶段：关键问题</span><span class="desc body-6">从题目到名次的八个步骤里，归纳出的 8 个关键问题。</span></span></a></li>
+        <li class="res"><a href="../notes/plan-stage5-report.html"><svg class="i" aria-hidden="true"><use href="#i-flask"/></svg><span><span class="name title-3">第五阶段：试评与修订</span><span class="desc body-6">6 份真实报告的试评结果、发现的问题和第 1.1 版修订。</span></span></a></li>
+        <li class="res"><a href="../research-plan/stage5-pilot/"><svg class="i" aria-hidden="true"><use href="#i-archive"/></svg><span><span class="name title-3">试评原始数据 <span class="badge caption-5">文件夹</span></span><span class="desc body-6">匿名报告、评委输出、要点池和计分程序 score.py，可以重算。</span></span></a></li>
+      </ul>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-books"/></svg>文献与精读</h3>
+      <ul class="res-list">
+        <li class="res"><a href="../index.html"><svg class="i" aria-hidden="true"><use href="#i-books"/></svg><span><span class="name title-3">文献索引 23 篇</span><span class="desc body-6">2025 年 8 月到 2026 年 10 月的论文，含中文摘要、作者分析和阅读状态。</span></span></a></li>
+        <li class="res"><a href="../notes/overview-tools.html"><svg class="i" aria-hidden="true"><use href="#i-list-checks"/></svg><span><span class="name title-3">评测工具一览</span><span class="desc body-6">哪些能输入报告、输出分数或名次，怎样拼给 5 个智能体用。</span></span></a></li>
+        <li class="res"><a href="../notes/overview-definitions.html"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><span><span class="name title-3">Deep Research 的定义</span><span class="desc body-6">23 篇里只有一篇给了正式定义；"深"有六种意思。</span></span></a></li>
+        <li class="res"><a href="../notes/overview-benchmark.html"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><span><span class="name title-3">Benchmark 的定义</span><span class="desc body-6">没有人定义过它；隐含的四个零件和三种理解。</span></span></a></li>
+        <li class="res"><a href="../notes/overview-common-definitions.html"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg><span><span class="name title-3">从共性提炼的四个定义</span><span class="desc body-6">按多少篇支持取共性，附 20 篇的编码表。</span></span></a></li>
+      </ul>
+      <p class="title-4" style="margin-top: 24px;">13 篇精读</p>
+      <div class="chips body-6">
+        <a class="chip" href="../notes/2508.04183_LiveDRBench.html">LiveDRBench</a>
+        <a class="chip" href="../notes/2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a>
+        <a class="chip" href="../notes/2601.06676_IDRBench.html">IDRBench</a>
+        <a class="chip" href="../notes/2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a>
+        <a class="chip" href="../notes/2601.10504_DR-Arena.html">DR Arena</a>
+        <a class="chip" href="../notes/2601.12346_MMDeepResearch-Bench.html">MMDeepResearch Bench</a>
+        <a class="chip" href="../notes/2602.18940_DREAM.html">DREAM</a>
+        <a class="chip" href="../notes/2603.01152_DeepResearch-9K.html">DeepResearch 9K</a>
+        <a class="chip" href="../notes/2603.28407_MiroEval.html">MiroEval</a>
+        <a class="chip" href="../notes/2605.28721_LiveBrowseComp.html">LiveBrowseComp</a>
+        <a class="chip" href="../notes/2606.12871_DailyReport.html">DailyReport</a>
+        <a class="chip" href="../notes/2608.02163_From-Simple-QA-to-Deep-Research.html">从简单问答到深度研究</a>
+        <a class="chip" href="../notes/2608.05179_Survey-Verification-Gap.html">核验缺口综述</a>
+      </div>
+    </div>
+
+    <div class="group" data-group>
+      <h3 class="group-title title-2"><svg class="i" aria-hidden="true"><use href="#i-archive"/></svg>领域外资料</h3>
+      <ul class="res-list">
+        <li class="res"><a href="../outside-field/mao-shijianlun/shijianlun-1937.htm"><svg class="i" aria-hidden="true"><use href="#i-book-open"/></svg><span><span class="name title-3">《实践论》</span><span class="desc body-6">"深"的定义所依据的原文。中文马克思主义文库版，如显示乱码，把编码改成简体中文。</span></span></a></li>
+        <li class="res"><a href="../outside-field/mao/fandui-benben-zhuyi-1930.htm"><svg class="i" aria-hidden="true"><use href="#i-book-open"/></svg><span><span class="name title-3">《反对本本主义》</span><span class="desc body-6">"调研"的精神所依据的原文。</span></span></a></li>
+        <li class="res"><a href="../outside-field/icd203/ICD-203-Analytic-Standards-2015.pdf"><svg class="i" aria-hidden="true"><use href="#i-file-pdf"/></svg><span><span class="name title-3">情报分析标准 ICD 203</span><span class="desc body-6">美国情报界的分析技艺标准，"把握程度"和"查不到"的写法参考了它。</span></span></a></li>
+        <li class="res"><a href="../outside-field/bean2025/2511.04703-Measuring-what-Matters.pdf"><svg class="i" aria-hidden="true"><use href="#i-file-pdf"/></svg><span><span class="name title-3">Measuring what Matters</span><span class="desc body-6">Bean 等人对评测基准构念效度的检查清单。</span></span></a></li>
+        <li class="res"><a href="../outside-field/amstar2/AMSTAR2-Shea-2017.pdf"><svg class="i" aria-hidden="true"><use href="#i-file-pdf"/></svg><span><span class="name title-3">AMSTAR 2</span><span class="desc body-6">系统综述的质量评价工具。</span></span></a></li>
+        <li class="res"><a href="../outside-field/sanra/SANRA-Baethge-2019.xml"><svg class="i" aria-hidden="true"><use href="#i-file-text"/></svg><span><span class="name title-3">SANRA</span><span class="desc body-6">叙述性综述的质量评价量表。</span></span></a></li>
+        <li class="res"><a href="../outside-field/frascati/Frascati-2015-Chapter2-definitions.pdf"><svg class="i" aria-hidden="true"><use href="#i-file-pdf"/></svg><span><span class="name title-3">《弗拉斯卡蒂手册》第二章</span><span class="desc body-6">研究与试验发展的定义。</span></span></a></li>
+        <li class="res"><a href="../outside-field/esomar/ICC-ESOMAR-International-Code-2016.pdf"><svg class="i" aria-hidden="true"><use href="#i-file-pdf"/></svg><span><span class="name title-3">市场研究国际守则</span><span class="desc body-6">ICC 与 ESOMAR 的行业守则。</span></span></a></li>
+        <li class="res"><a href="../outside-field/marchionini/Supporting-Exploratory-Search-CACM-2006.pdf"><svg class="i" aria-hidden="true"><use href="#i-file-pdf"/></svg><span><span class="name title-3">探索式搜索</span><span class="desc body-6">Marchionini 2006 年关于探索式搜索的文章。</span></span></a></li>
+        <li class="res"><a href="../outside-field/"><svg class="i" aria-hidden="true"><use href="#i-archive"/></svg><span><span class="name title-3">各家产品的自我描述 <span class="badge caption-5">文件夹</span></span><span class="desc body-6">谷歌、OpenAI、Perplexity、Anthropic 对自家深度研究产品的介绍存档，在 vendor 开头的子文件夹里。</span></span></a></li>
+      </ul>
+    </div>
+
+    <div class="empty" id="lib-empty" role="status">
+      <p class="title-3">没有匹配的材料</p>
+      <p class="body-6">换一个词试试，或者清空筛选。</p>
+      <button class="btn btn-primary button-sm" type="button" id="lib-clear">清空筛选</button>
+    </div>
+    <p class="lib-note caption-2">文献索引的阅读状态和留言功能，要先在该目录运行 <code>python3 serve.py</code>，再从 localhost:8766 打开。其余材料双击即可阅读。</p>
+  </div>
+</section>
+
+<section id="faq" aria-labelledby="faq-title" class="tagline">
+  <div class="wrap">
+    <div class="section-head rv">
+      <p class="caption-1">问答</p>
+      <h2 class="heading-3" id="faq-title">常见问题</h2>
+    </div>
+    <div class="faq">
+      <details><summary class="title-3">为什么不直接用现有的评测工具？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>我们逐一审视了 18 个，没有一个能直接用。最常见的问题是：评委判得对不对没人核对；名次差距比误差还小；写错不扣分。详见第二阶段汇总。</p></div></details>
+      <details><summary class="title-3">评委是 AI，怎样保证判得对？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>评委至少来自三家厂商，每个评委评两次。关键判定，也就是反过来就会改变相邻名次的判定，全部人工审计，另外随机抽查一成。每个判定都要引报告原文或来源为证。</p></div></details>
+      <details><summary class="title-3">为什么公布名次区间，不直接排第几名？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>两份报告要算分开，得过两道检查：换三种算分口径都领先；从要点池里随机换一批要点重新计分，重复一千次，至少九成仍然领先。分不开的就并列，公布成"第 1 至 2 名"这样的区间，不硬排。</p></div></details>
+      <details><summary class="title-3">深度地图是什么？它会不会让评分不客观？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>它是出题人在看到报告之前写下的浅答案、转折点和核心要点，只给评委。它是必需的，但不是标准答案：地图上没有、但正确又切题的要点同样得分。</p><p>地图上写了而没人写到的要点，对每份报告都是零分，不影响名次；它影响分数只通过预先登记的层级和重要性，有争议的标注按对领先一方最不利的方式计分。</p></div></details>
+      <details><summary class="title-3">参赛队伍能不能看了题目再改提示词？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>不能。智能体在题目公布前冻结并申报，由主办方统一运行，题目文本原样作为唯一输入，运行日志里的输入要逐字核对。</p></div></details>
+      <details><summary class="title-3">真实用户很少写明自己是谁，题目为什么要写？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>评委要有参照，才能判断切不切题。交给智能体的提问版用提问者的口吻写成一两句话；另外每道题再跑一个只有问题本身的裸题版，名次单独公布，看两者是否一致。</p></div></details>
+      <details><summary class="title-3">篇幅长、引用多，会加分吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>不会。篇幅、格式、引用条数、文笔都不进入名次；同一个要点写多遍也不加分。写作好坏单独公布。</p></div></details>
+      <details><summary class="title-3">这套评法检验过了吗？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>只做过一次小规模试评，8 条验收标准通过 4 条，据此改成第 1.1 版。第 1.1 版的正式检验还要一批按规程新收集的报告；深度地图一节的第 1.2 版修订也还没有检验。</p></div></details>
+      <details><summary class="title-3">怎样在本机打开这些材料？<svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="ans body-3"><p>双击 site 文件夹里的 index.html 就是本页，其余材料点链接即可。文献索引的留言功能需要先运行 serve.py。全部材料都在本机，不需要联网，也不需要登录。</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section id="open" aria-labelledby="open-title">
+  <div class="wrap">
+    <div class="section-head rv">
+      <p class="caption-1">公开</p>
+      <h2 class="heading-3" id="open-title">名次可复算，判定可申诉</h2>
+    </div>
+    <div class="open-grid">
+      <div class="open-item rv"><svg class="i" aria-hidden="true"><use href="#i-archive"/></svg><div><p class="title-3">复核包全部公开</p><p class="body-6">题目、深度地图、原始报告、网页存档、评委提示词与输出、要点池、计分代码。</p></div></div>
+      <div class="open-item rv"><svg class="i" aria-hidden="true"><use href="#i-check-circle"/></svg><div><p class="title-3">另一人独立重算</p><p class="body-6">公布的数字只能由计分代码生成，重算结果必须完全相同。</p></div></div>
+      <div class="open-item rv"><svg class="i" aria-hidden="true"><use href="#i-seal-check"/></svg><div><p class="title-3">深度地图先封存</p><p class="body-6">运行前公布校验值，赛后公开全文，证明没有看了报告再改。</p></div></div>
+      <div class="open-item rv"><svg class="i" aria-hidden="true"><use href="#i-scales"/></svg><div><p class="title-3">7 天申诉期</p><p class="body-6">申诉指向具体判定并附证据，由不参与评分的申诉专员裁决。</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="start" aria-labelledby="final-title">
+  <div class="wrap">
+    <h2 class="heading-3 rv" id="final-title">现在处在出题阶段</h2>
+    <p class="body-3 rv">先读出题手册，再按七步出一道题：题目卡三个版本，加一份写到核心要点不漏的深度地图。</p>
+    <a class="btn btn-primary button-md rv" href="../notes/question-handbook.html">打开出题手册 <svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap caption-2">
+    <span>深度研究评测基准 · 本地资料站 · 2026 年 10 月 30 日</span>
+    <span>架构图由 Archify 生成；本页按 landing-page-design 技能的规则制作。<a href="landing-plan.md">页面大纲</a> · <a href="../README.md">目录说明</a></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 移动端菜单：全高面板，链接依次进场（每个隔 60ms，总长不超过 400ms）
+  var body = document.body, btn = document.getElementById('menu-btn'), panel = document.getElementById('menu-panel');
+  var links = Array.prototype.slice.call(panel.querySelectorAll('a'));
+  var step = Math.min(60, Math.floor(400 / Math.max(1, links.length)));
+  function setMenu(open) {
+    body.classList.toggle('menu-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+    panel.setAttribute('aria-hidden', String(!open));
+    links.forEach(function (a, i) { a.style.transitionDelay = open && !reduce ? (i * step) + 'ms' : '0ms'; a.tabIndex = open ? 0 : -1; });
+  }
+  setMenu(false);
+  btn.addEventListener('click', function () { setMenu(!body.classList.contains('menu-open')); });
+  links.forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+  // 当前所在的节，在导航里标出来：取顶端已经越过视口 40% 处的最后一节
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a'));
+  var spySections = Array.prototype.slice.call(document.querySelectorAll('main > section[id]'));
+  function spy() {
+    var line = window.innerHeight * 0.4, current = '';
+    spySections.forEach(function (s) { if (s.getBoundingClientRect().top <= line) current = s.id; });
+    navLinks.forEach(function (a) { a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + current)); });
+  }
+
+  if ('IntersectionObserver' in window) {
+    // 进场：只播一次
+    var rv = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); rv.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll('.rv').forEach(function (el) { rv.observe(el); });
+  } else {
+    document.querySelectorAll('.rv').forEach(function (el) { el.classList.add('in'); });
+  }
+
+  // 标语逐词点亮和导航高亮，共用一个经 requestAnimationFrame 节流的滚动监听
+  var words = Array.prototype.slice.call(document.querySelectorAll('#tagline-text .w'));
+  if (reduce) words.forEach(function (w) { w.classList.add('on'); });
+  var ticking = false;
+  function paint() {
+    if (!reduce) {
+      var line = window.innerHeight * 0.62;
+      words.forEach(function (w) { w.classList.toggle('on', w.getBoundingClientRect().top < line); });
+    }
+    spy();
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(paint); } }, { passive: true });
+  window.addEventListener('resize', paint);
+  paint();
+
+  // 全部材料：按名称和说明筛选
+  var input = document.getElementById('lib-filter'), count = document.getElementById('lib-count');
+  var empty = document.getElementById('lib-empty'), groups = Array.prototype.slice.call(document.querySelectorAll('[data-group]'));
+  var items = Array.prototype.slice.call(document.querySelectorAll('#library .res, #library .chip'));
+  function filter() {
+    var q = input.value.trim().toLowerCase(), shown = 0;
+    items.forEach(function (el) {
+      var hit = !q || el.textContent.toLowerCase().indexOf(q) !== -1;
+      el.hidden = !hit; if (hit) shown++;
+    });
+    groups.forEach(function (g) {
+      var any = g.querySelector('.res:not([hidden]), .chip:not([hidden])');
+      var title = g.querySelector('.group-title').textContent.toLowerCase();
+      if (q && title.indexOf(q) !== -1) { g.querySelectorAll('[hidden]').forEach(function (el) { el.hidden = false; shown++; }); any = true; }
+      g.hidden = !any;
+      var chipsTitle = g.querySelector('.chips') && g.querySelector('.chips').previousElementSibling;
+      if (chipsTitle) chipsTitle.hidden = !g.querySelector('.chip:not([hidden])');
+    });
+    count.textContent = q ? ('找到 ' + shown + ' 项') : ('共 ' + items.length + ' 项');
+    empty.classList.toggle('show', shown === 0);
+  }
+  input.addEventListener('input', filter);
+  document.getElementById('lib-clear').addEventListener('click', function () { input.value = ''; filter(); input.focus(); });
+  filter();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：From Simple QA to Deep Research（arXiv 2608.02163）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2608.02163_From-Simple-QA-to-Deep-Research.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#from-simple-qa-to-deep-researcharxiv-260802163">审视记录：From Simple QA to Deep Research（arXiv 2608.02163）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="from-simple-qa-to-deep-researcharxiv-260802163">审视记录：From Simple QA to Deep Research（arXiv 2608.02163）</h1>
+<p>2026-10-29 写。证据等级标在每条判断末尾：【复算】是我们根据公开的材料亲自算过或查过；【自述】是只有论文（或其代码仓库）自己的说法；【推断】是我们根据原文推出来、原文没有直接说的。页码指本地 PDF 的页码（共 25 页）。</p>
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>日期与版本</strong>：arXiv 2608.02163 v1，2026 年 8 月 3 日提交；arXiv 接口显示至今只有这一个版本【复算】。</li>
+<li><strong>作者及机构</strong>：Can Wang、Haoran Chen（二人贡献相同）、Haowen Gao、Hao Ding、Zhaoyang Liu（通讯作者）、Zhiying Tu（通讯作者）。机构为山东省数字服务计算技术与系统重点实验室、阿里巴巴 Token Hub、中国科学院计算技术研究所人工智能安全全国重点实验室、香港理工大学电机及电子工程学系（第 1 页）【自述】。</li>
+<li><strong>发表情况</strong>：预印本。论文中没有写明投稿或录用的会议【复算】。</li>
+<li><strong>数据和代码是否公开</strong>：</li>
+<li>摘要写道："Our data, implementation, and results are publicly available at https://github.com/chr6192/TaskEvolving.git."（第 1 页）；arXiv 的备注栏写的是"Code and data are publicly available"【自述】。</li>
+<li>2026-10-29 查看：仓库存在（返回 200），许可为 Apache License 2.0；默认分支只有一个（名为 0720），最后一次提交是 2026-08-03；2026-10-25 有一次删除分支的操作，没有新提交；没有发布版本【复算】。</li>
+<li>仓库共 83 个文件，另有 3 个子模块（natural-questions、OpenJudge、verl），全部是构建流程和强化学习训练的代码、提示词、配置和两张示意图。<strong>500 道题、评分表、各模型的回答和评测结果都不在仓库里</strong>。说明文件提到的 <code>experiment/</code> 目录和 <code>deep_research/synthesis_v2/data/nq_ch.jsonl</code> 种子文件在仓库中不存在【复算】。</li>
+<li>在 Hugging Face 上按 TaskEvolving、仓库作者名 chr6192 等关键词查询数据集，结果均为空【复算】。</li>
+<li>结论：代码公开，数据和结果没有公开，与摘要的说法不符。</li>
+<li><strong>阅读依据</strong>：已有精读页加原文核对。本轮通读了全文和附录（包括全部构建提示词、表 9 至表 11、图 6），并对照 PDF 核对了表 3 至表 8 和图 3、图 5、图 6。</li>
+<li><strong>审视对象</strong>：本篇不是综述，只有一个评测基准。论文和仓库都没有给它起名字（仓库名是 TaskEvolving），下文沿用索引里的简称"From Simple QA"。审视对象是论文发布的这套评测：500 道题，每道题配一张由有向无环图（directed acyclic graph）导出的加权检查点评分表；每道题有三种问法；分"有工具"和"无工具"两种模式；由 Qwen3.7-Max 作评委。构建流水线（探路者、整理者、出题者三个角色的循环）只在它决定题目和评分表的范围内审视。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li>分数能区分模型和问法，评分细致、与人一致、稳定："Experiments demonstrate that the benchmark clearly discriminates among models and across query types, while its fact-grounded pointwise rubrics enable fine-grained, human-aligned, and stable evaluation."（摘要，第 1 页）【自述】</li>
+<li>题目是专业级的深度研究题："We construct a benchmark of 500 professionally deep research tasks spanning 31 topics"（贡献第一条，第 2 页）；"These statistics show that the benchmark contains domain-relevant, professionally deep research tasks with verifiable rubrics"（第 6 页）【自述】</li>
+<li>分数揭示模型在深度研究上的长处和短处："the benchmark effectively reveals models' strengths and weaknesses in deep research"（贡献第三条，第 2 页）【自述】</li>
+<li>评分表恰好覆盖题目所需："Gt already controls the sufficient and minimal coverage for solving qt, so the derived rubric set Rt evaluates exactly what qt requires and nothing beyond that."（第 4 页，构建流程一节"Formalizer"段）【自述】</li>
+<li>每个检查点都有外部出处、可单独核实："each checkpoint in ckptv comes from the interaction between the agent and the environment and can be verified independently, making evaluation both traceable and judgeable."（第 4 页）【自述】</li>
+<li>三种问法分别测三种能力：带提示问法"tests information processing under rich clues"，无提示问法"tests decomposition and planning under hidden constraints"，只给标题问法"tests argument formation under a directional topic only"（第 5 页）【自述】</li>
+<li>题目需要深度搜索才能答："This shows that our tasks encode long-tail information that models rarely store in pretraining and must instead recover through deep search."（第 7 页）【自述】</li>
+<li>自动构建的评分表不比专家写的差："Our automatically constructed rubrics remain competitive with, and often stronger than, expert-authored or semi-automatic alternatives"（第 7 页）【自述】</li>
+</ol>
+<p>论文自己划出的边界（第 21 页"Weaknesses"）："The current benchmark score measures coverage and correctness of task-specific evidential and analytical checkpoints. It does not separately measure citation count, citation rate, citation format, matching to a prescribed source list, prose style, document layout, or tool-call efficiency."【自述】</p>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong></li>
+<li>来源：从 NQ-Open 开放域问答集中用随机种子 42 抽 1,000 道简单问题作种子（第 20 页），由 GPT-5.5 同时担任探路者、整理者、出题者，一轮轮把题目"滚"大。963 道收敛，37 道失败（第 20 页）；从收敛的题目中"retain the 500 tasks with the most DAG nodes to ensure sufficient difficulty"（第 5 页）【自述】。</li>
+<li>数量：500 道；每道题有三种问法，共用一张评分表（第 5 页）【自述】。</li>
+<li>抽样方式：两段。种子是随机抽样；最终入选是按步骤图节点数取前 500 的目标抽样【推断】。</li>
+<li>是否复用：复用了 NQ-Open 的问题作为起点，但最终题目和评分表是新生成的【自述】。</li>
+<li>规模：平均演化 14.19 轮、调用工具 264.96 次；步骤图平均 20.85 个节点、深 6.21、宽 10.98；每题检查点 52 至 183 个，平均 104.85 个（表 2，第 5 页）【自述】。</li>
+<li>主题：10 个大类、31 个小类（图 3，第 5 页）。从图上读出的大类数字为文化 71、科学 69、历史 66、娱乐 64、体育 58、政策 43、生活 43、法律 30、商业 29、其他 27，合计 500【复算，数字读自图上小字】。论文自己说："The 500 tasks cover common open domain retrieval themes rather than one narrow domain."（第 6 页）【自述】</li>
+<li><strong>判分标准</strong>：评分项。步骤图的每个节点对应一条评分项，每条评分项下挂若干检查点；节点分证据节点（从外部来源查一个事实）和分析节点（在已查到的证据上做分析）两类（第 3 页）。检查点的内容是具体的事实或结论，所以实质上是一张加权的结论清单【推断】。节点得分是满足的检查点所占比例；题目得分是节点得分按权重加总（第 4 页）。权重只由图的结构决定：末端节点先平分 1，再按逆拓扑序把自己的权重平均分给所有前置节点，最后归一化（第 4 页）【自述】。证据检查点和分析检查点的平均满分约为 0.52 和 0.48（第 6 页）【自述】。</li>
+<li><strong>判卷方式</strong>：大语言模型评委。"the judge is Qwen3.7-Max and receives only the final response and the rubrics"（第 20 页）；对每个检查点作二值判断（第 4 页）【自述】。论文没有给出评委的判分提示词【复算】。仓库配置文件中，用于评分表评测的 Qwen3.7-Max 温度设为 0.0，判分交给外部框架 OpenJudge（<code>deep_research/synthesis_v2/config/synthesis_v2.yaml</code>）【自述】；OpenJudge 中的判分提示词我们没有读。评委只拿到回答和评分表，不联网【推断，依据"receives only"】。</li>
+<li><strong>运行环境</strong>：实时网络。有工具模式给被测模型和构建时相同的两个工具：经 Serper 接口调用的谷歌搜索、优先用 Jina 的网页抓取（第 5 页、第 20 页）；无工具模式"relies only on internal model knowledge"（第 5 页）【自述】。被测对象是在作者自己的工具框架下运行的 10 个基础模型，不是各家的深度研究产品【自述】。时间点：论文没有写明构建和评测是在哪一天进行的，也没有规定材料的截止时间；探路者提示词中只有一个占位符"{current_time}"（第 10 页）【复算】。被测模型作答时用的提示词论文没有给出，是否沿用探路者提示词，不确定【复算】。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>它声称：</strong> 评分细致、与人一致、稳定；重复评分和换评委，与人工评分的相关都很高（摘要，第 1 页；第 7 页）。</p>
+<p><strong>证据：</strong>
+- 表 6（第 7 页）：在人工审核过的 100 道题上，Qwen3.7-Max 重复评三次，以及换成 GLM-5.2、DeepSeek-V4-Pro 评，与人工评分的皮尔逊相关系数在 0.884 至 0.916 之间。
+- 表 5（第 6 页）：本基准的皮尔逊相关 0.899、斯皮尔曼相关 0.902、宏平均 F1 0.856、准确率 0.862、F1 0.834、一致率 0.871，并与其他评测基准报告的数字并列。
+- 但是，"人工评分"是谁打的、评的是哪些模型的哪些回答、一共多少条、以检查点还是以整题为单位计算，正文和附录都没有写（全文检索"human"，只有表 5、表 6 和第 7 页的一句"high Pearson correlation with human ratings"）。
+- 表 5 中各列的数字来自不同评测基准、不同题目、不同指标；即使只看与 DeepResearch Bench II 共有的两个指标，后者的准确率 0.9175 和 F1 0.8957 也都高于本基准的 0.862 和 0.834。
+- 权重：表 10（第 22 页）的例题中，原始问题的核心答案"指出是第二十六修正案"（节点 A）权重只有 0.01，而"总务管理局局长 Kunzig 于 3 月 24 日寄出核证副本"（节点 P）占 0.09，"Jennings Randolph 于 1 月 25 日提出参议院联合决议第 7 号"（节点 B）占 0.14。我们按图 6 人工读出 28 条边，用第 4 页的算法重算 16 个节点的权重，与表 10 最大偏差为 0.019（在综合节点 J 上），节点 A 的未取整值约为 0.005。
+- 同一事实重复计分：综合节点 J（权重 0.22）的第 2 个检查点要求写出 1 月 25 日、1 月 29 日、3 月 10 日、3 月 23 日、7 月 1 日、7 月 5 日六个日期，这些日期在节点 B、N、C、D、E、F 中各自已经作为检查点出现过；节点 A 的第 3 个检查点又要求 3 月 23 日和 7 月 1 日（表 10）。
+- 计分公式只统计满足的检查点（第 4 页）；论文没有给判分提示词，没有说明说错和没说是否区别对待，也没有检查评分表以外的内容是否属实。
+- 评委 Qwen3.7-Max 本身是被测模型之一；10 个被测模型中有 4 个是 Qwen 系列（第 5 页）。论文没有检验评委是否偏袒同家族模型，也没有报告换评委后模型的排名是否改变。</p>
+<p><strong>证据等级：</strong> 相关系数和准确率【自述】；权重重算和日期重复【复算】；"说错不额外扣分"【推断】。</p>
+<p><strong>我们的判断：</strong> 不够。
+- 一致性证据缺最关键的说明（人工评分的来源和规模），属于<strong>缺证据</strong>。
+- 按图的形状分权重、同一事实重复计分、只算覆盖不罚错误，属于<strong>设计缺陷</strong>：分数在相当程度上取决于出题模型怎样画图。论文自己的人工审核中"Are the weights in RT reasonable?"一项有 99 道为"好"（表 3），与例题中核心答案只占 1% 的情况放在一起看，说明这一审核问题没有抓住这类问题；例题是否在被审核的 100 道之中，不确定。
+- 对应的 Bean 检查项：
+  - "Validate any automated output parsing techniques for accuracy, consistency and bias"：部分做了。报告了准确率和稳定性，没有检验偏差，包括同家族偏袒。
+  - "If using human raters, describe their demographics"：对于表 5、表 6 所用的人工评分，没做。
+  - "Use metrics that capture the inherent variability of any subjective labels"：没做。检查点是二值判断，人工审核也是取多数票后再报告。
+  - "Assess the impact of format constraints"：论文说不限定写法和格式（第 21 页），但没有检验，这一项影响不大。
+  - 错误分析中的"identify and discuss any potential scoring biases"：没做。</p>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>它声称：</strong> 500 道题覆盖 31 个主题、题目质量高、能区分模型（第 2 页、第 6 页）。</p>
+<p><strong>证据：</strong>
+- 抽样：种子随机抽样，入选按节点数取前 500（第 5 页、第 20 页）。论文的理由是"to ensure sufficient difficulty"，但第 8 页又报告："None of DAG depth, node count, round count, and tool-call count shows a stable association with scores."
+- 人工审核（第 6 页、表 3、表 9）：三位"senior researchers familiar with retrieval and deep research tasks"共用 182 小时，审了随机抽取的 100 道题，每道题回答 11 个质量问题，取多数票后 Fleiss' κ 为 0.81。1,100 个评定中，0 个"差"、6 个"中"、1,094 个"好"。论文还写："Notably, all 10,695 checkpoints that encode task knowledge were manually checked as reliable."
+- 换算：182 小时约合 10,920 分钟，除以 10,695 个检查点，约每个检查点 1.0 分钟，还没有扣除回答 1,100 个质量问题的时间。如果算一致性系数需要三人各自看过全部题目，那么每人每个检查点约 20 秒。未经人工审核的另外 400 道题约有 41,730 个检查点（500 × 104.85 − 10,695），约占全部检查点的八成。
+- 统计：没有置信区间，没有显著性检验，没有报告重复运行。图 4 只画了最强和最弱两个模型的分数分布。图 5 只画了 8 个模型（没有 Claude Sonnet 5 和 Gemini 3.5 Flash）；正文先说"evaluate 20 randomly selected cases at every round"，紧接着又说"Each line is the mean score of one model over ten cases"（第 7 至 8 页）。
+- 构建的随机性：表 8（第 7 页）把 5 道种子题各独立构建 10 次，最终题目之间的平均杰卡德相似度只有 0.17 至 0.27。论文把这解读为多样性。</p>
+<p><strong>证据等级：</strong> 审核数字、表 3 和表 8【自述】；表 3 的计数加总、每个检查点的用时、未审核检查点数【复算】；"按节点数选题的理由与论文自己的发现相矛盾"和"构建随机性大"【推断】。</p>
+<p><strong>我们的判断：</strong> 不够。
+- 400 道题、约八成检查点没有任何人工检查。审核的用时只够约每个检查点 1 分钟，很难真正翻到原始出处去核对日期和票数。几乎全部评定落在"好"这一档时，κ 值对评审是否认真说明不了多少；原始评定的分布没有报告，无法复算 κ。这些属于<strong>缺证据</strong>。
+- 按节点数选题，理由没有得到论文自己的数据支持。目标抽样使题集偏向图大的题，而论文第 8 页说开放型种子"run longer and yield tasks that emphasize integrative analysis"，所以题集的构成可能偏向某一类种子。这属于<strong>设计缺陷</strong>，影响程度无法估计。
+- 同一道种子题十次构建得到的题目差别很大，说明一道题"该查什么"在相当程度上取决于这一次构建碰巧走了哪条路。对同一道最终题重新探路是否会得到不同的检查点，论文没有检验【推断】。
+- 对应的 Bean 检查项：
+  - "Employ sampling strategies to ensure task items are representative"：部分做了（种子随机，入选按节点数）。
+  - "Verify the quality and relevance of all task items, especially for large or automatically generated datasets"：部分做了，审了 100 / 500 道。
+  - "Include task items that test known LLM sensitivities"：部分做了。三种问法共用一张评分表，相当于对同一道题做了措辞变换。
+  - "Report the benchmark's sample size and justify its statistical power"：报告了样本量，没有论证统计效力。
+  - "Report uncertainty estimates for all primary scores"：没做。
+  - 复用数据集的几项："Document whether the benchmark adapts a previous dataset"做了（说明了来自 NQ-Open）；"analyse and report the relevant strengths and limitations of the adapted prior work"没做，例如没有讨论 NQ-Open 以维基百科为底、有些答案会随时间变化。
+- 按第一阶段第 1.2 节，我们第一轮只对报告排名，这一环本身不需要提供证据。但"按图的形状和一次构建的路径定标准"这一点，会原样带进任何沿用这套方法的评审。</p>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>它声称：</strong> 题目是专业级的深度研究题，需要深度搜索才能答；三种问法分别测信息处理、拆题规划、立论三种能力；分数揭示模型在深度研究上的长处和短处（第 2 页、第 5 页、第 7 页）。</p>
+<p><strong>证据：</strong>
+- <strong>闭卷检查</strong>（表 4，第 6 页；第 7 页）：论文报告，去掉工具后平均掉 0.14 分，并据此说题目"must instead recover through deep search"。我们按表 4 复算：
+  - 三种问法下平均分别掉 0.146、0.127、0.133，平均 0.135；证据检查点和分析检查点各掉约 0.07，与论文一致。
+  - 但反过来看，闭卷平均仍能拿到开卷分数的约 79%（带提示问法）、76%（无提示问法）、77%（只给标题问法）。只看本该靠搜索才能拿到的证据检查点，闭卷仍有开卷的约 75%。
+  - 各模型闭卷与开卷之比在 0.64 至 0.91 之间，Gemini 3.5 Flash 最高（带提示问法：开卷 0.74，闭卷 0.67）。
+  - 闭卷加提示与开卷不加提示的分数几乎一样：前五名中，闭卷带提示问法比开卷无提示问法高 0.01 至低 0.07，较弱的五个模型反而闭卷带提示更高（高 0.04 至 0.10）。也就是说，题目里给不给提示，影响与给不给搜索工具相当。
+  - 论文说"removing tools causes large drops for all ten models on all query types"，而最小的降幅只有 0.05（例如 Gemini 3.5 Flash 的无提示问法：0.57 降到 0.52）。
+- <strong>闭卷检查的用法</strong>：论文只把闭卷分数作为事后报告的一个数字，没有用它剔除闭卷就能答的题目，也没有报告每道题的闭卷分数。
+- <strong>题目来源</strong>：种子是维基百科上的常识性问题（表 8 列出的例子有"who played fred claus in the 2007 movie"），论文自己说主题是"common open domain retrieval themes"（第 6 页）。第 7 页又说"This suggests the potential to extend our construction pipeline to professional domains"。
+- <strong>标准答案来自一个模型</strong>：探路、整理、出题全部由 GPT-5.5 完成（第 5 页）。整理者提示词规定"only information from ‘tool_response‘ may be labeled evidential"，而分析节点的内容是"originating from content already in the trajectory"，来源可以是探路模型自己的推理或回答（<code>query_or_reason_or_answer</code>，第 13 页）。所以"每个检查点都有外部出处"只对证据节点成立；分析检查点是 GPT-5.5 自己得出的结论。
+- <strong>三种问法共用一张评分表</strong>：
+  - 无提示问法只保留一句话的家常问题（例题："How did the U.S. constitutionally lower the voting age to 18, when did it take legal effect compared with formal certification, and why wasn't a regular federal voting-rights law enough?"，第 21 页），却仍要按约 105 个检查点评分，其中包括"总务管理局局长哪天寄出副本"这类细节。
+  - 只给标题问法的提示词要求标题写出"concrete main object of study"（第 19 页）。例题的标题"S.J. Res. 7 and the Twenty-Sixth Amendment's Path, Effective Date, and Voting-Age Effect"直接写出了节点 A 和节点 B 要查的对象（第 21 页）。
+- <strong>构建时有意排除的内容</strong>：
+  - 整理者提示词："Unless the query explicitly requires comparing source credibility, do not write rigid items such as "cross-verify across how many databases / prioritization workflow""（第 12 页）；遇到来源冲突时"prefer omission over adding wrong information"（第 13 页）。
+  - 出题者提示词："Cross-checking the same fact with multiple pieces of evidence is forbidden"；"Degree questions such as "how strong / how stable is this conclusion" should also be rare"；不要追问"which channel is the single most authoritative answer, unless different definitions clearly change the answer"（第 16 页）。
+- <strong>深度研究的定义</strong>：论文在相关工作中给出了一段刻画："Deep research instead requires breaking down a research goal and integrating evidence into a coherent argument, so its subquestions must serve that goal and stay logically connected rather than form a loosely linked chain."（第 2 页）。但评分时"we use the DAG structure to assign rubric weights, but not to check whether the model reproduces that structure"（第 4 页）。
+- <strong>被测对象</strong>：10 个基础模型在作者自己的同一套工具框架下运行（第 5 页）。</p>
+<p><strong>证据等级：</strong> 闭卷各项比例和降幅【复算】；提示词原文、题目来源、被测对象【自述】；"分析检查点是出题模型自己的结论""标题泄露中间答案"【推断，后者只有一道例题】。</p>
+<p><strong>我们的判断：</strong> 不够，有设计缺陷，也有解读过度。
+1. <strong>闭卷检查的效果（回答第一阶段第 4.4 节的问题）</strong>：这个检查有价值，论文报告了这个数字，而很多评测基准连这个数字都没有。但它只是事后诊断，没有用来筛题。而且它的结果说明，分数中约四分之三在不搜索的情况下也能拿到。"必须靠深度搜索"的说法，只对剩下的约四分之一成立。按论文自己的数据，这套题衡量的很大一部分是模型对维基百科覆盖较好的知识的记忆，加上按提示组织答案的能力。这是<strong>设计缺陷</strong>（没有用闭卷结果筛题），加上<strong>解读过度</strong>。
+2. <strong>标准答案只代表一条路径</strong>：评分表的"充分且最小"是相对于 GPT-5.5 一次构建的轨迹而言的。另一位调研者走了另一条同样合理的路，查到的、想到的东西不在表里，就不得分。这正是第一阶段第 4.4 节担心的"只能奖励想到了出题人想到的"，而这里的"出题人"是一个模型的一次构建。这属于<strong>设计缺陷</strong>。
+3. <strong>三种问法的解读</strong>：无提示问法的分数，一部分测"自己拆题"，一部分测"拆得和出题模型一样细"；只给标题问法至少在例题中泄露了中间答案。论文把它们分别解读为"拆题规划"和"立论"能力，证据不足，属于<strong>缺证据</strong>。
+4. <strong>工具框架是混杂因素</strong>：所有模型都在同一套谷歌搜索加网页抓取的框架下运行，分数中混有"适不适应这套框架"的成分。Gemini 3.5 Flash 闭卷第二、开卷第六，就是一个提示【推断】。
+5. <strong>对应的 Bean 检查项</strong>：
+   - "Provide a precise and operational definition"：部分做了。有一段刻画，并操作化为"证据节点加分析节点"的步骤图。
+   - "Specify the scope ... and acknowledge any excluded aspects"：做了。第 21 页明确列出不评引用、文笔、版式、工具效率。
+   - "Identify if the phenomenon has sub-components and ensure they are measured separately"：部分做了。证据分和分析分分开报告，三种问法分开报告。
+   - "Control for unrelated tasks"：部分做了。无工具模式相当于对记忆知识的控制，但没有据此调整分数；工具框架的适应性没有控制。
+   - "Justify the relevance of the benchmark for the phenomenon with real-world applications"：没做。种子是真实的搜索问题，但演化后的题目由模型生成，没有与真实用户需求对照。
+   - "Provide a clear rationale for the choice of tasks and metrics"：部分做了。说明了为什么用步骤图；没有说明为什么按图的形状定权重就等于按重要性定权重。
+   - "Investigate whether failure modes correlate with non-targeted phenomena"：部分做了。检查了分数与图的结构指标是否相关（不相关，第 8 页），没有检查与题目主题、答案长度等的关系。
+   - "Conduct a qualitative and quantitative analysis of common failure modes"：部分做了。附录"Case Analyses"分析的是基准本身的长处和短处，不是模型的失败方式。
+   - 防范污染：见第 5 节。</p>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>它声称：</strong> "the benchmark clearly discriminates among models and across query types"（第 1 页）；"the benchmark shows strong discrimination and clearly separates stronger models from weaker ones"（第 6 页）；"Relative model ranking stays stable across most rounds"（第 8 页）。</p>
+<p><strong>证据：</strong>
+- 表 4 中强弱两端差距大：带提示问法开卷时，GPT-5.6 Terra 0.86，Qwen3-14B 0.35。
+- 头部五个模型的差距：带提示问法 0.80 至 0.86（差 0.06），无提示问法 0.67 至 0.68（差 0.01），只给标题问法 0.69 至 0.73（差 0.04）。
+- 第一名随问法而变：带提示问法是 GPT-5.6 Terra（0.86）；无提示问法是 GLM-5.2 和 DeepSeek-V4-Pro 并列（0.68），GPT-5.6 Terra 为 0.67；只给标题问法是 DeepSeek-V4-Pro（0.73）。
+- 没有任何不确定性估计。"排名在各轮保持稳定"只基于图 5 的 8 个模型、每轮 10 或 20 道题，而且这是构建过程中的分数，不是最终题集上的分数。
+- 论文在表 1 和表 5 中与其他评测基准作了比较，但没有比较本基准与其他基准给出的模型排名是否一致。</p>
+<p><strong>证据等级：</strong> 分差和名次【复算，依据表 4】；"排名稳定"【自述】。</p>
+<p><strong>我们的判断：</strong> 能区分强弱悬殊的模型；不能证明能区分头部模型。头部差距在 0.01 至 0.06 之间，没有置信区间，名次随问法改变，所以"谁是第一"这一类结论没有证据支持。这属于<strong>缺证据</strong>。对应的 Bean 检查项："Report uncertainty estimates for all primary scores to enable robust model comparisons"没做；"Compare similarities and differences between the benchmark and existing evaluations"部分做了（定性对比和人机一致性对比，没有排名对比）。</p>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：论文没有规定材料的截止时间点，也没有报告构建和评测的日期；探路者提示词要求对"latest / current / recent"注明"as of {current_time}"（第 10 页），但这个时间没有公布【复算】。种子中有答案会变的问题，例如表 8 的"who has the most followers on the twitter"；整理者提示词的例子里也有"the follower gap on platform X in 2026"（第 12 页）【自述】。检查点一旦定下就不再变，而评测在实时网络上进行，所以时间一长，检查点可能过时，按新信息作答的模型反而丢分【推断】。受影响的题目有多少，数据不公开，无法统计。</li>
+<li><strong>污染</strong>：论文没有做污染检测，也没有讨论预训练语料中是否已有相关内容【复算】。闭卷能拿约四分之三的分数，说明大部分检查点所需的知识已经在模型中【推断】。数据不公开，客观上减少了题目泄露，但也让外人无法核查。仓库的定位是"Automatic Task Evolution for Deep Research, and the Agentic RL Training Stack to Train on It"，其强化学习奖励函数用的是同一种步骤图加评分表的格式（仓库说明）【自述】。如果有人用这套流程造数据来训练模型，再在这个评测上测，就可能出现训练和测试重叠，论文没有讨论【推断】。</li>
+<li><strong>可复现</strong>：代码、全部构建提示词和超参数公开（附录第 10 至 20 页），这一点做得好【自述】。但题目、评分表、回答和结果都没有公开；说明文件提到的实验目录和种子文件不存在；判分提示词在外部框架中，论文没有给出；评测和构建都依赖实时网络【复算】。论文报告的分数外人无法复算。重新构建的成本约为 168 小时和 1 万美元（第 20 页），约合每道种子题 10 美元、每道入选题 20 美元【推断，按 1,000 道种子和 500 道入选题平摊】。</li>
+<li><strong>利益关系</strong>：</li>
+<li>作者来自阿里巴巴 Token Hub 等机构。评委 Qwen3.7-Max 是阿里巴巴的模型，同时也是被测模型；10 个被测模型中有 4 个是 Qwen 系列；仓库配置默认通过阿里云的接口调用评委【自述】。</li>
+<li>Qwen3.7-Max 在带提示问法下并列第二，在无工具模式下排第五或第六，看不出明显偏袒【复算】。但论文没有做偏袒检验【复算】。</li>
+<li>构建用的是 GPT-5.5，带提示问法第一名是同家族的 GPT-5.6 Terra。同家族模型的搜索习惯和知识范围可能更接近标准答案的来源，论文没有检验，我们也无法证明【推断】。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明："本来不打算做"指论文明确排除或从未声称要评的；"声称而未做到"指论文声称了、但证据不足的。按共同规则第 4 条，前者不作为论文的缺陷，只说明它与我们的需要之间的差距。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>切题与弄清真实需要（审视前提和概念边界）</td>
+<td>部分，间接</td>
+<td>没有"是否回答了所问的问题"这一项；切题靠覆盖步骤图的节点间接体现。概念边界只在探路时碰到才会进入评分表，例如节点 A 的检查点"Does not confuse it with the Voting Rights Act Amendments of 1970"（表 10）；出题者提示词要求保留"flyby / impact / soft landing / crewed landing"一类区分（第 15 页）。无提示问法"tests decomposition and planning under hidden constraints, including identifying research coverage"（第 5 页），但"该覆盖什么"以出题模型的步骤图为准。属于"声称而未做到"的一部分（见 4.3 第 3 条）</td>
+</tr>
+<tr>
+<td>时效与截止时间点</td>
+<td>不评</td>
+<td>没有截止时间点，没有时效方面的检查点（第 5 节）。论文没有声称要评，属于"本来不打算做"，但检查点会过时是一个隐患</td>
+</tr>
+<tr>
+<td>系统全面的查找及过程交代</td>
+<td>部分</td>
+<td>"全面"以覆盖预定检查点来衡量，衡量的是结果，不是查找本身。"过程交代"不评：整理者提示词规定"do not require specific tools, search engines, URLs, webpage sources, tool calls, or retrieval steps"（第 12 页）；第 21 页说不评"tool-call efficiency"。属于"本来不打算做"</td>
+</tr>
+<tr>
+<td>甄别来源与处理矛盾</td>
+<td>不评（有意排除）</td>
+<td>整理者提示词："Unless the query explicitly requires comparing source credibility, do not write rigid items such as "cross-verify across how many databases / prioritization workflow""（第 12 页）；来源冲突在构建时由整理者处理，"prefer omission over adding wrong information"（第 13 页），所以矛盾被从评分表中拿掉，而不是拿来考被测者；出题者提示词禁止"Cross-checking the same fact with multiple pieces of evidence"（第 16 页）。属于"本来不打算做"</td>
+</tr>
+<tr>
+<td>分析和整合（历史和全部现状、性质和内在联系、区分事实和判断、其他解释、不迎合）</td>
+<td>部分</td>
+<td>分析检查点约占满分的 48%（第 6 页），内容是"causal inference or cross-source comparison"一类（第 3 页），例如"Explain why a constitutional amendment was needed"（表 10）。但检查点写的是出题模型得出的具体结论，奖励的是"得出同样的结论"，不是"推理清楚"。"交代历史"只在题目本身是历史题时出现（例题的时间线）；"区分事实和判断""考虑其他解释""不迎合"都没有对应的检查项</td>
+</tr>
+<tr>
+<td>有理有据与引用准确</td>
+<td>不评（有意排除）</td>
+<td>第 21 页："It does not separately measure citation count, citation rate, citation format, matching to a prescribed source list"。检查点在构建时有出处（仅证据节点），但被测回答的引用不检查。属于"本来不打算做"</td>
+</tr>
+<tr>
+<td>结论准确具体清楚并说明把握</td>
+<td>部分</td>
+<td>"准确、具体"：评分表内的具体事实（日期、票数）判对错；评分表以外的内容不检查【推断】。"清楚、没有歧义"不评。"说明把握"不评：出题者提示词说"Degree questions such as "how strong / how stable is this conclusion" should also be rare"（第 16 页）。"敢于下判断"不评</td>
+</tr>
+<tr>
+<td>深：本质（性质和内在联系）</td>
+<td>部分</td>
+<td>只通过分析检查点评，而且只认出题模型想到的那一种解释（4.3 第 2 条）</td>
+</tr>
+<tr>
+<td>深：全体（历史和全部现状）</td>
+<td>部分</td>
+<td>步骤图平均宽 10.98（表 2），覆盖的方面越多分越高，相当于以预定要点衡量"全部现状"；历史只在题目涉及时才评</td>
+</tr>
+<tr>
+<td>深：内部联系</td>
+<td>部分</td>
+<td>论文在出题时追求子问题"stay logically connected rather than form a loosely linked chain"（第 2 页），但评分"not to check whether the model reproduces that structure"（第 4 页），各节点分数相加，事实之间的联系只能通过综合性的分析节点（如例题的节点 J）间接体现。按第一阶段的分级，"多而不连"的回答与"联成整体"的回答可能得分接近【推断】</td>
+</tr>
+<tr>
+<td>写作是否混入核心、权重多少</td>
+<td>没有混入，权重为 0</td>
+<td>"we impose no requirement on writing style or answer format"（第 21 页）；第 21 页还说不评"prose style, document layout"</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>是</td>
+<td>节点得分按结构权重加成一个总分（第 4 页）；证据分和分析分作为总分的两个组成部分分开报告（表 4）</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>无</td>
+<td>没有任何一项能让整题判为不合格；编造内容、核心答案错误都只损失相应检查点的分数，例题中核心答案只值 0.01【推断，依据计分公式和表 10】</td>
+</tr>
+</tbody>
+</table></div>
+<p>另外，构建提示词要求不要"use harder terminology for pseudo-depth"（第 14 页），也就是在出题时防"假深"。但评分时没有对应的机制：只算覆盖、不罚多写，堆砌事实不吃亏【推断】。</p>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td>摘要说数据、实现、结果均已公开，实际只公开了代码</td>
+<td>摘要"Our data, implementation, and results are publicly available"（第 1 页）；仓库 83 个文件中没有题目、评分表和结果，说明文件提到的实验目录和种子文件不存在；Hugging Face 上查不到</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>缺证据（承诺未兑现）</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>标准答案是一个模型一次构建的产物，"充分且最小"只相对于这条路径成立；另一条合理路径的发现不得分</td>
+<td>"evaluates exactly what qt requires and nothing beyond that"（第 4 页）；GPT-5.5 担任全部三个角色（第 5 页）；同一种子十次构建，题目相似度只有 0.17 至 0.27（表 8）</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>分析检查点来自出题模型自己的推理，"每个检查点都有外部出处"只对证据节点成立</td>
+<td>"only information from ‘tool_response‘ may be labeled evidential"；分析节点"originating from content already in the trajectory"（第 13 页）</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>权重按图的形状而不是按重要性分配：例题中核心答案只占 0.01，同一组日期在多个节点重复计分</td>
+<td>表 10（第 22 页）；按图 6 的 28 条边重算，最大偏差 0.019；"Prior steps that support more downstream conclusions accumulate more weight"（第 4 页）</td>
+<td>复算</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>F5</td>
+<td>只算覆盖，不罚说错，不查评分表以外的内容，没有致命缺陷机制</td>
+<td>计分公式（第 4 页）；论文没有给判分提示词</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计缺陷（待判分提示词确认）</td>
+</tr>
+<tr>
+<td>F6</td>
+<td>闭卷仍能拿约 76% 至 79% 的开卷分数，证据检查点约 75%；闭卷结果没有用于筛题；"must instead recover through deep search"解读过度</td>
+<td>表 4（第 6 页）；第 7 页原文</td>
+<td>复算</td>
+<td>测对了东西</td>
+<td>设计缺陷加解读过度</td>
+</tr>
+<tr>
+<td>F7</td>
+<td>人工审核只覆盖 100 / 500 道题，约每个检查点 1 分钟；1,094 / 1,100 为"好"，在这种分布下 κ 值说明力有限；约 41,730 个检查点未经人工检查</td>
+<td>第 6 页、表 3</td>
+<td>复算（算术）加推断</td>
+<td>测对了东西；经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>F8</td>
+<td>人机一致性的人工评分来源、规模、单位都没有说明；跨基准比较的数字不可比，且在共有指标上不如 DeepResearch Bench II</td>
+<td>表 5、表 6（第 6 至 7 页）</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>F9</td>
+<td>评委是被测模型之一，与发布者同属一家公司；出题模型与第一名同家族；没有做偏袒检验，也没有报告换评委后排名是否改变</td>
+<td>第 5 页、第 20 页；作者机构（第 1 页）</td>
+<td>自述加推断</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>F10</td>
+<td>头部五个模型差距只有 0.01 至 0.06，第一名随问法而变，没有任何不确定性估计</td>
+<td>表 4（第 6 页）</td>
+<td>复算</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>F11</td>
+<td>按节点数选前 500 道"to ensure sufficient difficulty"，而论文自己发现节点数与分数没有稳定关联；目标抽样可能使题集偏向某类种子</td>
+<td>第 5 页；第 8 页</td>
+<td>自述（两处原文相互矛盾）</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>F12</td>
+<td>三种问法共用一张评分表：无提示问法也在考"拆得和出题模型一样细"；只给标题问法在例题中泄露了中间答案</td>
+<td>第 5 页；第 19 页"concrete main object of study"；第 21 页的例题</td>
+<td>推断（仅一道例题）</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>F13</td>
+<td>甄别来源、引用、说明把握在构建时被有意排除；论文却称能揭示"深度研究"上的长处和短处</td>
+<td>第 12、13、16 页的提示词；第 21 页"Weaknesses"；贡献第三条（第 2 页）</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计选择（论文已划出边界，但总体说法超出了这条边界）</td>
+</tr>
+<tr>
+<td>F14</td>
+<td>没有截止时间点，也没有报告构建日期；有时间敏感的种子；检查点固定而评测用实时网络</td>
+<td>第 10 页"{current_time}"；表 8；第 12 页的例子</td>
+<td>复算加推断</td>
+<td>测对了东西；经得起复核</td>
+<td>设计缺陷加缺证据</td>
+</tr>
+<tr>
+<td>F15</td>
+<td>被测的是同一工具框架下的基础模型，分数混有"适应这套框架"的成分</td>
+<td>第 5 页"Agent mode uses the same tool setting as benchmark construction"；Gemini 3.5 Flash 闭卷第二、开卷第六（表 4）</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计选择</td>
+</tr>
+<tr>
+<td>F16</td>
+<td>构建过程分析的细节不一致：图 5 只有 8 个模型，正文先说每轮 20 道、又说每条线是 10 道的平均</td>
+<td>第 7 至 8 页</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>缺证据（小问题）</td>
+</tr>
+<tr>
+<td>F17</td>
+<td>没有做污染检测；仓库是用同一评分格式的强化学习训练栈，以后可能出现训练和测试重叠</td>
+<td>全文没有污染讨论；仓库说明</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>出处</th>
+<th>本轮是否复算</th>
+<th>数据或代码是否足以复算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表 4 共 60 格的"总分 = 证据分 + 分析分"</td>
+<td>表 4</td>
+<td>已复算，60 格全部对得上</td>
+<td>表格本身足够</td>
+</tr>
+<tr>
+<td>去掉工具平均掉 0.14，证据和分析各掉 0.07；无提示问法掉 0.16，只给标题问法掉 0.12</td>
+<td>第 6 至 7 页</td>
+<td>已复算：0.135（0.070、0.066）；0.157；0.118</td>
+<td>表格本身足够</td>
+</tr>
+<tr>
+<td>闭卷与开卷之比约 79% / 76% / 77%，证据检查点约 75%</td>
+<td>我们由表 4 算出</td>
+<td>已复算</td>
+<td>表格本身足够；逐题比例需要逐题数据，未公开</td>
+</tr>
+<tr>
+<td>表 3 的 1,100 个评定：0 差、6 中、1,094 好</td>
+<td>表 3</td>
+<td>已复算</td>
+<td>表格本身足够；原始评定和 κ 值无法复算</td>
+</tr>
+<tr>
+<td>每个检查点约 1.0 分钟（三人各看全部则约 20 秒）</td>
+<td>由第 6 页数字算出</td>
+<td>已复算（算术）</td>
+<td>只能做算术，实际分工未知</td>
+</tr>
+<tr>
+<td>图 3 大类数字合计 500</td>
+<td>图 3</td>
+<td>已复算（数字读自图上小字）</td>
+<td>图本身足够</td>
+</tr>
+<tr>
+<td>表 10 的权重由图 6 按第 4 页算法得出</td>
+<td>表 10、图 6</td>
+<td>已复算，最大偏差 0.019，可能有一两条边读错</td>
+<td>例题够；其余 499 道没有数据</td>
+</tr>
+<tr>
+<td>963 / 1,000 收敛，96.3%</td>
+<td>第 5 页、第 20 页</td>
+<td>算术成立</td>
+<td>构建日志未公开</td>
+</tr>
+<tr>
+<td>表 2 的统计（平均 14.19 轮、264.96 次工具调用、104.85 个检查点）</td>
+<td>表 2</td>
+<td>未复算</td>
+<td>数据未公开，无法复算</td>
+</tr>
+<tr>
+<td>表 5、表 6 的人机相关系数和准确率</td>
+<td>第 6 至 7 页</td>
+<td>未复算</td>
+<td>人工评分和评委输出未公开，无法复算</td>
+</tr>
+<tr>
+<td>Fleiss' κ = 0.81</td>
+<td>第 6 页</td>
+<td>未复算</td>
+<td>原始评定未公开，无法复算</td>
+</tr>
+<tr>
+<td>图 5 各轮分数，表 8 杰卡德相似度</td>
+<td>第 7 至 8 页</td>
+<td>未复算</td>
+<td>未公开，无法复算</td>
+</tr>
+<tr>
+<td>构建成本 168 小时、约 1 万美元</td>
+<td>第 20 页</td>
+<td>未复算</td>
+<td>代码公开，理论上可以重跑，但实时网络使结果不同</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>场景：5 个智能体、比赛评审、第一轮只对报告排名、先做基础级。以下都是候选，不在此采纳。</p>
+<ol>
+<li><strong>题目不能直接拿来用。</strong> 数据没有公开；而且种子是维基百科常识，闭卷就能拿大半分数，不满足"留有挖深的空间"的出题条件。可以借鉴的是方法，不是题集。</li>
+<li><strong>可以借鉴的做法：</strong>
+   - 证据检查点和分析检查点分开记分、分开报告，可以看出一份报告输在"没查到"还是"没想清楚"；
+   - 检查点的写法规则："only check whether the result is correct"，不限定路径、工具、措辞（第 12 页），可以直接作为写评分表的约束；
+   - 闭卷基线作为诊断：如果被评智能体能关掉搜索，先闭卷答一遍，再看开卷多出多少。但商业深度研究产品一般不能关掉搜索，所以这一条的适用范围有限；
+   - 同一道题准备详细和简短两种问法，量出各智能体对提示的依赖程度。第一轮只用一个题面，这一条可以作为附加实验；
+   - 出题时禁止"terminology upgrades"以防假深（第 14 页）的思路，可以反过来用于评分时识别假深。</li>
+<li><strong>不宜照搬的做法：</strong>
+   - <strong>标准答案只来自一个模型。</strong> 如果 5 个智能体中有一个与出题模型同家族，就有利益冲突之嫌。比赛名次要公开、要经得起参赛者质疑（第一阶段第 1.1 节），这一点尤其要紧。候选做法是：先由懂行的人写必答要点，再汇总 5 份报告中的论断、人工裁决后补充，类似 LiveDRBench 的做法。这只是候选，第四阶段再定。
+   - <strong>按图的形状定权重。</strong> 核心答案只值 1%，在比赛中会形成激励：参赛队伍会去堆砌上游细节，而不是把主要结论答对、答清楚。这与第一阶段"主要结论放在前面"的交付要求和"假深"的担心相冲突。
+   - <strong>只算覆盖、不罚错误、没有致命缺陷机制。</strong> 与第一阶段"编造来源可能需要作为致命缺陷"的考虑相反。</li>
+<li><strong>第一阶段的核心环节中，它有意不评的几项正是我们要补的：</strong> 甄别来源、引用准确、说明把握、时效与截止时间点、查找过程交代。如果借用它的检查点方法，这几项需要另外设计，不能指望从它的评分表中得到。</li>
+<li><strong>评委和稳定性：</strong> 它只报告了评委与人工评分的相关，没有报告换评委或重评后名次是否不变。我们第一轮恰恰需要后者（第一阶段第 1.2 节第 2 条）。评委不能与任何参赛智能体同家族，或者至少要做偏袒检验。</li>
+<li><strong>区分度：</strong> 它在头部模型之间只有 0.01 至 0.06 的差距，而且没有误差范围。我们的 5 个智能体很可能都属于头部，所以只用"覆盖检查点"一类方法，很可能排不出可信的名次，需要配合重复评分和不确定性估计。</li>
+<li><strong>成本参考：</strong> 按论文的数字，每道入选题的构建成本约 20 美元【推断】。如果我们只出一两道题，成本不是障碍；人工核对检查点的时间才是主要成本。</li>
+</ol>
+<h2 id="_1">精读页勘误</h2>
+<p>精读页：<code>notes/2608.02163_From-Simple-QA-to-Deep-Research.html</code>（2026-10-28 写）。大部分数字经核对无误，包括表 4、表 10、审核用时的换算、失败原因、成本、主题数字和仓库状态。需要更正或补充的有以下几处。</p>
+<ol>
+<li>第 9 节对照表中"标准答案谁定"一栏写作"GPT-5.5 一次探路的结果"，不准确。评分表是 GPT-5.5 在一次构建中<strong>多轮探路的累积结果</strong>：平均 14.19 轮，每轮一次探路，然后由整理者（也是 GPT-5.5）合并和删改（第 3 至 4 页、表 2）。"只来自一个模型"这一批评仍然成立。</li>
+<li>第 7.6 节说论文"在结语里说'有潜力把这套流程推广到专业领域'"。这句话实际在"Baseline Performance"一节讨论闭卷结果的段落中（第 7 页），不在结语里。精读页把它解读为"承认现在的题还不在专业领域里"，这是推断，原文也可以读作"推广到更多专业领域"。</li>
+<li>第 7.8 节说"图 5 的说明先说'每轮随机抽 20 道题'，紧接着又说……10 道题"。这两句都在正文"Construction Analysis"一节（第 7 至 8 页），不在图注里；图注只有"Performance across evolution rounds."。另外，图 5 只画了 8 个模型，没有 Claude Sonnet 5 和 Gemini 3.5 Flash，精读页没有提到。</li>
+<li>第 7.2 节说"排第一的 GPT-5.6 Terra"，没有加限定。GPT-5.6 Terra 只在带提示问法（有工具和无工具）以及无工具的无提示问法中排第一；在有工具的无提示问法中，GLM-5.2 和 DeepSeek-V4-Pro 并列第一（0.68 对 0.67），在有工具的只给标题问法中，DeepSeek-V4-Pro 第一（0.73 对 0.70）（表 4）。第 0 节"带提示时 0.86 分"的说法加了限定，是对的。</li>
+<li>补充：第 11 节"推断而非核实的"中把仓库的训练用途列为推断。仓库自己的简介就写着"the Agentic RL Training Stack to Train on It"，这一点属于仓库的自述，不是推断。会不会造成训练和测试重叠，仍然是推断。</li>
+<li>补充：仓库的最后一次提交确是 2026-08-03；2026-10-25 有一次删除分支的操作（分支名 codex/clean-import-20260925），没有新增文件，不影响"只有代码、没有数据"的结论。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2608.02163_From-Simple-QA-to-Deep-Research.md</code></footer>
+</div>
+</body>
+</html>

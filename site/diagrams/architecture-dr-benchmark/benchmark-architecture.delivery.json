@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "2749f94c-1da7-414e-9f5c-fefafda2cea5",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/site/diagrams/architecture-dr-benchmark/candidate.json",
+  "output": "/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/site/diagrams/architecture-dr-benchmark/benchmark-architecture.html",
+  "specification": {
+    "sha256": "e3baf0bf00d8f97cd1aab5ee0985177986bcf67efa092e30fad4fb24f8be95e7",
+    "bytes": 6970
+  },
+  "artifact": {
+    "sha256": "178886039ff2cf0658a78c5400688d24795f4f892db2b4971e18baa8476b0197",
+    "bytes": 835958
+  }
+}

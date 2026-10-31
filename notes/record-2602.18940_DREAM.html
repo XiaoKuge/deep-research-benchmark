@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：DREAM（arXiv 2602.18940）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2602.18940_DREAM.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#dreamarxiv-260218940">审视记录：DREAM（arXiv 2602.18940）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="dreamarxiv-260218940">审视记录：DREAM（arXiv 2602.18940）</h1>
+<p>2026-10-29 写。审视框架见 <code>../stage2-framework.md</code>。</p>
+<p>证据等级的写法：</p>
+<ul>
+<li>"复算（本次）"：本记录写作时亲自算过。DREAM 没有公开数据和代码，所以本次复算都是对论文表格和图中数字的算术核对，不是用原始数据重算。</li>
+<li>"复算（精读页 2026-10-28）"：精读页那次算过，本次没有重做，依据写在条目里。</li>
+<li>"自述"：只有论文自己的说法。</li>
+<li>"推断"：我们根据原文推出来的，原文没有直接说。</li>
+</ul>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>全称</strong>：DREAM: Deep Research Evaluation with Agentic Metrics。</li>
+<li><strong>日期</strong>：arXiv 第 1 版，2026-02-21。arXiv 接口显示至今只有这一版（本次核对，2026-10-29）。</li>
+<li><strong>作者及机构</strong>：11 人。10 人来自 AWS Agentic AI，1 人来自佐治亚理工学院（脚注说明是在 AWS 实习期间完成的工作）。</li>
+<li><strong>发表情况</strong>：预印本，未见会议或期刊信息。</li>
+<li><strong>数据和代码</strong>：论文全文没有给出 DREAM 本身的代码或数据链接。正文里出现的链接只有被借用的数据集 LiveResearchBench 的 HuggingFace 页面（第 5 节脚注 1）和参考文献里其他项目的地址。本次核对：HuggingFace 论文接口中这篇论文的代码仓库字段为空；GitHub 按标题关键词和 arXiv 编号搜索，均为 0 个结果。许可：无从谈起。</li>
+<li><strong>它是什么</strong>：一套评分方法，不出新题。演示时借用了三个已有评测基准的题目：DeepResearch Bench 英文部分 50 题、LiveResearchBench 公开的 80 题、ResearchRubrics 101 题，共 231 题（第 5 节）。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2602.18940_DREAM.html</code>，2026-10-28）加原文核对。原文核对读的是抽取的纯文本，表 4、表 10、表 12、图 5、图 7、图 8、图 9 对照了 PDF 页面图像。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li><strong>诊断</strong>：现有评测基准能评表层的流畅和引用对齐，却看不出事实错误、信息过时和推理缺陷。原文："they remain largely insensitive to failures in factual correctness, temporal validity, and substantive reasoning"（第 1 节）。论文称之为"综合的海市蜃楼"（Mirage of Synthesis）。</li>
+<li><strong>原理</strong>：评委应当具备与被评者相当的能力，即"能力对等"（capability parity）。原文："the evaluator should possess a similar set of capabilities as the researcher, including the ability to retrieve, verify, and reason over information"（第 1 节）。</li>
+<li><strong>方法有效</strong>：摘要写道："Controlled evaluations demonstrate DREAM is significantly more sensitive to factual and temporal decay than existing benchmarks, offering a scalable, reference-free evaluation paradigm." 结论写道："DREAM detects temporal degradation and extrinsic factual errors that static benchmarks miss entirely, while reliably surfacing reasoning flaws masked by stylistic coherence"（第 6 节）。</li>
+<li><strong>写作质量可以不用参照报告评</strong>：与 DeepResearch Bench 的 RACE 排名 Kendall τ 为 0.6，"this result confirms that DREAM provides a reliable signal comparable to established benchmarks"（第 4.5 节）。</li>
+<li><strong>对三个系统的结论</strong>："Smolagents Open DR dominates in both source quality and synthesis"；三个开源系统"remain fundamentally limited by poor citation grounding"（第 5 节）。</li>
+<li><strong>对评委底座稳健</strong>：换用两个评委底座后，"the relative performance rankings of the evaluated deep research agents remain highly robust"（第 5 节）。</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong>：不出新题。演示用三个已有评测基准的 231 题，属于复用已有数据集，抽样方式是整套沿用（第 5 节）。三个验证实验另用作者自己准备的小题集：20 道时效性强的题（附录 D.1，表 4）、10 道推理题（附录 D.2，表 6）、15 对人工编写的真假断言（附录 D.3，表 7），属于目标抽样。</li>
+<li><strong>判分标准</strong>：无标准答案。六个指标分两类（第 3.1 节，附录 C）：</li>
+<li>通用指标四个：写作质量（Writing Quality）、事实性（Factuality）、引用完整性（Citation Integrity）、来源权威性（Domain Authoritativeness）。</li>
+<li>按题生成的指标两个：关键信息覆盖（Key-Information Coverage，下称"关键信息覆盖"），是一组是或否的检查题；推理质量（Reasoning Quality），是若干"难题"加各自的核验计划。这两个由"出方案智能体"上网研究题目后生成，与具体报告无关。</li>
+<li><strong>判卷方式</strong>（第 3.2 节，图 3）：</li>
+<li>大语言模型评委：写作质量、关键信息覆盖。</li>
+<li>能联网的智能体评委：推理质量，执行核验计划，边查边判，从 10 分起扣。</li>
+<li>固定流程加大语言模型：事实性（每份报告抽 30 条最重要的断言，用"中性搜索词"检索，分别找支持和反驳的证据，判为支持、部分支持、反驳、无法核实）；引用完整性（标注率与忠实度的调和平均）；来源权威性（按域名打 1 到 10 分）。</li>
+<li>默认底座 Claude Sonnet 4.5（第 4 节开头）。分类法的推导用的是 Claude Opus 4.5（附录 B）。</li>
+<li><strong>运行环境</strong>：实时网络，包括网页搜索、arXiv、GitHub。原文没有写第 5 节那次评测是在哪一天运行、评分方案是在哪一天生成的。时效实验中"当前信息"一档是 2025 年 12 月（第 4.2 节）。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>它声称了什么</strong>：按题生成的评分方案质量高；各指标对坏报告敏感；换评委底座，排名不变。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li><strong>人工评评分方案本身</strong>（第 4.1 节，表 2，附录 E）。标注员按相关性、可核实性、清晰度三项（推理质量另加"核验计划是否成立"）给评分方案的条目打 1 到 3 分，换算到 0 到 1。联网智能体生成的方案得分最高：关键信息覆盖 0.92，推理质量 0.93；不联网的智能体 0.83 和 0.84；直接让大语言模型写 0.79 和 0.70。标注员之间的一致性用肯德尔协和系数（Kendall's W）衡量，为 0.58 到 0.86（表 9），这个系数衡量的是标注员对三种生成方式的排序是否一致（附录 E.4 原文："it reflects the degree to which annotators share similar preferences across the different creation strategies"）。证据等级：自述。
+   - 标注员人数和背景没有交代，只说"expert and non-expert annotators"（第 4.1 节）。
+   - 附录 E.1 说这份人工反馈足以作为"robust ground truth for calculating precision and recall against human judgments"，但全文没有报告任何精确率或召回率（本次在全文检索确认）。证据等级：自述加核对。</li>
+<li><strong>扰动实验</strong>：故意把报告弄坏，看分数是否下降。
+   - 时效（表 4）：关键信息覆盖从 79.35 降到 44.80 再到 22.34；RACE 全面性 50.02、50.04、44.81；RACE 洞察 50.54、48.78、41.68。三列平均值与逐题数字一致（复算（本次），依据表 4 逐题数字）。
+   - 推理（图 5）：推理质量平均降 35.16%、中位数降 40.12%；RACE 平均降 10.93%、中位数降 9.08%。正文写 RACE "average degradation of ∼ 9%"，9% 其实是中位数（自述，对照图 5 读数）。
+   - 事实（图 1 中图，附录 D.3）：真断言按比例换成假断言，DeepResearch Bench 的 FACT 指标不变，DREAM 事实性随之下降。图中没有给出具体数值。</li>
+<li><strong>写作质量与 RACE 的一致性</strong>：τ = 0.6（第 4.5 节）。对照对象是另一个大语言模型指标，不是人。论文拿它与"human inter-annotator agreement for subjective readability typically falls in the 0.5–0.7 range"相比，这句话没有给出处。证据等级：自述。</li>
+<li><strong>换评委底座</strong>（表 12，只在 DeepResearch Bench 上）：排序一致，复算（本次）确认五个指标在三个底座下排序完全相同；写作质量例外，Claude Sonnet 4.5 下的排序（通义、LangChain、Smolagents）与另两个底座下的排序（Smolagents、LangChain、通义）正好相反，只是 Claude 给三家的分数相差不到 0.7 分。但绝对值很不稳：Smolagents 的来源权威性在 Claude 下是 9.44，在 DeepSeek-V3.2 下是 60.72，在 Kimi-K2.5 下是 13.30。按正文措辞，换掉的只是"backbone for protocol execution"（第 5 节），生成评分方案的那一步没有换。</li>
+</ol>
+<p><strong>证据等级汇总</strong>：人工评价与扰动结果为自述；表格算术为复算（本次）；"生成方案那一步没换底座"为推断（依据措辞）。</p>
+<p><strong>我们的判断</strong>：不够，主要是缺证据，也有设计缺陷。</p>
+<ul>
+<li>缺证据：全部人工证据针对的是"评分方案写得好不好"，没有一项针对"拿方案给真实报告打的分对不对"。关键信息覆盖的是或否判定、事实性的四类标签、推理质量的扣分，都没有与人工判断对照。扰动实验证明的是"对作者造的坏报告敏感"，敏感不等于判得准。</li>
+<li>设计缺陷：</li>
+<li>事实性的分母只含"支持、部分支持、反驳"，"无法核实"不计入（附录 C.2 公式）。写满难以核实的内容不会被扣分。</li>
+<li>来源权威性把"没有引用"计成低分。按定义，只要引了一个域名，该题得分至少是 0.1（附录 C.4）。可 ResearchRubrics 上 Smolagents 的引用完整性是 2.03（说明有被引用的断言），来源权威性却是 0.00（表 10）。如果有任何一题引了域名，101 题的平均至少约为 0.1，不会是 0.00。复算（本次），依据表 10 与附录 C.4 定义的算术。</li>
+<li>引用完整性的计算口径与图表对不上。附录 C.3 写的是先在整个数据集上平均标注率和忠实度，再取调和平均。按图 9 读出的坐标套用这个公式，LangChain 在三个数据集上应约为 22、22、31，表 10 是 14.43、11.90、19.81；Smolagents 在 LiveResearchBench 上应约为 22，表中是 9.67；通义在 LiveResearchBench 上应约为 10，表中是 2.92。读数误差按正负 2 估计，这几处都超出了范围。复算（本次），依据图 9 读数。表中数值全部偏低，与"先逐题算调和平均再平均"的做法相符（推断）。</li>
+</ul>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>它声称了什么</strong>："dataset-agnostic"，可用于不同来源的题目（第 5 节，附录 F）。</p>
+<p><strong>拿出了什么证据</strong>：在三个已有数据集上各评了一次三个系统（表 10）。三个验证实验的题量分别是 20、10、15 对，都是作者自己选的。</p>
+<p><strong>证据等级</strong>：自述。</p>
+<p><strong>我们的判断</strong>：不够，主要是缺证据。</p>
+<ul>
+<li>验证实验的题目全部由作者挑选。15 对假断言几乎都是有大量辟谣的著名谣言，例如登月造假、人和恐龙同时代、十五分钟城市是封锁计划（表 7）。真实报告里更常见的是冷门数字和细节错误，网上证据少，正是事实性评委最容易判成"无法核实"、进而从分母里消失的情形（推断）。</li>
+<li>时效实验专挑"temporally volatile queries"（第 4.2 节）。对时效不敏感的题，按最新网页生成的检查清单会不会反而苛求近况，没有检验（推断）。</li>
+<li>事实实验跳过了从报告中抽取断言这一步，直接把人工构造的断言送进判定流程（附录 D.3："we bypassed the claim-source extraction phase and directly constructed synthetic evaluation payloads"）。所以它检验的只是"判定"，不是从真实报告出发的整条流程。证据等级：自述。</li>
+<li>评测只跑一次，没有误差范围，也没有重复运行。</li>
+</ul>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>它声称了什么</strong>：DREAM 的分数能反映事实正确、时效和推理这些"实质"质量，因而比只看表层的评测更接近真实的研究质量。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li>分类法：用 Claude Opus 4.5 从四个已有评测基准的源码和文档中抽出 48 条评分条目，再聚类成四大类，即呈现质量、任务完成、分析深度、来源质量（附录 B，表 1）。</li>
+<li>三个扰动实验（见 4.1）。</li>
+<li>没有拿专家对真实报告的判断来对照 DREAM 的分数或排名。</li>
+</ol>
+<p><strong>证据等级</strong>：自述。</p>
+<p><strong>我们的判断</strong>：不够，既有缺证据，也有设计缺陷。</p>
+<ul>
+<li>"该测什么"来自已有评测基准的共识，不是来自对"好的调研"的独立定义。附录 B 的做法是从四个评测基准里抽条目再聚类，并要求每一类都含多个评测基准的条目。这样得到的是现有做法的最大公约数（推断）。</li>
+<li>关键信息覆盖是召回率：清单里的事，报告说了几件（附录 C.5）。Smolagents 报告平均 3,000 到 3,700 词，最长 14,554 词；另两家 1,400 到 1,800 词（表 11）。Smolagents 正好在关键信息覆盖和推理质量上领先（表 10）。论文统计了长度，但没有控制长度。证据等级：自述加推断。</li>
+<li>"盲区对等"：生成清单的是与被评者同类的智能体，它漏掉的东西，被评报告写对了也不得分。原文没有讨论这一点（推断）。</li>
+<li>写作质量里含有"Conceptual Synthesis"子项，看的是"cause-effect relationships"和"thematic framing"，并说"this dimension rewards insight, not just content"（表 3）。也就是说，与"内部联系"最接近的评分内容放在了写作质量之下，而写作质量被论文归为呈现质量（第 2.1 节）。证据等级：自述。</li>
+</ul>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>它声称了什么</strong>：Smolagents 在内容上领先，三个开源系统都缺引用（第 5 节）；附录 F 说表 10 附有"a composite score averaging results across all metrics"。</p>
+<p><strong>拿出了什么证据</strong>：表 10 三个数据集和汇总行，表 11 报告长度，表 12 换底座。</p>
+<p><strong>证据等级</strong>：表格自述；以下核对为复算（本次）。</p>
+<p><strong>我们的判断</strong>：不够，既有设计缺陷，也有缺证据。</p>
+<ul>
+<li>只有 3 个系统，各跑一次，没有误差范围。</li>
+<li>汇总行中，写作质量、事实性、引用完整性、关键信息覆盖、推理质量五列，等于三个数据集按题数（50、80、101）加权的平均，误差不超过 0.02（Smolagents 写作质量差 0.22）。来源权威性一列算不出来：LangChain 加权应为 87.13，表中 85.08；Smolagents 加权应为 10.50，表中 17.96；通义加权应为 1.98，表中 3.38。复算（本次）；与精读页 2026-10-28 的复算结果一致。</li>
+<li>附录 F 说的综合分在表 10 里没有这一列。把六个汇总值直接平均：LangChain 55.18，Smolagents 48.33，通义 37.44；按表 12 的三个底座分别平均，LangChain 也都排第一。这与正文"Smolagents 内容最好"的叙述方向相反。如何把六项合成一个结论，论文没有定义，而合成方式会改变第一名。复算（本次）。</li>
+<li>正文说 Smolagents "dominates in both source quality and synthesis"（第 5 节），附录 F 说它"leads in most metrics (except CI)"。可按表 10，Smolagents 的来源权威性 17.96，远低于 LangChain 的 85.08；引用完整性 4.78，也低于 LangChain 的 15.92。"来源质量领先"与它自己的表格不符。复算（本次）。</li>
+<li>三个系统的底座模型各不相同：LangChain 用 GPT-5，Smolagents 用 Claude Opus 4.6，通义用自家模型（第 5 节）。分不清差别来自框架还是来自底座。</li>
+</ul>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：评分方案在评测时现场生成，所以能惩罚过时内容，这是它的长处。代价是同一份报告在不同日期重评，清单会变，分数也会变；论文没有讨论把方案存档复用的取舍。第 5 节评测的运行日期没有写。证据等级：自述加推断。</li>
+<li><strong>污染</strong>：DREAM 不提供标准答案，借用的三个数据集题目都是公开的。污染对它的影响主要在被评系统一侧，论文没有讨论。证据等级：推断。</li>
+<li><strong>可复现</strong>：没有代码；附录只完整给出了写作质量的提示词（表 3），其他指标只描述了流程；依赖实时网络和第三方搜索服务（局限性一节自己承认"dependencies on third-party service availability and potential retrieval bias"）。别人无法照做，也无法核对论文里的分数。证据等级：自述加本次核对。</li>
+<li><strong>利益关系</strong>：作者来自 AWS，没有评测 AWS 自己的产品，看不出自我推销。默认评委是 Claude Sonnet 4.5，排第一的 Smolagents 用的是 Claude Opus 4.6，同属一个模型家族；论文换了"执行方案"的评委底座，排序基本不变，但"生成方案"的底座没换（推断，依据第 5 节措辞）。另有一条公开背景信息，不是论文内容：亚马逊是 Anthropic 的投资方，Claude 模型也通过 AWS 提供。这不能说明结果有偏，只是值得知道。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明：DREAM 没有声称要覆盖我们的全部要求。下表只记录"评了什么、怎么评"，不据此指责它。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弄清真实需要，审视前提和概念边界，回答的正是所问</td>
+<td>部分</td>
+<td>没有"审视前提"的指标。写作质量的"Main Idea Clarity"要求中心意思"tightly aligned with the report question"（表 3）；关键信息覆盖检查是否答到要点。</td>
+</tr>
+<tr>
+<td>材料截至规定时间点，并且足够新</td>
+<td>部分</td>
+<td>评"新"：关键信息覆盖"retrieving up-to-date sources"（第 3.1 节）；事实性抽取断言时"incorporating the current date"（附录 C.2）。不评"截至规定时间点"，基准是评测当天。</td>
+</tr>
+<tr>
+<td>查找系统全面，查找过程交代清楚</td>
+<td>部分</td>
+<td>"全面"用关键信息覆盖衡量，是结果对清单的召回，不是查找本身。"过程交代"不评，局限性一节说"does not directly assess intermediate research processes"。</td>
+</tr>
+<tr>
+<td>甄别来源质量，处理矛盾信息</td>
+<td>部分</td>
+<td>来源权威性只看域名（附录 C.4）。推理质量扣分项含"ignored counter-evidence"（附录 C.6）。没有单独评"如何处理互相矛盾的信息"。</td>
+</tr>
+<tr>
+<td>分析：交代历史和全部现状，讲清性质和内在联系，推理清楚，区分事实和判断，考虑其他解释，不迎合</td>
+<td>部分</td>
+<td>推理质量扣"logical gaps, unsupported inferences, or ignored counter-evidence"（附录 C.6）。"区分事实和判断""不迎合"未见。历史和现状只以清单条目的形式出现，例如 TikTok 题的"original deadline was January 19, 2025"（表 5）。</td>
+</tr>
+<tr>
+<td>每个结论都能追到依据，引用准确</td>
+<td>评</td>
+<td>引用完整性 = 标注率与忠实度的调和平均，"a failure in either (e.g., citing nothing, or citing everything incorrectly) will reduce the score"（附录 C.3）。另有事实性，把"引用对得上"和"内容是对的"分开。</td>
+</tr>
+<tr>
+<td>结论准确、具体、清楚、无歧义，敢于下判断，如实说明把握</td>
+<td>部分</td>
+<td>"准确"由事实性评；"具体"部分体现在写作质量的"Information Density"子项。"敢于下判断""说明把握"未见。</td>
+</tr>
+<tr>
+<td>深：本质</td>
+<td>未单独评</td>
+<td>推理质量评的是推理站不站得住，不是认识推进到什么程度。</td>
+</tr>
+<tr>
+<td>深：全体（历史和全部现状）</td>
+<td>部分</td>
+<td>只能通过关键信息覆盖清单里的历史条目间接体现。</td>
+</tr>
+<tr>
+<td>深：内部联系</td>
+<td>部分，放在写作质量里</td>
+<td>写作质量的"Conceptual Synthesis"子项看"cause-effect relationships"（表 3），权重是写作质量三分之一里的四分之一。召回式的关键信息覆盖奖励"说得多"，区分不了"多而不连"和"联成整体"。</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>单列</td>
+<td>写作质量是六个指标之一。因为没有定义综合分，谈不上权重。它的"Ideas and Content"一项其实含有内容判断（表 3）。</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>没有定义</td>
+<td>附录 F 说有综合分，表 10 里没有。各项分开报告。</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>无</td>
+<td>没有任何一项不合格就判整体不合格的规则。</td>
+</tr>
+<tr>
+<td>交付形式（主要结论、论证、出处、把握程度、查找与来源说明）</td>
+<td>不要求</td>
+<td>只要求是一份报告。引用完整性间接奖励"出处"；其余部分不要求。</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>没有任何证据说明评委给真实报告打的分是对的。人工只评了评分方案条目的质量；附录 E.1 说可据此算精确率和召回率，全文却没有报告。</td>
+<td>第 4.1 节，表 2；附录 E.1 "for calculating precision and recall against human judgments"</td>
+<td>自述加核对</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>扰动实验规模小、题目由作者自选；假断言多是著名谣言；事实实验跳过了断言抽取。</td>
+<td>表 4（20 题）、图 5（10 对）、表 7（15 对）；附录 D.3 "we bypassed the claim-source extraction phase"</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>事实性分母不含"无法核实"，难以核实的内容不受罚。</td>
+<td>附录 C.2 公式</td>
+<td>自述（公式）；影响为推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>来源权威性把"没有引用"计为低分，并与引用完整性自相矛盾；换评委底座后 Smolagents 从 9.44 变为 60.72。</td>
+<td>附录 C.4；表 10（ResearchRubrics：引用完整性 2.03，来源权威性 0.00）；表 12</td>
+<td>复算（本次，算术）</td>
+<td>测对了东西；测得稳</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>来源权威性的汇总值按任何平均方式都算不出。</td>
+<td>表 10 汇总行</td>
+<td>复算（本次；与精读页 2026-10-28 一致）</td>
+<td>经得起复核</td>
+<td>缺证据（计算方法未交代）</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>引用完整性按附录 C.3 的公式和图 9 的坐标算不出表 10 的数值，七处中有五处超出读数误差。</td>
+<td>附录 C.3；图 9；表 10</td>
+<td>复算（本次，图 9 读数）；原因推断</td>
+<td>经得起复核</td>
+<td>缺证据（口径未交代）</td>
+</tr>
+<tr>
+<td>D7</td>
+<td>综合分说有却没有；直接平均六项，第一名与正文叙述相反。</td>
+<td>附录 F；表 10、表 12</td>
+<td>复算（本次）</td>
+<td>测对了东西（决策）</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>"Smolagents 来源质量领先"与自己的表格不符。</td>
+<td>第 5 节 "dominates in both source quality and synthesis"；表 10</td>
+<td>复算（本次）</td>
+<td>经得起复核</td>
+<td>文字与数据不一致</td>
+</tr>
+<tr>
+<td>D9</td>
+<td>关键信息覆盖是召回率，报告长度相差一倍以上而未控制。</td>
+<td>附录 C.5；表 11</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D10</td>
+<td>评分方案现场生成，换日期重评分数会变；"盲区对等"未讨论。</td>
+<td>第 3.1 节；局限性一节</td>
+<td>推断</td>
+<td>测得稳；经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D11</td>
+<td>没有代码，只给出写作质量的提示词。</td>
+<td>全文；附录 C；本次检索</td>
+<td>自述加核对</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D12</td>
+<td>只评 3 个系统，各一次，底座各不相同，没有误差范围。</td>
+<td>第 5 节；表 10</td>
+<td>自述</td>
+<td>测得稳（决策）</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D13</td>
+<td>写作质量只与另一个大语言模型指标对照（τ = 0.6），与"人与人一致性 0.5 到 0.7"的比较没有出处。</td>
+<td>第 4.5 节</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D14</td>
+<td>时效实验 2024 年 1 月一档中，第 5 题（苏丹内战）RACE 全面性、RACE 洞察和关键信息覆盖三项都是 0.00，像是一份生成失败的报告，论文未说明。去掉这一题，RACE 全面性从 50.11 降到 47.17，洞察从 50.77 降到 43.87。</td>
+<td>表 4</td>
+<td>复算（本次）；"生成失败"为推断</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>能否复算</th>
+<th>本轮状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>时效实验三档平均值</td>
+<td>表 4</td>
+<td>表中给出逐题数字，能核对平均值；不能重跑</td>
+<td>已核对，一致</td>
+</tr>
+<tr>
+<td>汇总行六列</td>
+<td>表 10</td>
+<td>表中给出三个数据集的数值，能核对汇总；不能重跑</td>
+<td>已核对：五列一致，来源权威性不一致</td>
+</tr>
+<tr>
+<td>引用完整性与图 9</td>
+<td>表 10，图 9，附录 C.3</td>
+<td>只能读图估算</td>
+<td>已核对：多处不一致</td>
+</tr>
+<tr>
+<td>六项简单平均的排名</td>
+<td>表 10，表 12</td>
+<td>能</td>
+<td>已算</td>
+</tr>
+<tr>
+<td>换底座后的排序</td>
+<td>表 12</td>
+<td>能</td>
+<td>已核对</td>
+</tr>
+<tr>
+<td>推理实验的下降幅度</td>
+<td>图 5</td>
+<td>没有逐对数据，只能读图</td>
+<td>未复算</td>
+</tr>
+<tr>
+<td>事实实验的曲线</td>
+<td>图 1 中图</td>
+<td>没有数值</td>
+<td>无法复算</td>
+</tr>
+<tr>
+<td>人工评价得分与肯德尔协和系数</td>
+<td>表 2，表 9</td>
+<td>没有原始标注</td>
+<td>无法复算</td>
+</tr>
+<tr>
+<td>写作质量与 RACE 的 τ = 0.6</td>
+<td>第 4.5 节</td>
+<td>DREAM 没有代码，无法重打写作质量分</td>
+<td>无法复算</td>
+</tr>
+<tr>
+<td>任何一份报告的任何一项分数</td>
+<td>全文</td>
+<td>没有代码、没有报告原文、没有评分方案存档</td>
+<td>无法复算</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>场景：5 个智能体，比赛评审，第一轮只对报告排名。</p>
+<ol>
+<li><strong>可以借的</strong>：
+   - "能力对等"适用于核实事实和时效。核实每条断言时用中性搜索词、同时找支持和反驳的证据（附录 C.2），这两个技巧可以照抄。
+   - "引用对得上"和"内容是对的"分开计分（附录 C.3 与 C.2 的区分）。
+   - 用扰动实验检验我们自己的评分器：拿 5 份报告中的一份，人为注入过时信息、推理漏洞或假断言，看分数是否下降。这是第一轮就能做的低成本检验。</li>
+<li><strong>要改的</strong>：
+   - 核实要对照运行时存档的网页，不要评分时现搜。否则参赛者复核时拿不到同样的证据，违背"经得起复核"。
+   - 评分方案（检查清单、核验计划）必须在看到 5 份报告之前生成并冻结，并与专家事先写的清单合并，补上"评委和考生一起漏掉"的盲区。
+   - "无法核实"单独报告，不能从分母中消失。
+   - 召回式指标要么按篇幅归一，要么同时报告"每千字命中几条"。
+   - 评委底座不要与任何一个参赛智能体同一家族，或者轮换两三家；生成方案和执行打分两步都要这样做。
+   - 怎样把各项合成名次，要事先写定并公开。DREAM 的例子说明，合成方式能改变第一名。</li>
+<li><strong>它没有提供、我们必须自己补的</strong>：评委给真实报告打的分是否与专家一致。DREAM 在这一环没有证据，我们第一轮需要至少一次专家盲评对照。</li>
+</ol>
+<hr />
+<h2 id="_1">精读页勘误</h2>
+<p>对照 <code>notes/2602.18940_DREAM.html</code>（2026-10-28）。</p>
+<ol>
+<li><strong>第 4 节"验证 2"把对照指标写成"DeepResearch Bench 洞察分"。</strong> 原文第 4.3 节和图 5 只写"DRB–RACE"或"RACE"，没有说是洞察分还是总分。应改为"RACE 分（论文未说明是哪一项）"。</li>
+<li><strong>第 7.7 节"图和表对不上"的例子选错了，结论本身成立而且更严重。</strong> 精读页依据的是附录 F 的文字描述（标注率约 5% 到 15%）。直接读图 9：Smolagents 在 DeepResearch Bench 和 ResearchRubrics 上的标注率约为 3 和 2，按调和平均算出约 5.6 和 3.8，与表 10 的 2.45 和 2.03 在读数误差之内。真正对不上的是 LangChain 的三个数据集、Smolagents 的 LiveResearchBench、通义的 LiveResearchBench，差距都超出读数误差（见本记录 4.1 和问题 D6）。精读页"可能是图上的范围估读不准"的保留说法也应删去：偏差是系统性的。</li>
+<li><strong>补充说明，不算错误。</strong> 第 7.3 节说 2024 年 1 月一档 RACE 全面性降了 5 分、洞察降了 9 分。数字没错，但其中第 5 题三项都是 0.00，去掉这一题，降幅约为 3 分和 7 分（见问题 D14）。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2602.18940_DREAM.md</code></footer>
+</div>
+</body>
+</html>

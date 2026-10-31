@@ -1,0 +1,96 @@
+{
+ "judge": "opus",
+ "order": "fwd",
+ "pairs": [
+  {
+   "first": "E",
+   "second": "F",
+   "verdict": "second",
+   "reason": "F 依据 DeepResearch Bench、DRACO、LiveDRBench 等 2025-2026 年专门评测深度研究的基准下判断，并指出 DRACO 是 Perplexity 自己发布的、各评测结果相互矛盾；E 对 Claude 和 Gemini 的判断依赖过时材料（称 Claude 3.5 Sonnet 不支持联网、Gemini 没有专门的深度调研模式），还把 Kimi k1.5、DeepSeek R1 的模型能力当作深度研究功能来比。"
+  },
+  {
+   "first": "C",
+   "second": "E",
+   "verdict": "first",
+   "reason": "C 逐家剖析了深度研究功能本身的机制及其代价（Claude 指挥家-演奏家架构 token 消耗约 15 倍、Gemini 大纲预确认、ChatGPT 8-20 分钟换取深度），并据此给出分场景选择，虽然没有出处；E 虽有引用，但对 Claude、Gemini 的结论建立在“Claude 3.5 Sonnet 不支持联网”“Gemini 没有专门化的深度调研模式”这类截止时早已过时的信息上。"
+  },
+  {
+   "first": "A",
+   "second": "B",
+   "verdict": "first",
+   "reason": "A 按数据来源、引用、隐私、定价等维度逐家对照官方文档并标注出处，还把 Kimi“基本消除幻觉”的说法标为未经核实的宣传；B 虽直接给了梯队，但只说“根据多方评测和用户反馈”，没有任何可追溯的依据。A 的明显缺陷是用 2024 年的 ChatGPT Search 代替了 ChatGPT Deep Research，且没有给出总的判断。"
+  },
+  {
+   "first": "D",
+   "second": "F",
+   "verdict": "first",
+   "reason": "D 用 2026 年初的材料覆盖了六家（GPT-5.2 深度研究的完整版/轻量版、Gemini 3.1 Pro、Kimi K2.5 智能体集群、BrowseComp-Plus 成绩、各家订阅价格），并先说明“哪家最好”为何取决于场景再给出分场景结论；F 指出 DRACO 是 Perplexity 自家基准、各评测互相矛盾，这点更审慎，但完全没有涉及 Claude 和 DeepSeek，推荐 Kimi 只凭未注明出处的“真实用户反馈”。"
+  },
+  {
+   "first": "B",
+   "second": "D",
+   "verdict": "second",
+   "reason": "D 用截至 2026 年初的材料逐家分析架构路线、BrowseComp-Plus 成绩、定价与幻觉成因，并附有检索过程和来源列表；B 只凭未注明的“多方评测”给出梯队，对 DeepSeek 和 Kimi“还有差距”的判断没有任何依据。"
+  },
+  {
+   "first": "B",
+   "second": "C",
+   "verdict": "second",
+   "reason": "C 先界定深度研究的概念，再比较各家实现路径（端到端训练、多智能体、开源推理加外部检索）在速度、深度、成本上的权衡，并按学术、商业、垂直场景给出选择；B 只有几段无出处的概括，例如称 DeepSeek 和 Kimi 成熟度有差距却不给依据。"
+  },
+  {
+   "first": "A",
+   "second": "E",
+   "verdict": "tie",
+   "reason": "A 对 Gemini、Claude、Kimi 深度研究功能的描述较新且有官方出处，但用 2024 年的 ChatGPT Search 代替了 ChatGPT Deep Research，也没有回答哪家最好；E 给出了明确的分场景结论并有引用，却把 Claude 说成不支持联网、Gemini 说成没有专门的深度调研模式，两份的核心缺陷相当。"
+  },
+  {
+   "first": "B",
+   "second": "F",
+   "verdict": "second",
+   "reason": "F 列出四个具名的深度研究评测及其结果，注意到 DRACO 是 Perplexity 自己发布的，并据此分场景推荐；B 的“第一梯队”等判断只依据未注明来源的测评者经验。"
+  },
+  {
+   "first": "B",
+   "second": "E",
+   "verdict": "tie",
+   "reason": "E 有引用、区分了“官方数据称”，ChatGPT 与 Perplexity 的取舍分析也更细，但对 Claude、Gemini 的判断依赖过时信息（称 Claude 3.5 Sonnet 不支持联网、Gemini 缺少专门深度调研模式）；B 的梯队划分更接近截止时的产品格局，却没有任何可追溯的依据，两者各有严重短板。"
+  },
+  {
+   "first": "C",
+   "second": "F",
+   "verdict": "second",
+   "reason": "F 的判断落在具名的 2025-2026 年深度研究基准上，并提醒 DRACO 是 Perplexity 自家评测；C 的综合排名来自没有出处的自行打分，依据的多是 2025 年初的情况（ChatGPT 深度研究仅限 $200 的 Pro 用户、R1 知识截至 2024 年初），打分也自相矛盾（ChatGPT 准确性和分析深度满分，总分却低于 Claude 和 Gemini）。"
+  },
+  {
+   "first": "A",
+   "second": "F",
+   "verdict": "second",
+   "reason": "F 直接回答了哪家更好，依据是几个专门评测深度研究的基准，并标出 DRACO 是 Perplexity 自家发布；A 主要罗列上下文窗口、多模态、隐私等平台特性，没有总的判断，而且把 ChatGPT 的深度研究功能当成 2024 年的 Search 模式，还说 GPT-5 尚未在应用中上线。"
+  },
+  {
+   "first": "A",
+   "second": "C",
+   "verdict": "second",
+   "reason": "C 抓住了各家深度研究功能本身（ChatGPT 基于 o3 的迭代浏览、Gemini 大纲预确认、Claude 多智能体），分析其速度、深度、成本的取舍后给出分场景选择；A 有出处，但偏到上下文窗口、隐私等通用特性，遗漏了 ChatGPT Deep Research，也没有给出哪家更好的判断。"
+  },
+  {
+   "first": "D",
+   "second": "E",
+   "verdict": "first",
+   "reason": "D 的材料截至 2026 年初，反映了 Claude、Gemini 都有深度研究能力并分析各自的架构取舍；E 对 Claude 和 Gemini 的判断依据 2025 年的过时信息，并用 Kimi k1.5、DeepSeek R1 的模型评测代替深度研究功能的比较。"
+  },
+  {
+   "first": "C",
+   "second": "D",
+   "verdict": "second",
+   "reason": "D 使用 2026 年初的材料（GPT-5.2 深度研究的完整版/轻量版、Gemini 3.1 Pro、Kimi K2.5 智能体集群、最新订阅价格），并附检索过程和来源列表；C 依据的多是 2025 年初的状况（ChatGPT 深度研究仅向 Pro 开放、R1 知识截至 2024 年初），排名出自无出处的自评分且前后不一。"
+  },
+  {
+   "first": "A",
+   "second": "D",
+   "verdict": "second",
+   "reason": "D 用 2026 年初的材料逐家分析深度研究功能并给出分场景结论；A 把 ChatGPT 的深度研究当作 2024 年的 Search 模式、称 GPT-5 尚未上线，且始终没有回答哪家更好。"
+  }
+ ]
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>评测工具一览</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  .cat{display:inline-block;min-width:22px;text-align:center;font-weight:700;border-radius:5px;padding:0 6px;font-size:12.5px}
+  .cA{background:rgba(52,211,153,.18);color:#6ee7b7} .cB{background:rgba(96,165,250,.18);color:#93c5fd}
+  .cC{background:rgba(245,158,11,.16);color:#fcd34d} .cD{background:rgba(248,113,113,.14);color:#fca5a5}
+  .cE{background:rgba(107,114,128,.25);color:#9aa3b2}
+  .note{font-size:13px;color:var(--muted)}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ header h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<header>
+  <h1>评测工具一览：哪些能"喂报告、出分数"</h1>
+  <p class="dek">回答索引页留言："在这么多篇文章里，软件可以直接用的有几个，即输入是一堆 DeepResearch 报告，输出是分数或者名次"</p>
+  <div class="meta">核查于 2026-10-28：逐个读了 23 篇的 GitHub / HuggingFace 仓库、README 和评测入口脚本，另查了文件夹外的初代 DeepResearch Bench。没有调用任何付费 API。</div>
+</header>
+
+<h2 id="s0"><span class="no">0</span>结论</h2>
+<div class="lead"><ul>
+  <li><strong>23 篇里，能直接用在你自己 Prompt 上、喂报告就出分的只有 3 个</strong>：urlhealth、DeepFact-Eval Lite、MiroEval 的 point_quality。文件夹外还有初代 DeepResearch Bench 的 FACT。</li>
+  <li><strong>没有一个是一站式的。</strong>每个只管一个侧面：
+    <ul>
+      <li>urlhealth：链接是不是真的；</li>
+      <li>DeepFact：句子说得对不对；</li>
+      <li>FACT：引用是否支持对应的说法；</li>
+      <li>MiroEval：综合质量，评分标准由模型临时拟定。</li>
+    </ul></li>
+  <li><strong>另有 2 个能用、但要你先写评分表</strong>：DRACO 的 <code>rubric</code> 评分库（支持扣分项，最适合装我们的"必答清单"），以及 DeepResearch Bench II 的评测脚本（只算召回）。</li>
+  <li><strong>没有现成可信的"5 份报告出名次"的工具。</strong>名次要靠上面几项分数，再加专家盲评排序。</li>
+  <li>其余 18 篇：4 篇只能评它自带的题，3 篇代码不完整，11 篇没有评测代码或本身不是评测工具。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>23 篇分类总表</h2>
+<p class="note">A = 喂报告就出分，可用于任意 Prompt；B = 能用于新 Prompt，但要先写评分表或参考报告；C = 只能评它自带的题；D = 有代码但不完整或跑不起来；E = 没有评测代码或不是评测工具。</p>
+<div class="tbl"><table>
+  <tr><th>类</th><th>论文 / 工具</th><th>一句话</th></tr>
+  <tr><td><span class="cat cA">A</span></td><td><a href="https://github.com/delip/urlhealth" target="_blank">urlhealth</a>（Reference Hallucinations）</td><td>查每个引用链接是活的、失效的还是疑似编造的；免费，不用大模型；<strong>我实测能跑</strong></td></tr>
+  <tr><td><span class="cat cA">A</span></td><td><a href="https://github.com/kkkevinkkkkk/DeepFact" target="_blank">DeepFact-Eval Lite</a>（DeepFact）</td><td>把报告拆成句子，联网逐句核验，得出"事实正确率"；需要 GPT-4.1 和 Serper；仓库没有许可证</td></tr>
+  <tr><td><span class="cat cA">A</span></td><td><a href="https://github.com/MiroMindAI/MiroEval" target="_blank">MiroEval</a> point_quality（<a href="2603.28407_MiroEval.html">精读</a>）</td><td>按题目自动生成评分标准，给 0–10 分；可让 5 份报告共用同一套标准；是 MiroMind 自家框架</td></tr>
+  <tr><td><span class="cat cB">B</span></td><td><a href="https://github.com/paper-instruments/rubric" target="_blank">rubric 评分库</a>（DRACO）</td><td>你写带权重的评分表（可设负权重扣"编造数字"），它逐条判"满足/不满足"再算分；MIT 许可，PyPI 可装</td></tr>
+  <tr><td><span class="cat cB">B</span></td><td><a href="https://github.com/imlrz/DeepResearch-Bench-II" target="_blank">DeepResearch Bench II</a>（<a href="2601.08536_DeepResearch-Bench-II.html">精读</a>）</td><td>按它的格式写评分要点，就能评你的报告；只算召回，写错不扣分；默认评委已换成 GPT-5.5</td></tr>
+  <tr><td><span class="cat cC">C</span></td><td>DR³-Eval</td><td>整套需要每题的标准答案和沙盒文档；但"分析深度"和"指令遵循"两个模块只要题目加报告，可以单独拆出来用</td></tr>
+  <tr><td><span class="cat cC">C</span></td><td>LiveDRBench（<a href="2508.04183_LiveDRBench.html">精读</a>）</td><td>评测脚本写死了从 HuggingFace 读自带题目；"断言 × 出处"的打分函数可以改造后复用</td></tr>
+  <tr><td><span class="cat cC">C</span></td><td>BrowseComp-Plus（<a href="2508.06600_BrowseComp-Plus.html">精读</a>）</td><td>短答案题，配固定语料，不评报告</td></tr>
+  <tr><td><span class="cat cC">C</span></td><td>MMDeepResearch-Bench（<a href="2601.12346_MMDeepResearch-Bench.html">精读</a>）</td><td>绑定自带的 140 道图文题；仓库没有许可证</td></tr>
+  <tr><td><span class="cat cD">D</span></td><td>DR-Arena（<a href="2601.10504_DR-Arena.html">精读</a>）</td><td>被测对象是在线模型，不是现成报告；README 提到的出题素材目录不在仓库里</td></tr>
+  <tr><td><span class="cat cD">D</span></td><td>From Simple QA to Deep Research（<a href="2608.02163_From-Simple-QA-to-Deep-Research.html">精读</a>）</td><td>评分器只能接它自己流水线的产出，依赖很重（verl、vllm）</td></tr>
+  <tr><td><span class="cat cD">D</span></td><td>Expert Consulting</td><td>匿名仓库里只有生成回答的部分，评分代码标着"外部"，找不到</td></tr>
+  <tr><td><span class="cat cE">E</span></td><td>DeepResearch-9K（<a href="2603.01152_DeepResearch-9K.html">精读</a>）</td><td>训练框架，外加短答案评测</td></tr>
+  <tr><td><span class="cat cE">E</span></td><td>Search-Time Contamination</td><td>有代码，但查的是搜索轨迹有没有碰到公开题库，不给报告打分</td></tr>
+  <tr><td><span class="cat cE">E</span></td><td>DREAM、IDRBench、DailyReport、LiveBrowseComp</td><td>没有评测代码（DailyReport 仓库只有一句"coming soon"，LiveBrowseComp 仓库只有项目主页）</td></tr>
+  <tr><td><span class="cat cE">E</span></td><td>FinResearchBench II、LifeSearch</td><td>找不到代码和数据</td></tr>
+  <tr><td><span class="cat cE">E</span></td><td>Why LMs Hallucinate、Verification Gap 综述、Rubric-Guided RL 综述</td><td>理论文章或综述，不是工具</td></tr>
+  <tr><td><span class="cat cA">A</span>/<span class="cat cB">B</span></td><td><a href="https://github.com/Ayanami0730/deep_research_bench" target="_blank">初代 DeepResearch Bench</a>（文件夹外）</td><td>FACT 能直接算任意报告的引用准确率（需 Jina）；RACE 能自动生成评分标准，但打的是相对分，必须给一份参考报告</td></tr>
+</table></div>
+
+<h2 id="s2"><span class="no">2</span>能直接用的几个，细看</h2>
+<div class="tbl"><table>
+  <tr><th>工具</th><th>输入</th><th>输出</th><th>依赖和成本</th><th>要注意</th></tr>
+  <tr><td><strong>urlhealth</strong></td>
+    <td>一个网址。要自己写几行代码，从报告里抽出所有链接，逐个调用 <code>inspect(url)</code>，没有命令行入口</td>
+    <td>每个链接分四类：活的 / 已失效（Wayback 有存档）/ 疑似编造（404 且没有存档）/ 未知；汇总成每份报告的"疑似编造比例"</td>
+    <td>不用大模型，不用搜索 API，免费；MIT 许可</td>
+    <td>
+      <ul>
+        <li>只查链接能不能打开，不查网页内容是否支持对应结论。</li>
+        <li>完全编造、根本不存在的域名会判成"未知"，而不是"疑似编造"。</li>
+      </ul></td></tr>
+  <tr><td><strong>DeepFact-Eval Lite</strong></td>
+    <td><code>{"question": …, "response": 报告全文}</code>，question 可以不填</td>
+    <td>事实分 = 核实为"有依据"的句子数 ÷ 被核验的句子数；附每句的判定和理由；每份报告最多核验 40 句</td>
+    <td>GPT-4.1 加 Serper（或 Tavily）搜索；论文给的 Lite 版准确率 77.9%，约 0.30 美元（按每份报告推断）</td>
+    <td>
+      <ul>
+        <li>"查不到"也算不通过，对冷门内容偏严。</li>
+        <li>仓库没有 LICENSE 文件，严格说不能复用。</li>
+        <li>依赖很重，我们没有试跑。</li>
+      </ul></td></tr>
+  <tr><td><strong>MiroEval point_quality</strong></td>
+    <td>JSON 数组，每项 <code>{query 或 rewritten_query, response}</code>。我核对过 <code>run_batch_eval.py</code> 第 82 行和 <code>--criteria_file</code> 参数</td>
+    <td>每份报告 0–10 分，含覆盖、洞见、指令遵循、清晰 4 个固定维度，外加按题目自动生成的维度；名次要自己排</td>
+    <td>默认评委 gpt-5.1，走 OpenAI 或 OpenRouter；Apache-2.0 许可；装好依赖后 <code>--help</code> 能正常运行</td>
+    <td>
+      <ul>
+        <li>评分标准由模型自拟，没有参考答案，分数偏宽松。</li>
+        <li>它的联网核事实模块依赖很重。</li>
+        <li>是 MiroMind 自家框架（见精读里的利益关联）。</li>
+      </ul></td></tr>
+  <tr><td><strong>DRACO 的 rubric 库</strong></td>
+    <td>题目 + 一份报告 + 你写的带权重评分表</td>
+    <td>0–1 的归一化分数，加每条要点"满足/不满足"及理由</td>
+    <td>默认用 Gemini，可以换成任意模型（自定义 <code>generate_fn</code>）；MIT 许可；分身用离线的假评委跑通了：权重 10 / 8 / −15 三条，得分 0.556，与公式一致</td>
+    <td>
+      <ul>
+        <li>评分表要自己写，这正是我们方案里"专家必答清单 + 汇总裁决"那一步。</li>
+        <li>DRACO 自带 100 题的评分表是明文，没有 canary 标记。</li>
+      </ul></td></tr>
+  <tr><td><strong>DRB II 评测脚本</strong></td>
+    <td>报告放进 <code>report/&lt;Agent 名&gt;/idx-1.md</code>，评分要点按它的 jsonl 格式写</td>
+    <td>信息召回、分析、呈现三个维度各自的通过率，加总分；可以汇总成表</td>
+    <td>默认评委 GPT-5.5（2026-08 从 Gemini 换过来），任何 OpenAI 兼容接口都能接；<code>--help</code> 能正常运行</td>
+    <td>
+      <ul>
+        <li>只算召回，写错不扣分。</li>
+        <li>仓库里没有生成评分要点的代码。</li>
+      </ul></td></tr>
+  <tr><td><strong>初代 DRB 的 FACT</strong></td>
+    <td><code>{id, prompt, article}</code> 的 jsonl，报告要带网址引用</td>
+    <td>引用准确率（被引网页是否支持对应说法），以及平均有效引用数</td>
+    <td>gpt-5.4-mini 加 Jina 抓网页；Apache-2.0 许可；未试跑</td>
+    <td>报告里没有网址引用就没法评；如果某家只给【†】这类标记、没有网址，要先转换格式</td></tr>
+</table></div>
+
+<h2 id="s3"><span class="no">3</span>对"同一 Prompt、5 个 Agent"的拼法</h2>
+<p>没有一个工具能包办。按层拼起来，正好对应我们之前定的评分卡：</p>
+<div class="tbl"><table>
+  <tr><th>层</th><th>用什么</th><th>得到什么</th><th>成本</th></tr>
+  <tr><td>链接是不是真的</td><td>urlhealth</td><td>每份报告的疑似编造和失效链接比例</td><td>免费</td></tr>
+  <tr><td>引用是否支持结论</td><td>初代 DRB 的 FACT</td><td>引用准确率</td><td>API 加 Jina</td></tr>
+  <tr><td>句子说得对不对</td><td>DeepFact-Eval Lite（注意许可）</td><td>事实正确率（每份最多 40 句）</td><td>约 0.3 美元一份</td></tr>
+  <tr><td>该说的说全了没有</td><td>DRACO 的 rubric 库，装我们的必答清单，再加负权重扣编造</td><td>0–1 分，加逐条满足情况</td><td>API</td></tr>
+  <tr><td>综合质量（仅作参考）</td><td>MiroEval point_quality，5 份报告共用同一套标准</td><td>0–10 分</td><td>API</td></tr>
+  <tr><td>名次</td><td>没有可信的现成工具</td><td>用上面的分数，加专家盲评排序</td><td>人工</td></tr>
+</table></div>
+<ul>
+  <li>这些工具都只给单次分数，不给误差范围。5 个 Agent 各跑 3 次、再用 bootstrap 估误差，要自己做。</li>
+  <li>5 份报告要用同一个评委模型，并且避开和被测 Agent 同一家族的模型。</li>
+  <li>初代 DRB 和 DRB II 的官方评委都已经从 Gemini-2.5-Pro 换成了 GPT-5.5。用现在的代码跑出的分数，不能直接和论文里的数字比。</li>
+</ul>
+
+<h2 id="s4"><span class="no">4</span>复核说明</h2>
+<ul>
+  <li><strong>我亲自跑过的：</strong>urlhealth。真实 arXiv 页面判为"活的"；编造的 arXiv 路径返回 404，Wayback 没有存档，判为"疑似编造"；真实 GitHub 仓库判为"活的"。</li>
+  <li><strong>分身跑过的：</strong>
+    <ul>
+      <li>rubric 库：用离线的假评委跑通了，没有调用真实 API；</li>
+      <li>MiroEval 和 DRB II：评测入口的 <code>--help</code> 能正常运行。</li>
+    </ul></li>
+  <li><strong>没有试跑的：</strong>DeepFact、初代 DRB、DR³-Eval（依赖较重）。</li>
+  <li>MiroEval 的输入字段和 <code>--criteria_file</code> 参数，是我在仓库代码里逐行核对的。</li>
+  <li><strong>其他依据：</strong>各条的仓库链接、最后提交日期、许可证、看过的文件和行号，都记在会话临时目录的 <code>tools_read13.json</code> 和 <code>tools_unread10.json</code> 里。</li>
+  <li><strong>两处是推断：</strong>DeepFact 的 0.3 美元是按论文的表格推算为每份报告的成本；FACT 对【†】格式的处理没有试过。</li>
+</ul>
+
+<footer>相关精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2603.28407_MiroEval.html">MiroEval</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2606.12871_DailyReport.html">DailyReport</a></footer>
+</div>
+</body>
+</html>

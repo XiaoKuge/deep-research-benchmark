@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：DeepFact（arXiv 2603.05912）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2603.05912_DeepFact.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#deepfactarxiv-260305912">审视记录：DeepFact（arXiv 2603.05912）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="deepfactarxiv-260305912">审视记录：DeepFact（arXiv 2603.05912）</h1>
+<p>审视日期：2026-10-29。依据：<code>stage2-framework.md</code> 第三节模板、第五节共同规则；<code>stage1-concepts.md</code> 的定义。</p>
+<p>证据等级的标注方式：【复算】表示我们亲自算过或核对过。本记录中的复算，依据的是论文表格和图中印出的数字，或数据集与代码仓库的公开元数据；没有下载数据集，也没有重跑任何代码。【自述】表示只有论文自己的说法。【推断】表示我们根据原文推出来，原文没有直接说。</p>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>日期</strong>：arXiv 编号表明首次提交于 2026 年 3 月；本次阅读的是第 2 版，日期 2026 年 4 月 3 日。</li>
+<li><strong>作者及机构</strong>：Yukun Huang（杜克大学，部分工作在亚马逊通用人工智能部门实习期间完成）、Leonardo F. R. Ribeiro、Momchil Hardalov、Markus Dreyer（亚马逊通用人工智能部门，原文 Amazon AGI）、Bhuwan Dhingra（杜克大学）、Venkatesh Saligrama（亚马逊通用人工智能部门、波士顿大学）。</li>
+<li><strong>发表情况</strong>：预印本。论文中没有写投稿或录用的会议。</li>
+<li><strong>数据和代码</strong>（2026-10-29 用 <code>curl -sI</code> 和公开的元数据接口核实，没有下载数据）：</li>
+<li>代码：论文首页脚注给出 <a href="https://github.com/kkkevinkkkkk/DeepFact">https://github.com/kkkevinkkkkk/DeepFact</a>，链接有效。注意：纯文本抽取时网址多出了一个字母 k，以 PDF 中的链接注释为准。仓库<strong>没有许可文件</strong>，代码托管平台的接口显示许可为空。仓库说明写"We release the DeepFact-Eval Lite version (<code>deep_fact_eval_lite.py</code>)"，源代码目录中也只有这个精简版的核查器。论文表 2 中准确率最高的完整版 DeepFact-Eval（83.4%），没有看到公开。</li>
+<li>数据：仓库说明指向 <a href="https://huggingface.co/datasets/kkkevinkkk/DeepFactBench">https://huggingface.co/datasets/kkkevinkkk/DeepFactBench</a>，链接有效，元数据中的许可为 MIT，不需要申请即可访问，文件为 <code>test.json</code> 和 <code>test_reports.json</code>，创建于 2026 年 3 月 8 日，次日最后修改。论文附录 K.1 写的是代码用"Apache-2.0 (or MIT)"、数据用"CC BY 4.0 (or CC BY-NC 4.0)"，与实际不一致。验证集（323 句）是否公开、各轮标签版本是否公开，没有核实。</li>
+<li><strong>评测对象</strong>：DeepFact 不直接评深度研究系统，它评的是<strong>事实核查器</strong>，即"给深度研究报告逐句判断真假的工具"。打个比方，它是给评委出的考卷，不是给考生出的考卷。这一点对论证链各环的意义，见第 4 节开头。</li>
+<li><strong>阅读依据</strong>：全文精读，包括正文第 1 至 8 节与附录 A 至 L。表 1、表 2 和图 3 至图 5 对照 PDF 版面核对过。</li>
+</ul>
+<hr />
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li><strong>一次性的专家标签不可靠。</strong>"in a controlled study with PhD-level specialists, unassisted experts achieve only 60.8% accuracy on a hidden micro-gold set of verifiable claims"（摘要）；"showing that expert 'gold' labels created within a finite time for complex DRR claims are unreliable"（第 4.3 节）。</li>
+<li><strong>"先审后评"能提高标签质量。</strong>作者提出"先审后评"（原文 Audit-then-Score，论文中写作 AtS）：被评的核查器若与当前标签不一致，就提交证据；由审核者裁决；采纳的修改先更新考卷，再给核查器打分。"Across four AtS rounds, expert micro-gold accuracy rises to 90.9%, indicating experts are substantially more reliable as auditors than as one-shot labelers"（摘要）。</li>
+<li><strong>智能体也可以充当审核者。</strong>"Our auditor agent successfully adjudicates disputes generated by both weaker and stronger challengers"（第 1 节）。</li>
+<li><strong>作者的核查器最好，并且能迁移。</strong>"DeepFact-Eval … outperforms existing verifiers on DeepFact-Bench and transfers well to external factuality datasets"（摘要）；"+27.5 acc over SAFE"，"+14.3 over GPTResearcher"（第 1 节）。</li>
+<li><strong>核查应当对照整个文献，而不只是报告引用的来源。</strong>"We instead target global factuality, verifying against the broader scientific literature beyond the provided bibliography"（第 2 节）。</li>
+</ol>
+<hr />
+<h2 id="3">3. 四个组成部分</h2>
+<p><strong>题目（被核查的句子）</strong></p>
+<ul>
+<li><strong>来源</strong>：先请博士生专家每人在自己发表过论文的细分方向上写 6 个研究问题（附录 B.4），由 GPT-4.1 模拟"澄清需求"后改写得更具体；再用三个系统生成报告：OpenAI 深度研究（o3）、Gemini 深度研究（Gemini-2.5-pro）、开源的 OpenDeepResearch（Qwen-32B），每个系统两份；每位专家从中挑出"most confident verifying"的三份，每个系统一份。</li>
+<li><strong>数量</strong>：944 句，来自 20 份报告、六个领域（第 6.5 节）。测试集 621 句，来自 15 份报告、五个领域（控制理论、环境工程、教育、公共卫生、工程管理）；验证集 323 句，来自 5 份计算机科学报告，由作者团队内部标注。</li>
+<li><strong>抽样方式</strong>：<strong>目标抽样</strong>。每份报告抽 40 句，按"重要性"（五级，表 6）和"风险"分层加权抽取；风险由一个自动核查器（SmolAgents 加 GPT-4.1）判定，判为不成立的句子被加权多抽（附录 E）。重要性由谁评定，论文没有说。【自述；未找到】</li>
+<li><strong>隐藏的"微型金标准"</strong>（原文 micro-gold）：测试集中有 143 句已知答案的句子，其中 120 句是作者把真实句子故意改错的（例如互换两篇文献的归属、改动数字和单位、删掉限定条件；附录 L.1），另 23 句是挑出来的、有明确引用且范围很窄的正确句子（第 4.2 节、第 6.5 节）。</li>
+<li><strong>是否复用</strong>：考卷本身是新构造的；检验迁移能力时复用了 SciFact、ExpertQA、Factcheck-Bench 三个已有数据集（第 7.3 节）。</li>
+</ul>
+<p><strong>判分标准</strong></p>
+<ul>
+<li><strong>唯一答案</strong>：每句一个标签，三选一：成立（Supported）、无法确定（Inconclusive）、矛盾（Contradictory），另有"不可核查"（None）不计入（表 3、表 7）。每个标签附一段理由。</li>
+<li>"成立"的定义要求"no equally or more credible source contradicts any part of the sentence"，并且"If inference is used, it must be transparent and logically valid"（表 3）。</li>
+<li>评核查器时，"无法确定"和"矛盾"合并为"不成立"，按二分类计算准确率、F1、精确率和召回率（第 7.2 节）。</li>
+<li><strong>标签会变</strong>：在"先审后评"中，标签被看作"evolving consensus"（图 1 说明），有更强的证据就可以改。</li>
+</ul>
+<p><strong>判卷方式</strong></p>
+<ul>
+<li><strong>人工</strong>定标签，经三轮人工审核智能体的意见后修订：第 1 轮审 SmolAgents（GPT-4.1），第 2 轮审 DeepFact-Eval（GPT-4.1），第 3 轮审 DeepFact-Eval（GPT-5）（第 6.1 节）。</li>
+<li>核查器的得分由<strong>程序</strong>按标签精确匹配算出。</li>
+</ul>
+<p><strong>运行环境</strong></p>
+<ul>
+<li>被评的核查器联网检索：DeepFact-Eval 通过谷歌搜索取文档（第 5.2 节），代码默认使用 Serper 搜索接口（仓库说明）。</li>
+<li><strong>时间点</strong>：各轮核查和标注的日期，论文没有写。成本按"OpenAI's listed rates (as of Dec 23, 2025)"估算（附录 C.2），只能说明大约在 2025 年底至 2026 年初。【未找到；推断】</li>
+</ul>
+<hr />
+<h2 id="4">4. 论证链四环</h2>
+<p><strong>先说明评测对象对各环节的意义。</strong>DeepFact 不直接评深度研究系统。它评的是<strong>事实核查器</strong>，也就是"给深度研究报告逐句判断真假的工具"。它的题目是从深度研究报告里取出的句子，标准答案是专家给每句话定的真假标签，被评的是各种核查器（SAFE、VeriScore、GPT-Researcher 改装的核查器、作者自己的 DeepFact-Eval 等）。打个比方，其他评测基准是给考生出的考卷，DeepFact 是<strong>给评委出的考卷</strong>：它检验的是"一个自动评委在事实这一项上判得准不准"。</p>
+<p>这一点决定了下面论证链四环的含义：</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>环节</th>
+<th>对一般评测基准的含义</th>
+<th>对 DeepFact 的含义</th>
+<th>对我们有什么用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>评分环节</td>
+<td>分数是否按规则正确打出</td>
+<td>每句话的真假标签（即标准答案）是否正确；核查器的准确率是否算对</td>
+<td>标签的可靠程度，决定了"核查器准确率"这个数能信几分</td>
+</tr>
+<tr>
+<td>推广环节</td>
+<td>这批题目能否代表同类题目</td>
+<td>这 621 句话能否代表深度研究报告中的句子</td>
+<td>决定核查器换到别的报告、别的领域时，准确率是否还成立</td>
+</tr>
+<tr>
+<td>外推环节</td>
+<td>评测上的表现能否代表真实的深度调研能力</td>
+<td>在这份考卷上判得准，能否代表在真实评审中判得准</td>
+<td>我们关心的正是这一环：能不能把这类核查器用作比赛评委的一个组成部分</td>
+</tr>
+<tr>
+<td>决策环节</td>
+<td>据分数得出的系统排序是否合理</td>
+<td>据准确率得出的核查器排序是否合理</td>
+<td>决定选哪个核查器</td>
+</tr>
+</tbody>
+</table></div>
+<p>所以 DeepFact 对我们的价值不在于它的排行榜，而在于它为"任何用自动事实核查来评深度研究报告的评测基准"的<strong>评分环节</strong>提供了证据，也提供了一种处理标准答案出错的做法。</p>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>对象说明</strong>：在 DeepFact 中，评分环节的核心是"标签对不对"。标签错了，核查器的准确率就失去意义。对我们来说，这一环的结论还有第二层意义：它直接检验了"人工逐句核查长报告"这件事本身有多可靠，而比赛评审很可能要用到人工核查。</p>
+<p><strong>它声称了什么</strong>：一次性的专家标签只有 60.8% 正确；经过三轮审核，升到 90.9%；第 3 轮比第 2 轮的提高是显著的；标签经事后复查是稳定的。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ul>
+<li>图 3：各轮在微型金标准上的准确率为 60.8%、80.4%、86.0%、90.9%。【自述】</li>
+<li>表 1：第 1 轮中人与智能体的判断转移。我们核对过：第 0 轮人判对的比例合计 60.9%，第 1 轮审后判对的比例合计 80.5%，智能体判对的比例合计 72.8%，分别与图 3 的 60.8%、80.4% 和 SmolAgents 的 72.7% 吻合。【复算】</li>
+<li>附录 F：按报告做配对重抽样，第 3 轮比第 2 轮高 4.9 个百分点，95% 置信区间为 1.4 至 7.9。【自述】</li>
+<li>附录 B.6：约一个月后复查，专家前后一致率 92.7%，对微型金标准的认可率 99.3%。【自述】</li>
+</ul>
+<p><strong>我们的判断</strong>：</p>
+<ol>
+<li><strong>衡量标签质量的唯一尺子是微型金标准，而它八成以上是人为改错的句子。</strong>143 句中 120 句是故意改错的（84%）。所以"专家只有 60.8% 正确"的准确含义是：专家在限时逐句核查中，常常没发现人为植入的细微错误。它不能直接说明专家对报告中自然出现的句子判得有多准；后者，即其余 478 句的标签准确率，论文没有直接测量。这是缺证据。【复算（比例）；推断（含义）】</li>
+<li><strong>微型金标准的构成与原文描述不完全一致。</strong>原文说正确与错误之比为"1:4"、占全部条目的"25%"（第 4.2 节）；按第 6.5 节的数字算，实际为 23 比 120，约 1 比 5.2，占 621 句的 23.0%。差异不大，但说明描述是约数。【复算】</li>
+<li><strong>标签向被审核的智能体靠拢。</strong>第 2、3 轮被审核的正是作者自己的 DeepFact-Eval。专家在看到它的理由之后修改标签，修改后的标签又用来给它打分。作者在第 6.5 节承认："iterative updates can subtly tune the benchmark to the reasoning style or retrieval habits of the challenger and the auditors"，并提出累计修改超过 5% 时请专家复审。论文报告了各轮需要专家处理的分歧句数（测试集上依次为 621、361、247、182，第 6.5 节），但没有报告其中被采纳、实际改动了标签的有多少，以及其中多少来自 DeepFact-Eval 的建议。【自述（风险）；缺证据（规模）】</li>
+<li><strong>"前后一致率 92.7%"是在能看到智能体理由的条件下测的</strong>："Experts re-annotate with all agents' verdicts and rationales visible"（附录 B.6）。它衡量的是稳定，不是独立判断的可靠。【自述】</li>
+<li><strong>每个领域大概只有一位专家。</strong>测试集 15 份报告、每位专家 3 份、五个领域，推算是 5 位专家、每个领域一位。论文没有写专家人数。每句标签只有一个人定，没有评分者间一致性；作者的理由是交叉标注时"secondary annotators … frequently defer to the primary annotator"（附录 B.1）。这一理由有道理，但结果是标签依赖一个人的判断。【推断（人数）；自述（理由）】</li>
+<li><strong>二分类把"错了"和"查不到"合在一起。</strong>"无法确定"和"矛盾"合并为"不成立"（第 7.2 节）。对评深度研究报告而言，"说错了"和"没有依据"是两种不同程度的问题，合并后无法区分。【自述；推断（影响）】</li>
+<li><strong>表 2 中有一行数字不自洽，图 5 与正文有一处不一致。</strong>
+   - 表 2 每行都给出准确率、F1、精确率、召回率。在同一个测试集上，后三者确定了"标签为成立的句子占多少"。我们用 13 行分别反推，其中 12 行得到的比例都在 61.2% 至 62.6% 之间，只有 SmolAgents 一行得到 41.0%；按 61.3% 计算，SmolAgents 的准确率应约为 53.3%，表中印的是 68.8%。也就是说，这一行的准确率与它自己的精确率和召回率对不上。【复算】
+   - 第 7.3 节说 DeepFact-Eval 在 Factcheck-Bench 上的估计准确率"from 82.0% to 93.0%"；图 5 中同一数据集的"一致"为 82.0%、"标注分歧"为 16.0%，二者相加是 98.0%，不是 93.0%。【复算】
+   - 图 3 中第 3 轮智能体为 88.9%，图 4 中同一智能体单独判为 88.8%；以 143 句为分母，88.9% 不是一个可能取到的值（127 句为 88.8%）。差异很小，但说明各图的分母或取整方式没有交代清楚。【复算】</li>
+</ol>
+<p>结论：DeepFact 对"标签会错"这一问题的处理，比多数评测基准认真，有隐藏的已知答案题、有逐轮的配对检验、有带理由的标签。但它证明的主要是"专家容易漏掉人为植入的细微错误"，而"最终标签对自然句子有多准"缺少直接证据（第 1 点）；并且标签与作者自己的核查器之间存在循环（第 3 点）。第 1、3 点属于缺证据，第 6 点属于设计选择，第 7 点是报告中的数字错误。</p>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>对象说明</strong>：对核查器而言，推广环节问的是：在这 15 份报告、621 句上测得的准确率，换到别的报告、别的领域是否还成立。对我们来说，比赛的报告很可能不是科学文献综述，这一环决定了 DeepFact 的数字能不能借用。</p>
+<p><strong>它声称了什么</strong>：这是面向研究问题的深度研究报告事实核查基准；结论不是由少数报告的特殊性造成的（附录 G："our findings are stable despite the limited number of reports"）。</p>
+<p><strong>拿出了什么证据</strong>：按报告做配对重抽样（附录 G，2 万次）。【自述】</p>
+<p><strong>我们的判断</strong>：</p>
+<ol>
+<li><strong>以报告为单位做重抽样，是对的做法</strong>：同一份报告中的句子不独立，作者明确考虑了这一点（附录 G）。这一点值得我们借鉴。【自述】</li>
+<li><strong>句子的抽法让标签分布偏离自然状态。</strong>抽样时按 SmolAgents 的判断加权多抽"可能不成立"的句子（附录 E），专家又挑自己"most confident"的报告。所以"去掉人为改错的句子后，27.0% 的句子自然不成立"（第 6.5 节），不能当作深度研究报告的错误率来引用。【自述（抽样）；推断（含义）】</li>
+<li><strong>抽样依赖的 SmolAgents 本身也是被评对象。</strong>风险加权用的是 SmolAgents（GPT-4.1）的判断，第 1 轮被审核的也是它，表 2 中它又作为基线被评。这会以无法估计的方式影响它和相近核查器的成绩。【推断】</li>
+<li><strong>"永远判成立"这个最简单的办法，准确率约为 61%，不低于四个传统核查器。</strong>由第 4.1 节第 7 点反推，测试集中标签为成立的约占 61.3%；若只按正文数字计算（501 句中 27.0% 不成立），约为 58.9% 至 59.9%。无论取哪个值，传统核查器的准确率（52.5% 至 58.5%，表 2）都不高于这一基线。论文没有报告这一基线。【复算】</li>
+<li><strong>领域只限于学术研究问题。</strong>出题规则要求避开"speculative/future-looking prompts""opinion-based prompts"（附录 B.4），五个领域都是理工和社会科学的学术方向。生成报告的三个系统是 2025 年的版本。迁移到商业、政策或时事类报告，没有证据。【自述（范围）；推断（影响）】</li>
+</ol>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>对象说明</strong>：这是对我们最重要的一环。我们想知道：如果把 DeepFact-Eval 这类核查器当作比赛评委的一部分，它对参赛报告的判断能有多准，会不会因报告风格不同而系统性地偏向某一方。</p>
+<p><strong>它声称了什么</strong>：DeepFact-Eval"transfers well to external factuality datasets"；在其他数据集上的残余分歧"increasingly reflects annotation divergence, ambiguity, or mis-scoped labels rather than true model errors"（第 7.3 节）。</p>
+<p><strong>拿出了什么证据</strong>：在 SciFact（188 句）、ExpertQA（200 句）、Factcheck-Bench（200 句）上的一致率分别为 84.6%、55.0%、82.0%；对分歧样本复查后，估计准确率在 SciFact 上升到 94.7%，在 Factcheck-Bench 上升到 93.0%（第 7.3 节、附录 D）。【自述】</p>
+<p><strong>我们的判断</strong>：</p>
+<ol>
+<li><strong>"复查后的准确率"是在有利于核查器的假设下推算的。</strong>以 SciFact 为例：29 个分歧中，12 个被归为"证据与标签不符"，全部算作核查器正确；其余 17 个中，7 个专家也无法裁决，10 个可裁决的里有 4 个专家站在核查器一边；作者再把 4/10 这个比例推到全部 17 个上。我们按此算出 (159 + 12 + 0.4 × 17) / 188 ≈ 94.6%，与原文 94.7% 一致，说明 94.7% 确实依赖这一推算。【复算】</li>
+<li><strong>复查人员不独立。</strong>Factcheck-Bench 的分歧样本由"authors"复查（附录 D.2）；ExpertQA 的 76 个分歧中只随机抽查了 30 个。【自述】</li>
+<li><strong>没有检验核查器的错误是否随报告风格系统性变化。</strong>例如，写法更谨慎的报告与写法更断然的报告，核查器的误判率是否不同。对给多份报告排名来说，这比平均准确率更重要，因为一致的误差不改变名次，有偏的误差会改变名次。论文没有做这项分析。【推断；缺证据】</li>
+<li><strong>没有验证由逐句结果合成的报告级分数。</strong>代码仓库提供了一个给整份报告打"DeepFact 分"的脚本（<code>calculate_deep_fact_score</code>，仓库说明），但论文正文没有描述、也没有验证任何报告级分数。【复算（仓库说明）；推断】</li>
+<li><strong>只核查可核查的事实句。</strong>观点、推测、未来判断、建议都归为"不可核查"，不打标签（表 7）。这与 DeepFact 的目标一致，不是缺点；但对照第一阶段的定义，调研的结论可以是预测和建议（第 2.2 节），这些部分的"有理有据"需要另外评。【自述（范围）；推断（含义）】</li>
+</ol>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>对象说明</strong>：对 DeepFact 而言，决策环节是"DeepFact-Eval 比其他核查器好"这一结论能否成立。对我们来说，它决定了如果要选核查器，DeepFact 的排行榜可信几分。</p>
+<p><strong>它声称了什么</strong>：DeepFact-Eval 准确率 83.4%，最好的传统核查器 58.5%，最好的深度研究型核查器 69.1%（表 2）；差距显著：比 GPT-Researcher 高 14.7 个百分点（95% 置信区间 7.4 至 23.3），比 SmolAgents 高 15.0 个百分点（9.5 至 20.5）（附录 G）。</p>
+<p><strong>我们的判断</strong>：</p>
+<ol>
+<li><strong>统计处理比多数评测基准规范</strong>：以报告为单位的配对重抽样、给出置信区间。【自述】</li>
+<li><strong>存在循环：考卷的标签部分是由第一名修改出来的。</strong>第 2、3 轮专家审核的是 DeepFact-Eval，采纳的修改并入了标签；其他核查器没有机会挑战标签，因为规则是"we trigger audits only when a challenger verifier outperforms the current benchmark on the micro-gold set"，而"As no baseline outperforms DeepFact-Eval on micro-gold, we do not run benchmark evolution"（第 6.5 节、第 7.2 节）。这一规则保证了效率，但也让现任最好的核查器在定义标准答案时占先。它对 83.4% 这个数字影响多大，无法从论文判断。【自述（规则）；推断（影响）】</li>
+<li><strong>正文与附录的差值略有出入</strong>：正文说比 GPT-Researcher 高 14.3（表 2 两数相减也是 14.3），附录说 14.7；比 SmolAgents，表 2 相减为 14.6，附录为 15.0。可能是重抽样均值与点估计的差别，论文没有解释。【复算】</li>
+<li><strong>SmolAgents 一行的数字不自洽</strong>（第 4.1 节第 7 点），它与 DeepFact-Eval 的差距因而也不确定。【复算】</li>
+<li><strong>准确率最高的完整版没有公开</strong>，只公开了精简版（表 2 中精简版的准确率为 76.3% 至 77.9%）。第一名的结果目前无法由他人复现。【复算（仓库文件）】</li>
+</ol>
+<hr />
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：标签被设计成随新证据改变（图 1 的"Add Newer Evidence"，例子中引用了"(AI, 2027)"）；附录 D 表 4 中有一个例子，专家依据较新的研究改判了一条较早数据集的标签。这与第一阶段"截至某一时间点"的要求正好相反：一份报告在截止时间点是对的，后来可能被判为矛盾。论文没有记录每次核查的日期。【自述（设计）；推断（冲突）；未找到（日期）】</li>
+<li><strong>污染</strong>：测试集的标签和理由以 MIT 许可公开，没有加密。核查器可能针对它调优。微型金标准在"先审后评"中承担监测作用，如果公开数据里标出了哪些是微型金标准，今后各轮的监测就会失效；是否标出，没有核实。【复算（元数据）；推断（风险）】</li>
+<li><strong>可复现</strong>：核查器依赖实时搜索和闭源模型（GPT-4.1、GPT-5），同一核查器隔一段时间再跑，结果会变；论文承诺发布带版本号的快照和修改记录（附录 H），目前数据集只看到一个版本。完整版核查器未公开（第 4.4 节第 5 点）。【复算（元数据）；推断】</li>
+<li><strong>利益关系</strong>：作者的核查器在作者的考卷上排第一，而考卷的标签部分由这个核查器参与修订（第 4.4 节第 2 点）。作者来自亚马逊通用人工智能部门，论文中没有评测亚马逊的深度研究产品。【自述；推断】</li>
+</ul>
+<hr />
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明：DeepFact 本来就不打算评"一份调研好不好"，它只评核查器在"事实是否成立"上判得准不准。所以下表的意义不在于找它没评什么，而在于看清：<strong>一个 DeepFact 式的核查器，能为我们的评分覆盖第一阶段定义中的哪些部分。</strong>依据是它的标签定义（表 3）和错误分类（表 8）。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弄清真实需要，审视前提和概念边界，切题</td>
+<td>不打算评</td>
+<td>只核查句子的真假，不看是否切题。</td>
+</tr>
+<tr>
+<td>材料截至规定时间点，并且足够新</td>
+<td>部分</td>
+<td>错误分类有"Currency：Relies on retracted or outdated sources without caveats"（表 8），但只用于制造人为错误和给错误归类，不单独计分；而且对照的是核查时的文献，不是截止时间点的文献（见第 5 节）。</td>
+</tr>
+<tr>
+<td>查找系统而全面，过程交代清楚</td>
+<td>部分</td>
+<td>错误分类有"Completeness：Omits accessible contradictory or qualifying evidence""Representativeness：Biased Sampling"（表 8），同样只用于归类。</td>
+</tr>
+<tr>
+<td>甄别来源质量，处理矛盾信息</td>
+<td>是（在句子层面）</td>
+<td>"成立"要求"no equally or more credible source contradicts any part of the sentence"（表 3）；作者强调核查"beyond the provided bibliography"（第 2 节），即引用的来源本身可能过时或片面。错误分类有"Contradiction Ignorance""Cherry-Picked Synthesis"。</td>
+</tr>
+<tr>
+<td>分析：历史和全部现状，性质和内在联系，推理清楚，事实与判断分开，考虑其他解释，不迎合</td>
+<td>部分</td>
+<td>推理：要求"If inference is used, it must be transparent and logically valid"（表 3）；错误分类有"Causal Projection""Chain-of-Thought Leap""Over-Scope Leap"。其余各项不评。判断句被归为"不可核查"（表 7 第 D 类"Subjective judgments &amp; opinions"），所以"事实与判断分开"只是被用来划定核查范围，不是评分项。</td>
+</tr>
+<tr>
+<td>每个结论能追到依据，引用准确</td>
+<td>是（在句子层面）</td>
+<td>错误分类有"Fabricated Source""Mis-sourced Evidence"（表 8）；人为改错的例子中有互换两篇文献的归属（附录 L.1）。但未加引用的句子同样要核查，所以它评的是"真不真"，不是"有没有标出处"。</td>
+</tr>
+<tr>
+<td>结论准确、具体、清楚，敢于下判断，说明把握</td>
+<td>部分</td>
+<td>"准确"是核心。错误分类有"Hyperbolic Statement""Conditional Collapse""Single-Study Certainty"，与"如实说明把握"相关。预测和建议不核查（表 7 第 B、F 类）。</td>
+</tr>
+<tr>
+<td>深：本质、全体、内部联系</td>
+<td>不打算评</td>
+<td>—</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>不涉及</td>
+<td>—</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>不涉及</td>
+<td>核查器按准确率比较；论文没有定义报告级总分（仓库中有一个未经论文验证的报告级分数脚本）。</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>不涉及</td>
+<td>标签中"矛盾"与"无法确定"在计分时被合并，严重程度不区分。</td>
+</tr>
+<tr>
+<td>交付形式（第五节五个部分）</td>
+<td>部分</td>
+<td>只与"出处"有关，而且是从"是否真实"的角度。</td>
+</tr>
+</tbody>
+</table></div>
+<p>小结：一个 DeepFact 式的核查器，能为我们覆盖"结论准确""引用准确""甄别"这几项在<strong>单句层面</strong>的部分，以及"推理清楚""说明把握"中可以落到单句上的部分；覆盖不了切题、查找过程、深、以及预测和建议是否有理有据。【推断】</p>
+<hr />
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>衡量标签质量只用微型金标准，而其中 84% 是人为改错的句子；自然句子的标签准确率没有直接测量</td>
+<td>第 6.5 节"143 claims are micro-golds, of which 120 are adversarially constructed"</td>
+<td>复算（比例）；推断（含义）</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>2</td>
+<td>标签部分由作者自己的核查器修订，再用来给它打分，存在循环</td>
+<td>第 6.1 节第 2、3 轮的审核对象；第 6.5 节作者自己承认的漂移风险</td>
+<td>自述（事实）；推断（影响）</td>
+<td>测对了东西；经得起复核</td>
+<td>设计缺陷（论文已部分承认）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>只有现任最好的核查器能挑战标签，其他核查器没有机会</td>
+<td>第 6.5 节"we trigger audits only when a challenger verifier outperforms the current benchmark on the micro-gold set"；第 7.2 节</td>
+<td>自述</td>
+<td>经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>4</td>
+<td>表 2 中 SmolAgents 一行的准确率与其精确率、召回率不自洽</td>
+<td>表 2；我们用其余 12 行反推出成立句约占 61.3%，SmolAgents 应约为 53.3%，表中为 68.8%</td>
+<td>复算</td>
+<td>测得稳</td>
+<td>报告错误</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Factcheck-Bench 的复查后准确率，正文与图 5 不一致</td>
+<td>第 7.3 节"82.0% to 93.0%"；图 5 为 82.0% 加 16.0%</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>报告错误</td>
+</tr>
+<tr>
+<td>6</td>
+<td>没有报告"永远判成立"的基线，而传统核查器都不高于这一基线</td>
+<td>表 2；基线约 59% 至 61%（复算）</td>
+<td>复算</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>7</td>
+<td>迁移实验的高准确率依赖有利于核查器的推算，复查人员包括作者本人</td>
+<td>附录 D.3 SciFact 的推算；附录 D.2"authors for Factcheck-Bench"</td>
+<td>自述；复算</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>8</td>
+<td>抽样按一个被评核查器的判断加权，又由专家挑自己有把握的报告，标签分布不是自然分布</td>
+<td>附录 E；附录 B.4"Each expert selects three reports they feel most confident verifying"</td>
+<td>自述；推断</td>
+<td>测对了东西</td>
+<td>设计局限</td>
+</tr>
+<tr>
+<td>9</td>
+<td>每个领域大概只有一位专家，标签没有评分者间一致性</td>
+<td>测试集 15 份报告、每人 3 份、五个领域；人数未写</td>
+<td>推断</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>10</td>
+<td>前后一致率是在能看到智能体理由的条件下测的</td>
+<td>附录 B.6"with all agents' verdicts and rationales visible"</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>设计局限</td>
+</tr>
+<tr>
+<td>11</td>
+<td>没有检验核查器的错误是否随报告风格系统性变化</td>
+<td>全文未见</td>
+<td>推断</td>
+<td>测对了东西（用于排名时）</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>12</td>
+<td>标签随新证据更新，与"截至某一时间点"的要求冲突；核查日期未记录</td>
+<td>图 1"Add Newer Evidence"；附录 D 表 4</td>
+<td>自述；推断</td>
+<td>测对了东西（用于比赛时）</td>
+<td>设计选择（与我们的需要不同）</td>
+</tr>
+<tr>
+<td>13</td>
+<td>准确率最高的完整版核查器未公开；仓库无许可文件；实际许可与论文所写不一致</td>
+<td>仓库说明与文件列表；附录 K.1</td>
+<td>复算（元数据）</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>14</td>
+<td>领域限于学术研究问题，排除预测和观点类题目</td>
+<td>附录 B.4</td>
+<td>自述</td>
+<td>测对了东西（迁移到其他报告时）</td>
+<td>设计范围</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>数据或代码是否足以复算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>测试集中成立句的比例，以及"永远判成立"基线的准确率</td>
+<td>论文未报告；我们反推约 61.3%</td>
+<td>足够。测试集标签已公开，可以直接统计。</td>
+</tr>
+<tr>
+<td>微型金标准的数量与构成（143 句、120 句人为改错）</td>
+<td>第 6.5 节</td>
+<td>取决于公开数据是否标出了微型金标准，未核实。</td>
+</tr>
+<tr>
+<td>各轮在微型金标准上的准确率（60.8% 至 90.9%）</td>
+<td>图 3</td>
+<td>需要各轮的标签版本，是否公开未核实。</td>
+</tr>
+<tr>
+<td>表 2 各核查器的准确率、F1、精确率、召回率</td>
+<td>表 2</td>
+<td>不足以直接复算：需要各核查器的逐句输出；可以用公开的精简版代码重跑精简版的两行，但检索结果会随时间变化。</td>
+</tr>
+<tr>
+<td>SmolAgents 一行是否有误</td>
+<td>表 2</td>
+<td>已依据印出的数字核对，发现不自洽（第 4.1 节第 7 点）；要确认需要逐句输出。</td>
+</tr>
+<tr>
+<td>报告级配对重抽样的置信区间</td>
+<td>附录 G</td>
+<td>需要逐句输出。</td>
+</tr>
+<tr>
+<td>在 SciFact 等三个数据集上的复查结果</td>
+<td>第 7.3 节、附录 D</td>
+<td>已核对 SciFact 的推算方式；复查样本没有公开。</td>
+</tr>
+<tr>
+<td>每份报告中可核查句子的总数，以及每句的核查成本（完整版每句 1.16 美元，精简版 0.21 至 0.30 美元）</td>
+<td>表 2；附录 B.1"A single report can contain hundreds of verifiable statements"</td>
+<td><code>test_reports.json</code> 含报告全文和逐句信息，可以统计句子数。</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>我们的场景：5 个智能体、比赛评审、第一轮只对报告排名。以下各条是根据本记录推出的观察和候选做法，不是结论，留待第四阶段论证。</p>
+<ol>
+<li><strong>人工评委不借助工具逐句核查，很难发现细微的事实错误。</strong>即使是本领域的博士生，在限时核查中也只发现了约六成人为植入的错误（第 4.1 节第 1 点的准确含义）。比赛中如果由人工评委通读报告来判断"准不准"，结论会不稳。这条证据支持在事实一项上使用有检索能力的工具辅助评审。【推断】</li>
+<li><strong>自动核查器的单句误判率约为一成多到两成</strong>（完整版二分类准确率 83.4%，换 GPT-5 为 87.2%），而且这个数字本身还有第 4.1、4.4 节所说的不确定性。用它给 5 份报告排名之前，至少要检验它的错误是否在不同报告之间均匀分布；论文没有这项证据（第 4.3 节第 3 点），需要我们自己做。【推断】</li>
+<li><strong>"先审后评"可以借来设计比赛的申诉与复核机制。</strong>参赛方对某条判定有异议时，必须提交证据；由审核者按证据强弱裁决；采纳的修改记入版本，所有作品按修改后的标准重新计分。这正对应第一阶段第 1.1 节所说"经得起复核"分量最重的要求。但 DeepFact 的循环问题（第 4.4 节第 2 点）提醒我们：申诉机制要对所有参赛方一视同仁，不能只允许排名靠前的一方挑战标准。这些都是候选做法。【推断】</li>
+<li><strong>按"重要性"分层核查，可以控制成本。</strong>DeepFact 先核查报告的主干论断和关键支撑（表 6 的第 5、4 级），而不是平均用力。比赛中若预算有限，可以先核查每份报告的主要结论及其直接依据。按论文的价格，精简版每句 0.21 至 0.30 美元，5 份报告各核查 100 句，约需一两百美元。【自述（价格）；推断（估算）】</li>
+<li><strong>核查必须锚定截止时间点。</strong>DeepFact 的标签随新证据改变，比赛则要求以截止时刻的信息为准。如果借用这类核查器，需要限制它只用截止时间之前的来源，或者至少记录每条判定依据的来源日期。【推断】</li>
+<li><strong>核查器覆盖不了的部分要另外评</strong>：切题、查找过程、深、以及预测和建议是否有理有据（第 6 节小结）。事实核查只能是评分的一个组成部分。【推断】</li>
+<li><strong>"无法确定"与"矛盾"在比赛中应当分开</strong>：前者对应"没有依据"，后者对应"说错了"，二者的严重程度不同，后者更接近"致命缺陷"的候选。【推断】</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2603.05912_DeepFact.md</code></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：DailyReport（arXiv 2606.12871）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2606.12871_DailyReport.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#dailyreportarxiv-260612871">审视记录：DailyReport（arXiv 2606.12871）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="dailyreportarxiv-260612871">审视记录：DailyReport（arXiv 2606.12871）</h1>
+<p>审视日期：2026-10-29。第二阶段己组。</p>
+<p>证据等级的写法：每条判断后用括号标注。"复算"在本记录中有两种来源，分别注明：依据论文表格或图中的数字重算；在 2026-10-29 查询链接和元数据。"自述"指只有论文自己的说法，包括附录中给出的提示词原文。"推断"指我们根据原文推出、原文没有直接说的内容。"没找到"指在原文和公开渠道中都没有找到相关信息。</p>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>名称</strong>：DailyReport: An Open-ended Benchmark for Evaluating Search Agents on Daily Search Tasks。</li>
+<li><strong>日期</strong>：v1 2026-06-11。截至 2026-10-29 仍是唯一版本（复算：arXiv 摘要页的提交记录）。PDF 共 32 页，正文 10 页，其余为参考文献和附录。</li>
+<li><strong>作者及机构</strong>：Jingxuan Han、Youpeng Wang、Zheren Fu、Licheng Zhang、Zhendong Mao（中国科学技术大学，Mao 为通讯作者）；Wei Liu、Mingyang Zhu、Ziwen Wang、Lin Qiu（项目负责人）、Xuezhi Cao、Xunliang Cai（美团）。Han 和 Wang 的工作是在实习期间完成的（首页脚注）。</li>
+<li><strong>发表情况</strong>：预印本（首页标"Preprint."）。</li>
+<li><strong>数据和代码</strong>：摘要写"To facilitate future research, our dataset and code are made publicly available at https://github.com/AGI-Eval-Official/DailyReport"。2026-10-29 的查询结果是（复算）：</li>
+<li>仓库存在，许可为 MIT；只有 <code>LICENSE</code> 和 <code>README.md</code> 两个文件；README 写"The benchmark and evaluation scripts are coming soon..."；</li>
+<li>三次提交都在 2026-06-10，此后没有推送；没有发行版，没有标签，只有 main 一个分支；</li>
+<li>Hugging Face 上，AGI-Eval-Official 名下没有数据集；AGI-Eval 名下有 5 个数据集（OIBench、Q-Real、PRDbench、AMemGym、UniGUI-Bench），没有 DailyReport；按名称搜索没有结果。</li>
+<li>结论：此前"没有公开数据和代码"的判断成立。论文摘要的说法与事实不符，而且已经持续四个多月。</li>
+<li><strong>许可</strong>：仓库为 MIT，目前只覆盖一份 README；论文在 arXiv 上为非独占发布许可（复算）。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2606.12871_DailyReport.html</code>，写于 2026-10-28）加原文核对。核对范围：正文全部章节；附录 A 至 C，包括全部提示词（报告生成的系统提示词、指令遵循评分、断言抽取、断言整合、检索词生成、段落抽取、合理性评判、事实核验、引用匹配、引用一致性）；表 1 至表 6；图 2（渲染成图像阅读）；图 6 的混淆矩阵逐格读数。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li>现有系统达不到用户预期："Our results on 17 agentic systems show that current systems still fall short of users' expectations."（摘要）；"even the highest score remains below the acceptable level of 3"（第 5.2 节）。</li>
+<li>分数可解释，并量化用户偏好："we derive highly interpretable scores for each dimension, along with a user preference score."（摘要）</li>
+<li>测的是日常用户的需求："DailyReport primarily evaluates whether agents can reliably satisfy everyday users' timely and practical information needs."（第 1 节）</li>
+<li>持续更新："Built on time-sensitive trending topics, DailyReport also supports continuous updates to reflect evolving user needs"（第 1 节）；"these tasks are consistently grounded in recent real-world events and are regularly updated."（第 3.1 节）</li>
+<li>三个维度互相独立：表 2 题为"Three disentangled evaluation dimensions which are designed to be strictly orthogonal"；事实性标为客观，"The verification process requires external search tools"；合理性标为主观，"can be judged solely by cross-referencing the context"。</li>
+<li>结果稳定："the results exhibit low variance, demonstrating that DailyReport provides stable results. This supports its practical value as a reliable benchmark for SAs."（第 5.5 节）</li>
+<li>用户偏好分反映真实用户的感受："UserPref achieves high agreement with real user ratings, with a Weighted Cohen's Kappa score of 0.859. This suggests that it effectively reflects real users' perceived experience."（第 5.5 节）</li>
+<li>组间比较："LLMs with search tools achieve the best performance, followed by LLM equipped with Claude Code, while native DRAs obtain relatively lower scores."（第 5.2 节）</li>
+<li>搜索量与表现相关："Search-tool usage ... shows the strongest association with overall performance."（第 5.4 节）</li>
+</ol>
+<p>论文没有局限性一节（没找到）。</p>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong>：</li>
+<li>数量与类型：150 道，其中检索型 100 道（"retrieving and integrating objective information about specified entities, with only lightweight analysis"），分析型 50 道（"broader subjective topics"，需要"autonomously identify relevant information for deeper analysis"）（第 3.2 节）。分属 10 个大领域、35 个细类（图 2）。</li>
+<li>来源：微博、小红书、知乎、Facebook、Reddit、Twitter 上的热门话题帖和用户评论（第 3.2 节）。标注员先读帖子和评论找出常见需求，过滤掉不安全、过窄、含糊或不适合写成日报的话题；写题人把选中的话题写成任务；另有审核人检查清晰、真实、安全、依赖搜索和分类一致（附录 A.1）。</li>
+<li>抽样方式：目标抽样，按"真实、清晰、安全"等准则挑选。话题池有多大、筛掉了多少、话题的时间范围，都没有写（没找到）。不复用已有数据集。</li>
+<li>时间：参考文献中的访问日期为 2026-04-20 和 2026-05-20，例题提到"2026 QS World University Rankings"（图 2），推断题目和运行都在 2026 年上半年（推断）。</li>
+<li><strong>判分标准</strong>：评分项。每道题按 9 种约束类型（内容、范围、完整性、数量、格式、设定、属性、行为规则、功能，附录 A.2）拆成子任务，每个子任务配最多三条"级联"评分项：指令遵循、事实性、合理性；共 3,546 条，平均每题 23.6 条（复算：3,546/150）。评分项由大语言模型生成、人工协助修改（第 3.3 节）。评分项只写"检查什么"，不存答案：论文没有描述任何参考答案，附录各提示词中评委也拿不到答案（推断）。每个子任务的重要性分 P0、P1、P2、P2(a) 四档，由出题人做"只有这一项没做到时，用户会给几分"的思想实验来定（第 4.3 节）。</li>
+<li><strong>判卷方式</strong>：能联网的智能体评委。评委是 Gemini-3-flash（第 5.1 节）；事实性由评委配 Serper 搜索和 Jina 网页抓取核验报告中抽出的断言（附录 B.3.2）；指令遵循和合理性由评委不联网判定（附录提示词）。汇总方式：指令遵循取各子任务平均；事实性和合理性按指令遵循分加权（第 4.2 节式 3、式 4，指令未做到的子任务不计事实分和合理分）；子任务综合分 o = ins ×（fac + rat）/ 2（式 5）；用户偏好分按算法 1 的规则给 1 至 4 分。</li>
+<li><strong>运行环境</strong>：实时网络，被测系统和评委都在实时网络上。评委提示词以评测当天为背景时间："Background time: The current date is {cur_date}"（附录指令遵循与合理性提示词）。被引网页没有存档（没找到存档措施）。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>声称</strong>：Gemini-3-flash 指令遵循准确率 96.5%，"substantially exceeding human annotation accuracy of 88.4%"；事实性 94.2%，合理性 95.3%（第 5.5 节、表 5）；三次重复的标准差很小（表 4）。</p>
+<p><strong>证据</strong>：</p>
+<ol>
+<li><strong>选评委与验证评委的数字完全相同</strong>。表 5"评委选择"中 Gemini-3-flash 的三个准确率是 96.5、94.2、95.3，与"Metric Validation"一段报告的数字完全相同（复算：对照）。看起来是同一批数据既用来挑评委，又用来验证评委（推断）。</li>
+<li><strong>标准答案参考过评委的判定</strong>。指令遵循的最终标签是这样定的："human annotators and the judge model independently evaluate these samples. Final labels are determined through adjudication, where experts review both results"（第 5.5 节）。评委 96.5% 高于人工标注员的 88.4%，有一部分可能是因为裁决本身参考了评委的判定（推断）。</li>
+<li><strong>事实性和合理性准确率的来源前后不一</strong>。第 5.5 节写"Since factuality and rationality are difficult for humans to annotate in long reports, we instead assess these metrics through manual spot checks"，没有给抽查的样本量（没找到）。但表 5 对四个候选评委都给出了事实性和合理性的准确率，并说是"against human expert annotations"。人工难以标注、只做了抽查，又怎么对四个评委分别算出准确率，论文没有解释（自述加推断）。</li>
+<li><strong>事实性的真值取决于评委搜到了什么</strong>。核验提示词规定：两个以上独立网页支持才判为真；找不到两个时，至少要有一个官方或权威来源；只有一个相关网页时，以它为准；任一核验问题为"Unknown"而无"False"时，整条断言为"Unknown"（附录"System Prompt for Fact-Checking"与"Claim Aggregation and Judgment Prompt"，自述）。子任务事实分是"核验为正确的断言数除以抽出的断言总数"（附录 B.3.2），所以"Unknown"在计分上等同于错（推断，由公式与提示词推出）。评委搜不到，正确的断言就丢分；评委搜到了错误来源，错误的断言就得分。评委 Gemini-3-flash 的检索和判断能力，不一定强于被测的 GPT-5.4、Claude Opus 4.6、Gemini 3.1 Pro（推断）。</li>
+<li><strong>合理性只查明显错误</strong>。合理性提示词列出四类错误：与上下文矛盾、违背常识、计算或推理错误、语义混乱；并规定已核验的断言"do not have rationality errors"（附录"Rationality Judge Prompt"，自述）。所以合理性分量的是"有没有明显的推理错误"，不量推理的深浅。</li>
+<li><strong>指令遵循不查真假，声明"无法获得"即可通过</strong>。指令遵循提示词写："Do not judge the accuracy of Document content based on your existing knowledge. You need to judge based on what the Document claims, even if the content may be incorrect."；又写："If the scoring criteria require explicitly providing a certain metric, and the delivery document explicitly states 'this metric cannot be obtained', consider the scoring criteria as satisfied."（附录"Instruction Follow Score Prompt"，自述）</li>
+<li><strong>稳定性只覆盖 3 个系统，口径不明</strong>。表 4 选了三个"大语言模型加搜索工具"组的系统，各重复三次：用户偏好分标准差 ±0.007 至 ±0.010，事实性 ±0.2 至 ±2.7 个百分点（自述）。"repeating the evaluation three times"（第 5.5 节）是重新生成报告，还是同一份报告重新评分，没有写（没找到）。如果是后者，只反映了评委的稳定性，没有反映智能体自身的波动（推断）。表 3 主表与表 4 均值的差距都在约 1.15 个标准差以内，与"主表是三次中的一次"相容（复算：依据表 3、表 4）。</li>
+</ol>
+<p><strong>证据等级</strong>：提示词与验证流程为自述；数字对照为复算；对独立性和计分含义的判断为推断。</p>
+<p><strong>判断</strong>：评分环节的验证不独立：选评委与验证评委用同一批数据，指令遵循的标准答案参考过评委判定，这是设计缺陷。事实性和合理性准确率的来源说不清，稳定性只覆盖 3 个系统且口径不明，这是缺证据。事实性把"评委查不到"算作错，使分数依赖评委的检索能力，这是设计缺陷。</p>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>声称</strong>：150 道题从多平台热点中提炼，覆盖 10 个大领域（第 3.2 节、图 2）；"supports continuous updates"（第 1 节）。</p>
+<p><strong>证据</strong>：数据没有公开，题目分布只能从图 2 看；话题池大小、筛选比例、时间范围都没有写；子任务总数没有给（没找到）。仓库自 2026-06-10 以后没有任何更新（复算）。</p>
+<p><strong>证据等级</strong>：自述加复算。</p>
+<p><strong>判断</strong>：无法核验，这是缺证据。按第一阶段第 1.2 节，我们第一轮不需要推广环节的证据，这里只作记录。</p>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>声称</strong>：用户偏好分"effectively reflects real users' perceived experience"（第 5.5 节）；现有系统"still fall short of users' expectations"（摘要）。</p>
+<p><strong>证据</strong>：</p>
+<ol>
+<li><strong>用户评分前看到了子任务结果</strong>。验证时"users are given the generated reports and subtask results, and assign an overall score from 1 to 4"（第 5.5 节）；附录 B.1 同样写"The generated reports and subtask results of 300 randomly sampled subtasks are provided to diverse users"（自述）。"subtask results"最自然的理解是算法给出的子任务判定；如果是这样，人的评分就受到算法结果的影响，一致性有一部分是看了算法分的结果（推断；论文没有说清"subtask results"指什么）。</li>
+<li><strong>抽样单位前后不一</strong>。附录 B.1 说抽的是"300 randomly sampled subtasks"，而用户给的是"an overall task score"（自述）。子任务和整份任务不是同一个层级。用户是谁、有多少人、是否与出题人重合，都没有写（没找到）。</li>
+<li><strong>"加权"卡帕系数的标注有误</strong>。按图 6 的混淆矩阵重算（行为用户评分 1 至 4，列为算法评分 1 至 4：第一行 12、0、0、0；第二行 3、86、14、0；第三行 0、5、174、0；第四行 0、0、0、6），科恩卡帕系数（Cohen's kappa）不加权为 0.859，线性加权为 0.876，二次加权为 0.901，图题标的"QWK = 0.901"即二次加权（复算：依据图 6）。正文两处都称 0.859 为"Weighted Cohen's Kappa"，实际是不加权的值。一致性本身确实很高，这一条不影响结论，但说明报告不够严谨。</li>
+<li><strong>评分分布高度集中</strong>。300 个样本中用户评 3 分的有 179 个（59.7%），评 2 分的 103 个，评 1 分的 12 个，评 4 分的只有 6 个（复算：依据图 6）。高一致性主要来自 2 分和 3 分这两档。</li>
+<li><strong>"用户视角"其实是出题人的设想</strong>。重要性档位由出题人"estimate the user preference level when only the target subtask is left unsatisfied"（第 4.3 节），没有让真实用户来定。算法 1 的阈值 0.3、0.5、0.7 是手定的，依据没有写（没找到）。按算法 1，普通 P2 子任务只在"全部子任务满分得 4 分"那一条里出现，对 1 至 3 分没有影响（推断，由算法 1 推出）。所以"最高只有 2.89、达不到 3 分"，部分是这套规则的定义造成的（推断）。</li>
+<li><strong>"列全了没有"实际上不核</strong>。完整性约束（"exhaustive coverage, and informational completeness"，附录 A.2）作为子任务，由指令遵循来判；而指令遵循只看"what the Document claims"，不核真假（见 4.1 第 6 条）；事实性只核验报告中抽出的断言，即只算精确率。以图 2 的例题为例，"2026 年 QS 世界大学排名前 100 中有几所中国大陆高校"，报告漏列了几所，按论文给出的流程，大概率不会被发现（推断）。</li>
+<li><strong>搜索量与表现的关联没有给统计量</strong>。第 5.4 节说搜索量"shows the strongest association with overall performance"，没有给相关系数或检验（没找到）。</li>
+</ol>
+<p><strong>证据等级</strong>：见各条。</p>
+<p><strong>判断</strong>："用户偏好分反映真实用户感受"的验证不独立，这是设计缺陷；"达不到用户预期"有一部分由手定规则造成，规则的依据缺证据。"满足日常用户需求"这一构念，实际被操作化为"按出题人写下的显式要求逐条完成、写出来的断言能被评委搜到支持、分析段落没有明显错误"；真实的完整性不在其中。</p>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>声称</strong>：三组系统的排序；GPT-5.4 的两种配置最好；原生深度研究智能体较低（第 5.2 节、表 3）。</p>
+<p><strong>证据</strong>：</p>
+<ol>
+<li>主表没有置信区间。原生深度研究智能体五家的用户偏好分为 2.17 至 2.48，其中四家在 2.40 至 2.48 之间，相差 0.08（复算：依据表 3）。表 4 的标准差约 0.01，但只覆盖 3 个非原生系统。</li>
+<li><strong>组间提示词不同</strong>。"大语言模型加搜索工具"和"加 Claude Code"两组用统一的系统提示词，要求"NEVER use your own parametric knowledge"、"at least 2000 words"、统一的 [n] 引用格式和参考文献列表（附录 B.4.2、B.4.3 与提示词模板，自述）。原生深度研究智能体的配置只写了把超时放宽到 1,800 秒（附录 B.4.1），是否给了同样的提示词，没有写（没找到）。这些要求正好与后面的断言核验流程配套。另一方面，断言与引用的匹配提示词能识别多种引用格式，包括"[15†L10]"和"[citation:N]"（附录"Prompt for Match Claims with References"，自述），这在一定程度上减轻了格式不一致的影响。</li>
+<li><strong>评委与部分被测系统同属一家</strong>。评委 Gemini-3-flash 与被测的 Gemini 3.1 Pro、Gemini Deep Research 都来自谷歌，论文没有做换评委复评（没找到）。主表中 Gemini 系列并不靠前（复算：依据表 3），没有明显的自家偏好迹象（推断）。</li>
+<li>原生智能体的引用分析只给了 o3 和 o4-mini 两家，其余"do not expose the internal traces"（表 6）。</li>
+</ol>
+<p><strong>证据等级</strong>：复算加自述。</p>
+<p><strong>判断</strong>：组间结论受提示词混杂，这是设计缺陷；组内相近名次没有不确定性估计，这是缺证据。GPT-5.4 两种配置领先次名的幅度较大（2.89、2.87 对 2.79），可能较稳（推断）。</p>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：题目以 2026 年上半年的热点为基础（推断，见第 3 节）。论文声称"regularly updated"（第 3.1 节），但没有写更新机制、版本号或更新记录；仓库自 2026-06-10 以后没有任何更新（复算）。评委以评测当天为背景时间，被引网页不存档，题目本身也不写截止时间；同一份报告隔一段时间重评，事实分可能改变（推断）。</li>
+<li><strong>污染</strong>：题目新，发布时被训练语料覆盖的风险较低（推断）。但题目没有公开，无法核验；一旦公开，又会很快失去新鲜度。论文所说的"持续更新"是对这个矛盾的回应，但没有实施的证据。</li>
+<li><strong>可复现</strong>：目前为零。附录中的提示词相当完整，这是优点；但评分项、子任务、重要性档位、阈值依据、断言抽取结果、被引网页都没有公开。论文摘要声称已公开，与事实不符（复算）。</li>
+<li><strong>利益关系</strong>：作者来自中国科学技术大学和美团，17 个被测系统中没有美团的模型（复算：依据表 3）。通讯作者 Zhendong Mao 也是 DeepResearch Bench 和 DeepResearch Bench II 的作者（复算：参考文献的作者列表），两者在表 1 中都被标为缺少若干特性。这是同一团队的前后工作，不构成利益冲突，记录备查。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明：DailyReport 声称评的是"日常用户的需求"，没有声称评调研的全部环节。按共同规则第 4 条，下表中的"不评"多数属于它本来就不打算做的。它自己声称而没有做到的，是第 2 节第 4、6、7 条（持续更新、稳定、反映真实用户感受）和数据代码公开。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弄清问题背后的真实需要，审视前提和概念边界，切题</td>
+<td>部分评</td>
+<td>指令遵循按子任务检查"做没做到"；功能约束要求输出"serve a specific practical function, achieve a targeted effect, or solve a defined problem"（附录 A.2）。题目有"真实"原则（第 3.2 节），但评的是出题人写下的显式要求。"审视前提和概念边界"不评</td>
+</tr>
+<tr>
+<td>材料截至规定的时间点，并且足够新</td>
+<td>部分评</td>
+<td>范围约束包括时间边界（附录 A.2）；事实核验"highly sensitive to the time involved in the claim"（核验提示词）。但题目不写截止时间，评委以评测当天为准</td>
+</tr>
+<tr>
+<td>查找系统而全面，查找过程交代得清楚</td>
+<td>只评结果的一部分</td>
+<td>完整性约束作为子任务，但指令遵循只看报告自己的声称（见 4.3 第 6 条）；查找过程交代不评；搜索次数只作描述性分析（第 5.4 节）</td>
+</tr>
+<tr>
+<td>甄别来源质量，处理互相矛盾的信息</td>
+<td>不进分数</td>
+<td>评委自己偏好权威来源，"skeptical of articles with obvious personal subjective attitudes"（核验提示词）；被测系统引用的准确度和引用与断言的一致性只在附录表 6 中作分析，不进用户偏好分</td>
+</tr>
+<tr>
+<td>分析：历史和全部现状、性质和内在联系、推理清楚、区分事实和判断、考虑其他解释、不迎合</td>
+<td>部分评</td>
+<td>合理性只查四类明显错误（见 4.1 第 5 条）；"考虑其他解释""区分事实和判断""交代历史"不评；事实与判断的区分由评委的断言抽取完成，不作为对报告的要求</td>
+</tr>
+<tr>
+<td>每个结论都能追到依据，引用准确</td>
+<td>部分评</td>
+<td>事实性核验断言；报告给出的引用页面"serve as key sources and are jointly considered with other retrieved sources"（附录 B.3.2）；引用本身对不对单独统计，但不进分数</td>
+</tr>
+<tr>
+<td>结论准确、具体、清楚，敢于下判断，说明把握</td>
+<td>部分评</td>
+<td>"准确"：事实性只算精确率，少写不吃亏（推断）；"敢于下判断"：声明"this metric cannot be obtained"即可通过指令遵循（指令遵循提示词）；"说明把握"不评</td>
+</tr>
+<tr>
+<td>深：本质、全体、内部联系</td>
+<td>不评</td>
+<td>分析型题要求"deeper analysis"（第 3.2 节），但评分不量深度</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>混入</td>
+<td>数量约束（字数、条数）、格式约束（结构与排版）、属性约束（风格与视角）与内容约束同为子任务（附录 A.2），按出题人定的重要性档位进入用户偏好分。写作类子任务占多少，数据未公开，无从得知</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>不线性加总</td>
+<td>三个维度分别报告；用户偏好分用分档规则（算法 1），不是各项相加</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>有一种</td>
+<td>P0 子任务全部失败时直接给 1 分（算法 1 第 8 行，"c0 = 0"）。但"致命"由需求的重要性定义；关键事实全错会拉低 P0 子任务的得分，却不会单独触发 1 分；编造引用没有单独处理（推断）</td>
+</tr>
+<tr>
+<td>交付形式（第五节五个部分）</td>
+<td>不检查</td>
+<td>对三组非原生系统的提示词规定了引用格式和篇幅（附录 C），不检查"把握程度""查找与来源说明"</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>数据和代码都没有公开，与摘要的说法不符</td>
+<td>摘要；仓库查询</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>声称未做到</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>选评委与验证评委看起来用同一批数据，数字完全相同</td>
+<td>表 5；第 5.5 节</td>
+<td>复算加推断</td>
+<td>测得稳</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>指令遵循的标准答案由看过评委判定的专家裁决</td>
+<td>第 5.5 节</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>事实性和合理性的准确率来源前后不一，抽查样本量没有给</td>
+<td>第 5.5 节与表 5</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>用户评分前看到了子任务结果</td>
+<td>第 5.5 节；附录 B.1</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>"加权卡帕系数 0.859"实为不加权</td>
+<td>图 6；第 5.5 节；附录 B.1</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>报告错误，结论不变</td>
+</tr>
+<tr>
+<td>R7</td>
+<td>验证的抽样单位是子任务，用户打的是整份任务的分；用户是谁没有写</td>
+<td>附录 B.1</td>
+<td>自述</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>R8</td>
+<td>事实性把"评委查不到"算作错，真值依赖评委的检索能力</td>
+<td>附录 B.3.2；核验提示词</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>R9</td>
+<td>指令遵循不核真假，声明"无法获得"即算满足</td>
+<td>指令遵循提示词</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计取舍，与"敢于下判断"相冲突</td>
+</tr>
+<tr>
+<td>R10</td>
+<td>事实性只算精确率，完整性的真实情况不核</td>
+<td>第 4.2 节式 3；提示词</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>R11</td>
+<td>重要性档位由出题人设想，阈值手定，"达不到 3 分"部分由规则定义</td>
+<td>第 4.3 节；算法 1</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>R12</td>
+<td>组间提示词不同，组间结论受混杂</td>
+<td>附录 B.4、附录 C</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>R13</td>
+<td>稳定性只覆盖 3 个系统，是否重新生成报告没有写</td>
+<td>表 4；第 5.5 节</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>R14</td>
+<td>被引网页不存档，评测时间不固定，结果会随时间漂移</td>
+<td>提示词中的 {cur_date}；没找到存档措施</td>
+<td>推断</td>
+<td>经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>R15</td>
+<td>"持续更新"没有任何实施证据</td>
+<td>第 1 节、第 3.1 节；仓库查询</td>
+<td>复算</td>
+<td>测对了东西（时效）</td>
+<td>声称未做到</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>能否复算</th>
+<th>本轮结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>卡帕系数 0.859 与"QWK = 0.901"</td>
+<td>第 5.5 节；图 6</td>
+<td>能，依据图 6 的混淆矩阵</td>
+<td>已复算：不加权 0.859，线性加权 0.876，二次加权 0.901</td>
+</tr>
+<tr>
+<td>每题 23.6 条评分项</td>
+<td>第 1 节</td>
+<td>能</td>
+<td>已复算：3,546/150 = 23.64</td>
+</tr>
+<tr>
+<td>表 3 各列的范围</td>
+<td>表 3</td>
+<td>能</td>
+<td>已复算：指令遵循 0.917 至 0.989，事实性 0.612 至 0.835，合理性 0.662 至 0.933，子任务全通过 0.119 至 0.484</td>
+</tr>
+<tr>
+<td>表 3 与表 4 的一致性</td>
+<td>表 3、表 4</td>
+<td>能</td>
+<td>已复算：差距都在约 1.15 个标准差以内</td>
+</tr>
+<tr>
+<td>表 6 的范围</td>
+<td>表 6</td>
+<td>能</td>
+<td>已读出：引用准确度 0.550 至 0.814，引用与断言一致性 0.739 至 0.906</td>
+</tr>
+<tr>
+<td>各系统的逐题分数、子任务数、断言数、评委准确率、用户评分</td>
+<td>—</td>
+<td>不能，数据和代码都未公开</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>我们的场景是：5 个智能体，比赛评审，第一轮只对报告排名。</p>
+<ol>
+<li><strong>可以借鉴的方法</strong>（与精读页第 9 节一致）：按 9 种约束类型把题目拆成可逐项检查的要求清单；级联计分，没写到的内容不打事实分；显式的重要性分档；逐条核验断言；把"引用本身对不对"和"断言是否忠于引用"分开统计。断言与引用的匹配提示词能识别多种引用格式，可以直接参考。</li>
+<li><strong>它的规则会奖励回避</strong>。指令遵循把"无法获得"算作满足，事实性只算精确率。两者合在一起，少写、多说"查不到"在这套规则下不吃亏。第一阶段的"好的调研"要求"敢于下判断，同时如实说明有多大把握"；第 1.1 节又指出规则公布后参赛者会照着规则优化。所以我们必须有召回一侧的检查（例如专家事先写定的必答要点），并对回避判断有相应的处理。</li>
+<li><strong>验证必须独立</strong>。比赛名次要公开、要经得起复核。DailyReport 暴露的三点可以直接作为我们的规则：请专家或用户打分时不给他们看算法的结果；考评委用的标准答案在评委判定之前定好；挑评委和验证评委用两批不同的样本。</li>
+<li><strong>实时核验要配存档</strong>。第一阶段的调研定义写的是"截至某一时间点"。DailyReport 以评测当天为准、不存档，复核时结果可能改变。我们应当在题目中写明截止时间，并在运行时存档被引网页，核验时对照存档，而不是现搜。</li>
+<li><strong>统一格式要求要对所有参赛者一样</strong>，或者在核验前统一做格式归一。否则比的是谁的格式更合核验流程。</li>
+<li><strong>分辨率问题</strong>。DailyReport 的用户偏好分在单题上只有 1 至 4 四档。如果我们第一轮只有少数几道题，5 份报告很可能大量同档，这种分档分数不宜单独作为排名依据（推断）。</li>
+</ol>
+<hr />
+<h2 id="_1">精读页勘误</h2>
+<ol>
+<li><strong>"重复运行的均值和主表对不上"说得过重</strong>。精读页第 6.8 节以 Gemini 3.1 Pro 加搜索的事实性为例（表 3 为 0.730，表 4 为 69.9 ± 2.7）。0.730 距表 4 均值 1.15 个标准差；三次运行中一次为 73.0、另两次约 68 是完全可能的，主表与表 4 的其余数字也都在约 1.15 个标准差以内。应改为"论文没有说主表是三次中的哪一次还是均值"，不能算对不上。</li>
+<li><strong>表 6 的数字范围有误</strong>。精读页第 7 节写"'引用本身对不对'是 0.55–0.77，'断言是否忠于引用'是 0.74–0.86"。核对表 6：引用准确度（Reference Accuracy）为 0.550 至 0.814，引用与断言一致性（Refer-Claim Consistency）为 0.739 至 0.906，两项的最高值都是 GPT 5.4 加搜索工具；原生智能体只有 o3 和 o4-mini 两家有数。</li>
+<li><strong>"列全了没有"的问题，原文其实有答案</strong>。精读页第 6.6 节写"评委怎么知道 QS 前 100 里漏了两所大学？只能评测时现查。论文没说清楚"。附录的指令遵循提示词写明"judge based on what the Document claims ... You do not need to verify its accuracy"，事实性只核验报告中抽出的断言。所以按论文给出的流程，漏列很可能根本不会被查出，而不是"现查"。</li>
+<li><strong>组间混杂的论点需要补一句</strong>。精读页第 6.7 节的论点成立，但应补充：断言与引用的匹配提示词能识别"[15†L10]""[citation:N]"等多种引用格式，格式不一致的影响比精读页说的要小一些。</li>
+<li><strong>基本信息可以补全</strong>。精读页没有记录仓库的 MIT 许可证，也没有记录 arXiv 页面确认只有 v1。不影响结论。</li>
+<li>其余核对一致：数据和代码未公开（2026-10-29 再次确认，仓库仍只有两个文件、三次提交都在 2026-06-10）；卡帕系数的重算；评委选择与指标验证的数字相同；落选的 Claude-4.5-Sonnet 在事实性和合理性上高于 Gemini-3-flash、成本单位没有写；用户评分时拿到"subtask results"；原生智能体的配置只写了超时；表 3 的各项范围。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2606.12871_DailyReport.md</code></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>资料与程序对照巡天网站结构</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">现有资料和程序按巡天黑客松网站的结构逐项对照：已有、部分、缺，以及待办。本页由 <code>research-plan/site-mapping.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#_1">资料与程序对照巡天网站结构</a><ul>
+<li><a href="#_2">一、巡天网站的结构</a></li>
+<li><a href="#_3">二、公开页面</a></li>
+<li><a href="#_4">三、参赛者页面</a></li>
+<li><a href="#_5">四、后台与程序</a></li>
+<li><a href="#_6">五、巡天有、但不能照搬的</a></li>
+<li><a href="#_7">六、从别家借来、要补进规则的四条</a></li>
+<li><a href="#_8">七、按先后排的待办</a></li>
+<li><a href="#implement-spec">八、关于 implement-spec</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="_1">资料与程序对照巡天网站结构</h1>
+<p>2026 年 10 月 30 日。把深度研究评测基准现有的资料和程序，按巡天智能体黑客松网站（create.gosim.org/survey26，代码在 <code>~/projects/GOSIM/shenzhen26/survey26/survey26-new/hackathon-survey26</code>）的结构逐项对上，看哪些已经有、哪些只有一部分、哪些还缺，以及哪些不能照搬。</p>
+<p>状态的意思：<strong>已有</strong>，可以直接放上去；<strong>部分</strong>，有材料，但还不是那个页面或那个程序要的样子；<strong>缺</strong>，还没有；<strong>不适用</strong>，深度研究赛项用不上。</p>
+<hr />
+<h2 id="_2">一、巡天网站的结构</h2>
+<p>巡天分三层。</p>
+<ol>
+<li><strong>公开页面</strong>：首页、上手、完整赛事说明、愿景、规则、任务卡、文档、资源、常见问题、排行榜、公告、找队友；页脚有规则、文档、接口、运行状态、行为准则、联系方式和数据许可。</li>
+<li><strong>参赛者页面</strong>：报名与登录、控制台、队伍、通知、参赛（提交智能体）、比赛记录、每次提交的详情（评分报告、决策文件、运行日志、可回放的过程页面）。</li>
+<li><strong>后台与程序</strong>：管理后台（阶段、场景、提交、异常监控、队伍、用户、公告、额度、设置），数据库，在隔离环境里运行参赛智能体的评测进程，比赛环境，独立的计分程序，新手包，自动测试，运维脚本。</li>
+</ol>
+<p>比赛分两个阶段：练习阶段的场景全部公开，本地算分和平台算分完全一致；正式阶段的场景保密，只收智能体程序包，由平台统一运行，按正式阶段的成绩定奖。</p>
+<hr />
+<h2 id="_3">二、公开页面</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>巡天页面</th>
+<th>巡天在这页放什么</th>
+<th>我们已有的</th>
+<th>状态</th>
+<th>要补的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首页</td>
+<td>赛事一句话、主按钮、入口</td>
+<td>本地资料站 <code>site/index.html</code></td>
+<td>已有</td>
+<td>加赛事日程和"现在处在哪个阶段"</td>
+</tr>
+<tr>
+<td>上手</td>
+<td>新人第一步</td>
+<td>出题手册（给出题同学）；评审细则（给评委）</td>
+<td>部分</td>
+<td>按三类人分别写第一步：出题同学、参赛队伍、评委</td>
+</tr>
+<tr>
+<td>完整赛事说明</td>
+<td>时间线、阶段、奖项、报名条件</td>
+<td>一页总结 <code>notes/plan-summary.html</code>（是研究总结，不是赛事说明）</td>
+<td>部分</td>
+<td>写赛事说明：日程、两道题、运行日、名次怎么公布、奖项</td>
+</tr>
+<tr>
+<td>愿景</td>
+<td>为什么办这个赛</td>
+<td>论文工作稿（三层定义）；资料站的定义一节</td>
+<td>已有</td>
+<td>—</td>
+</tr>
+<tr>
+<td>规则</td>
+<td>规则全文</td>
+<td>比赛规则手册 <code>notes/rules.html</code>，草案第 2 版</td>
+<td>已有</td>
+<td>确认标〔默认〕的条款；加互查、随机抽查、规则版本（见第六节）</td>
+</tr>
+<tr>
+<td>任务卡</td>
+<td>每个任务的说明卡</td>
+<td>淡水湖题的题目卡和深度地图（出题手册实例一）；欧盟法规题只有题目卡；"一道题走完全程"</td>
+<td>部分</td>
+<td>公开练习题卡：淡水湖完整，欧盟法规补写深度地图；正式题保密，赛后公开</td>
+</tr>
+<tr>
+<td>文档</td>
+<td>技术文档、接口</td>
+<td>评审细则第 1.2 版；规则手册附录一的交付要求原文</td>
+<td>部分</td>
+<td>给参赛队伍的技术文档：智能体怎样交、主办方怎样调用、运行环境和时长上限</td>
+</tr>
+<tr>
+<td>资源</td>
+<td>参考资料</td>
+<td>文献索引 23 篇、精读 13 篇、四篇综述、领域外资料</td>
+<td>已有</td>
+<td>—</td>
+</tr>
+<tr>
+<td>常见问题</td>
+<td>问答</td>
+<td>资料站问答 9 条；出题手册常见问题</td>
+<td>已有</td>
+<td>两处合并成一页，按出题、参赛、评审分组</td>
+</tr>
+<tr>
+<td>排行榜</td>
+<td>按阶段的榜单，带分项</td>
+<td>第五阶段试评的名次 <code>stage5-pilot/results-v1.1.json</code>；"一道题走完全程"里的示意名次</td>
+<td>部分</td>
+<td>名次页：每份报告的名次区间画成横条，附三种权重下的分数、严重问题、环节评级</td>
+</tr>
+<tr>
+<td>公告</td>
+<td>赛事动态</td>
+<td>无</td>
+<td>缺</td>
+<td>公告页：日程变动、规则版本变更记录（评法已有 1.0、1.1、1.2 三个版本）</td>
+</tr>
+<tr>
+<td>找队友</td>
+<td>组队</td>
+<td>无</td>
+<td>不适用</td>
+<td>参赛方是智能体的开发队伍，不需要组队</td>
+</tr>
+<tr>
+<td>页脚</td>
+<td>行为准则、联系、数据许可</td>
+<td>无</td>
+<td>缺</td>
+<td>行为准则、联系方式、题目和数据的使用许可</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="_4">三、参赛者页面</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>巡天页面</th>
+<th>巡天在这页做什么</th>
+<th>我们已有的</th>
+<th>状态</th>
+<th>要补的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>报名与登录</td>
+<td>账号</td>
+<td>无</td>
+<td>缺</td>
+<td>本地资料站用不上；真办赛时沿用巡天的账号系统</td>
+</tr>
+<tr>
+<td>控制台</td>
+<td>队伍的总览</td>
+<td>无</td>
+<td>缺</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>队伍</td>
+<td>队伍信息</td>
+<td>冻结申报表模板（规则手册附录三）</td>
+<td>部分</td>
+<td>申报表改成固定格式的文件，能存档、能算校验值</td>
+</tr>
+<tr>
+<td>参赛</td>
+<td>上传智能体程序包</td>
+<td>规则第二节写明要交什么</td>
+<td>部分</td>
+<td>定下提交方式：程序包、接口地址，还是由主办方在指定账号下操作；取决于〔默认〕的"主办方统一运行"是否确认</td>
+</tr>
+<tr>
+<td>比赛记录、提交详情</td>
+<td>每次运行的评分报告、决策文件、运行日志、回放页面</td>
+<td>第五阶段试评的全部数据：6 份匿名报告，单独评审用的原版加三个扰动版（改错、注水、编造来源），评委输出（环节评级、断言核验、两两比较、要点池）、计分结果</td>
+<td>部分</td>
+<td>做成可以点着看的复核包页面：点一份报告，看每条结论的标签和来源；点一条要点，看谁写到了</td>
+</tr>
+<tr>
+<td>通知</td>
+<td>站内通知</td>
+<td>无</td>
+<td>缺</td>
+<td>本地资料站用不上</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="_5">四、后台与程序</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>巡天的部件</th>
+<th>做什么</th>
+<th>我们已有的</th>
+<th>状态</th>
+<th>要补的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>管理后台</td>
+<td>阶段、场景、提交、异常监控</td>
+<td>运行记录表模板（规则手册附录四）</td>
+<td>部分</td>
+<td>本地先用一个运行记录文件；真办赛时沿用巡天后台</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>存一切有状态的数据</td>
+<td>本地 JSON 文件：试评的评委输出、文献索引的留言 <code>comments.json</code></td>
+<td>部分</td>
+<td>规模小，先用文件；真办赛时沿用巡天的数据库</td>
+</tr>
+<tr>
+<td>评测进程</td>
+<td>在隔离环境里运行参赛智能体</td>
+<td>无；第五阶段的报告是事后收集的，<code>stage5-pilot/prep.py</code> 负责匿名化和生成扰动版本</td>
+<td>缺</td>
+<td>统一运行的程序：按申报的方式调用智能体，记录输入校验值、起止时间和日志</td>
+</tr>
+<tr>
+<td>比赛环境</td>
+<td>场景数据</td>
+<td>题目卡、截止日期；被引网页的存档在规则里有要求</td>
+<td>部分</td>
+<td>网页存档程序：运行后 24 小时内把报告引用的网页存下来，附时间和校验值</td>
+</tr>
+<tr>
+<td>计分程序</td>
+<td>独立、可复算的打分</td>
+<td><code>stage5-pilot/score.py</code>（第 1.1 版规则）；<code>site/walkthrough_example.py</code>（按第 1.2 版规则算示意数据）</td>
+<td>部分</td>
+<td><code>score.py</code> 升到第 1.2 版：有争议的标注按最不利计分，重抽只在有报告写到的要点里进行</td>
+</tr>
+<tr>
+<td>评委（巡天没有）</td>
+<td>判定对错、层级、重要性</td>
+<td>评委输出已存；评委提示词没有存成文件，在会话记录里可以原样找回；把输出整理成文件的三个脚本留在会话临时目录</td>
+<td>部分</td>
+<td>把评委提示词和整理脚本存进 <code>stage5-pilot/</code>，这是复核包要公开的内容</td>
+</tr>
+<tr>
+<td>新手包</td>
+<td>参赛者下载的起步材料</td>
+<td>出题手册的题目卡模板、深度地图模板、自查清单（给出题同学）；交付要求原文</td>
+<td>部分</td>
+<td>给参赛队伍的新手包：交付要求、练习题、本地自查办法</td>
+</tr>
+<tr>
+<td>自动测试</td>
+<td>每次改动后自动检查</td>
+<td>第五阶段的扰动检验（改错、注水、编造来源）和 8 条验收标准，<code>score.py</code> 会逐条检查</td>
+<td>部分</td>
+<td>把验收标准变成每次改计分程序后都要跑的测试</td>
+</tr>
+<tr>
+<td>回放页面</td>
+<td>看智能体一步步做了什么</td>
+<td>架构图讲解版；"一道题走完全程"</td>
+<td>部分</td>
+<td>运行日志能拿到中间过程时，再考虑每份报告的过程回放</td>
+</tr>
+<tr>
+<td>运维脚本</td>
+<td>部署、发布</td>
+<td><code>render_plan.py</code>、<code>render_pdf.py</code>、<code>build_explained.py</code>、<code>serve.py</code></td>
+<td>已有</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="_6">五、巡天有、但不能照搬的</h2>
+<ol>
+<li><strong>计分时机。</strong> 巡天交上去就自动出分。深度研究要经过评委核验、要点池判定和人工审计，还有 7 天申诉期，所以在"运行结束"和"公布名次"之间要多一个"评审中"的阶段，名次也分临时和最终两次公布。</li>
+<li><strong>提交次数。</strong> 巡天允许每天反复提交、取最好的一次。深度研究是智能体冻结后只运行一次，每家两道题、每道题两个版本，共四次；反复提交就成了对着保密题调参。</li>
+<li><strong>能不能上网。</strong> 巡天的智能体在隔离环境里运行，允许调用大模型接口。深度研究的智能体必须上网检索，结果随时间变化，所以要同一天运行，并存档被引网页。</li>
+<li><strong>账号与组队。</strong> 只有五支队伍时，本地资料站不需要账号、组队、通知；真办赛时直接用巡天平台的。</li>
+</ol>
+<hr />
+<h2 id="_7">六、从别家借来、要补进规则的四条</h2>
+<p>上一轮比较外部评测网站时，选定主要学 MLPerf 的流程，配合 HELM 的透明做法。落到我们这里是四条，都还没写进规则：</p>
+<ol>
+<li>申诉期内各队可以看到所有队伍的报告和判定，也可以对别家的判定提异议；</li>
+<li>每届随机抽一支队伍，主办方用它冻结的版本重跑一道题，核对是否与申报一致；</li>
+<li>一届一版规则，名次注明依据哪一版，另设变更记录；</li>
+<li>分封闭组和开放组：封闭组即现行做法，开放组允许按题调整，单独公布。</li>
+</ol>
+<hr />
+<h2 id="_8">七、按先后排的待办</h2>
+<ol>
+<li>存档评委提示词和整理脚本（复核包的硬要求，现在就能做）。</li>
+<li><code>score.py</code> 升到第 1.2 版，并把验收标准变成测试。</li>
+<li>名次页和复核包浏览页，先用第五阶段试评的真实数据做样子。</li>
+<li>赛事说明、公告（含规则变更记录）、按三类人分写的上手页。</li>
+<li>欧盟法规题的深度地图；正式题。</li>
+<li>参赛队伍的技术文档和新手包（等"主办方统一运行"等〔默认〕条款确认）。</li>
+<li>统一运行程序和网页存档程序。</li>
+<li>真办赛时，在巡天平台的代码上改：账号、提交、数据库、管理后台都沿用，换掉比赛环境和计分部分。</li>
+</ol>
+<hr />
+<h2 id="implement-spec">八、关于 implement-spec</h2>
+<p>Matt Pocock 的 <code>implement-spec</code> 是"实施一份已经写好的需求说明"的技能：先要运行 <code>setup-matt-pocock-skills</code> 选定任务管理方式（可以只用本地文件），再用 <code>to-spec</code> 写需求说明、<code>to-tickets</code> 拆成带先后依赖的任务单，然后由它在一个集成分支上派多个子任务并行实现，最后做代码审查。</p>
+<p>这份对照表相当于需求说明之前的盘点。它适合在第七节的第 3、4、7、8 项上使用；第 1、2 项各是一两处改动，直接做更快。这几个工程类技能目前没有装，上次只装了效率类。用它要在 <code>mofa-research</code> 仓库里建分支、提交代码；这个目录目前还没有加入版本管理，开始前需要你同意。</p>
+<footer>源文件：<code>research-plan/site-mapping.md</code></footer>
+</div>
+</body>
+</html>

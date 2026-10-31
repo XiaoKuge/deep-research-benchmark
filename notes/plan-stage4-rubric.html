@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>评审细则</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">交给评委使用的操作版本。本页由 <code>research-plan/stage4-rubric.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#12">评审细则（第 1.2 版）</a><ul>
+<li><a href="#_1">一、评委需要知道的定义</a></li>
+<li><a href="#012">二、环节评级（每个环节三档：0、1、2）</a></li>
+<li><a href="#_2">三、要点抽取</a></li>
+<li><a href="#_3">四、要点池的判定</a></li>
+<li><a href="#_4">五、断言核验</a></li>
+<li><a href="#_5">六、写作（二级，单独报告，不进入名次）</a></li>
+<li><a href="#_6">七、硬伤</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="12">评审细则（第 1.2 版）</h1>
+<p>2026-10-29。这是第四阶段方案（<code>stage4-design.md</code>）的操作版本，写给评委看，评委按它判定。第五阶段的小规模检验用的是第一版；检验之后改了两处，即第五节的结论清单和第七节第 2 条，改动的原因见 <code>stage5-report.md</code> 第三节。</p>
+<p>2026-10-30 第 1.2 版：第四节加了深度地图标注的用法和判定时隐去出处；有争议标注的计分规则见第四节末尾。起因是出题手册审阅时提出的问题：深度地图的定位不清，出题人不知道写到什么程度为止。第 1.2 版的改动还没有检验。</p>
+<hr />
+<h2 id="_1">一、评委需要知道的定义</h2>
+<p><strong>调研。</strong> 为了回答提问者的一个具体问题，以截至某一时间点已经存在的信息为材料，系统地查找、甄别、分析和整合，得出有理有据的结论。结论可以是描述、解释、预测或建议，但都要讲得出道理、拿得出依据。</p>
+<p><strong>深。</strong> 指调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。全体，是事情的历史和全部现状；本质，是事情的性质，以及这件事与其他事情之间的内在联系。材料的丰富是深的基础，但材料多本身不等于深。</p>
+<p><strong>不看的东西。</strong> 篇幅、格式、标题层级、表格多少、引用条数、文笔，都不进入名次。写作只在第六节单独评。</p>
+<hr />
+<h2 id="012">二、环节评级（每个环节三档：0、1、2）</h2>
+<p>每个评级都必须引用报告原文一到两句作为依据。原文中找不到依据时，按较低的一档评。</p>
+<p><strong>① 切题与真实需要</strong></p>
+<ul>
+<li>0：答的是另一个问题；或者只按字面回答，没有交代自己怎样理解问题和提问者的需要。</li>
+<li>1：回答了所问的问题，并写明了自己的理解或假设。</li>
+<li>2：在 1 的基础上，审视了问题的前提或其中概念的边界，例如"最好"按什么标准、某个概念包括哪些范围，并据此组织回答。</li>
+</ul>
+<p><strong>③ 查找过程的交代</strong></p>
+<ul>
+<li>0：没有交代查了什么、怎么查的。</li>
+<li>1：交代了来源的大致范围或类型。</li>
+<li>2：交代了查找的范围、方法和局限：查了哪些，没查到什么，为什么。</li>
+</ul>
+<p><strong>④ 甄别来源与处理矛盾</strong></p>
+<ul>
+<li>0：不加区分地使用来源；遇到相互矛盾的信息，不处理或没有发现。</li>
+<li>1：对来源有所区分，例如区分官方材料和二手评论，但对矛盾的处理不足。</li>
+<li>2：说明来源的可靠程度，主动指出相互矛盾的信息，并给出取舍的理由。</li>
+</ul>
+<p><strong>⑤ 分析</strong>（区分事实和判断、考虑其他解释、不迎合）</p>
+<ul>
+<li>0：事实和判断混在一起；只有一种解释；结论迎合提问者或某一方。</li>
+<li>1：大体分开了事实和判断，推理基本清楚。</li>
+<li>2：明确区分事实和判断；考虑过其他解释或反例，并说明取舍；没有为了迎合而扭曲结论。</li>
+</ul>
+<p><strong>⑦ 结论与把握</strong></p>
+<ul>
+<li>0：结论含糊或回避判断，例如只说"各有所长"而不给出可用的判断；或者下了判断，但完全不说明把握。</li>
+<li>1：给出了明确的结论，但没有说明把握程度，或者把握说明流于形式。</li>
+<li>2：结论具体、明确，并如实说明各个结论有多大把握、依据是什么。</li>
+</ul>
+<p><strong>关于"查不到"。</strong> 报告说"查不到""无法确定"时，交代了查了什么、缺什么，并且仍然给出带把握说明的判断，算诚实；只说"无法确定"而不给可用的判断，算回避，在 ⑦ 中按 0 评。</p>
+<hr />
+<h2 id="_2">三、要点抽取</h2>
+<p><strong>要点</strong>是报告中一条独立的、有实质内容的认识，例如一个事实、一个解释、一个判断、一条建议。</p>
+<ul>
+<li>同一个意思写了几遍，只算一条。</li>
+<li>只是罗列名字、没有说出任何认识的，不算要点。</li>
+</ul>
+<p>每条要点记下：</p>
+<ul>
+<li><strong>内容</strong>：一句话概括；</li>
+<li><strong>层级</strong>：现象、全体、内部联系、本质，四选一，定义见下；</li>
+<li><strong>原文</strong>：报告中的一句原话。</li>
+</ul>
+<p><strong>层级的定义：</strong></p>
+<ul>
+<li><strong>现象</strong>：事情本身的事实和表面特征。例如"某产品于某日发布""某产品支持上传文件"。</li>
+<li><strong>全体</strong>：事情的历史，即怎样演变而来；或者全部现状，特别是容易被忽略的方面、例外和反例。例如"这类功能从 2024 年底的首个产品发展到 2025 年各家跟进，期间定义发生了什么变化""某产品在中文资料上的表现与英文不同"。</li>
+<li><strong>内部联系</strong>：这件事与其他事情之间的因果、制约、依赖关系。例如"某产品报告质量高，是因为它把检索和写作交给不同的子智能体，代价是用时更长"。</li>
+<li><strong>本质</strong>：事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。例如"'哪家最好'没有脱离用途的答案，因为各产品优化的目标不同：有的优化引用透明度，有的优化报告的完整性"。</li>
+</ul>
+<p><strong>判定层级时的提醒。</strong> 抽象的套话不算"本质"，例如"技术在不断进步""各有所长"。一条要点只有说出了具体的性质或联系，并且能在报告中找到支撑，才能定为内部联系或本质。</p>
+<hr />
+<h2 id="_3">四、要点池的判定</h2>
+<p>把所有报告和出题人深度地图中的要点合并，意思相同的合成一条，再对每条池中要点判定四件事：</p>
+<ol>
+<li><strong>对不对。</strong> 截至题目卡规定的截止时间，这条认识是否正确。标为正确、有误或无法判断，并附依据：来源网址或理由。</li>
+<li><strong>切不切题。</strong> 它是否有助于回答提问者的问题。标为切题或不切题。不切题的要点不计分。</li>
+<li><strong>层级。</strong> 现象、全体、内部联系、本质，四选一。以池中判定为准，不受抽取时所标层级的约束。</li>
+<li><strong>重要性。</strong> 核心或一般。核心，指回答这个问题不能缺少的认识。</li>
+</ol>
+<p>然后记下每份报告写到了哪些池中要点，写对了还是写错了。</p>
+<p><strong>深度地图的标注（第 1.2 版）。</strong> 深度地图是出题人在看到任何报告之前预先登记的浅答案、转折点和核心要点。它不是标准答案：地图上没有、但正确又切题的要点同样计分；要点的对错一律按来源判定。</p>
+<ol>
+<li>地图上已有的要点，以地图登记的层级和重要性为默认值。评委组改动，必须依据来源或第三节的定义写明理由。</li>
+<li>地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告。判为核心的，列入人工审计。</li>
+<li><strong>有争议的标注</strong>，指评委组判定时没有一种意见达到三分之二的层级或重要性判定，以及评委组改动过的地图标注。计分时，比较一对报告，每条有争议的要点都按对领先一方最不利的那种标注计分，再做分开检验。有争议的判定只能让一对报告并列，不能把它们拉开。</li>
+<li>估计名次把握的重抽样，只在至少一份报告写到的要点中进行。这样，地图上写了而没有一份报告写到的要点，对名次的影响为零。</li>
+</ol>
+<p>在第五阶段的试评数据上核对过两件事（2026-10-30）：去掉地图上 2 条没有一份报告写到的要点，6 份报告的净分和名次完全不变；把地图上 8 条要点的重要性全部反过来，名次不变。把全部 122 条要点的重要性抹平，原来分开的 12 对中有 1 对变成分不开。</p>
+<hr />
+<h2 id="_4">五、断言核验</h2>
+<p><strong>主要结论</strong>，指报告摘要或结论部分中的判断，以及正文中支撑这些判断的关键事实。</p>
+<p><strong>结论清单（第 1.1 版）。</strong> 凡是带来源的结论全部列入，另加至多 10 条不带来源的主要结论，优先抽对提问者影响最大的。清单由一人按这条规则抽出，所有核验员使用同一份清单。另外，在清单中标出至多 3 条"对题目的直接回答"，即报告对所问问题的总体判断。</p>
+<p>（第一版是每份报告由核验员自己抽出至多 10 条。不同核验员抽的不同，会带来噪声。）</p>
+<p>每条主要结论记两类标签。</p>
+<p><strong>来源标签：</strong></p>
+<ul>
+<li><strong>支持</strong>：打开所引来源（或它的存档），来源确实支持这条结论；</li>
+<li><strong>部分支持</strong>：来源支持其中一部分，或者结论说得比来源更强；</li>
+<li><strong>不支持</strong>：来源存在，但不支持这条结论；</li>
+<li><strong>失效但有存档</strong>：链接打不开，但网页存档中能找到，并据存档判断支持与否（另外记下支持与否）；</li>
+<li><strong>找不到（疑似编造）</strong>：链接打不开，存档中也没有，按标题检索也找不到；</li>
+<li><strong>没有出处</strong>：这条结论没有给出来源，或者导出时来源丢失。</li>
+</ul>
+<p><strong>对错标签：</strong> 不管有没有来源，都独立检索核对，截至截止时间这条结论是否正确：</p>
+<ul>
+<li><strong>正确</strong></li>
+<li><strong>有误</strong>：附依据</li>
+<li><strong>无法判断</strong></li>
+</ul>
+<p><strong>来源只列在文末的情况。</strong> 报告只在文末列出来源，没有对应到具体结论时，核验者在所列来源中查找支持：找到的，记为相应的来源标签，并注明"文末来源"；找不到的，记为没有出处。</p>
+<p><strong>"疑似编造"要经第二次核查才算确认。</strong> 第二次核查可以换一种检索方式，或者查同一网站的其他页面。</p>
+<p><strong>时效（②）</strong>，三档：</p>
+<ul>
+<li>0：主要结论依赖已经过时的信息，截止时间之前已有更新的信息被忽略；</li>
+<li>1：大体是新的，但有个别重要信息过时；</li>
+<li>2：材料截至规定的时间点，并且足够新。</li>
+</ul>
+<hr />
+<h2 id="_5">六、写作（二级，单独报告，不进入名次）</h2>
+<ul>
+<li>0：难以读懂，或结构混乱；</li>
+<li>1：能读懂，结构基本清楚；</li>
+<li>2：清楚、简洁，主要结论在前。</li>
+</ul>
+<hr />
+<h2 id="_6">七、硬伤</h2>
+<p>下列四种，有任何一种，报告就排在所有没有硬伤的报告之后：</p>
+<ol>
+<li><strong>编造来源</strong>：经第二次核查确认，至少一个来源是编造的；</li>
+<li><strong>直接回答与证据相反</strong>：报告对题目的直接回答（结论清单中标出的至多 3 条），至少一条被截止时间之前可靠的证据明确否定。支撑性事实的错误不算硬伤，在深度净分中扣分（第一版是"至少一条核心的主要结论"，结果长报告几乎都被判了硬伤）；</li>
+<li><strong>答非所问</strong>：报告回答的是另一个问题；</li>
+<li><strong>全篇没有可追溯的出处</strong>：经过补救，仍然没有一个可以追溯的来源。</li>
+</ol>
+<p>格式、篇幅、文笔，永远不算硬伤。</p>
+<footer>源文件：<code>research-plan/stage4-rubric.md</code></footer>
+</div>
+</body>
+</html>

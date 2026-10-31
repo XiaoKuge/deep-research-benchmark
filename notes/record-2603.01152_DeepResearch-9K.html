@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：DeepResearch-9K（arXiv 2603.01152）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2603.01152_DeepResearch-9K.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#deepresearch-9karxiv-260301152">审视记录：DeepResearch-9K（arXiv 2603.01152）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="deepresearch-9karxiv-260301152">审视记录：DeepResearch-9K（arXiv 2603.01152）</h1>
+<p>审视日期：2026-10-29。第二阶段己组。</p>
+<p>证据等级的写法：每条判断后用括号标注。"复算"在本记录中有四种来源，分别注明：依据论文表格中的数字重算；逐行阅读公开代码；对照另一篇论文的原文；在 2026-10-29 查询链接和元数据。另有一类特殊情况，注明"复算（精读页，本轮未重做）"：指精读页在 2026-10-28 下载全量数据后做的统计。本轮按要求没有下载数据集，所以这些数字没有重算，只是转引。"自述"指只有论文自己的说法。"推断"指我们根据原文推出、原文没有直接说的内容。"没找到"指在原文和公开渠道中都没有找到相关信息。</p>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>名称</strong>：DeepResearch-9K: A Challenging Benchmark Dataset of Deep-Research Agent。</li>
+<li><strong>日期</strong>：v1 2026-03-01，v2 2026-06-20。本地 PDF 是 v2（复算：arXiv 摘要页的提交记录）。</li>
+<li><strong>作者及机构</strong>：Tongzhou Wu（深圳技术大学、香港城市大学）、Yuhao Wang（香港城市大学）、Xinyu Ma（百度）、Xiuqiang He（深圳技术大学）、Shuaiqiang Wang（百度）、Dawei Yin（百度）、Xiangyu Zhao（香港城市大学，通讯作者）。</li>
+<li><strong>发表情况</strong>：SIGIR 2026 会议论文，ACM 出版，数字对象标识符为 10.1145/3805712.3808597（首页）。arXiv 备注为"6 pages, 4 figures"；PDF 含参考文献共 8 页，首页 ACM 引用格式也写 8 页。论文没有写明属于会议的哪个专题（没找到）。</li>
+<li><strong>数据</strong>：Hugging Face <code>artillerywu/DeepResearch-9K</code>，公开，不需申请。建立于 2026-02-06，最后修改于 2026-04-21。内容是两个 parquet 文件（分别在 DeepResearch-9K 和 DeepResearch-Hard 两个子目录下）和一个 README。数据卡没有填写许可证字段（复算：2026-10-29 通过元数据接口查询，没有下载数据文件）。GitHub README 中链接的独立数据集 <code>artillerywu/DeepResearch-Hard</code> 返回 401，即不存在或不公开（复算）。作者名下没有公开任何模型权重（复算：查询 Hugging Face 模型列表为空）。</li>
+<li><strong>代码</strong>：GitHub <code>Applied-Machine-Learning-Lab/SIGIR2026_DeepResearch-R1</code>，共 276 个文件。仓库顶层没有许可证（GitHub 接口返回空）；子目录 <code>DeepResearch-R1/</code> 下有 Apache-2.0 许可证，继承自所用的 verl 训练框架，<code>Notice.txt</code> 署名字节跳动。出题脚本 <code>data/create_data.py</code> 于 2026-04-21 提交，提交说明为 "DeepResearch-9K data construction pipeline"（复算：查询仓库与提交记录）。</li>
+<li><strong>许可</strong>：论文为 CC BY-NC-ND 4.0（首页）。数据没有标许可。代码见上。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2603.01152_DeepResearch-9K.html</code>，写于 2026-10-28）加原文核对。另外逐行阅读了出题脚本 <code>data/create_data.py</code>、训练入口 <code>DeepResearch-R1/verl/trainer/main_ppo.py</code> 中选择奖励函数的部分、奖励函数 <code>qa_em.py</code>、训练脚本 <code>train_ppo.sh</code>、推理脚本 <code>infer.py</code>，以及 GitHub 和 Hugging Face 的两份 README。对照了 BrowseComp-Plus 论文表 4（本地 PDF 第 11 页）。图 4 渲染成图像后逐个读数。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<p><strong>先回答一个前置问题：这里的"benchmark"是不是只是"数据集"的意思？</strong> 不是。论文有明确的评测声称，必须按评测基准来审视：</p>
+<ol>
+<li>标题是"A Challenging Benchmark Dataset"，关键词是"Benchmark, Dataset"。</li>
+<li>"we introduce DeepResearch-9K, a challenging benchmark with different levels of difficulty designed to systematically evaluate and advance agentic capabilities in open-ended deep-research scenarios."（第 1 节）</li>
+<li>关于 DeepResearch-Hard 子集："these instances represent the most difficult cases in our dataset ... Thus, this subset can rigorously evaluate the limits of deep-research agents."（第 3 节）</li>
+<li>"This result demonstrates that L3 accurately captures the intricate relationships and high reasoning demands of real-world research"（第 4.2 节）。</li>
+<li>"confirming that the dataset probes the upper limits of current agentic capabilities in multi-hop reasoning and information synthesis."（第 4.3 节）</li>
+<li>"this work provides both an evaluation benchmark and a training framework"（第 6 节）。</li>
+</ol>
+<p>同时，论文把自己的主要贡献定位为训练资源："Current benchmarks are designed primarily for assessment, not for providing the large-scale, high-quality interaction trajectories needed to train agents ... Our approach tackles this dual challenge"（第 5.1 节）。设计的重心也确实在训练一侧：9,000 道题中只有 1,774 道作测试；论文中的评测实验只有两组，一组是教师模型直接做全部 9,000 道，另一组是 8 种训练配置加 DeepSeek-V3 在测试集上的比较。</p>
+<p>关于分数含义的其他主要说法：</p>
+<ol start="7">
+<li>答案可核验："(3) verifiable answers"（摘要）；"Each sample has a verifiable final answer. Specifically, in the following, LLM-as-Judge is adopted to verify the correctness of the answer."（第 2.1 节）；质量保证"ensures that every task in DeepResearch-9K possesses a factual grounding that is robustly verifiable while maintaining an extreme level of research difficulty"（第 3.4 节）。</li>
+<li>难度分级有效："This consistent increase validates the effectiveness of our dataset construction strategy, which effectively prevents agents from bypassing reasoning steps through single-source retrieval."（第 2.2 节）</li>
+<li>训练出的小模型达到最先进水平（state-of-the-art）："agents trained on DeepResearch-9K under our DeepResearch-R1 achieve state-of-the-art results on challenging deep-research benchmarks."（摘要）；Llama-3.2-3B 加近端策略优化（Proximal Policy Optimization）训练后"clearly outperforming all other models, including the larger DeepSeek V3 baseline (20.18%)"（第 4.3 节）。</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong>：</li>
+<li>原料：从 HotpotQA（2018）、2WikiMultihopQA（2020）、MuSiQue（2022）三个多跳问答数据集中各随机抽 1,000 道（第 3.1 节，自述）。对这三个数据集而言是随机抽样，但总体本身是复用的老数据集。</li>
+<li>生成：每道原题依次生成 L1、L2、L3 三道题，共 9,000 道（第 2.2 节；脚本第 193 行的循环，复算：读公开代码）。方法是用大语言模型抽实体、建关系链、蒙面（第 3.1 至 3.3 节）。论文明确说抽实体用的是 DeepSeek-V3（第 3.1 节）；出题用哪个模型，正文没有直接写，脚本中抽实体和出题共用同一个模型变量，且该变量留空（推断：出题也是同一个模型）。</li>
+<li>子集与划分：DeepResearch-Hard 是教师模型 Tongyi-DeepResearch-30B-A3B 做错的 3,974 道（第 3 节、表 1）。训练集 7,226 道，等于教师做对的 5,026 道加上从 Hard 中随机抽的 2,200 道；测试集是 Hard 中剩下的 1,774 道（第 4.1.1 节；Hugging Face README 一致）。那 2,200 道是哪些，编号和随机种子都没有公开，仓库中也没有切分脚本（复算：查 README 与文件列表）。</li>
+<li><strong>判分标准</strong>：唯一答案，即一个实体名或"是/否"。标准答案是出题模型生成题目时同一次调用输出的 <code>short_answer</code>（脚本第 109 至 146 行，复算：读公开代码）。</li>
+<li><strong>判卷方式</strong>：大语言模型评委 DeepSeek-V3 判最终答案是否正确（第 4.1.3 节）。论文说评委提示词"is provided on our code website"（第 3 节），仓库 276 个文件中没有评委相关的文件（复算：列出全部文件名）。另一个指标是每条轨迹的搜索次数（第 4.1.3 节）。</li>
+<li><strong>运行环境</strong>：教师做题时用 Serper 搜索，全部流程的搜索费用为 200 美元（第 3 节）。训练时检索的是一个语料库，由 DeepSeek-V3 根据教师轨迹写成"Wikipedia-style summaries"（第 4.1.2 节）。训练出的模型在测试时检索的是这个语料库还是实时网络，论文只说"under identical environmental conditions"（第 4.3 节），没有写清（没找到）。运行日期没有写（没找到）。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>声称</strong>：每道题都有可核验的答案；"rule-based validation pipeline"加上"rigorous cross-document independence checks and automated format validation"保证质量（第 2.1、3.4 节）。</p>
+<p><strong>证据</strong>：</p>
+<ol>
+<li><strong>标准答案没有经过任何核对</strong>。公开脚本中唯一的质检函数 <code>check_difficulty_fast</code> 只检查三件事：题目不少于 40 个字符；L3 题目不能含 "(A)" "Step 1" "First," 这类列表标记；L3 题目不能换行（脚本第 64 至 78 行）。另外按题目文本的 MD5 摘要去掉完全相同的题（第 205 至 209 行）。"No single Wikipedia page or article should contain more than 2 consecutive entities"只是写在给模型的提示词里（第 90 行），脚本没有检查。没有任何一步核对答案对不对、是否唯一（复算：读公开代码）。论文所说的"cross-document independence checks"在代码中不存在。</li>
+<li><strong>新发现：出题脚本有两级兜底，兜底路径完全不经过质检</strong>。L3 最多重试 5 次，L1 和 L2 最多重试 2 次。都失败时，改用一个简化提示"Identify a specific fact about '{seed_entity}' related to its {target_level}-hop connections"（第 131 行），这条路径既不调用 <code>check_difficulty_fast</code>，也不去重（第 215 至 225 行）。如果简化提示也失败，题目就直接写成"Search for specific details about {fallback_seed}."，答案取原数据集的答案（第 223 行）。兜底产生的题目仍按原来的难度等级标注（复算：读公开代码）。数据中有多少条来自兜底，本轮没有下载数据，无法统计（不确定）。</li>
+<li><strong>公开脚本是否就是实际用的版本</strong>：脚本的模型名和输入输出路径都留空，提交时间比数据发布晚两个半月（复算）。它是否就是生成这批数据的版本，不能确认（推断）。</li>
+<li><strong>论文中唯一与答案正确性沾边的环节是教师试做</strong>。对教师做对的 5,026 道，这只说明两个模型（出题模型和教师模型）的结论一致，由第三方（DeepSeek-V3 评委）判定。对 Hard 的 3,974 道，连这一点都没有。测试集 1,774 道全部来自 Hard，也就是说，测试集的标准答案没有经过任何形式的核对，包括模型之间的一致性检查（推断，由第 3 节、第 4.1.1 节推出）。</li>
+<li><strong>"verifiable"一词的用法</strong>：第 2.1 节写"Each sample has a verifiable final answer. Specifically, in the following, LLM-as-Judge is adopted to verify the correctness of the answer."。这里被"verify"的是被测模型的回答是否与标准答案一致，不是标准答案本身是否正确（推断）。</li>
+<li><strong>精读页的抽查与全量统计</strong>：精读页按固定随机种子抽 25 道人工阅读，认为"题目清楚、答案唯一、明确问了什么"的约 5 道；全量统计显示 L3 中 69.3% 通篇没有问号，L2 中 12.1% 的标准答案本身是一段描述而不是名字，9,000 道中有 4 对完全重复的题（复算（精读页，本轮未重做））。</li>
+<li><strong>论文自己的展示题有问题</strong>。图 1 的 L3 例题问"a city that was once divided during the Cold War"里的图书馆，答案是莱比锡大学图书馆，推理过程写"Leipzig fits the 'divided' context"。冷战时被分割的城市是柏林，莱比锡没有被分割（推断，依据常识，未上网核实）。这道 L3 题只用了 2 次工具调用（图 1），而论文说 L3"ensuring a minimum of 15 search iterations"（第 3.2 节）。</li>
+<li><strong>评委没有验证</strong>。DeepSeek-V3 判答案的准确率没有任何人工核对（没找到），提示词没有公开（复算）。版本也不确定：抽实体和训练奖励引用的是文献 [36]（DeepSeek-V3.2 论文），评委引用的是文献 [35]（DeepSeek-V3 技术报告），所以实际用的是哪个版本说不清（复算：对照参考文献；推断）。</li>
+<li><strong>论文与代码对奖励的描述矛盾</strong>。论文写"The reward signal in both RL phases is provided by DeepSeek-V3, which evaluates the quality and correctness of the agent's reasoning trajectories"（第 4.1.2 节）。公开代码中，训练入口 <code>main_ppo.py</code> 对数据来源为 <code>deep_research_9k</code> 的样本选用 <code>qa_em.compute_score_em</code>（第 25 至 28 行），即把答案规范化后与标准答案做精确匹配；<code>train_ppo.sh</code> 设置格式分 0.2、检索分 0.1、正确分 1.0（复算：读公开代码）。出题脚本写入的奖励字段也是<code>'style': 'rule'</code>（第 166 行）。所以公开代码复现不出论文描述的奖励。</li>
+<li><strong>同一个模型身兼多职</strong>。抽实体（第 3.1 节）、出题（推断，见第 3 节）、写训练检索语料（第 4.1.2 节）、给训练奖励（第 4.1.2 节，但见上条）、当评委（第 4.1.3 节）、当被比较的对手（第 4.3 节），都是"DeepSeek-V3"。出题者和阅卷者是同一个模型，阅卷者对答案的理解天然与出题者一致（推断）。</li>
+</ol>
+<p><strong>证据等级</strong>：代码相关各条为复算（读公开代码）；论文说法为自述；对测试集答案、"verifiable"用法和展示题的判断为推断。</p>
+<p><strong>判断</strong>：评分环节不成立。标准答案未经核对，测试集甚至连模型一致性检查都没有经过，这是设计缺陷；评委没有验证、提示词没有公开、版本不清，这是缺证据；论文与代码对奖励的描述互相矛盾，经不起复核。</p>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>声称</strong>：难度分级有效，L1"strictly constrained to 1–2 search iterations"，L3"a minimum of 15 search iterations"（第 3.2 节）；平均搜索次数从 L1 的 4.30 升到 L3 的 20.23，"validates the effectiveness of our dataset construction strategy"（第 2.2 节）。</p>
+<p><strong>证据</strong>：</p>
+<ol>
+<li>教师正确率 L1 72.47%、L2 71.33%、L3 23.73%，分别等于 2,174/3,000、2,140/3,000、712/3,000（复算：依据表 1）。L1 与 L2 几乎一样，论文自己也写 L2"slightly drops"（第 4.2 节）。</li>
+<li>"1–2 次搜索"和"至少 15 次搜索"都只是提示词中的要求（脚本第 83 行、第 124 行；复算：读公开代码），论文第 3.2 节写成"strictly constrained"和"ensuring"。精读页按轨迹统计：教师做对的 712 道 L3 中，有 65% 不到 15 次搜索就解出；L1 只有 44% 在 2 次以内（复算（精读页，本轮未重做））。</li>
+<li>测试集只由教师做错的题组成。选出来的是"这一个教师模型不会的题"，不是"难题"；这些题是否可解、答案是否正确，没有人检查（推断）。精读页统计，Hard 中有 45.5% 是没有问号的 L3（复算（精读页，本轮未重做））。</li>
+<li>训练集与测试集来自同一批 3,000 道原题的不同难度变体，同一原题的 L1、L2、L3 可能分到两边（推断，由第 4.1.1 节的划分方式推出）。精读页统计，Hard 中有 307 道题的答案也是其他难度某道题的答案（复算（精读页，本轮未重做））。</li>
+<li>训练检索语料由全部教师轨迹生成（第 4.1.2 节），是否排除了测试题的轨迹，没有写（没找到）。另外，<code>train_ppo.sh</code> 把 <code>test.parquet</code> 设为验证集（<code>data.val_files</code>），每 28 步在 128 条上验证一次（复算：读公开代码）。是否据此挑选检查点，不知道（推断，不确定）。</li>
+<li>测试集 1,774 道。正确率在 20% 左右时，单个系统的 95% 置信区间半宽约 1.87 个百分点（复算：二项分布近似）。</li>
+</ol>
+<p><strong>证据等级</strong>：见各条。</p>
+<p><strong>判断</strong>：推广环节不成立。难度分级在数据上只分出两档，"至少 15 次搜索"没有实测支持，这是声称未做到；测试集的构成方式使它代表"一个教师模型的失败"，而不是任何一类题目的总体，这是设计缺陷。</p>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>声称</strong>：L3"accurately captures the intricate relationships and high reasoning demands of real-world research"（第 4.2 节）；Hard"can rigorously evaluate the limits of deep-research agents"（第 3 节）；训练出的模型"achieve state-of-the-art results on challenging deep-research benchmarks"（摘要）。</p>
+<p><strong>证据</strong>：</p>
+<ol>
+<li><strong>唯一的外部对照数字出处可疑</strong>。论文说教师在 BrowseComp-Plus 上的准确率是 24.94%，"closely matching its 23.73% accuracy on L3"（第 4.2 节）。BrowseComp-Plus 论文表 4（第 11 页）中，24.94% 是 gpt-oss-120B 低推理档配 Qwen3-Embed-8B 检索器的准确率，同一行的召回率是 22.50%，恰好等于本文最佳模型的准确率；下一行 gpt-oss-120B 中推理档配 BM25 检索器的准确率是 23.73%，恰好等于本文 L3 的教师正确率（复算：对照 BrowseComp-Plus 原文）。23.73% 可以由表 1 的 712/3,000 算出，内部自洽，这一处可能是巧合。BrowseComp-Plus 论文中没有出现 Tongyi-DeepResearch-30B-A3B（复算：检索原文）。精读页另据 BrowseComp-Plus 官方排行榜，称这个模型的成绩在 33.98% 至 68.07% 之间，排行榜是一份数据文件，本轮没有下载核实。</li>
+<li><strong>图 4 的数字大多不能由 1,774 道题算出</strong>。测试集有 1,774 道，单次评测的正确率应当能写成"答对题数除以 1,774"。图 4 的 9 个数字中，只有 12.23%（217/1,774）和 20.18%（358/1,774）能这样写出；22.50% 不行，最接近的是 399/1,774 = 22.49% 和 400/1,774 = 22.55%；其余 20.94%、12.81%、21.09%、20.31%、10.16%、13.52% 也都不行（复算：逐个检验）。可能的原因有多次运行取平均、部分给分、实际评测题数不是 1,774，或者数字有误；论文没有交代，无法判断（推断）。</li>
+<li><strong>即使数字无误，也不能说明两套题测的是同一种能力</strong>。"一个模型在两套题上分数接近"说明不了难度相当，更说明不了"代表真实研究"。何况本文的写作准则是"by deconstructing high-quality examples from BrowseComp-Plus using LLM-based analysis"得来的（第 3.4 节），两者形式相近本在意料之中（推断）。</li>
+<li><strong>"state-of-the-art"超出了实验</strong>。训练出的模型只在自己的测试集上测过，对手只有 DeepSeek-V3；没有在 BrowseComp-Plus 或任何外部评测基准上测试训练出的模型（第 4.3 节、图 4，自述加推断）。</li>
+<li><strong>任务形式与"真实研究"的距离</strong>。答案是一个实体名或"是/否"，题目是蒙面的谜题，L3 被要求写成"a single, dense narrative paragraph"（图 3）。它测的是多跳检索和解谜，不是调研（推断）。精读页统计，没有问号的 L3 教师错了 87.0%，有问号的错了 52.1%（复算（精读页，本轮未重做））；教师在 L3 上失败，有相当一部分来自题面没有说要答什么，而不是研究难度。</li>
+<li><strong>原料是流传多年的老题</strong>。精读页发现教师的思考过程中直接写出了 2WikiMultihopQA 的原题措辞（复算（精读页，本轮未重做））。</li>
+</ol>
+<p><strong>证据等级</strong>：见各条。</p>
+<p><strong>判断</strong>：外推环节不成立。"代表真实研究的推理需求"这一声称，证据只有一个出处可疑的对照数字，而且有反证迹象（无问号题的失败率），这是缺证据；把短答案谜题当作深度研究能力的代表，是设计层面的问题。</p>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>声称</strong>：Llama-3.2-3B 加近端策略优化、不经监督微调直接强化学习，得 22.50%，"clearly outperforming all other models, including the larger DeepSeek V3 baseline (20.18%)"；"model performance consistently plateaus near 20%"（第 4.3 节）。</p>
+<p><strong>证据</strong>：图 4 的读数为：Qwen2.5-3B 近端策略优化，直接强化学习 12.23%、先监督微调再强化学习 20.94%；Qwen2.5-3B 组相对策略优化（Group Relative Policy Optimization），12.81% 和 21.09%；Llama-3.2-3B 近端策略优化，22.50% 和 20.31%；Llama-3.2-3B 组相对策略优化，10.16% 和 13.52%；DeepSeek-V3 20.18%（复算：读图）。8 种配置各跑一次，没有置信区间。22.50% 与 20.18% 相差 2.32 个百分点；如果把两者看作独立样本，差值的标准误约 1.38 个百分点，相当于 1.69 个标准误（复算：二项分布近似；如果按同一测试集作配对比较，标准误会小一些，但需要逐题结果）。同时比较 8 种配置，没有做多重比较校正。Llama-3.2-3B 组相对策略优化的两个结果只有 10.16% 和 13.52%，与"plateaus near 20%"不符（复算：读图）。DeepSeek-V3 作为对手是怎样运行的（是否带搜索、用什么提示词），没有写（没找到）。</p>
+<p><strong>证据等级</strong>：复算加自述。</p>
+<p><strong>判断</strong>：决策环节不成立。"clearly outperforming"证据不足，这是缺证据。</p>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：原料是 2018 至 2022 年的百科类老题，答案多为稳定的事实，时效本来不是它关心的问题。但教师试做和测试的运行日期都没有写（没找到），实时网络上的检索结果会随时间变化。</li>
+<li><strong>污染</strong>：三个源数据集早已公开，题目和答案大量进入模型训练语料（推断）；教师思考过程中出现原题措辞（复算（精读页，本轮未重做））。本数据集本身明文公开，没有防泄漏标记（精读页；本轮读两份 README，没有相关说明）。训练检索语料由全部教师轨迹生成，可能含有测试题的信息（推断）。</li>
+<li><strong>可复现</strong>：数据和轨迹公开，这一点做得好，精读页的全部全量统计也因此才做得了。但测试集切分的编号和种子没有公开；评委提示词没有公开；奖励函数在论文和代码中不一致；DeepSeek 的版本不清；出题脚本的模型名留空；没有公开训练出的模型（复算：见第 1 节、第 4.1 节）。</li>
+<li><strong>利益关系</strong>：作者中有百度人员，被测和被训练的模型中没有百度的模型（自述：图 4、第 4.3 节）。教师模型来自通义团队，与作者没有隶属关系（推断）。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明：DeepResearch-9K 不评报告，任务是短答案。第一阶段第五节已经推出，短答案不足以观察"深"，最多只能到"多而不连"一级。按共同规则第 4 条，"不评报告"不是它声称了而没做到的事，它本来就是多跳问答。它自己声称而没有做到的，是"L3 代表真实研究的推理需求"和"答案可核验"，已在第 4 节审视。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弄清问题背后的真实需要，审视前提和概念边界，切题</td>
+<td>不评</td>
+<td>题目是合成的谜题，没有提问者。精读页统计 69.3% 的 L3 通篇没有问号，没有说要答什么（复算（精读页，本轮未重做））</td>
+</tr>
+<tr>
+<td>材料截至规定的时间点，并且足够新</td>
+<td>不评</td>
+<td>—</td>
+</tr>
+<tr>
+<td>查找系统而全面，查找过程交代得清楚</td>
+<td>不评</td>
+<td>论文用搜索次数衡量难度："Search Count ... reflects the agent's information-seeking ability and planning effectiveness"（第 4.1.3 节），把次数当成能力的反映，但没有检验次数与查找质量的关系</td>
+</tr>
+<tr>
+<td>甄别来源质量，处理互相矛盾的信息</td>
+<td>不评</td>
+<td>—</td>
+</tr>
+<tr>
+<td>分析：历史和全部现状、性质和内在联系、推理、区分事实和判断、考虑其他解释、不迎合</td>
+<td>不评</td>
+<td>多跳链条要求一步推出下一步（第 3.2 节），但评分只看最终答案</td>
+</tr>
+<tr>
+<td>每个结论都能追到依据，引用准确</td>
+<td>不评</td>
+<td>—</td>
+</tr>
+<tr>
+<td>结论准确、具体、清楚，敢于下判断，说明把握</td>
+<td>只评"准确"的一部分</td>
+<td>最终实体是否与标准答案一致，由 DeepSeek-V3 判定（第 4.1.3 节）；但标准答案本身未经核对。"说明把握""敢于下判断"不评</td>
+</tr>
+<tr>
+<td>深：本质、全体、内部联系</td>
+<td>不评</td>
+<td>第一阶段第 4.3 节所说的"线索上的深"（由此及彼、一环扣一环）是它的设计意图，但只写在提示词中（脚本第 87 至 91 行），没有实测</td>
+</tr>
+<tr>
+<td>写作是否混入核心</td>
+<td>不涉及</td>
+<td>短答案</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>不加</td>
+<td>报告单一正确率，按难度分别给出（表 1）</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>无</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>标准答案没有任何核对；测试集全部是教师做错的题，连模型一致性检查都没有</td>
+<td>脚本第 64 至 78、135 至 146 行；第 3 节、第 4.1.1 节</td>
+<td>复算（读公开代码）加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>出题脚本的两级兜底不经过质检和去重，最后一级题目为"Search for specific details about …"，仍按原难度标注</td>
+<td>脚本第 131、215 至 225 行</td>
+<td>复算（读公开代码）；影响多大不确定</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>L3 大量没有问号，Hard 中约一半是这种题</td>
+<td>精读页全量统计</td>
+<td>复算（精读页，本轮未重做）</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>难度分级只分出两档；"至少 15 次搜索"只是提示词中的要求</td>
+<td>表 1；脚本第 83、124 行；第 3.2 节</td>
+<td>复算</td>
+<td>测对了东西</td>
+<td>声称未做到</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>"与 BrowseComp-Plus 一样难"所依据的 24.94% 出处可疑，三个关键数字都出现在 BrowseComp-Plus 表 4 相邻两行中</td>
+<td>第 4.2 节；BrowseComp-Plus 表 4</td>
+<td>复算（对照原文）</td>
+<td>测对了东西</td>
+<td>缺证据，可能有误</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>图 4 的 9 个数字中 7 个不能写成"答对题数除以 1,774"，评测方式没有交代</td>
+<td>图 4；第 4.1.1 节</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>缺说明</td>
+</tr>
+<tr>
+<td>D7</td>
+<td>论文说训练奖励由 DeepSeek-V3 给出，公开代码用的是精确匹配</td>
+<td>第 4.1.2 节；<code>main_ppo.py</code> 第 25 至 28 行；<code>qa_em.py</code></td>
+<td>复算（读公开代码）</td>
+<td>经得起复核</td>
+<td>声称与实现不符</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>评委提示词没有公开，评委准确率没有人工核对，版本不清</td>
+<td>第 3 节、第 4.1.3 节；参考文献 [35]、[36]；仓库文件列表</td>
+<td>复算加推断</td>
+<td>测得稳；经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D9</td>
+<td>同一个模型身兼出题、写语料、奖励、评委、对手</td>
+<td>第 3.1、4.1.2、4.1.3、4.3 节</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D10</td>
+<td>测试集切分不可复现；训练脚本把测试集设为验证集</td>
+<td>Hugging Face README；<code>train_ppo.sh</code></td>
+<td>复算（读公开代码）加推断</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D11</td>
+<td>"clearly outperforming""state-of-the-art"证据不足；只在自建测试集上测</td>
+<td>图 4；摘要；第 4.3 节</td>
+<td>复算</td>
+<td>测得稳</td>
+<td>结论超出证据</td>
+</tr>
+<tr>
+<td>D12</td>
+<td>原料是流传多年的老题，污染风险高</td>
+<td>第 3.1 节；精读页</td>
+<td>自述加复算（精读页，本轮未重做）</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D13</td>
+<td>训练检索语料可能包含测试题的信息；测试时的检索环境没有写清</td>
+<td>第 4.1.2、4.3 节</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>能否复算</th>
+<th>本轮结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>教师正确率 72.47%、71.33%、23.73%、55.84%，及对应题数</td>
+<td>表 1</td>
+<td>能，算术</td>
+<td>已复算，一致</td>
+</tr>
+<tr>
+<td>训练集 7,226、测试集 1,774</td>
+<td>第 4.1.1 节</td>
+<td>能，算术</td>
+<td>已复算，一致</td>
+</tr>
+<tr>
+<td>图 4 各数字能否写成"答对题数除以 1,774"</td>
+<td>图 4</td>
+<td>能，算术</td>
+<td>已复算，9 个中只有 2 个能</td>
+</tr>
+<tr>
+<td>平均搜索次数 4.30、10.74、20.23</td>
+<td>图 2</td>
+<td>能，数据含完整轨迹</td>
+<td>本轮未做；精读页数出 5.31、10.74、19.28，口径不同</td>
+</tr>
+<tr>
+<td>L3 无问号比例、Hard 中占比、L2 描述性答案比例、跨难度共享答案、重复题</td>
+<td>—</td>
+<td>能，数据公开</td>
+<td>精读页已做，本轮未重做</td>
+</tr>
+<tr>
+<td>兜底路径产生的题目数量</td>
+<td>—</td>
+<td>部分能：可在数据中检索"Search for specific details about"开头的题；简化提示产生的题无法从文本上识别</td>
+<td>本轮未做</td>
+</tr>
+<tr>
+<td>教师在 BrowseComp-Plus 上的 24.94%</td>
+<td>第 4.2 节</td>
+<td>不能，论文没有给检索器、设置和运行记录</td>
+<td>只能对照 BrowseComp-Plus 公开结果</td>
+</tr>
+<tr>
+<td>图 4 各配置的正确率</td>
+<td>图 4</td>
+<td>不能，缺测试集编号、评委提示词和训练出的模型</td>
+<td>—</td>
+</tr>
+<tr>
+<td>标准答案的正确率</td>
+<td>—</td>
+<td>能，数据足够，需要人工核对</td>
+<td>本轮未做；可作为下一步：从测试集中随机抽 100 道人工核对</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>我们的场景是：5 个智能体，比赛评审，第一轮只对报告排名。</p>
+<ol>
+<li><strong>不能作为我们的评测工具</strong>。任务是短答案谜题，不是报告；标准答案未经核对。</li>
+<li><strong>"强模型做错的题"不等于难题</strong>。没有人工核对时，按"强模型做错"选出来的，很可能是题目或答案本身有毛病的那些。对我们的含义：如果 5 份报告在某一个评分要点上全都"错了"，或者一致地给出了与标准不同的说法，先回头核对标准本身，再扣智能体的分。</li>
+<li><strong>题面必须写清楚要交什么</strong>。69.3% 的 L3 没有说要答什么，教师在这些题上大面积失分。这与第一阶段第 4.4 节"题目写明提问者是谁、要拿结果做什么"的候选规则一致，是一个反面的证据。</li>
+<li><strong>出题、评委、选手不要是同一个模型</strong>；评委要有人工核对过的准确率。</li>
+<li><strong>规则文本与评分代码必须一致</strong>。DeepResearch-9K 的论文与代码在奖励上互相矛盾。比赛的评分脚本公开后，应当逐项对照规则文本；否则参赛者质疑时无从复核，直接损害"经得起复核"这一层。</li>
+<li><strong>引用外部数字要附可查的原始记录</strong>。第 4.3 节第 1 条的 24.94% 就是反例。</li>
+<li><strong>可以借用的部分</strong>：它的轨迹格式（思考、工具调用、返回结果交替记录）便于统计查找过程。第一轮不进排名，但第一阶段第 5.3 节提到，研究过程记录能否用来核实"查找与来源说明"是否属实，留给第三阶段；这种格式可供参考。</li>
+</ol>
+<hr />
+<h2 id="_1">精读页勘误</h2>
+<ol>
+<li><strong>代码许可写得不准确</strong>。精读页基本信息写"GitHub（训练框架 Apache-2.0）"。仓库顶层没有许可证（GitHub 接口返回空），Apache-2.0 许可证只在 <code>DeepResearch-R1/</code> 子目录下，继承自 verl 框架。</li>
+<li><strong>训练奖励应注明"论文如此说，代码不同"</strong>。精读页第 4 节写"训练时的奖励：也是 DeepSeek-V3 给的"，第 7.5 节把"训练时给奖励"列为 DeepSeek-V3 的六个角色之一。这是论文第 4.1.2 节的说法；公开代码对 <code>deep_research_9k</code> 数据用的是精确匹配奖励（<code>main_ppo.py</code> 第 25 至 28 行）。</li>
+<li><strong>出题脚本的对照漏了兜底路径</strong>。精读页第 2 节的"论文怎么说 / 脚本里实际是什么"对照表没有提到两级兜底：重试失败后改用简化提示，最后一级题目直接写成"Search for specific details about …"、答案取原数据集答案，两级都不经过质检和去重。</li>
+<li><strong>BrowseComp-Plus 表 4 的核对可以补全</strong>。精读页第 7.4 节只提到 24.94% 和 22.50%；同表下一行（gpt-oss-120B 中推理档配 BM25）的准确率是 23.73%，恰为本文 L3 的教师正确率，也应记录。由于 23.73% 可由表 1 的 712/3,000 算出，这一处可能纯属巧合。另可补充：图 4 中 22.50% 等 7 个数字不能写成"答对题数除以 1,774"。</li>
+<li><strong>"由 DeepSeek-V3 改写成 L1/L2/L3"是推断，不是原文</strong>。精读页第 0 节如此表述。论文只明确说抽实体用 DeepSeek-V3（第 3.1 节）；出题模型是由脚本中同一个模型变量推断的。而且论文对"DeepSeek-V3"引用了两篇不同的文献：[35] 是 DeepSeek-V3 技术报告，[36] 是 DeepSeek-V3.2 论文。</li>
+<li><strong>"benchmark 只是数据集"的看法需要修正</strong>。精读页第 3 节写"标题叫 'Benchmark Dataset'，但实际上主要是训练数据"。就设计重心而言这成立；但论文第 1、3、4.2、4.3、6 节有明确的评测声称（见本记录第 2 节），审视时应按评测基准对待这些声称，而不是因为它"主要是训练数据"就不审视。</li>
+<li><strong>篇幅与类别</strong>。精读页写"SIGIR 2026 短文（6 页）"。"6 页"与 arXiv 备注一致，PDF 含参考文献共 8 页；"短文"在论文中没有找到依据。这一条不影响结论。</li>
+<li>其余核对一致：版本日期；表 1 的数字；训练和测试划分；Hugging Face 数据集的建立和修改日期、没有许可证、独立的 Hard 数据集链接无效；出题脚本中质检函数的内容；"200 美元只是搜索费、另有约 8,064 个 A100 图形处理器小时"（第 3 节）；评委提示词在仓库中找不到。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2603.01152_DeepResearch-9K.md</code></footer>
+</div>
+</body>
+</html>

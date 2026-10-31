@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：DR-Arena（arXiv 2601.10504）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2601.10504_DR-Arena.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#dr-arenaarxiv-260110504">审视记录：DR-Arena（arXiv 2601.10504）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="dr-arenaarxiv-260110504">审视记录：DR-Arena（arXiv 2601.10504）</h1>
+<p>2026-10-29 写。审视框架见 <code>../stage2-framework.md</code>。</p>
+<p>证据等级的写法：</p>
+<ul>
+<li>"复算（本次）"：本记录写作时亲自算过或查过。包括对论文表格数字的算术核对，以及用 GitHub 接口查看仓库的元数据和文件清单。本次没有下载对局数据。</li>
+<li>"复算（精读页 2026-10-28）"：精读页那次依据项目网站公开的对局记录（<code>web/public/data/battle-index.json</code> 和逐场回放）算过，本次没有重做。</li>
+<li>"自述"：只有论文自己的说法。</li>
+<li>"推断"：我们根据原文推出来的，原文没有直接说。</li>
+</ul>
+<hr />
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>全称</strong>：DR-Arena: an Automated Evaluation Framework for Deep Research Agents。</li>
+<li><strong>日期</strong>：arXiv 第 1 版 2026-01-15，第 3 版 2026-07-12。本记录依据第 3 版（本地 PDF 页眉；arXiv 接口本次核对一致）。</li>
+<li><strong>作者及机构</strong>：4 人，来自新加坡国立大学、南洋理工大学、新加坡管理大学、新加坡科技设计大学，通讯作者 Wenxuan Zhang。</li>
+<li><strong>发表情况</strong>：arXiv 第 3 版的备注写明"Accepted to ACL 2026 as an oral presentation and selected as an SAC Highlight"（本次核对 arXiv 接口）。</li>
+<li><strong>数据和代码</strong>：论文首页给出 <code>https://github.com/iNLP-Lab/DR-Arena</code>。本次核对：</li>
+<li>仓库存在（网页返回 200），主分支最后一次提交 2026-07-08；</li>
+<li><strong>没有声明许可证</strong>（GitHub 接口的许可证字段为空）；</li>
+<li>项目主页 <code>https://inlp-lab.github.io/DR-Arena/</code> 存在；</li>
+<li>仓库文件清单中有对局记录 <code>web/public/data/battle-index.json</code>、树的元信息 <code>web/public/data/metadata.json</code> 和逐场回放；</li>
+<li>仓库中<strong>没有</strong> <code>web_tree</code> 目录，即 README 所说的信息树数据和爬树代码不在仓库里（精读页 2026-10-28 指出，本次按文件清单确认）。</li>
+<li><strong>它是什么</strong>：两两对战的擂台，没有固定题库和固定标准答案。一个大语言模型"考官"（Gemini-3-Pro）从网页爬出"信息树"，照树出题并写出评分清单，判两个被测系统谁答得好；分不出高下就追问，直到累计分差达到阈值；最后用 Elo 式积分给 6 个系统排名。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2601.10504_DR-Arena.html</code>，2026-10-28）加原文核对。原文核对读的是抽取的纯文本；表 3、表 4、表 7、表 8 的数字、附录 A 的提示词、附录 D 的完整对局逐条核对过。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li><strong>可替代人工评判</strong>：摘要写道："DR-Arena achieves a Spearman correlation of 0.94 with the LMSYS Search Arena leaderboard. This represents state-of-the-art alignment with human preferences without any manual efforts, validating DR-Arena as a reliable alternative for costly human adjudication."</li>
+<li><strong>与现实同步、没有污染</strong>：摘要说"constructs real-time Information Trees from fresh web trends to ensure the evaluation rubric is synchronized with the live world state"；第 2 节说它"synchronizing tasks and ground truth with the current world state and eliminating both temporal misalignment and parametric memorization"。</li>
+<li><strong>评委不依赖某一个模型的偏好</strong>：交叉考官验证"suggesting that the evaluation signal is not primarily driven by the stylistic bias of a particular judge model"（第 4.3 节）。</li>
+<li><strong>人工审核证明考官可靠</strong>："These findings validate the automated Examiner as a trustworthy, scalable proxy for human adjudication"（第 4.4 节）。</li>
+<li><strong>自适应追问省算力</strong>："DR-Arena effectively functions as an efficient sorting algorithm"（第 5.1 节）。</li>
+<li><strong>能看出能力结构</strong>：把失败分为"深度"（找错对象）和"广度"（漏了细节），"disentangles reasoning deficits from retrieval gaps"（第 3.3 节）。</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong>：没有固定题库。考官从 Google Trends 的分类中抽一个话题，搜索后选一个链接丰富的网页做树根，沿链接爬出信息树（第 3.1 节）。出题时把目标对象的名字藏起来，让被测者顺着关系链推出（"深度"），再要求汇总同层几个对象的属性（"广度"）（第 3.2 节）。锦标赛用了 30 棵事先建好的树（第 4.1 节："30 pre-constructed Information Trees"），其中 8 棵树根是维基百科（附录 F 表 9）。抽样方式：话题随机抽取，树根由考官挑选，属于目标抽样加大语言模型自动生成。</li>
+<li><strong>判分标准</strong>：结论清单。每题同时生成两份清单：深度清单（找对对象没有、推理链对不对）和广度清单（细节齐不齐）（第 3.2 节，附录 A.1）。</li>
+<li><strong>判卷方式</strong>：大语言模型评委，即考官本身（Gemini-3-Pro）。评委不联网，对照清单判断（附录 A.2 的提示词里没有任何工具；"去掉清单"的消融里才提到"internal knowledge and optional search"，第 4.3 节）。判决分五档：甲好很多（+2）、甲好一点（+1）、平手（分"两人都好"和"两人都差"）、乙好一点、乙好很多。输家另贴失败类型标签：深度、广度、两者、都没有（表 1）。积分用 Elo 式评分，按 Bradley–Terry 模型更新（第 4.1 节）。</li>
+<li><strong>运行环境</strong>：被测系统在实时网络上作答；信息树是开赛前建好的，比赛中可以临时再爬以加深或加宽（算法 1）。人类对照榜是 LMSYS Search Arena 截至 2025-12-03 的数据（第 4.1 节）。精读页依据仓库 <code>metadata.json</code> 查得，这批树在 2025-11-21 到 11-23 爬取（复算（精读页 2026-10-28））。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p>这是 DR-Arena 最需要审视的一环：每一轮的胜负由一个大语言模型判出，名次完全由这些胜负累积而来。</p>
+<p><strong>它声称了什么</strong>：考官的判决有清单兜底，跨模型一致，并与人工判断一致。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li><strong>交叉考官</strong>（第 4.3 节，表 7）：抽 50 场对局，用 GPT-5.2-Chat 和 Claude-Opus-4.6 重判，与原判一致率 93.02% 和 88.70%，科恩卡帕系数（Cohen's κ）0.901 和 0.839。证据等级：自述。
+   - 这两个百分比都不可能以 50 为分母；与之相容的最小分母分别是 43 和 115。所以比对单位不是"场"，两次比对的有效样本数也不相同，论文没有说明。复算（本次，算术）；单位为"轮"是推断（50 场按平均 2.3 轮计约 115 轮）。
+   - 重判用的仍是 Gemini 出的题和清单、同一份提示词。它检验的只是"判"这一步在不同模型之间是否一致，不是"判得对不对"。证据等级：推断。</li>
+<li><strong>人工审核</strong>（第 4.4 节，表 8，附录 H）：2 名标注员审核 30 场、64 轮。题目合格率 90.6%，清单与来源网页相符 89.1%，判决与人工一致 κ = 0.91，两人之间 κ = 0.88，状态转移正确 96.9%，停止时机合适 92.2%。证据等级：自述。
+   - 标注员是两名计算机系本科生（附录 H："current bachelor's students in Computer Science"），表 5 和表 8 称他们为"expert annotators"。
+   - 他们拿到的材料包括"the Examiner's automated logs"（附录 H 实验二），也就是先看到考官的判定，再回答"Do the annotators agree with the Examiner's Win/Loss/Tie decision?"。这种条件下的一致率会被抬高（推断）。
+   - 四个百分比都与 64 为分母相符（58/64、57/64、62/64、59/64）。正文说"92.2% of the matches are deemed to have stopped at an efficient round count"，可 30 场无法得出 92.2%，单位实际是轮。复算（本次，算术）。</li>
+<li><strong>清单本身有错</strong>：约 11% 的清单条目与来源网页不符（表 8 的 89.1%）。附录 G.2 和 G.3 各给了一例：清单对了，评委凭错误记忆推翻，判错了一场；清单错了，评委凭记忆纠正。局限性一节承认"parametric knowledge conflicts remain a risk"。证据等级：自述。</li>
+<li><strong>评委提示词要求模仿人类偏好，并奖励格式和引用数量</strong>（附录 A.2）：
+   - 第一句是"Super-User Evaluator (Simulating Human Preference)"，并要求"heavily weigh comprehensiveness, formatting, and helpfulness"；
+   - "Citation Density: A higher citation count is generally preferred"，两份回答的引用条数直接标在回答上方给评委看；
+   - "Markdown Mastery: REWARD the use of Bold headers, Bullet points, and Tables"；
+   - 判决规则里有"Style Winner"：两人事实都对，一方格式明显更好，判"好一点"，计 1 分。
+   - 论文自己的统计：输家失败类型中"都没有"（即只因格式、引用等软标准落败）占 18.1%（附录 I，图 7）。精读页按公开记录算得 21.1%（复算（精读页 2026-10-28））。
+   - 附录 D 的完整对局第 1 轮，两人找出的对象和数据完全相同，评委判 Perplexity 好一点，理由是"By using bullet points... Agent A made the answer immediately scannable"。这一分计入了最后胜负。证据等级：自述。</li>
+<li><strong>位置偏差没有处理</strong>：论文没有交换甲乙位置重判。精读页依据公开记录查得，每一对选手在全部对局中甲乙位置固定（复算（精读页 2026-10-28））。</li>
+<li><strong>失败类型标签不稳</strong>：附录 D 第 4 轮，Perplexity 把主要竞争对手认成 NEC TurboExpress，按表 1 的定义（"Failed to identify the correct core entity"）应属深度失败，日志却记为"Loser Failure: WIDE"；第 5 轮同样的错误，评委的理由改称"a critical logic failure"。标签决定下一题加深还是加宽（表 2）。证据等级：自述；与表 1 不一致为推断。</li>
+<li><strong>长度</strong>：每题有字数上限，提示词要求"Do not penalize slightly going over if the quality is high"。精读页依据回放抽样，分出胜负的回合里赢家回答更长的只占 44.5%（复算（精读页 2026-10-28））。</li>
+</ol>
+<p><strong>我们的判断</strong>：不够，既有设计缺陷，也有缺证据。</p>
+<ul>
+<li>设计缺陷：评委被明确要求模仿众包用户的口味，奖励格式和引用条数，又不交换位置；评委不联网，清单之外的事实只能凭记忆。</li>
+<li>缺证据：模型之间一致，不等于判得对，因为它们看的是同一份清单和同一份提示词；人工审核不盲，规模只有 64 轮、两名本科生。没有一项证据能说明"在没有清单错误、没有格式干扰的情况下，考官选出的赢家确实是研究做得更好的一方"。</li>
+</ul>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>它声称了什么</strong>：话题来自 Google Trends，覆盖面广；不依赖固定题库，所以没有"任务通用性有限"的问题（第 1 节）。</p>
+<p><strong>拿出了什么证据</strong>：30 棵树分布在 27 个话题分类、21 个来源域名（附录 F 表 9、表 10）。复算（本次）：表 9 计数合计 30，表 10 合计 30。</p>
+<p><strong>证据等级</strong>：自述。</p>
+<p><strong>我们的判断</strong>：不够，主要是设计上的局限，也缺证据。</p>
+<ul>
+<li>题型单一：都是"藏起名字的实体识别加属性汇总"。附录 B 的例题包括体操俱乐部的城市列表、苹果新加坡零售店的批量退货规定、克利夫兰诊所远程问诊服务的州别和价格。这类题更像冷知识组合题，与需要分析和判断的研究题不是同一类任务（推断）。</li>
+<li>题目数量：论文说每一对选手在同一批 30 棵树上比（第 4.1 节）；精读页依据公开记录查得每对实际只在 25 到 28 棵树上比，共 297 场、683 轮，而论文附录 I 说"789 unique interaction rounds"（复算（精读页 2026-10-28））。差别原因不明。</li>
+<li>没有报告任何名次的不确定性，也没有换一批树重做。</li>
+</ul>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>它声称了什么</strong>：赢得擂台意味着深度研究能力强；与人类排行榜高度一致说明它测的是人看重的东西。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li>与 LMSYS Search Arena 的 Spearman 相关 0.94，Pearson 相关 0.74（表 3）。</li>
+<li>与其他 6 个评测基准对比（表 4）：BrowseComp 0.76，DeepResearch Bench 0.40，LiveNewsBench 0.20，LiveSearchBench −0.11，LiveResearchBench −0.63，FutureSearch 的 Deep Research Bench −0.90。</li>
+<li>消融：去掉清单，Spearman 降到 0.83；只打第 1 轮 0.77，打到第 2 轮已是 0.94（表 6）。</li>
+</ol>
+<p><strong>证据等级</strong>：表格自述；以下核对为复算（本次）。</p>
+<p><strong>我们的判断</strong>：不够，既有设计缺陷，也有缺证据。</p>
+<ul>
+<li><strong>金标准测的不是研究质量。</strong> LMSYS Search Arena 是普通用户在两个带搜索的聊天回答之间投票得出的偏好榜（第 4.1 节："large-scale blind human comparisons"）。评委又被要求"Simulating Human Preference"。拿模仿众包口味的评委去对众包口味，一致只能说明口味学到了，不能说明研究质量判对了（推断）。</li>
+<li><strong>被测对象不是深度研究产品。</strong> 6 个系统都取自 Search Arena 的 13 个模型（第 4.1 节），如 GPT-5.1-Search、o3-Search，不是 OpenAI Deep Research 这类产品；回答有字数上限（附录 A.1、A.2）。精读页依据回放抽样，各家回答中位长度只有 200 到 320 个英文单词（复算（精读页 2026-10-28））。论文却称它们为"advanced DR agents"，并把框架定位为"long-horizon Deep Research"的评测（第 2 节）。这是论文的声称与它的检验对象不符，不是我们拿自己的定义去要求它。</li>
+<li><strong>"深度"的含义不同。</strong> DR-Arena 的"深度"沿用 Lan 等人的定义，"depth refers to the search steps required"（第 3.2 节），即推理链要跳几步；"广度"是要汇总几个对象。这是"查找"层面的深和广，不是认识层面的深。</li>
+<li><strong>"实时"打了折扣。</strong> 摘要说信息树是"real-time"，第 4.1 节自己写明锦标赛用的是"30 pre-constructed Information Trees"，局限性一节也说"we share the same fixed Information Trees"。</li>
+<li><strong>相关系数说明力有限。</strong> 6 个点时，只要一对相邻名次互换，Spearman 就是 0.943（复算（本次））。Pearson 0.737 在 6 个点上的双侧 p 值约 0.095，不显著（复算（本次））。人类榜第 2 到第 4 名分别是 1142、1139、1138，第 2 到第 6 名只差 17 分（表 3），论文没有给出人类榜的置信区间。</li>
+<li><strong>表 4 的对比不可比，而且有些数取不到。</strong> 没有并列名次时，4 个点的 Spearman 只能取 1、0.8、0.6……，5 个点只能取 0.1 的整数倍，6 个点只能取 1 − 2k/35。表中 N = 4 的 −0.11、−0.63，N = 5 的 0.76，N = 6 的 −0.90 都取不到，说明计算时存在并列或用了别的口径，论文没有说明。复算（本次）。各基准所用的模型集合和点数也不同，比相关系数高低得不出"state-of-the-art"。</li>
+</ul>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>它声称了什么</strong>：DR-Arena 的排名"accurately recovering the hierarchy of the LMSYS Search Arena"（第 1 节）。</p>
+<p><strong>拿出了什么证据</strong>：表 3 的 Elo 积分和名次；瑞士制赛程（第 4.1 节）。</p>
+<p><strong>证据等级</strong>：自述；以下为复算。</p>
+<p><strong>我们的判断</strong>：不够，既有设计缺陷，也有缺证据。</p>
+<ul>
+<li>瑞士制没有全对全。图 5 列出的对局恰好 11 对（复算（本次），依据图 5 的标签），15 对中有 4 对没有交手：GPT-5.1 对 Perplexity、Gemini 对 Claude、o3 对 Perplexity、Grok 对 Claude。第 5.1 节"r = −0.61, p = 0.045"与 11 个点相符（本次按 11 点算得 p ≈ 0.046）。</li>
+<li>论文没有给出积分的任何区间，也没有说明积分的具体算法（"Elo rating system updated via the Bradley-Terry model"，第 4.1 节）。精读页用公开的 297 场胜负重算：排名顺序与论文一致，积分差 1 到 21 分；重抽样 1,000 次，后 3 名的 95% 区间大幅重叠；只有 32% 的重抽样能复现 ρ ≥ 0.94（复算（精读页 2026-10-28））。</li>
+<li>论文用"人类被 Claude 的文笔打动，考官严格惩罚编造数字"解释 Claude 与 Perplexity 的名次对调（第 4.2 节，附录 G.1）。精读页依据公开记录查得，两人正面交手 28 场，Claude 14 胜、Perplexity 13 胜、平 1 场；积分差主要来自瑞士制安排的其他对手（复算（精读页 2026-10-28））。附录 G.1 的依据只是一场对局。</li>
+<li>精读页查得，作者的线上排行榜在 2026 年 4 月扩到 15 个模型后，原 6 个系统的顺序与人类榜的 Spearman 降到 0.83（复算（精读页 2026-10-28））。线上榜的考官和设置可能不同，所以不是严格复现，但说明名次不稳。</li>
+</ul>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：信息树在开赛前一次性建好（第 4.1 节自述）；精读页查得爬取时间是 2025-11-21 到 11-23，回放中有回答注明"accessed 14 Dec 2025"，2026 年 2 到 4 月的线上对局仍用同一批树（复算（精读页 2026-10-28））。清单记录的是爬取那一刻网页上的数字，价格、退货规定这类信息几个月就会变，评委又不联网，无法判断谁的信息更新（推断）。</li>
+<li><strong>污染</strong>：论文声称"eliminating ... parametric memorization"（第 2 节）。但树根多为维基百科等常见网页，被测模型可能直接凭记忆作答；论文没有检查被测者是否真的搜索。精读页查得，仓库代码通过 OpenRouter 的普通对话接口调用被测模型，配置中看不到开启联网搜索的设置，抽样回答中带真实网址的比例在 7% 到 88% 之间（复算（精读页 2026-10-28））；精读页自己也说明这不能证明模型没有联网。另外，树的展示版已放在公开网站上，日后会进入训练语料（推断）。</li>
+<li><strong>可复现</strong>：代码和对局记录公开，这在已读的几篇中少见。但爬树代码和信息树数据不在仓库里（本次按文件清单确认）；仓库没有许可证（本次核对）；精读页查得仓库当前配置的考官已从 Gemini-3-Pro 改为 GPT-5.2（复算（精读页 2026-10-28））。论文局限性一节承认"exact reproduction may be affected by temporal changes in indexing, ranking, geoblocking, and webpage availability"。</li>
+<li><strong>利益关系</strong>：作者来自四所大学，被测的全是商业模型，没有自家产品。考官 Gemini-3-Pro 与被测的 Gemini-2.5-Pro-Grounding 同属一个家族，后者排第 2，与人类榜一致，看不出偏袒；论文没有单独检验这一点。证据等级：自述加推断。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明：DR-Arena 的任务是短回答的实体识别和属性汇总，它本来就不打算评长篇调研报告的分析质量。下表只记录"评了什么、怎么评"。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弄清真实需要，审视前提和概念边界，回答的正是所问</td>
+<td>部分</td>
+<td>评委提示词有"Does it actually solve the user's underlying intent?"（附录 A.2）。题目是考官设计的谜题，不存在"审视前提"的空间。</td>
+</tr>
+<tr>
+<td>材料截至规定时间点，并且足够新</td>
+<td>部分</td>
+<td>以信息树爬取时的网页为准。附录 G.1 中 Claude 用了上一年的数据被判输。没有规定截止时间，评委也无法判断谁更新。</td>
+</tr>
+<tr>
+<td>查找系统全面，查找过程交代清楚</td>
+<td>部分</td>
+<td>"全面"用广度清单衡量："did the agent gather <em>all</em> the requested scattered details?"（附录 A.1）。这是对预定要点的覆盖。"过程交代"不评。</td>
+</tr>
+<tr>
+<td>甄别来源质量，处理矛盾信息</td>
+<td>未评</td>
+<td>只看引用条数："A higher citation count is generally preferred"（附录 A.2）。</td>
+</tr>
+<tr>
+<td>分析：历史和全部现状、性质和内在联系、推理清楚、区分事实和判断、考虑其他解释、不迎合</td>
+<td>未评</td>
+<td>深度清单只检查"找对对象没有"："The Correct Entity Names + The Logic Validation"（附录 A.1）。</td>
+</tr>
+<tr>
+<td>每个结论都能追到依据，引用准确</td>
+<td>未评准确性</td>
+<td>只数引用条数，不核对引用内容。</td>
+</tr>
+<tr>
+<td>结论准确、具体、清楚、无歧义，敢于下判断，如实说明把握</td>
+<td>部分</td>
+<td>"准确"：对象和细节是否与清单一致。"清楚"：提示词的"Scannability &amp; Directness"。"说明把握"未见。</td>
+</tr>
+<tr>
+<td>深：本质、全体、内部联系</td>
+<td>未评</td>
+<td>它的"深度"是"the search steps required"（第 3.2 节），"广度"是"the number of information units to be searched"。这是查找步数和对象数量，与我们所说的认识推进到本质、全体和内部联系不是一回事。</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>混入</td>
+<td>格式是判决的明确依据之一（"Dimension 3: Presentation &amp; Structure"，附录 A.2）。只赢在格式的"Style Winner"计 1 分；论文统计输家中"都没有"失败的占 18.1%（附录 I）。</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>不加总分，按胜负累积</td>
+<td>每轮 +1 或 +2，累积分差达到阈值即结束一场；名次由 Elo 式积分给出。</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>有，限于单轮</td>
+<td>"Do not give MUCH_BETTER if the winner has a factual error in a sub-point"；找错核心对象即判对方"好很多"或"两人都差"（附录 A.2）。这近似一条"关键项不合格即降档"的规则。</td>
+</tr>
+<tr>
+<td>交付形式（主要结论、论证、出处、把握程度、查找与来源说明）</td>
+<td>不要求</td>
+<td>有字数上限的短回答；提示词提倡"BLUF - Bottom Line Up Front"，与"主要结论放在前面"相通。</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>评委被要求模仿人类偏好，并奖励格式和引用条数；再拿人类偏好榜验证。</td>
+<td>附录 A.2 "Simulating Human Preference""REWARD the use of Bold headers""A higher citation count is generally preferred"；表 3</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>只靠格式即可得分，约五分之一的落败与清单无关。</td>
+<td>附录 A.2 "Style Winner"；附录 I 图 7 的 18.1%；附录 D 第 1 轮</td>
+<td>自述；21.1% 为复算（精读页 2026-10-28）</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>A3</td>
+<td>人工审核不盲，标注员是两名本科生，先看了考官的判定。</td>
+<td>附录 H "the Examiner's automated logs"；表 8</td>
+<td>自述</td>
+<td>测对了东西；经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>A4</td>
+<td>交叉考官只检验"判"的一致性，题和清单仍是 Gemini 出的；一致率的分母不是 50，且两次不同。</td>
+<td>第 4.3 节；表 7</td>
+<td>自述；分母为复算（本次，算术）</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>A5</td>
+<td>约 11% 的清单条目有误，评委不联网，只能凭记忆处理。</td>
+<td>表 8 的 89.1%；附录 G.2、G.3；局限性一节</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>A6</td>
+<td>不交换甲乙位置。</td>
+<td>论文未提；公开记录中位置固定</td>
+<td>复算（精读页 2026-10-28）</td>
+<td>测得稳</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>A7</td>
+<td>失败类型标签自相矛盾，而标签决定下一题怎么出。</td>
+<td>附录 D 第 4、5 轮；表 1、表 2</td>
+<td>自述；矛盾为推断</td>
+<td>测得稳</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>A8</td>
+<td>0.94 是 6 个点上的一次相邻对调；Pearson 0.74 不显著；人类榜第 2 到第 6 名只差 17 分。</td>
+<td>表 3</td>
+<td>复算（本次）</td>
+<td>测对了东西（外推）</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>A9</td>
+<td>表 4 中四个相关系数在无并列时取不到，各基准的模型集合也不同，不能据此称"最先进"。</td>
+<td>表 4</td>
+<td>复算（本次）</td>
+<td>经得起复核</td>
+<td>缺证据（口径未交代）</td>
+</tr>
+<tr>
+<td>A10</td>
+<td>被测的是有字数上限的搜索聊天模型，不是深度研究产品。</td>
+<td>第 4.1 节；附录 A.1、A.2；回放长度</td>
+<td>自述；长度为复算（精读页 2026-10-28）</td>
+<td>测对了东西</td>
+<td>声称与检验对象不符</td>
+</tr>
+<tr>
+<td>A11</td>
+<td>瑞士制漏掉 4 对；没有任何积分区间；后 3 名在误差之内。</td>
+<td>第 4.1 节；图 5；表 3</td>
+<td>11 对为复算（本次，图 5 标签）；区间为复算（精读页 2026-10-28）</td>
+<td>测得稳（决策）</td>
+<td>设计缺陷加缺证据</td>
+</tr>
+<tr>
+<td>A12</td>
+<td>说"实时"，实际用事先建好的固定树。</td>
+<td>摘要；第 4.1 节 "30 pre-constructed Information Trees"；局限性一节</td>
+<td>自述</td>
+<td>测对了东西（时效）</td>
+<td>声称与做法不符</td>
+</tr>
+<tr>
+<td>A13</td>
+<td>正文说出现"好很多"就结束，算法和完整对局都只看累计分差。</td>
+<td>第 3.3 节；算法 1；附录 D 第 4 轮判"好很多"后继续第 5 轮</td>
+<td>自述</td>
+<td>经得起复核</td>
+<td>文字与做法不一致</td>
+</tr>
+<tr>
+<td>A14</td>
+<td>论文规模与公开记录不符：论文说每对 30 棵树、789 轮，公开记录为 297 场、683 轮。</td>
+<td>第 4.1 节；附录 I</td>
+<td>复算（精读页 2026-10-28）</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>A15</td>
+<td>爬树代码和树数据不在仓库里；没有许可证。</td>
+<td>README 所述目录不存在；GitHub 接口许可证为空</td>
+<td>复算（本次，文件清单与元数据）</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>A16</td>
+<td>附录 B 的例题违反了"不得提及来源网页标题"的出题规则。</td>
+<td>第 3.2 节 "strictly prohibited from mentioning specific filenames or website titles"；附录 B 例 2 "Marketing Eye Atlanta"、例 3 "the user guide covering macOS Tahoe and iOS 26"、例 5 "Steve Pond (RS 537)"</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计缺陷（规则未执行）</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>能否复算</th>
+<th>本轮状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spearman 0.94、Pearson 0.74</td>
+<td>表 3</td>
+<td>能，表中给出两组 Elo</td>
+<td>已核对：0.943、0.737</td>
+</tr>
+<tr>
+<td>Elo 积分与名次</td>
+<td>表 3</td>
+<td>能，对局记录公开</td>
+<td>精读页 2026-10-28 已重算，顺序一致，积分差 1 到 21 分</td>
+</tr>
+<tr>
+<td>积分区间与名次稳定性</td>
+<td>论文未报告</td>
+<td>能，对局记录公开</td>
+<td>精读页 2026-10-28 已做重抽样</td>
+</tr>
+<tr>
+<td>表 4 中其他基准的相关系数</td>
+<td>表 4</td>
+<td>需要各基准的原始排行榜</td>
+<td>未复算，只确认四个值在无并列时取不到</td>
+</tr>
+<tr>
+<td>交叉考官一致率</td>
+<td>表 7</td>
+<td>需要重新调用模型接口；分母可做算术检查</td>
+<td>只做了分母检查</td>
+</tr>
+<tr>
+<td>人工审核各项比例</td>
+<td>表 8</td>
+<td>没有原始标注；可做分母检查</td>
+<td>只做了分母检查，与 64 轮相符</td>
+</tr>
+<tr>
+<td>判决分布与失败类型分布</td>
+<td>附录 I 图 7</td>
+<td>能，对局记录公开</td>
+<td>精读页 2026-10-28 已算，与论文有出入</td>
+</tr>
+<tr>
+<td>轮数与实力差的相关</td>
+<td>第 5.1 节，图 5</td>
+<td>能</td>
+<td>本次只核对了 p 值与 11 个点相符</td>
+</tr>
+<tr>
+<td>重跑整场锦标赛</td>
+<td>—</td>
+<td>爬树代码和树数据不在仓库里，被测模型和网页已变化</td>
+<td>不能</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>场景：5 个智能体，比赛评审，第一轮只对报告排名。</p>
+<ol>
+<li><strong>两两比较适合 5 份报告。</strong> 5 份报告只有 10 对，应当全部比较，不要用瑞士制抽着比。DR-Arena 漏掉 4 对，名次就受到"谁和谁碰上"的影响。</li>
+<li><strong>每一对比两次，第二次交换顺序。</strong> 两次结论不一致记为平手。</li>
+<li><strong>评委提示词不要写"模仿某种偏好"，也不要奖励格式和引用条数。</strong> 第一阶段已把写作语言定为二级可选指标，格式应单独记一项，不进入胜负。引用要核对内容，不能数条数。</li>
+<li><strong>人工对照必须盲。</strong> 专家判定时看不到自动评委的结论，也看不到彼此的结论。DR-Arena 的人工审核恰好相反。</li>
+<li><strong>单轮的"关键项不合格即降档"可以借。</strong> "赢家有事实错误就不能判好很多"这条规则，与第一阶段留待决定的"致命缺陷"机制思路相通，可作为第四阶段的候选。</li>
+<li><strong>自适应追问不适用于第一轮。</strong> 它需要被测系统在线回答追加的问题；第一轮只评已交上来的报告，且第一阶段第 6.3 节规定第一轮不交互。</li>
+<li><strong>不要拿"与某个排名相关多少"当主要证据。</strong> 5 个点时，一对相邻对调 Spearman 就是 0.9。名次的不确定性要另外给出，例如对评委或评分条目重抽样。</li>
+</ol>
+<hr />
+<h2 id="_1">精读页勘误</h2>
+<p>对照 <code>notes/2601.10504_DR-Arena.html</code>（2026-10-28）。逐条核对了精读页中能用原文核对的说法，没有发现错误。以下只是更新：</p>
+<ol>
+<li>精读页"复核说明"写"查询时 arXiv 接口没有返回结果，未能核对版本列表"，ACL 2026 的信息来自仓库 README。本次 arXiv 接口返回第 3 版（2026-07-12），备注写明"Accepted to ACL 2026 as an oral presentation and selected as an SAC Highlight"，与精读页一致。</li>
+<li>精读页依据公开对局记录得出的数字（297 场、683 轮、位置固定、重抽样区间、Claude 对 Perplexity 14 比 13 等），本次没有重做，在本记录中标为"复算（精读页 2026-10-28）"。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2601.10504_DR-Arena.md</code></footer>
+</div>
+</body>
+</html>

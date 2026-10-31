@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "深度研究评测基准架构（第 1.2 版）",
+    "locale": "zh-CN",
+    "output": "diagrams/architecture-dr-benchmark/benchmark-architecture.html",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "external": {
+          "label": "参赛方"
+        },
+        "database": {
+          "label": "材料与存档"
+        },
+        "security": {
+          "label": "封存的材料"
+        },
+        "backend": {
+          "label": "处理步骤"
+        },
+        "frontend": {
+          "label": "公开结果"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "agents",
+      "type": "external",
+      "label": "五个参赛智能体",
+      "sublabel": "各写一份调研报告",
+      "pos": [
+        300,
+        40
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "qcard",
+      "type": "database",
+      "label": "题目卡",
+      "sublabel": "同一道题的三个版本",
+      "pos": [
+        40,
+        180
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "runner",
+      "type": "backend",
+      "label": "统一运行",
+      "sublabel": "主办方在同一天运行",
+      "pos": [
+        300,
+        180
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "reports",
+      "type": "database",
+      "label": "报告与网页存档",
+      "sublabel": "报告原件和被引网页",
+      "pos": [
+        560,
+        180
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "ratings",
+      "type": "backend",
+      "label": "环节评级",
+      "sublabel": "五个方面各评三档",
+      "pos": [
+        820,
+        40
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "verify",
+      "type": "backend",
+      "label": "断言核验",
+      "sublabel": "逐条核对主要结论",
+      "pos": [
+        820,
+        180
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "pool",
+      "type": "database",
+      "label": "要点池",
+      "sublabel": "全部要点逐条判定",
+      "pos": [
+        820,
+        320
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "depthmap",
+      "type": "security",
+      "label": "深度地图",
+      "sublabel": "出题人事先写的要点",
+      "pos": [
+        560,
+        460
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "scorer",
+      "type": "backend",
+      "label": "计分程序",
+      "sublabel": "按公开的规则排先后",
+      "pos": [
+        1080,
+        180
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "ranks",
+      "type": "frontend",
+      "label": "名次区间",
+      "sublabel": "例如第 1 至 2 名",
+      "pos": [
+        1340,
+        180
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "package",
+      "type": "frontend",
+      "label": "复核包与申诉",
+      "sublabel": "材料公开，可以申诉",
+      "pos": [
+        1340,
+        320
+      ],
+      "size": [
+        160,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "主办方运行环境",
+      "wraps": [
+        "runner",
+        "reports"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "评审：评委看不到队名",
+      "wraps": [
+        "ratings",
+        "verify",
+        "pool"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "公布",
+      "wraps": [
+        "ranks",
+        "package"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "card-to-runner",
+      "from": "qcard",
+      "to": "runner",
+      "label": "原样输入",
+      "variant": "emphasis"
+    },
+    {
+      "id": "runner-to-agents",
+      "from": "runner",
+      "to": "agents",
+      "label": "题目原文"
+    },
+    {
+      "id": "agents-to-runner",
+      "from": "agents",
+      "to": "runner",
+      "label": "报告"
+    },
+    {
+      "id": "runner-to-reports",
+      "from": "runner",
+      "to": "reports",
+      "label": "保存",
+      "variant": "emphasis"
+    },
+    {
+      "id": "reports-to-verify",
+      "from": "reports",
+      "to": "verify",
+      "label": "匿名报告",
+      "variant": "emphasis"
+    },
+    {
+      "id": "reports-to-ratings",
+      "from": "reports",
+      "to": "ratings",
+      "label": "报告全文"
+    },
+    {
+      "id": "reports-to-pool",
+      "from": "reports",
+      "to": "pool",
+      "label": "抽取要点"
+    },
+    {
+      "id": "map-to-pool",
+      "from": "depthmap",
+      "to": "pool",
+      "label": "事先定的层级和重要性",
+      "variant": "security"
+    },
+    {
+      "id": "verify-to-scorer",
+      "from": "verify",
+      "to": "scorer",
+      "label": "核验结果",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ratings-to-scorer",
+      "from": "ratings",
+      "to": "scorer",
+      "label": "评级结果"
+    },
+    {
+      "id": "pool-to-scorer",
+      "from": "pool",
+      "to": "scorer",
+      "label": "要点判定"
+    },
+    {
+      "id": "scorer-to-ranks",
+      "from": "scorer",
+      "to": "ranks",
+      "label": "排出先后",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ranks-to-package",
+      "from": "ranks",
+      "to": "package",
+      "label": "临时名次"
+    },
+    {
+      "id": "map-published",
+      "from": "depthmap",
+      "to": "package",
+      "label": "赛后公开全文",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "运行",
+      "items": [
+        "每个智能体做 2 道题，每道题 2 个版本，共 4 次",
+        "智能体在题目公布前定下来，之后不能再改",
+        "智能体中途提问，一律请它按自己的理解直接做"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "深度地图",
+      "items": [
+        "出题人在看到任何报告之前写成",
+        "地图上写了、却没有报告写到的要点，不影响名次",
+        "它只通过事先定好的层级和重要性影响分数"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "计分",
+      "items": [
+        "编造来源等严重问题的报告，排在其他报告之后",
+        "写对的深层内容得分，写错的扣分，换几种权重都领先才算分开",
+        "评委有争议的判定只能让名次并列，不能拉开"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "复核",
+      "items": [
+        "评委的全部输出和计分程序随名次公开",
+        "申诉由不参与评分的申诉专员裁决，改动后重算",
+        "赛后统计深度地图漏了什么，用来改进下一届出题"
+      ]
+    }
+  ]
+}

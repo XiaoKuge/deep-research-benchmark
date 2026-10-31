@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/site/diagrams/architecture-dr-benchmark/candidate.json",
+    "sha256": "5453b6ff45f19154f1f5e52ece08280f9c2135f0b9030a111311e4781bcb37db",
+    "bytes": 4988
+  },
+  "artifact": {
+    "path": "/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/site/diagrams/architecture-dr-benchmark/benchmark-architecture.html",
+    "sha256": "dbc0037c10b1f43aed75411be8019519654a0c92c251dc7aeb7c0611be89e3eb",
+    "bytes": 836051
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/site/diagrams/architecture-dr-benchmark/benchmark-architecture.finalize.json",
+    "summaryReceipt": "/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/site/diagrams/architecture-dr-benchmark/benchmark-architecture.finalize-summary.json",
+    "browserCheckReceipt": "/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/site/diagrams/architecture-dr-benchmark/benchmark-architecture.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 2669,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

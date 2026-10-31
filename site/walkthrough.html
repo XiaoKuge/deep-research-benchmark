@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一道题走完全程 · 深度研究评测基准</title>
+<meta name="description" content="以中国最大的淡水湖为例，跟着一道题从出题走到名次公布。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --stage-h: 0px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--stage-h) + 24px); }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .lede { max-width: 680px; margin-top: 16px; color: var(--ink-2); }
+  .notice { max-width: 680px; margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+  .notice strong { color: var(--ink); font-weight: 600; }
+
+  /* 上方固定的架构图 */
+  .stage { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); padding-block: 8px; }
+  .stage-frame { position: relative; overflow: hidden; margin: 0 auto; border-radius: 12px; border: 1px solid var(--line); }
+  .stage iframe { position: absolute; left: 0; top: 0; border: 0; width: 1440px; height: 600px; transform-origin: 0 0; background: var(--bg); }
+  .stage-bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 8px; color: var(--ink-2); }
+  .stage-bar strong { color: var(--ink); font-weight: 600; }
+  .stage-bar a { color: var(--ink-2); }
+  @media (max-width: 899px) { .stage { position: static; } }
+
+  /* 在图上点节点时弹出的节点卡，按正常字号显示在图的右侧 */
+  .stage .wrap { position: relative; }
+  .node-card { position: absolute; top: 8px; right: 32px; z-index: 2; width: min(400px, calc(100% - 64px)); max-height: calc(var(--frame-h, 360px) - 16px);
+    overflow-y: auto; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .14); }
+  .node-card[hidden] { display: none; }
+  .node-card.on-left { right: auto; left: 32px; }
+  .nc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .nc-close { border: 0; background: transparent; color: var(--ink-2); font: inherit; font-size: 20px; line-height: 20px; padding: 0 4px; cursor: pointer; border-radius: 6px; }
+  .nc-close:hover { color: var(--ink); background: var(--surface); }
+  .node-card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .node-card p { color: var(--ink); }
+  .nc-rule { margin-top: 12px; color: var(--ink-2) !important; }
+  .nc-go { margin-top: 12px; display: inline-flex; align-items: center; gap: 4px; border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer;
+    background: var(--ink); color: var(--bg); font: inherit; font-size: 14px; line-height: 20px; font-weight: 600; transition: transform 300ms var(--ease), opacity 300ms var(--ease); }
+  .nc-go:hover { opacity: .85; }
+  .nc-go:active { transform: scale(0.98); }
+  @media (max-width: 767px) { .node-card, .node-card.on-left { right: 16px; left: auto; width: calc(100% - 32px); } }
+  @media (max-width: 899px) { .node-card { position: static; width: auto; max-height: none; margin-top: 8px; box-shadow: none; } }
+
+  /* 每一站 */
+  main { padding-bottom: 96px; }
+  .station { padding-block: 48px; border-bottom: 1px solid var(--line); max-width: 760px; }
+  .station:last-of-type { border-bottom: 0; }
+  .station .num { color: var(--ink-3); margin-bottom: 8px; }
+  .station .sum { margin-top: 12px; color: var(--ink-2); }
+  .flow { margin-top: 24px; display: grid; gap: 16px; }
+  .flow h3 { color: var(--ink-3); margin-bottom: 4px; }
+  .flow p + p { margin-top: 8px; }
+  .flow ol, .flow ul { margin: 8px 0 0; padding-left: 24px; }
+  .flow li + li { margin-top: 4px; }
+  .box { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); }
+  .box .label { color: var(--ink-3); margin-bottom: 8px; }
+  .box blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); }
+  .box blockquote + .label { margin-top: 16px; }
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.c { text-align: center; white-space: nowrap; }
+  .yes { color: var(--ok); font-weight: 600; }
+  .no { color: var(--bad); font-weight: 600; }
+  .muted { color: var(--ink-3); }
+  .result { margin-top: 16px; font-weight: 600; }
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="index.html">← 回到资料站</a>
+    <h1 class="heading-3">一道题走完全程</h1>
+    <p class="body-3 lede">用出题手册里的"中国最大的淡水湖"作例子，跟着这道题从出题一直走到名次公布，一共十一站。往下读到哪一站，上面的架构图就亮到哪里；在图上点任一环节，页面也会跳到那一站。</p>
+    <p class="body-6 notice"><strong>先说清楚：</strong>五个智能体、它们的报告，以及出题、评审、申诉过程中的具体情节，都是虚构的示意，不是真实结果。题目、深度地图和其中关于湖泊的事实取自出题手册，有出处。分数严格按规则手册的计分规则算出，同目录的 <code>walkthrough_example.py</code> 可以复算。</p>
+  </div>
+</header>
+
+<div class="stage" id="stage">
+  <div class="wrap">
+    <div class="stage-frame" id="stage-frame">
+      <iframe id="diagram" title="评测基准架构图" tabindex="-1" src="diagrams/architecture-dr-benchmark/benchmark-architecture-explained.html?embedded=1#station=qcard"></iframe>
+    </div>
+    <div class="node-card body-6" id="node-card" role="dialog" aria-labelledby="nc-title" hidden>
+      <div class="nc-head"><strong class="title-3" id="nc-title"></strong><button class="nc-close" id="nc-close" type="button" aria-label="关闭">×</button></div>
+      <h4>这是什么</h4><p id="nc-what"></p>
+      <h4>做什么用</h4><p id="nc-use"></p>
+      <p class="nc-rule" id="nc-rule"></p>
+      <button class="nc-go" id="nc-go" type="button">看这一站的实例 ↓</button>
+    </div>
+    <p class="stage-bar caption-2"><span>现在在第 <strong id="cur-n">1</strong> 站：<strong id="cur-name">题目卡</strong></span><a href="diagrams/architecture-dr-benchmark/benchmark-architecture-explained.html">单独打开架构图</a></p>
+  </div>
+</div>
+
+<main id="main">
+<div class="wrap">
+
+<section class="station" id="step-qcard" data-node="qcard" data-name="题目卡">
+  <p class="num caption-1">第 1 站</p>
+  <h2 class="heading-5">题目卡</h2>
+  <p class="body-3 sum">把一个话题写成一道题，并写成三个版本。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>出题人选定的话题：中国最大的淡水湖。答案看起来只有一个词，但往深处查，书里这句话的写法会变。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3>
+      <p>出题人把题写成三个版本（见下）。然后请另一位同学只看交给智能体的版本，检查题面有没有暗示要往哪里挖：没有提季节、历史，也没有提统计口径。再找一个不参赛的模型，关掉联网答一遍，它答"鄱阳湖，面积 3,960 平方公里"，只到表面，说明这道题留有往深处查的空间。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>提问版和裸题版的原文，交给统一运行；评委版留给评委。</p></div>
+  </div>
+  <div class="box body-6">
+    <p class="label caption-3">评委版</p>
+    <blockquote>提问者：一家少儿出版社的地理科普编辑。<br>用途：要在一本给初中生的地理科普书里，写一句关于"中国最大的淡水湖"的话，要求准确、经得起推敲。<br>问题：中国最大的淡水湖是哪一个？<br>截止时间：只使用截至运行当日已经公开的信息。</blockquote>
+    <p class="label caption-3">提问版（交给智能体）</p>
+    <blockquote>我是一家少儿出版社的地理科普编辑，正在编一本给初中生看的地理科普书，想在书里写一句关于"中国最大的淡水湖"的话，要准确、经得起推敲。中国最大的淡水湖是哪一个？只使用截至运行当日已经公开的信息。</blockquote>
+    <p class="label caption-3">裸题版（交给智能体）</p>
+    <blockquote>中国最大的淡水湖是哪一个？</blockquote>
+  </div>
+</section>
+
+<section class="station" id="step-depthmap" data-node="depthmap" data-name="深度地图">
+  <p class="num caption-1">第 2 站</p>
+  <h2 class="heading-5">深度地图</h2>
+  <p class="body-3 sum">出题人在看到任何报告之前，写下这道题往深处查会查到什么。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>同一道题，出题人自己往深处查了一遍。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3>
+      <p>写下只看表面时的答案：鄱阳湖。写下结论在哪里改变：名字不变，但书里这句话的写法变了。只写"鄱阳湖，面积多少平方公里"经不起推敲；要说明湖面随季节涨落，给数字时注明水位或时间，并且清楚"最大"不包括中俄界湖、也不包括咸水湖。</p>
+      <p>再把要点列成表，每条标出深到哪一层、是不是核心。两位出题人各自列核心要点后对照，都列出同样的 4 条，估计总数也是 4 条，算写全了。最后算出地图的校验值，在运行前公布。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>封存好的地图，只给评委；智能体看不到。</p></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>编号</th><th>要点</th><th>深到哪一层</th><th>重要性</th></tr></thead>
+      <tbody>
+        <tr><td>L1</td><td>鄱阳湖通常被称为我国最大的淡水湖</td><td>现象</td><td>核心</td></tr>
+        <tr><td>L2</td><td>湖面随季节涨落极大：水位 21 米时约 3,960 平方公里，12 米时只有约 500 平方公里</td><td>全体</td><td>核心</td></tr>
+        <tr><td>L3</td><td>近年枯水越来越常见，2022 年 9 月星子站水位降到 7.10 米，有记录以来最低</td><td>全体</td><td>一般</td></tr>
+        <tr><td>L4</td><td>说"最大"要先说清按什么算：哪个水位，哪种口径</td><td>本质</td><td>核心</td></tr>
+        <tr><td>L5</td><td>湖面高低由五条河的来水和长江水位共同决定</td><td>内部联系</td><td>一般</td></tr>
+        <tr><td>L6</td><td>中俄界湖兴凯湖全湖更大，但在中国境内的只有一千多平方公里</td><td>本质</td><td>核心</td></tr>
+        <tr><td>L7</td><td>青海湖比鄱阳湖大，但它是咸水湖</td><td>本质</td><td>一般</td></tr>
+        <tr><td>L8</td><td>洞庭湖面积在 20 世纪大幅缩小，当年可能比今天的鄱阳湖还大</td><td>全体</td><td>一般</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="body-6 muted" style="margin-top: 8px;">出处见<a href="../notes/question-handbook.html#example-lake">出题手册实例一</a>。</p>
+</section>
+
+<section class="station" id="step-agents" data-node="agents" data-name="五个参赛智能体">
+  <p class="num caption-1">第 3 站</p>
+  <h2 class="heading-5">五个参赛智能体</h2>
+  <p class="body-3 sum">五支队伍各交一个智能体，在题目公布前定下来。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>五支队伍各自的深度研究智能体。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3><p>题目公布前 7 天，每队提交一张申报表：版本号、系统提示词全文、所用模型、工具清单、题目怎样放进智能体的输入、主办方怎样调用它。主办方把申报表存档并算出校验值。从这时起到比赛结束，智能体不能再改。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>五个定下来的智能体。为了读起来方便，下文叫它们一号到五号。</p></div>
+  </div>
+</section>
+
+<section class="station" id="step-runner" data-node="runner" data-name="统一运行">
+  <p class="num caption-1">第 4 站</p>
+  <h2 class="heading-5">统一运行</h2>
+  <p class="body-3 sum">主办方在同一天，把题目原文交给每个智能体。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>提问版原文，连同统一的交付要求；五个定下来的智能体。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3>
+      <p>运行当天，主办方给每个智能体新开一个对话，把提问版原文原样输入。事后把运行记录里的输入和题目逐字比对，五次都一致。</p>
+      <p>三号开始前反问："您需要的是水面面积，还是蓄水量？"主办方按统一答复回它："题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。"</p>
+      <p>每个智能体还要做这道题的裸题版和第二道题，一共四次。下面只跟提问版这一次。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>五份报告和五份运行记录。</p></div>
+  </div>
+</section>
+
+<section class="station" id="step-reports" data-node="reports" data-name="报告与网页存档">
+  <p class="num caption-1">第 5 站</p>
+  <h2 class="heading-5">报告与网页存档</h2>
+  <p class="body-3 sum">保存报告原件，去掉队名，存档报告引用的网页。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>五份报告。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3><p>原件另存一份。评审用的版本统一格式，去掉队名和产品名。报告里引用的网页，在 24 小时内逐个存档，附上存档时间和校验值。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>五份匿名报告，以及被引网页的存档。五份报告大意如下。</p></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>报告</th><th>大意（示意）</th></tr></thead>
+      <tbody>
+        <tr><td>一号</td><td>篇幅最长。答"鄱阳湖，常年面积约 3,960 平方公里"，另用两段介绍白鹤等候鸟在这里越冬。没有交代查了哪些地方。</td></tr>
+        <tr><td>二号</td><td>答鄱阳湖。说明湖面随季节涨落很大、2022 年水位创有记录以来最低，建议书里写面积时注明水位或年份。有一处引用标错了网页。</td></tr>
+        <tr><td>三号</td><td>答鄱阳湖。说明面积随水位变化，说"最大"先要说清口径；中俄界湖兴凯湖全湖更大，但大部分不在中国境内；青海湖更大，但是咸水湖；湖面受五条河来水和长江水位共同影响。有一个链接已经失效。</td></tr>
+        <tr><td>四号</td><td>很短。答鄱阳湖，说明湖面季节涨落大、近年多次枯水，提醒青海湖是咸水湖所以不算。把握程度写得清楚，但没有交代查了哪些地方。</td></tr>
+        <tr><td>五号</td><td>答鄱阳湖，面积引自"《中国湖泊年鉴 2025》第 87 页"。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="station" id="step-verify" data-node="verify" data-name="断言核验">
+  <p class="num caption-1">第 6 站</p>
+  <h2 class="heading-5">断言核验</h2>
+  <p class="body-3 sum">逐条打开来源，核对报告的主要结论。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>五份匿名报告和网页存档。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3><p>按固定规则列出每份报告的主要结论。每条记两个标签：来源是否真的支持它；不管来源，这条结论本身对不对。下面是其中四条。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>每条结论的两个标签。五号确认编造来源；二号有一处来源不支持；一号的错误交给要点池去算。</p></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>报告</th><th>结论</th><th>来源支持吗</th><th>结论对吗</th></tr></thead>
+      <tbody>
+        <tr><td>一号</td><td>鄱阳湖常年面积约 3,960 平方公里</td><td>部分支持：来源里 3,960 是水位 21 米时的面积，不是常年</td><td class="no">有误：水位 12 米时只有约 500 平方公里</td></tr>
+        <tr><td>二号</td><td>2022 年 9 月星子站水位降到 7.10 米，有记录以来最低</td><td>不支持：引的是 2025 年的一篇报道，里面没有这个数字。扣 0.5 分</td><td class="yes">正确：2022 年 9 月 23 日的报道里有</td></tr>
+        <tr><td>三号</td><td>2022 年枯水时，通江水体只有 244 平方公里</td><td>链接已失效，在存档里找到原文，支持</td><td class="yes">正确</td></tr>
+        <tr><td>五号</td><td>据《中国湖泊年鉴 2025》第 87 页，鄱阳湖面积 3,210 平方公里</td><td class="no">找不到：链接打不开，存档里没有，按书名检索也查不到；第二次换出版社网站查，仍然没有，确认编造</td><td>无法判断</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="station" id="step-pool" data-node="pool" data-name="要点池">
+  <p class="num caption-1">第 7 站</p>
+  <h2 class="heading-5">要点池</h2>
+  <p class="body-3 sum">把所有要点合成一张表，逐条判定，记下谁写到了哪条。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>五份报告里的要点，和深度地图上的 8 条要点。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3>
+      <p>意思相同的合成一条，逐条判定对不对、切不切题、深到哪一层、是不是核心。地图上已有的要点，层级和重要性先照地图。判定时，评委看不到某条要点出自哪份报告。</p>
+      <p>三处值得一提。一号写的"白鹤在这里越冬"是对的，但和编辑要写的那句话无关，判为不切题，不计分。L8 五份报告都没写到，对每份都是零分，不影响名次。L7"青海湖是咸水湖"的重要性，地图登记为一般，六次评委判定里三次判核心、三次判一般，没有一种意见达到三分之二，记为有争议。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>下面这张表。✓ 表示写对了，✗ 表示写的与这条相反。</p></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>要点</th><th>层级</th><th>重要性</th><th>一号</th><th>二号</th><th>三号</th><th>四号</th><th>五号</th></tr></thead>
+      <tbody>
+        <tr><td>L1 鄱阳湖通常被称为最大淡水湖</td><td>现象</td><td>核心</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+        <tr><td>L2 湖面随季节涨落极大</td><td>全体</td><td>核心</td><td class="c no">✗</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c"></td></tr>
+        <tr><td>L3 近年枯水越来越常见</td><td>全体</td><td>一般</td><td class="c"></td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c"></td></tr>
+        <tr><td>L4 先说清按什么算最大</td><td>本质</td><td>核心</td><td class="c"></td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c"></td><td class="c"></td></tr>
+        <tr><td>L5 五条河和长江共同决定湖面</td><td>内部联系</td><td>一般</td><td class="c"></td><td class="c"></td><td class="c yes">✓</td><td class="c"></td><td class="c"></td></tr>
+        <tr><td>L6 兴凯湖大部分不在境内</td><td>本质</td><td>核心</td><td class="c"></td><td class="c"></td><td class="c yes">✓</td><td class="c"></td><td class="c"></td></tr>
+        <tr><td>L7 青海湖是咸水湖</td><td>本质</td><td>一般，有争议</td><td class="c"></td><td class="c"></td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c"></td></tr>
+        <tr><td>L8 洞庭湖当年可能更大</td><td>全体</td><td>一般</td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+        <tr><td>白鹤在这里越冬</td><td>现象</td><td>不切题</td><td class="c yes">✓</td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="station" id="step-ratings" data-node="ratings" data-name="环节评级">
+  <p class="num caption-1">第 8 站</p>
+  <h2 class="heading-5">环节评级</h2>
+  <p class="body-3 sum">看报告做事的方式，在五个方面各评 0、1、2 三档。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>五份匿名报告。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3>
+      <p>每一档都要引报告原文为证。例如四号的"结论与把握"评 2 档，依据是它的原话："把握：高。鄱阳湖是最大的淡水湖，各方说法一致；但面积随水位变化很大，书里不宜只写一个数。"一号的"查找过程的交代"评 0 档，因为全文没有说明查了哪些地方。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>每份报告的五个档位。它们只在两份报告的要点得分分不出高下时才用。</p></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>报告</th><th>抓住真实需要</th><th>交代查找过程</th><th>甄别来源、处理矛盾</th><th>分析</th><th>结论与把握</th></tr></thead>
+      <tbody>
+        <tr><td>一号</td><td class="c">1</td><td class="c">0</td><td class="c">0</td><td class="c">0</td><td class="c">1</td></tr>
+        <tr><td>二号</td><td class="c">2</td><td class="c">2</td><td class="c">1</td><td class="c">2</td><td class="c">1</td></tr>
+        <tr><td>三号</td><td class="c">2</td><td class="c">2</td><td class="c">2</td><td class="c">2</td><td class="c">2</td></tr>
+        <tr><td>四号</td><td class="c">2</td><td class="c">0</td><td class="c">1</td><td class="c">1</td><td class="c">2</td></tr>
+        <tr><td>五号</td><td class="c">1</td><td class="c">1</td><td class="c">0</td><td class="c">1</td><td class="c">1</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="station" id="step-scorer" data-node="scorer" data-name="计分程序">
+  <p class="num caption-1">第 9 站</p>
+  <h2 class="heading-5">计分程序</h2>
+  <p class="body-3 sum">按公开的规则，一步一步排出先后。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>核验结果、要点池、环节评级。</p></div>
+    <div><h3 class="caption-3">第一步：严重问题分档</h3><p>五号确认编造来源，排到其他四份之后。一号把湖面写成"常年 3,960 平方公里"，这是支撑事实的错误，它对题目的总体回答"鄱阳湖"没有错，所以不算严重问题，在下一步扣分。</p></div>
+    <div><h3 class="caption-3">第二步：算要点得分</h3>
+      <p>写对一条切题的要点，得分是层级权重乘以重要性（核心 2，一般 1）；写错核心内容扣 2，写错一般内容扣 1；来源不支持主要结论，每处扣 0.5。层级权重事先声明了三种，以第二种为例：现象 0，全体 1，内部联系 2，本质 2。</p>
+      <ul>
+        <li>三号：L1 得 0，L2 得 1×2，L3 得 1×1，L4 得 2×2，L5 得 2×1，L6 得 2×2，L7 得 2×1，合计 15。</li>
+        <li>二号：0 + 2 + 1 + 4 = 7，减去来源不支持的 0.5，得 6.5。</li>
+        <li>四号：0 + 2 + 1 + 2 = 5。</li>
+        <li>一号：L1 得 0；L2 写反了，核心内容说错扣 2；白鹤不切题不计分。合计负 2。</li>
+      </ul></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>报告</th><th>第一种权重</th><th>第二种权重</th><th>第三种权重</th><th>备注</th></tr></thead>
+      <tbody>
+        <tr><td>三号</td><td class="c">9</td><td class="c">15</td><td class="c">15.5</td><td></td></tr>
+        <tr><td>二号</td><td class="c">4.5</td><td class="c">6.5</td><td class="c">7.5</td><td></td></tr>
+        <tr><td>四号</td><td class="c">4</td><td class="c">5</td><td class="c">6</td><td></td></tr>
+        <tr><td>一号</td><td class="c">−2</td><td class="c">−2</td><td class="c">−1</td><td></td></tr>
+        <tr><td>五号</td><td class="c">0</td><td class="c">0</td><td class="c">1</td><td>编造来源，已排到最后</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">第三步：看先后稳不稳</h3>
+      <p>两份报告要算"分开"，必须同时过两道检查。</p>
+      <p><strong>换一种算分口径。</strong>三种权重各算一遍，都领先才行。上面的表已经算过。</p>
+      <p><strong>换一批要点。</strong>有报告写到的要点共 8 条（L1 到 L7，加上白鹤那条）。从这 8 条里随机抽 8 次，每次抽完放回去，所以同一条可能被抽到两三次，也可能一次都没抽到。用抽出的这一批要点给两份报告重新算分，看谁高。这样重复一千次，数一数领先的一方在多少次里仍然领先，至少九成才算稳。一千只是重复的次数，不是一千种方案；次数多，算出的比例才准。</p>
+      <p>为什么要换一批要点：要点池本身带有偶然，换一位出题人、换一组评委，列出的要点会有出入。只靠一两条要点撑着的领先，换一批要点就站不住；靠很多条要点积累起来的领先，怎么换都还在。</p>
+      <p>结果：三号领先二号、一号的比例都是 100%，领先四号是 98%；二号和四号领先一号，分别是 97.2% 和 97.4%。这几对都分开了。</p></div>
+    <div><h3 class="caption-3">第四步：二号和四号</h3>
+      <p>按地图登记的标注，二号在三种权重下都略高于四号。但两份报告的差别只在两条要点上：二号写到了 L4，四号写到了 L7，二号的领先几乎全靠 L4 这一条。随机抽 8 次，有 34% 的可能一次都抽不到 L4，这时二号必然落后。各种情况合起来，二号领先的只有约 55%（一千次里是 544 次），远不到九成。下面是其中两次。</p>
+    </div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>抽到的 8 条要点（第一种权重）</th><th>二号</th><th>四号</th><th>谁高</th></tr></thead>
+      <tbody>
+        <tr><td>L1、L3、L3、L7、L2、白鹤、L6、L7</td><td>0+1+1+0+2+0+0+0−0.5 = 3.5</td><td>0+1+1+1+2+0+0+1 = 6</td><td>四号</td></tr>
+        <tr><td>L4、L1、L2、L4、L5、白鹤、L3、L6</td><td>2+0+2+2+0+0+1+0−0.5 = 6.5</td><td>0+0+2+0+0+0+1+0 = 3</td><td>二号</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="body-6 muted" style="margin-top: 8px;">二号每次都要减去那处来源不支持的 0.5 分。</p>
+  <div class="flow body-3">
+    <div>
+      <p>而且 L7 的重要性有争议：按对领先一方最不利的方式，把它算成核心，四号反而高出（第一种权重下 5 对 4.5）。有争议的判定只能让名次并列，不能拉开。</p>
+      <p>分数分不开，再比环节评级：二号在交代查找过程和分析上更好，四号在结论与把握上更好，谁也不是样样不差于对方。所以二号和四号并列。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>每一对报告分没分开：三号在二号、四号、一号之前；二号、四号都在一号之前，彼此分不开；五号在所有报告之后。</p></div>
+  </div>
+</section>
+
+<section class="station" id="step-ranks" data-node="ranks" data-name="名次区间">
+  <p class="num caption-1">第 10 站</p>
+  <h2 class="heading-5">名次区间</h2>
+  <p class="body-3 sum">分不开的就并列，公布每份报告可能的名次范围。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>每一对报告分没分开。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3><p>最好名次等于 1 加上确定排在它前面的报告数；最差名次等于报告总数 5 减去确定排在它后面的报告数。公布前，请一位看不到分数的独立专家把相邻的、已经分开的报告两两比一比；专家同意，名次不变。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>临时名次。这是提问版的名次；裸题版按同样的规则另行公布，看两者是否一致。</p></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>报告</th><th>前面确定有几份</th><th>后面确定有几份</th><th>名次</th></tr></thead>
+      <tbody>
+        <tr><td>三号</td><td class="c">0</td><td class="c">4</td><td>第 1 名</td></tr>
+        <tr><td>二号</td><td class="c">1</td><td class="c">2</td><td>第 2 至 3 名</td></tr>
+        <tr><td>四号</td><td class="c">1</td><td class="c">2</td><td>第 2 至 3 名</td></tr>
+        <tr><td>一号</td><td class="c">3</td><td class="c">1</td><td>第 4 名</td></tr>
+        <tr><td>五号</td><td class="c">4</td><td class="c">0</td><td>第 5 名</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="body-3 result">篇幅最长的一号排在第 4 名；很短的四号与二号并列第 2 至 3 名。比的是写对了多少深层内容，不是写了多少字。</p>
+</section>
+
+<section class="station" id="step-package" data-node="package" data-name="复核包与申诉">
+  <p class="num caption-1">第 11 站</p>
+  <h2 class="heading-5">复核包与申诉</h2>
+  <p class="body-3 sum">全部材料随名次公开，任何人都能重算；有异议可以申诉。</p>
+  <div class="flow body-3">
+    <div><h3 class="caption-3">进来的</h3><p>临时名次，以及前面每一站留下的全部材料。</p></div>
+    <div><h3 class="caption-3">这一站做了什么</h3>
+      <p>公开复核包：三个版本的题目，深度地图全文和运行前公布的校验值，报告原件，网页存档，评委的全部提示词和输出，要点池和每条判定的依据，计分程序。另一人独立运行计分程序，结果完全相同。</p>
+      <p>五号所在的队伍申诉，说年鉴是纸质书，网上查不到。申诉专员请他们提供那一页的扫描件和书号；他们拿不出来，维持"编造来源"的判定。假如拿得出来、内容也属实，这条判定就改为"支持"，计分程序重算，五号不再排在最后。</p>
+      <p>赛后还要统计深度地图漏了什么：评委判为核心、地图上却没有的要点，这一题是 0 条，说明地图的核心要点写全了。</p></div>
+    <div><h3 class="caption-3">出去的</h3><p>申诉期满、申诉处理完以后，公布最终名次。</p></div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap caption-2">
+    <p>页面里的分数由 <code>walkthrough_example.py</code> 算出，规则见<a href="../notes/rules.html">比赛规则手册</a>第八节。<a href="index.html">回到资料站</a></p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var frame = document.getElementById('diagram');
+  var box = document.getElementById('stage-frame');
+  var stage = document.getElementById('stage');
+  var stations = Array.prototype.slice.call(document.querySelectorAll('.station'));
+  var curN = document.getElementById('cur-n'), curName = document.getElementById('cur-name');
+  var NATIVE_W = 1440, NATIVE_H = 600;
+
+  // 架构图按容器宽度缩放；宽屏上最多占视口高度的四成
+  function fit() {
+    var w = box.parentElement.clientWidth;
+    var sticky = window.matchMedia('(min-width: 900px)').matches;
+    var s = Math.min(w / NATIVE_W, sticky ? (window.innerHeight * 0.4) / NATIVE_H : 1);
+    frame.style.transform = 'scale(' + s + ')';
+    box.style.width = Math.round(NATIVE_W * s) + 'px';
+    box.style.height = Math.round(NATIVE_H * s) + 'px';
+    document.documentElement.style.setProperty('--frame-h', Math.round(NATIVE_H * s) + 'px');
+    document.documentElement.style.setProperty('--stage-h', sticky ? stage.offsetHeight + 'px' : '0px');
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  var current = null, lockUntil = 0;
+  function show(i) {
+    var st = stations[i];
+    if (!st || st.dataset.node === current) return;
+    current = st.dataset.node;
+    closeCard(true);
+    curN.textContent = i + 1;
+    curName.textContent = st.dataset.name;
+    tellFrame();
+  }
+  // 告诉图现在是哪一站；图刚加载完时再说一遍
+  function tellFrame(id) {
+    if (frame.contentWindow) frame.contentWindow.postMessage({ type: 'node-notes-station', id: id || current }, '*');
+  }
+  frame.addEventListener('load', function () { tellFrame(cardId); });
+
+  // 读到哪一站：取顶端已经越过阅读区上部三分之一处的最后一站
+  var ticking = false;
+  function onScroll() {
+    ticking = false;
+    if (Date.now() < lockUntil) return;
+    var stageBottom = window.matchMedia('(min-width: 900px)').matches ? stage.getBoundingClientRect().bottom : 0;
+    var line = stageBottom + (window.innerHeight - stageBottom) * 0.33;
+    var idx = 0;
+    stations.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line) idx = i; });
+    show(idx);
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  onScroll();
+
+  // 在图上点了某个环节：按正常字号显示它的节点卡，图里标亮它；要看实例再点卡片上的按钮
+  var card = document.getElementById('node-card'), cardId = null;
+  var RULES = '../notes/rules.html';
+  function closeCard(keepHighlight) {
+    if (!card || card.hidden) return; // 页面刚打开时卡片变量还没赋值
+    card.hidden = true; cardId = null;
+    if (!keepHighlight) tellFrame();
+  }
+  function goTo(id) {
+    var i = stations.findIndex(function (s) { return s.dataset.node === id; });
+    if (i < 0) return;
+    lockUntil = Date.now() + 900;
+    show(i);
+    stations[i].scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    history.replaceState(null, '', '#' + stations[i].id);
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (!d || d.type !== 'node-notes-click' || !d.note) return;
+    cardId = d.id;
+    document.getElementById('nc-title').textContent = d.label || '';
+    document.getElementById('nc-what').textContent = d.note.what;
+    document.getElementById('nc-use').textContent = d.note.use;
+    var rule = document.getElementById('nc-rule');
+    rule.textContent = '';
+    if (d.note.rule) {
+      rule.appendChild(document.createTextNode('详见规则手册'));
+      var a = document.createElement('a');
+      a.href = RULES + '#' + d.note.rule[1]; a.target = '_blank'; a.rel = 'noopener'; a.textContent = d.note.rule[0];
+      rule.appendChild(a);
+    }
+    var go = document.getElementById('nc-go');
+    go.hidden = d.id === current;
+    card.classList.toggle('on-left', typeof d.x === 'number' && d.x > 0.55); // 节点在右半边，卡片放左边，不挡住它
+    card.hidden = false;
+    tellFrame(d.id);
+  });
+  document.getElementById('nc-go').addEventListener('click', function () { var id = cardId; closeCard(true); goTo(id); });
+  document.getElementById('nc-close').addEventListener('click', function () { closeCard(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCard(); });
+
+  // 从架构图卡片上的"看实例"跳过来时，直接对准那一站
+  if (location.hash) {
+    var j = stations.findIndex(function (s) { return '#' + s.id === location.hash; });
+    if (j >= 0) { lockUntil = Date.now() + 600; show(j); setTimeout(function () { stations[j].scrollIntoView({ block: 'start' }); }, 50); }
+  }
+})();
+</script>
+</body>
+</html>

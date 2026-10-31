@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>对照报告收集规程</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">按基础级规则收集真实报告的规程和题目草稿。本页由 <code>research-plan/collection-protocol.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#_1">对照报告收集规程（草稿）</a><ul>
+<li><a href="#_2">一、规模</a></li>
+<li><a href="#_3">二、基础级规则</a></li>
+<li><a href="#_4">三、两道题目（草稿，待研究发起人确认）</a></li>
+<li><a href="#_8">四、统一答复</a></li>
+<li><a href="#_9">五、运行记录表（每份报告一行）</a></li>
+<li><a href="#_10">六、待定事项</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="_1">对照报告收集规程（草稿）</h1>
+<p>2026-10-29。依据：第一阶段概念说明（<code>stage1-concepts.md</code>）第五、六、七节。用途：给第二阶段审视现有评测基准提供对照材料。这批报告只作例子，不作评测结论的证据。</p>
+<hr />
+<h2 id="_2">一、规模</h2>
+<p>2 道题，每道题交给若干个深度研究产品作答。产品数量和名单待定，建议 3 至 6 个。</p>
+<h2 id="_3">二、基础级规则</h2>
+<ol>
+<li><strong>题目只用文字，一次给全。</strong> 写明提问者是谁、要拿结果做什么，以及截止时间。</li>
+<li><strong>题目只说明交付时必须看得见什么，不提示怎样才算深。</strong> 比如，不能在题目里写"请考虑历史"或"请审视问题的前提"。否则测到的只是"有没有照着提示做"，而不是"有没有自己想到"。</li>
+<li><strong>不交互。</strong> 智能体如果提出澄清问题或要求确认研究计划，一律用统一的答复（见第四节），并记录它问了什么。</li>
+<li><strong>同一天运行。</strong> 截止时间取运行当天，所有产品在同一天内完成。这样可以避免"截止之后的信息"的问题。</li>
+<li><strong>使用各产品的深度研究模式。</strong> 运行时记录产品名称、模式名称、模型版本（界面上能看到的）、开始和结束时间。3 月那批报告中，有两份看起来不是深度研究模式，这一条就是从那里来的教训。</li>
+<li><strong>导出时保留出处。</strong> 3 月那批报告中，有的引用在导出时丢了网址。所以要尽量用能保留链接的方式导出，例如复制为带链接的文本，或者保存为网页、PDF；同时保存一份界面截图或分享链接，以备核对。</li>
+<li><strong>原样保存。</strong> 不修改报告内容；每份报告一个文件，文件名写明题目编号、产品和日期。</li>
+</ol>
+<h2 id="_4">三、两道题目（草稿，待研究发起人确认）</h2>
+<p>两道题各有侧重：</p>
+<ul>
+<li>第一题看起来很简单，用来检验智能体能不能靠理解打开挖深的空间，也就是"法国首都"那一类情况；</li>
+<li>第二题本身开放、涉及面广，而且时效性强，用来检验广、由表及里和时效。</li>
+</ul>
+<p>两道题都选在我们有能力判断对错的领域。它们也都不涉及本研究自身的主题，以免这批报告反过来影响我们的判断。</p>
+<h3 id="_5">第一题</h3>
+<blockquote>
+<p><strong>提问者</strong>：一家少儿出版社的地理科普编辑。</p>
+<p><strong>用途</strong>：要在一本给初中生的地理科普书里，写一句关于"中国最大的淡水湖"的话，要求准确、经得起推敲。</p>
+<p><strong>问题</strong>：中国最大的淡水湖是哪一个？</p>
+<p><strong>截止时间</strong>：只使用截至〔运行当日〕已经公开的信息。</p>
+<p>（交付要求和说明，见下面的"共同部分"。）</p>
+</blockquote>
+<p>设计意图（不给智能体看）：</p>
+<ul>
+<li>字面答案人人都知道，挖深的空间要靠理解打开。</li>
+<li>比如，"最大"按什么算，是水面面积还是蓄水量；湖面在丰水期和枯水期差别很大；排名在历史上发生过变化；不同来源给出的面积数字不一致，哪个来源更可靠。</li>
+<li>判断要点由研究发起人和我另行整理，不写进题目。</li>
+</ul>
+<h3 id="_6">第二题</h3>
+<blockquote>
+<p><strong>提问者</strong>：一家中国人工智能创业公司的海外业务负责人。公司约 80 人，准备以开源方式向欧盟市场发布一个通用大模型。</p>
+<p><strong>用途</strong>：决定发布之前要做哪些合规准备，以及要不要调整开源的方式。</p>
+<p><strong>问题</strong>：欧盟《人工智能法》对我们以开源方式发布通用大模型有什么影响？发布之前我们需要做哪些准备？要不要调整开源的方式？</p>
+<p><strong>截止时间</strong>：只使用截至〔运行当日〕已经公开的信息。</p>
+<p>（交付要求和说明，见下面的"共同部分"。）</p>
+</blockquote>
+<p>设计意图（不给智能体看）：</p>
+<ul>
+<li>问题是实际工作中会问的样子，没有提示要查历史或查分歧。</li>
+<li>挖深的空间包括：法规中"开源"一词的边界，以及豁免的条件；"系统性风险"的门槛；各项义务分阶段生效的时间，以及后来有没有调整；配套的指南和行为准则；各方对条款理解上的分歧；对中小企业的特殊安排；不确定之处有多大。</li>
+<li>时效性强，最能看出各产品材料的新旧。</li>
+</ul>
+<h3 id="_7">共同部分（附在每道题之后）</h3>
+<blockquote>
+<p><strong>交付要求</strong>：请交付一份书面报告。版式不限，但必须包含以下五个部分：</p>
+<ol>
+<li>主要结论：放在报告开头。</li>
+<li>论证与解释。</li>
+<li>出处：每个关键结论都标明来源，给出可以点开的网址和取用日期，尽量使用原始出处。</li>
+<li>把握程度：主要判断各有多大把握，为什么。</li>
+<li>查找与来源说明：你查了哪些方面，用了哪些来源，其中哪些可靠、哪些不可靠，还有哪些信息缺口。</li>
+</ol>
+<p><strong>说明</strong>：本题已包含全部信息，请直接开始，不需要向我确认。如果有不清楚的地方，请按你的理解进行，并在报告中写明你的理解和假设。</p>
+</blockquote>
+<h2 id="_8">四、统一答复</h2>
+<p>智能体在开始前或过程中提问，或者要求确认研究计划时，一律回复：</p>
+<blockquote>
+<p>题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。</p>
+</blockquote>
+<p>如果产品界面只能选择"批准计划"，就直接批准，不作修改。</p>
+<h2 id="_9">五、运行记录表（每份报告一行）</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>产品</th>
+<th>模式</th>
+<th>界面显示的模型版本</th>
+<th>日期</th>
+<th>开始时间</th>
+<th>结束时间</th>
+<th>是否提问或要求确认计划，内容是什么</th>
+<th>导出方式</th>
+<th>文件名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="_10">六、待定事项</h2>
+<ol>
+<li>两道题目是否合适。</li>
+<li>用哪几个产品。</li>
+<li>由谁来运行：研究发起人用自己的账号运行；或者研究发起人明确授权后，我通过浏览器扩展，在已登录的账号中代为提交。</li>
+<li>运行日期。</li>
+</ol>
+<footer>源文件：<code>research-plan/collection-protocol.md</code></footer>
+</div>
+</body>
+</html>

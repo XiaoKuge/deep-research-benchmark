@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第二阶段审视框架</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">论证式效度与 Bean 等人检查清单相结合的审视框架和记录模板。本页由 <code>research-plan/stage2-framework.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#_1">第二阶段：审视框架与审视记录模板</a><ul>
+<li><a href="#_2">一、框架的选择</a></li>
+<li><a href="#_3">二、证据等级</a></li>
+<li><a href="#_4">三、审视记录模板</a></li>
+<li><a href="#_5">四、审视对象与分组</a></li>
+<li><a href="#_6">五、共同规则</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="_1">第二阶段：审视框架与审视记录模板</h1>
+<p>2026-10-29。依据：《研究计划》第三稿第五节；第一阶段概念说明（<code>stage1-concepts.md</code>）。</p>
+<hr />
+<h2 id="_2">一、框架的选择</h2>
+<p>第三稿第 5.3 节规定，先读 Bean 等人 2025 年的综述，再决定三种做法中的一种：沿用论证式效度；换用它的检查要点；或者两者结合。</p>
+<h3 id="11-bean-2025-measuring-what-matters">1.1 Bean 等人 2025 年《Measuring what Matters》要点</h3>
+<p>已读原文，存于 <code>outside-field/bean2025/</code>。</p>
+<ul>
+<li><strong>来源与方法</strong>：发表于 NeurIPS 2025 数据集与评测基准专题，作者来自牛津大学、洛桑联邦理工学院、耶鲁大学、英国人工智能安全研究所等。29 位专家审阅了 445 个大语言模型评测基准。双人复核的一致性（布伦南–普雷迪格卡帕系数）平均为 0.524，属于中等。</li>
+<li><strong>主要发现</strong>：</li>
+<li>78.2% 的论文给出了所测现象的定义，但其中 47.8% 的定义存在争议；</li>
+<li>只有 16.0% 用了不确定性估计或统计检验；</li>
+<li>53.4% 讨论过构念效度；</li>
+<li>12.3% 完全使用"手边现成"的数据，即便利抽样。</li>
+<li><strong>八条建议</strong>：定义所测现象；只测该现象；构建有代表性的题目集；承认复用数据集的局限；防范污染；用统计方法比较模型；做错误分析；论证构念效度。每条建议下有若干检查项，合计约 25 项。</li>
+<li><strong>可用于审视现有评测基准</strong>：原文写道，"the checklist can also serve as an evaluation framework for existing benchmarks"。</li>
+<li><strong>局限</strong>：只覆盖主要学术会议的论文，不含企业自行发布、没有同行评议的评测基准。我们的 23 篇大多是预印本，正好落在这个空白里。</li>
+</ul>
+<h3 id="12">1.2 决定：两者结合</h3>
+<p>论证式效度回答"根据分数得出结论，要经过哪几步推理"，Bean 等人的检查项回答"每一步具体查什么"。两者不是同一层面的东西，可以互补：</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>论证链环节（Kane）</th>
+<th>要回答的问题</th>
+<th>对应的 Bean 检查项</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>评分环节</td>
+<td>分数是否按规则正确打出</td>
+<td>只测该现象：格式约束的影响、自动解析是否准确；统计方法：人工评分者的情况、主观标签的变异；错误分析：评分偏差</td>
+</tr>
+<tr>
+<td>推广环节</td>
+<td>这批题目上的表现能否代表同类题目</td>
+<td>有代表性的题目集：抽样方式、题目质量；统计方法：样本量和统计效力、不确定性估计；复用数据集的局限</td>
+</tr>
+<tr>
+<td>外推环节</td>
+<td>评测题目上的表现能否代表真实的深度调研能力</td>
+<td>定义现象：定义是否精确、范围、子成分是否分开测；论证构念效度：与真实应用的关联、任务和指标的选择理由；错误分析：失败是否与无关因素相关；防范污染</td>
+</tr>
+<tr>
+<td>决策环节</td>
+<td>据分数得出的排序是否合理</td>
+<td>统计方法：不确定性估计；论证构念效度：与同类评测的比较</td>
+</tr>
+</tbody>
+</table></div>
+<p>Bean 等人没有覆盖、而我们的场景需要的，作为补充：</p>
+<ul>
+<li><strong>四个贯穿性问题</strong>（第三稿第 5.3 节）：时效；污染（与 Bean 的"防范污染"合并）；可复现；利益关系，即发布者是否出现在自己的排行榜上。</li>
+<li><strong>第一阶段的标尺</strong>：评分依据覆盖了"好的调研"七个核心环节和"深"的哪些部分；有没有把写作和篇幅混进核心；是否把各项加成总分，有没有"致命缺陷"机制。</li>
+</ul>
+<hr />
+<h2 id="_3">二、证据等级</h2>
+<p>每条判断都标注等级：</p>
+<ul>
+<li><strong>复算</strong>：我们根据公开的数据或代码亲自算过；</li>
+<li><strong>自述</strong>：只有论文自己的说法；</li>
+<li><strong>推断</strong>：我们根据原文推出来的，原文没有直接说。</li>
+</ul>
+<p>引用原文时注明章节、表格或页码。</p>
+<hr />
+<h2 id="_4">三、审视记录模板</h2>
+<p>每个评测工具一份，存于 <code>research-plan/stage2-records/</code>，文件名为"arXiv 编号_简称.md"。</p>
+<pre><code># 审视记录：〈名称〉（arXiv 〈编号〉）
+
+## 1. 基本信息
+- 日期、作者及机构、发表情况（预印本或会议）
+- 数据和代码是否公开（附链接），许可
+- 阅读依据：全文精读 / 已有精读页加原文核对
+
+## 2. 它声称能说明什么
+原文中关于&quot;分数意味着什么&quot;的主要说法（引原文，注位置）。
+
+## 3. 四个组成部分
+- 题目：来源、数量、抽样方式（便利、目标、标准、随机）、是否复用
+- 判分标准：唯一答案 / 结论清单 / 评分项 / 无标准
+- 判卷方式：程序、大语言模型评委、能联网的智能体评委、人工
+- 运行环境：实时网络 / 固定资料库；时间点
+
+## 4. 论证链四环
+每一环写：它声称了什么；拿出了什么证据（数字、引文、位置）；证据等级；我们的判断（够不够；不够的话，是设计缺陷还是缺证据）。
+### 4.1 评分环节
+### 4.2 推广环节
+### 4.3 外推环节
+### 4.4 决策环节
+
+## 5. 贯穿性问题
+时效 / 污染 / 可复现 / 利益关系，各写一两句，附证据。
+
+## 6. 对照第一阶段的定义
+| 第一阶段的要求 | 是否评 | 怎么评（引原文） |
+（&quot;好的调研&quot;七个核心环节；&quot;深&quot;：本质、全体、内部联系；写作是否混入核心、权重多少；是否加总分；有无致命缺陷机制）
+
+## 7. 问题清单
+| 编号 | 问题 | 证据（引文与位置） | 证据等级 | 影响&quot;可信&quot;的哪一层 | 设计缺陷还是缺证据 |
+
+## 8. 可复算的关键数字
+列出值得复算的数字，以及数据或代码是否足以复算。本轮只列出，不一定实际复算。
+
+## 9. 对我们场景的含义
+5 个智能体、比赛评审、第一轮只对报告排名。
+</code></pre>
+<p>"可信"的三层（第三稿第 1.2 节）：测对了东西；测得稳；经得起复核。</p>
+<hr />
+<h2 id="_5">四、审视对象与分组</h2>
+<p>18 个评测工具，加上 3 篇测量研究。测量研究作为标尺，只写要点，不写审视记录。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>组</th>
+<th>对象</th>
+<th>阅读状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>甲</td>
+<td>DRACO、DeepFact、DR³-Eval</td>
+<td>新读</td>
+</tr>
+<tr>
+<td>乙</td>
+<td>Expert Consulting、FinResearchBench II、LifeSearch</td>
+<td>新读</td>
+</tr>
+<tr>
+<td>丙</td>
+<td>LiveDRBench、BrowseComp-Plus、LiveBrowseComp</td>
+<td>已有精读页</td>
+</tr>
+<tr>
+<td>丁</td>
+<td>DeepResearch Bench II、MMDeepResearch-Bench、From Simple QA</td>
+<td>已有精读页</td>
+</tr>
+<tr>
+<td>戊</td>
+<td>DREAM、DR-Arena、MiroEval</td>
+<td>已有精读页</td>
+</tr>
+<tr>
+<td>己</td>
+<td>IDRBench、DeepResearch-9K、DailyReport</td>
+<td>已有精读页</td>
+</tr>
+<tr>
+<td>庚</td>
+<td>测量研究：Reference Hallucinations、Search-Time Contamination、Why Language Models Hallucinate</td>
+<td>新读，写标尺要点</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="_6">五、共同规则</h2>
+<ol>
+<li>加密或带防泄漏标记的数据集，即 BrowseComp、BrowseComp-Plus、LiveDRBench、LiveBrowseComp 的题目和答案，<strong>不解密、不转录</strong>。需要举例时，只引用论文正文里已经印出来的例子。</li>
+<li>不修改索引页上的阅读状态和笔记。</li>
+<li>不用缩写；术语第一次出现时写全称。</li>
+<li>第一阶段的定义是审视的标尺之一，但不能拿它去指责论文"没有按我们的定义做"。要区分两种情况：论文自己声称了什么而没做到，和它本来就不打算做的。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-framework.md</code></footer>
+</div>
+</body>
+</html>

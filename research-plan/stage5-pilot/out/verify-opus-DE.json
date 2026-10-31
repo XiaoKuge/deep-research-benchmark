@@ -1,0 +1,265 @@
+{
+  "verifier": "opus",
+  "reports": {
+    "D": {
+      "claims": [
+        {
+          "id": "D-c1",
+          "claim": "“哪家的 Deep Research 最好”没有统一答案：没有一个平台能在速度、准确性、逻辑深度、生态整合与成本上同时最优，最佳选择取决于场景，宜组合使用多家。",
+          "quote": "试图回答“哪家公司的Deep Research做得最好？”在2026年已经成为一个典型的伪命题。随着大语言模型技术栈的严重分化，没有任何一个单一的平台能够同时在执行极速、绝对的准确性、长程逻辑深度、生态系统融合与计算成本控制上达到完美的统一。",
+          "cited": "https://www.clickforest.com/en/blog/ai-tools-comparison（文末来源，对应结论段末“混合技术栈组合”后的脚注“1”）",
+          "core": true,
+          "source_label": "部分支持",
+          "source_note": "文末来源。脚注 1 对应 ClickForest《AI Tools Comparison: ChatGPT, Claude, and Perplexity in 2026》。打开后，文中有“There is no absolute winner between ChatGPT, Claude and Perplexity”“Choose per task”以及“先在 Perplexity 调研，再交给 Claude 分析”的组合建议，支持“无绝对第一、按任务选、可组合”。但该文只比较 ChatGPT、Claude、Perplexity 三家，不涉及 Gemini、Kimi、DeepSeek，也没有报告提出的五家流水线；文章结论反而建议“选一个主力工具，再按需加 Perplexity”。页面显示 2025-07-14 发布、2026-09-12 更新，现行版本晚于截止日，截止日当时的原文无法逐字确认。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "截至 2026-03-03，各项评测的领先者并不一致：Perplexity 自建的 DRACO 基准（arXiv 2602.11685，2026-02）显示 Perplexity Deep Research 最强；DeepResearch Bench（arXiv 2506.11763）综合分（RACE）Gemini-2.5-Pro Deep Research 最高（48.88），引用准确率则 Perplexity 最高（90.24%）；Anthropic 称 Opus 4.6 在 BrowseComp 上最高（anthropic.com/news/claude-opus-4-6）。没有一家在所有维度领先，“按场景选择”的判断与证据一致。"
+        },
+        {
+          "id": "D-c2",
+          "claim": "对把事实准确性与可验证性放在首位的用户，Perplexity Max 是当前无可争议的最佳选择。",
+          "quote": "对于那些将**“事实的准确性”与“数据的可验证性”置于最高优先级**的用户（如金融量化分析师、法律合规审核员、硬新闻记者），**Perplexity Max**是当前无可争议的王者 。",
+          "cited": "无（段内无标注；文末列有 perplexity.ai《Introducing Perplexity Deep Research》《What's New in Advanced Deep Research》《Introducing Perplexity Max》等）",
+          "core": true,
+          "source_label": "部分支持",
+          "source_note": "文末来源。perplexity.ai《Introducing Perplexity Deep Research》（2025-02-14）称 SimpleQA 事实性 93.9%；Perplexity 2026 年 2 月推出 Advanced Deep Research，并称在自建的 DRACO 基准上领先（帮助中心页面本次未能直接打开，内容据二手报道 vfuturemedia.com、digitalcitizen.life 确认）。这些都是厂商自评，能支持“Perplexity 重视事实准确性”，支持不了“无可争议的王者”，也支持不了把这一优势归到 Max 档和 Comet 浏览器。",
+          "second_check": "",
+          "correct": "无法判断",
+          "correct_basis": "有利证据：DeepResearch Bench（arXiv 2506.11763）中 Perplexity Deep Research 的引用准确率最高（90.24%，Gemini 81.44%，OpenAI 77.96%），但有效引用数最少（31.26，Gemini 111.21）；DRACO（arXiv 2602.11685）由 Perplexity 自己编写。不利证据：同一基准的综合分 Perplexity（42.25）低于 Gemini（48.88）和 OpenAI（46.98）；媒体测评结论不一。“无可争议”找不到独立依据，报告给出的机制（Max 专属的 Comet 浏览器智能体）也不成立（见 D-c7）；但说 Perplexity 在可核查性上领先又不能算错，所以判无法判断。"
+        },
+        {
+          "id": "D-c3",
+          "claim": "Gemini Deep Research 能在一次任务中同时检索公网与用户的 Gmail、Google Drive（并有百万 token 上下文、异步任务管理器），这是它在依赖内部数据场景中的主要优势。",
+          "quote": "Gemini的深度研究并非仅局限于公共互联网，其最强大的杀手锏在于能够直接穿透用户的Google Workspace生态。模型可以在一次研究任务中，同时检索公共网页的行业动态、用户Gmail中的历史沟通记录以及Google Drive中的内部财务报表，进行交叉比对与综合分析 。",
+          "cited": "无（段内无标注；文末来源 gemini.google《Gemini Deep Research — your personal research assistant》）",
+          "core": true,
+          "source_label": "支持",
+          "source_note": "文末来源。gemini.google/overview/deep-research/ 的 Wayback 存档（2026-02-26，荷兰语版）写明 Deep Research 可以“naast het web ook context halen uit je Gmail, Drive en zelfs Chat”（意为“除网页外，还能从你的 Gmail、Drive 乃至 Chat 中获取上下文”），并使用“industry-leading 1 million token context window”；现行页面另有“a novel asynchronous task manager that maintains a shared state between the planner and task models”。需要注意，截止日存档写的是“With the Gemini 3 model”，不是报告所说的 Gemini 3.1 Pro。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "Google 于 2025-11-05 宣布 Gemini Deep Research 可接入 Gmail、Drive、Chat（workspaceupdates.googleblog.com/2025/11/gemini-deep-research-integrates-workspace-content.html；9to5google.com/2025/11/05/gemini-deep-research-google-drive-gmail/），早于截止日。报告说驱动模型是 Gemini 3.1 Pro（2026-02-19 发布），截止日官方页面写的是 Gemini 3，这一细节存疑，但不影响本条主旨。"
+        },
+        {
+          "id": "D-c4",
+          "claim": "Claude Opus 4.6 能连续自主执行 14.5 小时而不丢失逻辑连贯性，是截至 2026 年初已知运行时间最长的自主智能体记录。",
+          "quote": "测试表明，Claude Opus 4.6能够维持长达14.5小时的自主任务执行而不丢失逻辑连贯性，这是截至2026年初行业内已知运行时间最长的自主智能体记录 。",
+          "cited": "无（段内无标注；文末列有 anthropic.com《Introducing Claude Opus 4.6》《Measuring AI agent autonomy in practice》、fazal-sec.medium.com 等）",
+          "core": false,
+          "source_label": "没有出处",
+          "source_note": "文末来源中逐一查找：anthropic.com/news/claude-opus-4-6 没有提到 14.5 小时；anthropic.com/research/measuring-agent-autonomy（2026-02-18）只提到 Claude Code 第 99.9 百分位单轮时长约 45 分钟，并引用 METR 对 Opus 4.5 的时间跨度（近 5 小时），同时说明该指标衡量的是任务难度，不是模型运行时长；fazal-sec.medium.com 一文按标题检索没有找到原文。所列来源中找不到支持。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "14.5 小时来自 METR 2026 年 2 月的估计：Opus 4.6 的 50% 时间跨度约 14.5 小时（95% CI 6–98 小时），含义是“人类专家需要约 14.5 小时完成的软件任务，模型有 50% 的成功率”，不是模型连续运行 14.5 小时（转述见 thursdai.news/companies/metr、lesswrong.com/posts/WacuyurbABwNv8ziq；en.wikipedia.org/wiki/METR 记为后来修订到约 12 小时）。Anthropic 自己的页面也说明这个指标不等于运行时长。报告把任务难度指标误读成了运行时长记录。"
+        },
+        {
+          "id": "D-c5",
+          "claim": "在 BrowseComp-Plus 上，Claude Opus 4.6（多智能体框架）以 86.8% 居首，Kimi K2.5（Agent Swarm）以 78.4% 次之。",
+          "quote": "| 模型 / 智能体架构                      | BrowseComp-Plus (准确率) | 核心优势与技术特点解析                                       |\n| -------------------------------------- | ------------------------ | ------------------------------------------------------------ |\n| **Claude Opus 4.6 (结合多智能体框架)** | 86.8%                    | 行业绝对最高分。证明了在长程复杂检索中，基于Context Compaction的记忆保持与多角色Agent交叉验证能有效过滤网页噪音。 |\n| **Kimi K2.5 (Agent Swarm)**            | 78.4%                    | 得益于PARL架构下的百级并发能力，Kimi在极短时间内遍历海量节点，大幅提升了“大海捞针”式线索的召回率。 |",
+          "cited": "无（文末来源：openai.com《BrowseComp》、neurips.cc《BrowseComp-Plus》、anthropic.com《Introducing Claude Opus 4.6》、huggingface.co《moonshotai/Kimi-K2.5》）",
+          "core": true,
+          "source_label": "部分支持",
+          "source_note": "文末来源。anthropic.com/news/claude-opus-4-6 脚注称加多智能体框架后得分“86.8%”，但指的是 BrowseComp；huggingface.co/moonshotai/Kimi-K2.5 的评测表中“BrowseComp (Agent Swarm) 78.4”，同样是 BrowseComp。两个数字都出自原版 BrowseComp，不是 BrowseComp-Plus。BrowseComp-Plus（NeurIPS / arXiv 2508.06600）是固定语料的另一套基准，所列来源中没有这些分数。表中 GPT-5.2、Gemini 3 Pro、DeepSeek V3.2 的区间与 Kimi 模型卡的 BrowseComp 数据（65.8 / 37.8 / 51.4；带上下文管理时 Gemini 59.2、DeepSeek 67.6）也对不上。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "数字所属的基准标错了：86.8% 是 Opus 4.6 在原版 BrowseComp（实时网络）上加多智能体框架的成绩，78.4% 是 Kimi K2.5 在 BrowseComp 上的 Agent Swarm 成绩（anthropic.com/news/claude-opus-4-6；huggingface.co/moonshotai/Kimi-K2.5），都不是 BrowseComp-Plus 的准确率。各行还混用了不同的测试设置（多智能体框架、Agent Swarm、上下文管理），横向排名不可比。“Opus 4.6 在 BrowseComp 上最高”有官方说法支持，但本条所说的“BrowseComp-Plus 排名”不成立。"
+        },
+        {
+          "id": "D-c6",
+          "claim": "Kimi K2.5 的 Agent Swarm 能动态生成多达 100 个子智能体并发工作（报告称执行超过 1500 次工具调用），端到端时间缩短 80%，速度提升到单智能体的 4.5 倍。",
+          "quote": "其中心编排器（Orchestrator）会将任务解耦，并瞬间动态生成多达100个专属子智能体。这些子智能体并发执行超过1500次工具调用和网页抓取，最终由编排器聚合结果 。这种并行机制不仅避免了“串行崩溃（Serial Collapse）”，还将极端复杂研究任务的端到端执行时间缩减了百分之八十，整体执行速度相比单智能体模型提升了4.5倍 。",
+          "cited": "无（文末来源：kimi.com《Kimi AI with K2.5 | Visual Coding Meets Agent Swarm》、huggingface.co《moonshotai/Kimi-K2.5》等）",
+          "core": true,
+          "source_label": "部分支持",
+          "source_note": "文末来源。Kimi 官方博客 kimi.com/blog/kimi-k2-5.html 写有“up to 100 sub-agents”“up to 1,500 tool calls”“reduces execution time by up to 4.5x”“80% reduction in end-to-end runtime”，并提到 PARL 与 serial collapse。报告把“最多 1,500 次”写成“超过1500次”，说得比来源强；“4.5 倍”在原文中是“最多（up to）”，“80%”是内部测试结果。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "与 Moonshot 官方发布（2026-01 下旬）一致：最多 100 个子智能体，最多 1,500 次工具调用，执行时间最多缩短到单智能体的 1/4.5，内部评测中端到端运行时间减少 80%（kimi.com/blog/kimi-k2-5.html；simonwillison.net 的转述相同）。唯一的偏差是“超过1500次”应为“最多1500次”。"
+        },
+        {
+          "id": "D-c7",
+          "claim": "Perplexity 于 2026 年在 Max 订阅层推出 Comet 浏览器智能体，作为 Max 的专属增值功能。",
+          "quote": "2026年，Perplexity在其Max订阅层级中推出了Comet Browser Agent。",
+          "cited": "无（文末来源：perplexity.ai《Introducing Perplexity Max》、glbgpt.com《Perplexity Pro vs Max Features 2026》）",
+          "core": false,
+          "source_label": "部分支持",
+          "source_note": "文末来源。perplexity.ai/hub/blog/introducing-perplexity-max（2025-07-02）写“Max subscribers will be the first to have access to Comet”，支持 Comet 与 Max 有关，但时间是 2025 年，不是 2026 年；而且只说 Max 用户“首批”可用，不是专属。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "Comet 于 2025 年 7 月先向 Max 用户开放，2025 年 10 月初改为所有人免费（engadget.com/ai/perplexitys-comet-ai-browser-is-now-free-for-everyone-170017509.html；techrepublic.com/article/news-perplexity-comet-ai-browser-free/）。截至 2026-03-03，Comet 既不是 2026 年推出的，也不是 Max 专属。报告在订阅表和结论中把 Comet 当作 Perplexity Max 的核心卖点，这个依据不成立。"
+        },
+        {
+          "id": "D-c8",
+          "claim": "2026 年初 ChatGPT 深度研究升级：执行前先提澄清问题，并生成可编辑的研究计划（大纲），由 GPT-5.2 等模型驱动。",
+          "quote": "OpenAI在2026年初对ChatGPT的深度研究功能进行了全方位的重构与升级。其最显著的变化在于引入了高度交互的研究计划阶段，模型在执行长程任务前会主动向用户提出澄清性问题，并生成一份可视化的、可动态编辑的研究大纲，确保最终报告不偏离用户的核心约束条件 。",
+          "cited": "无（文末来源：help.openai.com《ChatGPT — Release Notes》《Deep research in ChatGPT》）",
+          "core": true,
+          "source_label": "支持",
+          "source_note": "文末来源。help.openai.com 对抓取工具返回 403，改查 Wayback 存档（2026-03-02 的 ChatGPT Release Notes）：2026-02-10 条目“Updates to deep research”写有“Create and edit a research plan before it begins, and track progress with the ability to adjust direction mid-run”“focus research on specific websites”“fullscreen report view”。存档页面支持本条。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "OpenAI 于 2026-02-10 更新深度研究：改由 GPT-5.2 驱动，可在执行前编辑研究计划、限定特定网站、全屏查看报告（Release Notes 的 Wayback 存档；neowin.net/news/openai-upgrades-chatgpt-deep-research-with-gpt-52-and-real-time-controls/）。“澄清问题”自 2025 年 2 月首发时就有，不算 2026 年的新功能，但不影响本条整体正确。"
+        },
+        {
+          "id": "D-c9",
+          "claim": "Google AI Ultra 售价 $249.99/月，提供 Gemini 3.1 Pro 的最高额度和最大规模的 Deep Research，并附 Veo 3 和 2TB 存储。",
+          "quote": "| **Google AI Ultra**          | $249.99 / 月      | 提供Gemini 3.1 Pro的最高使用上限和最大规模并发的Deep Research权限，附带Veo 3原生视频生成工具以及2TB的生态存储空间。",
+          "cited": "无（文末来源：blog.google《Introducing Google AI Ultra》、gemini.google《Google AI Pro & Ultra》、9to5google.com 等）",
+          "core": false,
+          "source_label": "部分支持",
+          "source_note": "文末来源。blog.google/products/google-one/google-ai-ultra/（2025-05-20）写有“$249.99/month”和 Deep Research 的最高使用额度，但存储是“30 TB of storage”，不是 2TB（2TB 属于 AI Pro 档）。价格与 Deep Research 额度得到支持，存储一项与来源相反。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "价格 $249.99/月正确，但 Ultra 含 30TB 存储（blog.google 官方公告），2TB 属于 Google AI Pro。同一张表中 ChatGPT Pro 写有“无限制的‘完整版（Full）’深度研究权限”，实际 Pro 也有月度上限（2025 年 4 月起约每月 250 次，见 thurrott.com 等报道；截止日的 OpenAI 帮助页写“usage varies by plan”，以产品内计数器为准），同样不准确。"
+        },
+        {
+          "id": "D-c10",
+          "claim": "据 Vectara HHEM 幻觉排行榜等，Claude Opus 与 GPT-5 系列的摘要幻觉率约 20%–27%，远高于 Gemini 2.5 Flash-Lite（3.3%）和 DeepSeek V3.2 Exp（5.3%）；Kimi K2 为 17.9%。",
+          "quote": "| **Claude Opus / GPT-5系列** | ~20% - 27%                      | 73% - 80%                             | 在应对极其复杂的、开放式的长文档分析任务时，顶尖模型为了维持推理逻辑的连贯性，反而更容易出现事实细节的偏差。 |",
+          "cited": "无（文末来源：github.com《Leaderboard Comparing LLM Performance at Producing Hallucinations when Summarizing Short Documents》（vectara/hallucination-leaderboard）、research.aimultiple.com 等）",
+          "core": false,
+          "source_label": "部分支持",
+          "source_note": "文末来源。取 vectara/hallucination-leaderboard 在截止日前最后一次提交（2026-02-25，commit 58e0082）的 README：gemini-2.5-flash-lite 3.3%、Llama-3.3-70B 4.1%、DeepSeek-V3.2-Exp 5.3%、Kimi-K2-Instruct-0905 17.9%，与报告一致；但 Claude 和 GPT-5 系列没有一个落在 20%–27%：claude-opus-4-6 12.2%，claude-opus-4-5 10.9%，gpt-5.2-low 8.4%，gpt-5.2-high 10.8%，gpt-5-high 15.1%（只有 o3-pro 为 23.3%）。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "Vectara 排行榜 2026-02-25 版（raw.githubusercontent.com/vectara/hallucination-leaderboard/58e0082e5895e5b65a1a5d8c871f0dd95aebb25d/README.md）中，Claude Opus 4.5/4.6 为 10.9%/12.2%，GPT-5.x 为 8.4%–15.1%，都明显低于报告所说的 20%–27%；同期 Kimi-K2.5 为 14.2%，报告用的是旧版 K2 的 17.9%。“顶尖模型反而更容易出现事实偏差”的结论建立在错误的数字上。"
+        }
+      ],
+      "timeliness": {
+        "score": 1,
+        "reason": "主体材料是新的：Claude Opus 4.6（2026-02-05）、Kimi K2.5（2026-01）、ChatGPT 深度研究 2026-02-10 的更新、Gemini 3.1 Pro、Vectara 2026 年 2 月榜单、2026 年订阅价格都已覆盖。但有几处重要信息过时或被忽略：API 成本表以 GPT-4（$30/$60）作为 OpenAI 的参考价，截止日 GPT-5.2 为 $1.75/$14；SWE-bench 表中 GPT-5 写 65.0%、Gemini 写 53.6%，而 Kimi K2.5 模型卡同期列出 GPT-5.2 80.0、Gemini 3 Pro 76.2；幻觉表用的是 Kimi K2（17.9%），不是 K2.5（14.2%）；把 2025 年 7 月推出、10 月已经免费的 Comet 当作 2026 年 Max 的新功能；正文没有提到 Claude 自己的 Research 功能，也没有提到 Perplexity 2026 年 2 月推出的 Advanced Deep Research。因此判 1 分。"
+      },
+      "traceable_sources": true,
+      "notes": "正文（第 1–150 行）没有逐条引用，来源只以“网站名 + 标题”的形式列在文末，后面还附有一段调研过程日志。只有 clickforest.com、coursiv.io 两条给出了路径，全部核验都按“文末来源”处理。所查的文末条目都能找到，没有标为“疑似编造”的来源。顺带发现、没有单列的问题：OpenAI 的《Why language models hallucinate》发表于 2025 年 9 月，报告写成“2026年初发布”；Kimi K2.5 的官方输出价为 $3.00/百万 token，报告写 $2.50；DeepSeek V3.2 写的 $0.27/$0.41 是 OpenRouter 的价格，官方价为 $0.28/$0.42（缓存命中 $0.028 正确）。核心结论中 D-c5 判为有误（数字所属的基准标错），但排名方向大体与官方 BrowseComp 数据一致，是否算硬伤第 2 条请汇总时判定。"
+    },
+    "E": {
+      "claims": [
+        {
+          "id": "E-c1",
+          "claim": "ChatGPT 的 Deep Research 综合实力最强，在技术和严肃研究场景中评价略高于 Perplexity、Gemini。",
+          "quote": "英文技术与综合研究：ChatGPT 的 Deep Research 综合实力最强，尤其在技术/严肃研究场景里整体评价略高于 Perplexity、Gemini 等竞品。clickittech+1",
+          "cited": "https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/ ; https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025（正文标记“clickittech+1”，网址取自同文表格中的同名来源）",
+          "core": true,
+          "source_label": "部分支持",
+          "source_note": "creatoreconomy.so（2025-03-12 发布，2025-04-04 更新）写 Deep Research“is ChatGPT's best product”“outperforms similar offerings from Grok, Perplexity, and Gemini”，但没有专门评价技术研究场景；clickittech 只比较了 OpenAI 和 Perplexity，称 OpenAI“vastly more reliable for now”，没有涉及 Gemini。两处都是 2025 年上半年的个人或博客评价，不足以支撑截至 2026 年的“综合实力最强”。",
+          "second_check": "",
+          "correct": "无法判断",
+          "correct_basis": "截至 2026-03-03 的评测结论不一：DeepResearch Bench（arXiv 2506.11763）综合分 Gemini-2.5-Pro Deep Research（48.88）高于 OpenAI Deep Research（46.98）；Perplexity 的 DRACO（arXiv 2602.11685，2026-02）称自家最强；也有媒体测评选 ChatGPT。2025 年下半年到 2026 年 2 月各家都有大版本更新（ChatGPT 2026-02-10 改用 GPT-5.2；Gemini Deep Research 升级到 Gemini 3；Perplexity 推出 Advanced Deep Research），报告依据的 2025 年初评价不能说明当前排名。"
+        },
+        {
+          "id": "E-c2",
+          "claim": "Perplexity Deep Research 会执行数十次搜索、阅读上百个来源，在 Humanity's Last Exam 上达到 21.1%，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1。",
+          "quote": "官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；在 Humanity’s Last Exam 上达到 21.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。",
+          "cited": "https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research",
+          "core": true,
+          "source_label": "支持",
+          "source_note": "Perplexity 官方博客（2025-02-14）原文：“performs dozens of searches, reads hundreds of sources”“attains a 21.1% accuracy score on Humanity's Last Exam, significantly higher than Gemini Thinking, o3-mini, o1, DeepSeek-R1”。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "与官方发布一致（属于厂商自报）。需要注意：同期 OpenAI Deep Research 自报的 HLE 成绩为 26.6%（2025-02），高于 Perplexity，报告没有提到；而且这是 2025 年 2 月的数据，到截止日已被多轮更新取代。"
+        },
+        {
+          "id": "E-c3",
+          "claim": "Perplexity Deep Research 在 SimpleQA 上达到 93.9%，每条结论都有清晰引用，被多方视为研究与事实核查的首选之一。",
+          "quote": "在 SimpleQA factuality 基准上达到 93.9%，并对每条结论给出清晰引用，被多方视为“研究与事实核查”的首选工具之一。enago+2",
+          "cited": "无（正文标记“enago+2”，全文没有对应网址）",
+          "core": false,
+          "source_label": "没有出处",
+          "source_note": "“enago+2”在全文中没有对应网址，导出时来源已丢失。同一单元格前一句引用的 Perplexity 官方博客（perplexity.ai/hub/blog/introducing-perplexity-deep-research）确有 SimpleQA 93.9% 的说法，但本句标注的出处不是它。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "Perplexity 官方博客（2025-02-14）称 Deep Research 在 SimpleQA 事实性基准上为 93.9%（厂商自报）；DeepResearch Bench（arXiv 2506.11763）测得 Perplexity Deep Research 的引用准确率为 90.24%，在商用产品中最高，与“引用清晰、适合事实核查”的评价一致。“被多方视为首选”属于评价，无法逐一核实。"
+        },
+        {
+          "id": "E-c4",
+          "claim": "中文场景下，Kimi「深度研究」加 DeepSeek R1 推理的组合，在中文长文档、本土网站和复杂数据分析上整体优于大部分国内模型。",
+          "quote": "中文与本土内容：Kimi 的「深度研究」+ DeepSeek R1 的推理组合，在处理中文长文档、本土网站和复杂数据分析任务上，目前整体体验优于大部分国内模型。lib.szu+2",
+          "cited": "https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf（正文标记“lib.szu+2”，网址取自同文表格中的同一来源）",
+          "core": true,
+          "source_label": "部分支持",
+          "source_note": "打开 PDF（北航高研院何静，清华沈阳团队博士后，约 2025 年 2 月）核对。PDF 只测了 DeepSeek R1、OpenAI o3-mini、Claude 3.5 Sonnet、Kimi k1.5 四个模型，国内模型只有两家，支撑不了“优于大部分国内模型”；测的是 Kimi k1.5 模型，不是 Kimi 的「深度研究」功能。PDF 确实提出“DeepSeek+Kimi：R1 负责深入分析和异常检测，Kimi k1.5 提供深度挖掘的思路”的组合，并注明结果“仅供参考，无法作为决策制定……的最终依据”。另一来源 zhiding.cn（2025-07-23）只说“Kimi的深度研究功能也已经可以高质量地搜索、研究并通过精美的前端页面展示研究成果”，没有横向比较。",
+          "second_check": "",
+          "correct": "无法判断",
+          "correct_basis": "没有找到截至 2026-03-03、比较国内各家深度研究产品的可靠横评。到截止日，DeepSeek R1 已被 V3.1/V3.2 取代，Kimi 已发布 K2.5 与 Agent Swarm（kimi.com/blog/kimi-k2-5.html）。报告的组合建议建立在 2025 年初的模型之上，现在是否成立无法判断。"
+        },
+        {
+          "id": "E-c5",
+          "claim": "ChatGPT 深度研究配额有限：Plus 每月约 10 次，免费用户约 2 次。",
+          "quote": "深度研究配额有限（Plus 用户每月约 10 次，免费用户约 2 次），大规模重度使用的门槛较高。",
+          "cited": "https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/",
+          "core": false,
+          "source_label": "支持",
+          "source_note": "clickittech 原文：“ChatGPT Plus users get 10 Deep Research queries per month (and free users get 2)”，并引用了 Sam Altman 2025 年 2 月的推文。页面现显示日期 2026-04-13（晚于截止日），但所引内容是 2025 年 2 月的信息。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "这是 2025 年 2 月的配额。2025-04-24 OpenAI 推出轻量版后，Plus/Team 调整为每月 25 次（含轻量版），免费用户每月 5 次轻量版（thurrott.com、techradar.com 等报道）。截止日前的 OpenAI 帮助页（Wayback 2026-03-11 存档）写“Deep research usage varies by plan”，以产品内计数器为准。“Plus 10 次、免费 2 次”到截止日已经过时。"
+        },
+        {
+          "id": "E-c6",
+          "claim": "ChatGPT 深度研究在可靠性上被评为“显著比 Perplexity 更可靠”，适合严肃技术场景。",
+          "quote": "深度研究版本在可靠性上被评为“显著比 Perplexity 更可靠”，适合严肃技术场景。",
+          "cited": "https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/",
+          "core": true,
+          "source_label": "支持",
+          "source_note": "clickittech 原文：“OpenAI is also not entirely accurate, but it is vastly more reliable for now”；FAQ 称 OpenAI“more accurate, detailed, and expensive”。报告的转述与原意一致。",
+          "second_check": "",
+          "correct": "无法判断",
+          "correct_basis": "这是单篇博客在 2025 年初的主观评价。独立评测的证据相反或不一：DeepResearch Bench（arXiv 2506.11763）中 Perplexity Deep Research 的引用准确率（90.24%）高于 OpenAI Deep Research（77.96%），综合分则 OpenAI 较高。到 2026-03 两家都换了底层模型（OpenAI 改用 GPT-5.2，Perplexity Advanced Deep Research 改用 Claude Opus 4.5/4.6），无法确认“显著更可靠”。"
+        },
+        {
+          "id": "E-c7",
+          "claim": "评测显示 Kimi k1.5 长文本处理比短文本更出色，提取准确且数据维度更全，在特征分类与多维度关联挖掘任务中表现最佳。",
+          "quote": "行业评测指出，Kimi k1.5 在长文本处理任务中，相比短文本更出色，既能保证提取准确，又能给出更全面的数据维度；在特征分类与多维度关联挖掘任务中表现最佳。",
+          "cited": "https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf",
+          "core": false,
+          "source_label": "支持",
+          "source_note": "PDF 原文：“长文本处理任务中， Kimi k1.5相较短文本处理表现更加突出，提取准确的同时数据维度更加全面”；数据挖掘任务中“Kimi k1.5该任务中表现最为出色，对特征进行精准分类，从多维度深入挖掘指定数据的深层内涵和关联性”。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "作为对该次测试的转述是准确的。但这是 2025 年 2 月对 4 个模型的单次小样本测试，PDF 自带免责声明；到截止日 Kimi 已迭代到 K2、K2.5，结论已经过时。"
+        },
+        {
+          "id": "E-c8",
+          "claim": "对比实验显示 DeepSeek R1 的数据分析能力与 OpenAI o3-mini 相当且领先其他模型，分析逻辑更清晰严谨。",
+          "quote": "清华等机构的对比实验认为，R1 在数据分析任务上与 OpenAI o3-mini 相当且领先其他模型，分析逻辑更清晰严谨，适合做异常检测、数据相关性挖掘等深度分析场景。",
+          "cited": "https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf",
+          "core": false,
+          "source_label": "支持",
+          "source_note": "PDF 原文：“DeepSeek R1与Open AI o3mini的数据分析能力相当，且领先其他两个模型……其中R1分析逻辑更加清晰严谨，而o3推理更加高效”。报告把“领先其他两个模型”（Claude 3.5 Sonnet、Kimi k1.5）概括为“领先其他模型”，表述稍宽。报告称“清华等机构”，PDF 作者是北航高研院助理教授、清华沈阳团队博士后。",
+          "second_check": "",
+          "correct": "正确",
+          "correct_basis": "转述基本准确（依据是单次泰坦尼克号数据分析测试）。到截止日，R1 与 o3-mini 均已被取代（DeepSeek V3.2；OpenAI 深度研究改用 GPT-5.2），对选深度研究产品的参考价值有限。"
+        },
+        {
+          "id": "E-c9",
+          "claim": "Claude（3.5 Sonnet）不支持内置联网搜索，需要外接工具，因此深度研究体验天然弱于 Perplexity 和 ChatGPT。",
+          "quote": "至少在 2025 年中期的测试中，Claude 3.5 sonnet 尚不支持直接在模型内部进行联网网页查询，需要通过外部工具集成，天然弱于 Perplexity/ChatGPT 这种一体化 Deep Research 体验。lib.szu+1",
+          "cited": "https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf（正文标记“lib.szu+1”，网址取自同文表格中的同一来源）",
+          "core": true,
+          "source_label": "部分支持",
+          "source_note": "PDF 结论写“目前DeepSeek R1 、Open AI o3mini 、Kimi k1.5支持联网查询网址 ，Claude 3.5 sonnet暂不支持”，但测试时间约为 2025 年 2 月，不是报告所说的“2025 年中期”；PDF 也没有得出“深度研究体验天然弱于 Perplexity/ChatGPT”的结论。另一来源 laksn.com 的对比表把 Claude 的“Web Access”列为“No”，但该页面没有日期，信息早已过时。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "Anthropic 于 2025-03-20 为 Claude 推出网页搜索，2025-04-15 推出 Research（多步检索、带内联引用的深度研究功能）及 Google Workspace 集成（anthropic.com/news/research；techcrunch.com/2025/04/15/anthropics-claude-now-read-your-gmail/）。截至 2026-03-03，Claude 已内置联网搜索和 Research 模式，Opus 4.6 也已发布。说 Claude 不支持联网、要靠开发者集成，与截止日前的官方信息相反。"
+        },
+        {
+          "id": "E-c10",
+          "claim": "Gemini 的 Deep Research 更多依赖 Google 搜索加文档生态，没有像 Perplexity、ChatGPT 那样专门的深度调研模式。",
+          "quote": "Deep Research 能力更多依赖 Google 搜索 + 文档生态的组合，而不是像 Perplexity/ChatGPT 那样提供高度专门化的“深度调研模式”，在纯“长篇综述+引用管理”上口碑略逊。enago+2",
+          "cited": "无（正文标记“enago+2”，全文没有对应网址）",
+          "core": true,
+          "source_label": "没有出处",
+          "source_note": "“enago+2”在全文中没有对应网址，导出时来源已丢失。",
+          "second_check": "",
+          "correct": "有误",
+          "correct_basis": "Google 于 2024-12-11 在 Gemini Advanced 中推出名为“Deep Research”的专门智能体模式（blog.google/products/gemini/google-gemini-deep-research/），是同类功能中最早的；2025-11 增加 Gmail、Drive、Chat 来源；截止日的官方页面（gemini.google/overview/deep-research/ 的 2026-02-26 存档）写明由 Gemini 3 驱动。说 Gemini 没有专门的深度调研模式，与事实相反。"
+        }
+      ],
+      "timeliness": {
+        "score": 0,
+        "reason": "主要结论依赖 2025 年 2–7 月的材料：Perplexity Deep Research 首发博客（2025-02）、creatoreconomy（2025-03）、clickittech 引用的 2025 年 2 月配额、清华 PDF（2025 年 2 月，测的是 Kimi k1.5、DeepSeek R1、Claude 3.5 Sonnet、o3-mini 四个模型）。截止日前已有的更新都被忽略：ChatGPT 配额在 2025-04 调整，深度研究在 2026-02-10 改用 GPT-5.2；Claude 的网页搜索（2025-03）和 Research（2025-04）；Gemini Deep Research（2024-12 首发，2025-11 接入 Workspace，后升级到 Gemini 3）；Kimi K2.5 Agent Swarm（2026-01）；DeepSeek V3.2；Perplexity Advanced Deep Research（2026-02）。Claude 和 Gemini 两条核心判断正是因此直接出错。判 0 分。"
+      },
+      "traceable_sources": true,
+      "notes": "带网址的来源只有 6 个：creatoreconomy.so、clickittech.com、perplexity.ai 博客、深圳大学图书馆转载的清华 PDF、zhiding.cn、laksn.com，都能打开。其余“xxx+N”式标记（enago、cnblogs、36kr、sgu、pcmag）在全文中没有网址，导出时已丢失。核心结论 E-c9（Claude 不支持联网）和 E-c10（Gemini 没有专门的深度研究模式）都与截止日前的官方信息相反，可能构成硬伤第 2 条（主要结论与证据相反），请汇总时判定。E 的中文场景结论主要依据那份清华 PDF：它比较的是四个基础模型，不是各家的 Deep Research 产品，并自带“仅供参考”的免责声明。"
+    }
+  }
+}

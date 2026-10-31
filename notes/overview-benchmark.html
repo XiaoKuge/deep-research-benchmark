@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark 的定义</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:3px solid var(--line);background:var(--panel);
+    border-radius:0 8px 8px 0;color:#d8dce4;font-size:14px}
+  blockquote .src{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
+  .eg{background:var(--panel2);border-radius:8px;padding:8px 14px;margin:10px 0;font-size:14px}
+  .note{font-size:13px;color:var(--muted)}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ header h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<header>
+  <h1>这 23 篇怎么理解"Benchmark"</h1>
+  <p class="dek">回答索引页留言："在这些文章中，对于 Benchmark 的定义又是什么？"</p>
+  <div class="meta">核查于 2026-10-29：在 23 篇全文里搜了 desiderata / should / saturation / distinguishability / validity 这类措辞，逐篇看了摘要和引言里"我们提出了一个什么"的那句话。英文引文都是原文。接着上一页《<a href="overview-definitions.html">有没有定义 Research / Deep Research</a>》。</div>
+</header>
+
+<h2 id="s0"><span class="no">0</span>结论</h2>
+<div class="lead"><ul>
+  <li><strong>没有一篇定义"benchmark 是什么"。</strong>大家都默认读者知道。16 篇自称 benchmark，但"benchmark"这个词本身没人解释。</li>
+  <li><strong>从做法看，benchmark 由四个零件组成：</strong>一组题、每道题的判分标准、一个判卷的人或程序、一套考场规则（能不能上网、用什么资料）。各篇的差别，就在这四个零件各自怎么选。</li>
+  <li><strong>"好 benchmark 该满足什么"倒是有人列过。</strong>LiveDRBench 写了 5 条要求，DRACO 写了 3 条选题标准。把 23 篇的说法拼起来，大约有 10 条，但没有一篇全部做到。</li>
+  <li><strong>最缺的是"效度"：这个分数到底测的是不是我们想测的东西。</strong>23 篇里只有 Verification Gap 综述引用了专门研究这个问题的文献。上一页说过 Deep Research 本身没定义清楚，所以各个 benchmark 实际上在<strong>用自己的打分方式反过来定义 Deep Research</strong>。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>它们怎么称呼自己</h2>
+<div class="tbl"><table>
+<tr><th>自称</th><th>篇数</th><th>论文</th></tr>
+<tr><td><b>benchmark</b></td><td>16</td><td>LiveDRBench、BrowseComp-Plus、IDRBench、DRB II、MMDR、DRACO、DeepResearch-9K、DeepFact、MiroEval（"benchmark and evaluation framework"）、DR³-Eval、Expert Consulting、LiveBrowseComp、DailyReport、FinResearchBench II、From Simple QA、LifeSearch</td></tr>
+<tr><td><b>评测框架</b>（evaluation framework）</td><td>2</td><td>DREAM（"reference-free evaluation paradigm"，不依赖标准答案）、DR-Arena（"fully automated evaluation framework"，擂台）</td></tr>
+<tr><td><b>测量研究</b></td><td>3</td><td>Reference Hallucinations、Search-Time Contamination、Why LMs Hallucinate</td></tr>
+<tr><td><b>综述</b></td><td>2</td><td>Verification Gap、Rubric-Guided RL</td></tr>
+</table></div>
+<p class="note">名不副实的一例：DeepResearch-9K 叫"A Challenging Benchmark Dataset"，但它主要是训练数据，答案没有核验过（见其<a href="2603.01152_DeepResearch-9K.html">精读</a>）。"benchmark"在这里只是"一个数据集"的意思。</p>
+
+<h2 id="s2"><span class="no">2</span>隐含的定义：四个零件</h2>
+<p>把 benchmark 想成一场考试就好懂了：</p>
+<div class="eg">
+<b>① 题</b>：考哪些题、从哪来（专家出题、真实用户请求、自动生成）。<br>
+<b>② 标准</b>：每道题怎么算对。可以是唯一答案、一张结论清单、一组评分项，也可以没有标准、只比高低。<br>
+<b>③ 判卷</b>：谁来判。可以是程序比对、LLM 评委、能上网查证的 Agent 评委，或者人类专家。<br>
+<b>④ 考场</b>：Agent 答题时能用什么。是实时网络，还是一个固定的资料库。
+</div>
+<div class="tbl"><table>
+<tr><th>论文</th><th>① 题</th><th>② 标准</th><th>③ 判卷</th><th>④ 考场</th></tr>
+<tr><td><a href="2508.06600_BrowseComp-Plus.html">BrowseComp-Plus</a></td><td>830 道短答案题</td><td>唯一答案</td><td>LLM 判对错</td><td><b>固定</b>的约 10 万篇语料</td></tr>
+<tr><td><a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a></td><td>用 90 天内的新事实出的短答案题</td><td>唯一答案</td><td>LLM 判对错</td><td>实时网络</td></tr>
+<tr><td><a href="2508.04183_LiveDRBench.html">LiveDRBench</a></td><td>100 题，用"反转"老任务的办法造</td><td>结论清单（含子结论）</td><td>LLM 对清单，算精确率、召回率</td><td>实时网络</td></tr>
+<tr><td><a href="2601.08536_DeepResearch-Bench-II.html">DRB II</a></td><td>132 题，从专家文章反推</td><td>9,430 条是 / 否评分项</td><td>LLM 评委</td><td>实时网络</td></tr>
+<tr><td>DRACO</td><td>100 题，来自 Perplexity 的真实请求</td><td>评分项，含扣分项</td><td>LLM 评委</td><td>实时网络</td></tr>
+<tr><td>DR³-Eval</td><td>真实用户提供的材料</td><td>多维评分</td><td>LLM 评委</td><td>每题一个<b>固定</b>沙箱语料</td></tr>
+<tr><td>Expert Consulting</td><td>70 道咨询题，埋了"认知陷阱"</td><td>程序检查项 + 0–3 分评分表</td><td>程序 + <b>人类专家</b></td><td>实时网络</td></tr>
+<tr><td><a href="2602.18940_DREAM.html">DREAM</a></td><td>沿用别家的题</td><td><b>没有固定标准</b>，评委现场生成一部分评分项</td><td>能上网查证的 Agent 评委</td><td>实时网络</td></tr>
+<tr><td><a href="2601.10504_DR-Arena.html">DR-Arena</a></td><td><b>考官现场出题</b>、追问</td><td>没有标准，两两比较</td><td>考官 LLM</td><td>实时网络</td></tr>
+</table></div>
+<p>四个零件里，<strong>② 标准</strong>的分歧最大：有的是"唯一答案"，有的是"评分项"，还有的干脆没有标准。From Simple QA 点出了没有标准的代价：两两比较"useful for ranking models, but the resulting scores depend on which models are compared and do not provide an absolute measure of response quality"。也就是说，换一批对手，分数就变了。</p>
+
+<h2 id="s3"><span class="no">3</span>"好 benchmark 该满足什么"：拼起来约 10 条</h2>
+<p>列得最完整的是 LiveDRBench：</p>
+<blockquote>We list the following desiderata for a DR evaluation benchmark:
+1. The tasks should not be answerable using any single article on the Web. …
+2. The tasks should require accessing a wide variety of sources on the Web, i.e., to force the models to find the right grounding for their responses and not be able to answer directly from parametric memory.
+3. Evaluation of each task should be objective and reproducible, and metrics should help benchmark the progress in the DR field.
+4. The tasks should be amenable to periodic updates. …
+5. The tasks should capture a wide variety of DR domains and users …
+<span class="src">— LiveDRBench §4.1</span></blockquote>
+<p>它自己也承认这几条很难同时满足。例如请专家出题能满足第 2 条，但不好更新（第 4 条）。</p>
+<p>把其他各篇的说法合起来：</p>
+<div class="tbl"><table>
+<tr><th>要求</th><th>白话</th><th>谁提的</th></tr>
+<tr><td><b>可复现、公平</b></td><td>换个时间、换个人跑，结果一样</td><td>BrowseComp-Plus（"fairness, transparency"）、DR³-Eval（标题就是 Realistic and Reproducible）、LiveDRBench 第 3 条、Search-Time Contamination</td></tr>
+<tr><td><b>真实</b></td><td>题目像真实用户会问的</td><td>DRACO、FinResearchBench II（"ecological validity"）、DailyReport、DR³-Eval、LifeSearch</td></tr>
+<tr><td><b>客观、可核验</b></td><td>专家们对"什么算好答案"意见一致</td><td>DRACO 选题标准 1（"Multiple experts would agree on what makes a good answer"）、LiveDRBench 第 3 条、MMDR、From Simple QA</td></tr>
+<tr><td><b>有边界</b></td><td>正确答案不是无穷多，能判断"答全了"</td><td>DRACO 选题标准 2（"There is not an infinite number of correct answers"）</td></tr>
+<tr><td><b>非搜不可</b></td><td>不能凭记忆答，也不能靠一篇文章答</td><td>LiveDRBench 第 1、2 条；MiroEval（先让模型不联网作答，答得好的题剔除）；LiveBrowseComp；From Simple QA 的闭卷基线</td></tr>
+<tr><td><b>难在复杂，不在繁琐</b></td><td>难在找信息或综合，而不是活多</td><td>DRACO 选题标准 3（"Difficulty comes from complexity, not tedium"）</td></tr>
+<tr><td><b>防污染、能更新</b></td><td>题和答案别被模型背下来，能定期换新</td><td>LiveDRBench 第 4 条、DR-Arena、LiveBrowseComp、Search-Time Contamination、DeepFact（标签可修订）</td></tr>
+<tr><td><b>有区分度、不饱和</b></td><td>能拉开好坏，不会大家都满分</td><td>DRACO（自家系统得分超 90% 就退回重做）、FinResearchBench II（只留能区分系统的评分项）、MiroEval、Expert Consulting</td></tr>
+<tr><td><b>和人的判断一致</b></td><td>机器评分和专家排名对得上</td><td>LifeSearch、DR-Arena、DailyReport、FinResearchBench II、DeepFact</td></tr>
+<tr><td><b>评分不鼓励瞎猜</b></td><td>答错要比不答更吃亏</td><td>Why LMs Hallucinate；DRACO 的扣分项</td></tr>
+<tr><td><b>评委能力对等</b></td><td>评委要能做被评者做的事，比如上网查证</td><td>DREAM（"capability parity"）</td></tr>
+</table></div>
+
+<h2 id="s4"><span class="no">4</span>对 benchmark 的三种理解</h2>
+<h3>A. 一份固定的考卷（多数）</h3>
+<p>题、标准一次定好，大家都考同一份。Search-Time Contamination 说出了它的用处："enabling different models and methods to be assessed against shared reference datasets while supporting transparency, reproducibility, and cumulative progress"，也就是一把公共的尺子，能横向比，也能看出逐年进步。</p>
+<h3>B. 一个活的流程（少数，越来越多）</h3>
+<p>DR-Arena 认为固定考卷有三个毛病："limited task generality, temporal misalignment … and data contamination"。也就是题型固定、答案会过时、题会被模型背下来。它的替代方案是：</p>
+<ul>
+  <li><b>DR-Arena</b>：考官现场出题；</li>
+  <li><b>DREAM</b>：评委现场查证；</li>
+  <li><b>DeepFact</b>：标签可以被推翻，"benchmark labels and rationales are explicitly revisable"；</li>
+  <li><b>From Simple QA</b>：全自动造新题；</li>
+  <li><b>LiveDRBench</b>：定期更新。</li>
+</ul>
+<p>代价是<strong>不同时间的分数没法直接比</strong>，因为考卷变了。</p>
+<h3>C. 一套激励机制（Why LMs Hallucinate）</h3>
+<blockquote>language models are optimized to be good test-takers, and guessing when uncertain improves test performance. … modifying the scoring of existing benchmarks that are misaligned but dominate leaderboards, rather than introducing additional hallucination evaluations.
+<span class="src">— Why Language Models Hallucinate，摘要</span></blockquote>
+<p>意思是：<strong>benchmark 不只是测量，它还在训练整个行业。</strong>计分规则奖励什么，模型就会往哪里长。答错和不答都是 0 分，模型就会学着瞎猜。</p>
+
+<h2 id="s5"><span class="no">5</span>几条要求互相打架</h2>
+<ul>
+  <li><b>区分度 vs 效度。</b>FinResearchBench II 只保留"能在 10 个系统之间分出高下"的评分项。这等于用"能不能拉开当前这批系统"来定义"好题"，有循环论证的风险：被删掉的题可能恰恰是大家都没做好、但很重要的事。DRACO 用自家 Perplexity Deep Research 来测题够不够难，而它的发布方正是排行榜第一名。</li>
+  <li><b>真实 vs 客观。</b>真实用户的请求往往开放、模糊。DRACO 要求题目"有边界、专家意见一致"，就得把真实请求过滤、改写，结果离"真实"又远了一步。</li>
+  <li><b>防污染 vs 可比。</b>题换得越勤，越不怕被背下来，但今年的分数和去年的就越没法比。</li>
+</ul>
+
+<h2 id="s6"><span class="no">6</span>缺的那一块：效度</h2>
+<p>前面 10 条要求，大多在说"这个分数稳不稳、准不准"，属于<strong>信度</strong>。很少有人问"这个分数测的是不是我们想测的东西"，这是<strong>效度</strong>。23 篇里只有 Verification Gap 综述正面提了：</p>
+<blockquote>Construct-validity critiques of dominant benchmarks [Raji et al., 2021] and a review of 445 LLM benchmarks [Bean et al., 2025] show that high leaderboard scores can be measurement artifacts, so an agent optimizing against a benchmark may be exploiting inval[id] …
+<span class="src">— Verification Gap 综述 §13.4</span></blockquote>
+<p>这和上一页的结论连起来了：<strong>Deep Research 没有公认的定义，所以没有一个 benchmark 能说清自己测的"构念"是什么。</strong>结果是倒过来的：每个 benchmark 的打分方式，事实上成了它对 Deep Research 的定义。</p>
+<ul>
+  <li>BrowseComp-Plus 的 Deep Research，就是"在固定语料里找到唯一答案"；</li>
+  <li>DRB II 的，就是"覆盖专家文章里的要点"；</li>
+  <li>DR-Arena 的，就是"在两两比较中赢"。</li>
+</ul>
+<p>DRB II 精读里用 Kane 的论证链分析过同一个问题（"推广"和"外推"两环最弱）。</p>
+
+<h2 id="s7"><span class="no">7</span>对你 5 个 Agent 评测的启示</h2>
+<ol>
+  <li><strong>把四个零件逐个写下来：</strong>题从哪来、标准是什么、谁判卷、考场开不开网。写不出来的那个零件，就是你评测里最主观的地方。</li>
+  <li><strong>用 LiveDRBench 的 5 条和 DRACO 的 3 条给题目做体检。</strong>尤其是"不能靠一篇文章答"和"有边界"这两条。</li>
+  <li><strong>别用"区分度"去筛评分项。</strong>只有 5 个 Agent 时，"能拉开这 5 个"的评分项很可能只是在放大偶然差异。评分项应该按"任务需要什么"来定，而不是按"谁答出来了"。</li>
+  <li><strong>计分让"答错"比"不答"更吃亏</strong>（Why LMs Hallucinate、DRACO 的扣分项）。<strong>评委要能上网查证</strong>（DREAM 的能力对等）。</li>
+  <li><strong>效度要靠 benchmark 之外的东西来证明。</strong>例如找专家独立排名，看机器分数和它对不对得上。这和你心得笔记里记的"专家盲测对比"是同一件事，这里只记下这个联系，不展开。</li>
+</ol>
+
+<h2 id="s8"><span class="no">8</span>说明</h2>
+<ul>
+  <li><strong>值得补读、但不在文件夹里的两篇：</strong>Bean et al. 2025, <i>Measuring what Matters: Construct Validity in Large Language Model Benchmarks</i>（NeurIPS 2025 Datasets &amp; Benchmarks，arXiv 2511.04703），审查了 445 个 LLM benchmark；Raji et al. 2021, <i>AI and the Everything in the Whole Wide World Benchmark</i>。它们专门讨论"benchmark 测的是什么"，正好补上这 23 篇的空白。我没读过这两篇的全文，上面只引用了 Verification Gap 对它们的转述。</li>
+  <li><strong>第 2 节的表只列了 9 篇代表</strong>，其余各篇的四个零件见各自的精读页。</li>
+  <li><strong>可能有遗漏：</strong>双栏 PDF 抽出的文本有时左右栏会串在一起；我是按关键词定位后逐段读的。</li>
+</ul>
+
+<footer>相关：<a href="overview-definitions.html">有没有定义 Research / Deep Research</a> · <a href="overview-tools.html">评测工具一览</a> · <a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap</a></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：DeepResearch Bench II（arXiv 2601.08536）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2601.08536_DeepResearch-Bench-II.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#deepresearch-bench-iiarxiv-260108536">审视记录：DeepResearch Bench II（arXiv 2601.08536）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+<li><a href="#_1">精读页勘误</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="deepresearch-bench-iiarxiv-260108536">审视记录：DeepResearch Bench II（arXiv 2601.08536）</h1>
+<p>记录日期：2026-10-29。证据等级标在每条判断末尾：【复算】是我们根据公开数据或代码亲自算过或逐条查过的；【自述】是只有论文或其仓库自己的说法；【推断】是我们根据原文推出、原文没有直接说的。页码指本地 PDF（第三版，共 30 页）的页码。</p>
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>版本与日期</strong>：arXiv 第三版，2026 年 9 月 10 日；第一版发布于 2026 年 1 月。首页标注"Preprint. Work in progress."，属于预印本，没有找到会议或期刊发表记录【自述】。</li>
+<li><strong>作者及机构</strong>：李瑞哲、杜明轩（共同第一作者）、徐本峰（项目负责人）、朱驰炜、王晓瑞、毛震东（通讯作者）。机构为中国科学技术大学、北京 Metastone 科技公司（第 1 页）。与初代 DeepResearch Bench 是同一团队【自述】。</li>
+<li><strong>数据和代码是否公开</strong>：</li>
+<li>代码仓库 <code>https://github.com/imlrz/DeepResearch-Bench-II</code>，2026-10-29 用 <code>curl -sI</code> 检查，返回 200。仓库许可：代码为 Apache-2.0；数据按题目分别继承来源文章的许可。按 2026-10-28 拉取的本地副本统计，132 道题中 129 道为 CC BY 4.0，2 道为 CC BY-NC 4.0，1 道为 CC0【复算】，与仓库说明文件的说法一致【自述】。论文第 4 页说只保留"CC-4.0 or CC-4.0-NC"许可的文章，第 119 题的 CC0 与此不符【复算】。</li>
+<li>被测系统生成的报告：说明文件指向 Hugging Face 数据集 <code>muset-ai/DeepResearch-Bench-II-Dataset</code>（返回 200，标注许可 apache-2.0）。按该数据集的文件清单，含 7 个系统的报告，没有通义 DeepResearch；各系统文件数在 127 到 133 之间，不全是 132 份【复算，只查了文件清单，未下载】。</li>
+<li>评委逐条打分的原始输出、人工标注（第 4.3 节用来验证评委的那 10 份报告的标注）：没找到公开版本。</li>
+<li>排行榜：<code>agentresearchlab.org/benchmarks/deepresearch-bench-ii/</code> 和 Hugging Face 空间 <code>muset-ai/DeepResearch-Bench-Leaderboard</code>，均返回 200。</li>
+<li><strong>阅读依据</strong>：已有精读页（<code>notes/2601.08536_DeepResearch-Bench-II.html</code>，2026-10-28）加原文核对。原文全文通读；附录 E 的两个提示词逐句读过。精读页中依据数据集的统计，用本地副本 <code>scratchpad/drb2_data/tasks_and_rubrics.jsonl</code>（2026-10-28 拉取，与 2025-11 版的题目和评分项字段逐字相同）重新算过。仓库的提交记录和说明文件于 2026-10-29 读取。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li><strong>分数可核验、与人类专家判断一致</strong>："All rubrics are derived from carefully selected expert-written investigative articles … ensuring that the criteria are verifiable and aligned with human expert judgment."（摘要，第 1 页）</li>
+<li><strong>能揭示智能体与人类专家的差距</strong>："even the strongest models satisfy fewer than 50% of the rubrics, revealing a substantial gap between current DRAs and human experts."（摘要，第 1 页）第 1 节写目标是"reveal where DRAs truly fall short relative to human experts"（第 2 页）。</li>
+<li><strong>评委能识破"看似正确的幻觉"</strong>：图 2 说明写，从专家文章拆出的细粒度评分项"enabling the LLM judge to reject seemingly correct hallucinations and provide unbiased, verifiable evaluations aligned with human judgment"（第 3 页）。</li>
+<li><strong>能核验召回信息的正确性</strong>：第 2.1 节批评其他报告类评测基准只查"引文是否支持论断"，"does not necessarily confirm that the information is correct"（第 3 页）；表 1 称本评测基准的评分项"Verifiable by LLM Internal Knowledge"，即不需要评委懂行（第 3 页）。</li>
+<li><strong>三个维度对应深度研究的核心能力</strong>：信息召回（Information Recall）包括"checking its reliability through source credibility and cross-validation"；分析（Analysis）要求"higher-level insights that go beyond simple aggregation"；呈现（Presentation）包括"transparent citation or referencing for verification"（表 2，第 5 页）。</li>
+<li><strong>更准确的能力度量</strong>："providing a more accurate measure of model capabilities"（第 6 节，第 9 至 10 页）。</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong></li>
+<li>来源：以初代 DeepResearch Bench 的题目为种子，寻找回答相同或相似问题的开放获取综述，经许可筛选和四条适配性人工筛选（需要大量公开检索；结论需要实质综合；不依赖实验；不依赖复杂数据挖掘或随机机器学习），再由一个未披露名称的大语言模型（论文称为 task-generator）从文章"反推"出题目（第 3.1.1、3.1.3 节，第 4 至 6 页；附录 E.1 原话："we reverse-engineer a question from the 'reference answer'"，第 23 页）【自述】。</li>
+<li>数量：132 道，中英文各 66 道，22 个领域（表 7，第 14 页）【复算】。来源文章实际为 131 篇：第 124 题没有来源，附录表 9 第 124 行为空（第 22 页），数据中该题也没有屏蔽字段；而第 3.1.1 节写"132 articles were retained"（第 5 页）【复算】。</li>
+<li>抽样方式：目标抽样加便利抽样。话题分布继承自初代基准对真实用户查询的统计；候选池由开放获取许可决定；最后人工挑选【自述，抽样类型的归类是推断】。数据中 96 个种子题，其中 36 个各派生出两道题（编号形如 task8 与 task8+）【复算】。按屏蔽网址的域名，131 篇中 67 篇来自 MDPI【复算】。</li>
+<li>是否复用：复用初代 DeepResearch Bench 的种子题和话题分布；复用已发表的综述文章作为标准答案的来源【自述】。</li>
+<li><strong>判分标准</strong>：评分项（rubric），共 9,415 条二元评分项（论文正文写 9,430 条，见第 7 节问题 D11），分三个维度：信息召回 6,983 条（74%）、分析 1,686 条（18%）、呈现 746 条（8%）【复算】。每条评分项自带答案内容，例如"明确指出VIX的全称是CBOE Volatility Index"（第 9 题）。属于"结论清单"与"评分项"的混合：信息召回类近于结论清单，分析和呈现类近于评分项【推断】。</li>
+<li><strong>判卷方式</strong>：大语言模型评委。论文使用 Gemini-2.5-Pro，每批 50 条评分项（第 4.1.1 节，第 7 页）。打分提示词给出三档：1 表示满足且不依赖被屏蔽文章，0 表示"does NOT mention this rubric item at all"，−1 表示满足但依据被屏蔽文章（附录 E.2，第 29 页）。仓库聚合代码 <code>aggregate_scores.py</code> 只把 1 计为通过，0 和 −1 都留在分母里；每题得分是该题全部评分项的通过比例，模型总分是各题得分的平均【复算，读代码】。2026 年 8 月起，仓库的官方评委改为 GPT-5.5，原因是 Gemini-2.5-Pro 将于 2026 年 10 月 20 日在谷歌云 Vertex 平台退役；旧评委保留在 <code>gemini-25</code> 分支（仓库说明文件"News"一节）【自述】。论文第三版（2026 年 9 月）仍只写 Gemini-2.5-Pro。</li>
+<li><strong>运行环境</strong>：实时网络。被测系统是截至 2025 年 11 月可用的商业或早期发布的深度研究产品（第 4.1.2 节，第 7 页）。每道题的提示词末尾附一条"最高优先级规则"，列出来源文章的标题、作者和网址，要求不得查看（数据中 132 道题都有这段规则，第 124 题的列表为空）【复算】。题目给出时间范围以与来源文章对齐（第 3.1.2 节，第 5 页）；但运行时智能体能看到截止时间之后的网络信息【推断】。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>它声称：</strong> 评分项自带答案，评委只需比对，不需要领域知识，因此判得准；Gemini-2.5-Pro 与人工标注一致。</p>
+<p><strong>证据：</strong>
+- 表 4、表 5（第 8 页）：在 10 份报告上，Gemini-2.5-Pro 每批 50 条时准确率（ACC）91.75、F1 89.57；GPT-5 为 88.36、78.28；Gemini-2.5-Flash 为 89.45、79.79。
+- 仓库说明文件补充了一项新研究：同样的 10 份报告、738 条逐项判断，GPT-5.5 的三档准确率 91.19%，科恩卡帕系数（Cohen's κ）0.7993，题目层面皮尔逊相关系数 0.9587；表中没有 Gemini-2.5-Pro 一行【自述】。
+- 论文没有写人工标注者的人数、资质，也没有标注者之间的一致性；没有报告同一评委重复评分的稳定性；没有按报告格式（PDF、DOCX、Markdown、HTML）分别报告准确率；批大小和评委型号都是在这同一组 10 份报告上选出的（第 4.3 节）【自述】。
+- 打分三档中没有"提到了但说错"。按第 E.2 节的定义，说错的内容只能落入 0 或 −1，代码对二者一样不给分【复算，读提示词和代码】。第 4.1.1 节又写"binary scheme (0/1)"，与附录 E.2 的三档不一致【自述】。</p>
+<p><strong>证据等级：</strong> 一致性数字为【自述】；打分规则和聚合方式为【复算】。</p>
+<p><strong>我们的判断：</strong> 就"单条评分项判没判对"这一点，证据方向是正面的，但规模小、选型和验证用的是同一组样本，结果可能偏乐观；缺少重复评分的稳定性证据。对第一轮"对报告排名"最关键的是"换一个评委、重新评一次，名次是否基本不变"，这一项没有证据。评委在 2026 年 8 月换成 GPT-5.5 之后，论文表 3 的分数与现行排行榜分数分属两个评委，二者是否可比没有证据。以上主要是<strong>缺证据</strong>。打分档位不区分"说错"和"没提"，是<strong>设计缺陷</strong>：它使"判得准"只对"有没有命中"成立，对"有没有说错"不成立。
+Bean 检查项：评估格式约束的影响——没做（题目常规定表格列名和行数，呈现类评分项直接检查格式，见第 E.1 节示例 2）；验证自动解析的准确性、一致性和偏差——部分做了（只有准确性，没有一致性和偏差）；描述人工评分者——没做；主观标签的变异——没做（单个评委、单次评分、二元判定）；错误分析中的评分偏差——没做。</p>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>它声称：</strong> 132 道题覆盖 22 个领域，来自真实用户查询的话题分布；模型表现在语言和话题之间稳定。</p>
+<p><strong>证据：</strong>
+- 表 7（第 14 页）：22 个领域中，科学与技术 23 道、金融与商业 15 道、软件开发 13 道、健康 12 道、教育与就业 10 道，其余 17 个领域各只有 2 到 6 道【复算】。
+- 第 5.1 节（第 8 至 9 页）：用单因素方差分析（one-way ANOVA）检验语言和话题，话题效应全部 p&gt;0.05。每个小领域只有 2 到 6 道题，检验效力很低，"没有显著差异"说明不了"没有差异"【推断】。表 8（第 15 页）中，同一模型在只有 2 道题的领域里分数波动很大，例如 Qwen 在"时尚与美妆"为 0.7193、在"犯罪与法律"为 0.2222【自述】。
+- 每个被测系统只运行一次；表 3 没有置信区间或标准误【自述】。
+- 36 对题目共用同一种子，132 道题并非 132 个独立话题【复算】；一半来源来自同一出版方（MDPI，67 篇）【复算】。
+- 没有论证样本量或统计效力【自述】。</p>
+<p><strong>证据等级：</strong> 题目构成为【复算】；稳定性结论为【自述】；检验效力不足为【推断】。</p>
+<p><strong>我们的判断：</strong> 不够。抽样以"能出成题"和"许可允许"为主导，代表性没有论证，属于<strong>设计缺陷</strong>；没有重复运行和不确定性估计，属于<strong>缺证据</strong>。按第一阶段第 1.2 节，第一轮只对报告排名，推广环节不需要我们提供证据，但凡是要引用本基准"某智能体更强"的结论，这一环都站不住。
+Bean 检查项：用抽样策略保证代表性——没做（目标抽样加便利抽样）；核验题目质量和相关性——部分做了（四阶段流水线、专家审核超过 400 小时，但专家人数、资质和一致性都没写；数据中仍有构造痕迹，见问题 D12）；包含测试已知敏感性的题目（换说法、换顺序）——没做；报告样本量并论证统计效力——没做；报告不确定性估计——没做；说明是否改编已有数据集——做了（说明以初代基准为种子）；分析被复用工作的优缺点——部分做了（第 2.1 节批评初代基准的评分标准由大语言模型定义）；在新旧基准上对比表现——没做；说明改动如何提高构念效度——部分做了（只有论述）。</p>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>它声称：</strong> 分数反映深度研究能力，并且能核验召回信息的正确性；三个维度对应信息查找、分析、写作三层能力（图 1、表 2）。</p>
+<p><strong>证据：</strong>
+- <strong>标准答案只有一篇文章。</strong> 附录 E.1 要求题目生成器"retrieve information across the entire internet and produce content that is as similar as possible to the human article"，分析维度评"whether those conclusions are similar to those in the human article"（第 23 页）。专家审核要求信息召回类评分项"remain fully consistent with the source article"（第 3.1.3 节，第 6 页）。来源文章本身是否正确、是否完整，论文只有一句声明："thus reflecting a high degree of credibility and expert consensus"（第 3.1.1 节，第 4 页），没有被引、撤稿、审稿方式等任何核查【自述】。90% 自检只检验"评分项忠于原文"，不检验原文对不对【自述】。
+- <strong>按范例对答案。</strong> 数据中第 5 题要求整理 1968 至 2021 年的"代表性研究"，评分项却逐条规定是哪几篇（Evans and Archer 1968、Fielitz 1974、Solnik 1974、Statman 1987 等），选了其他同样有代表性的研究不得分；第 117 题的分析类评分项要求复现一位学者对吉藏"第一义空"的诠释；第 120 题有 186 条信息召回评分项，其中约 140 条是逐年入境人数，换一个同样合理的数据源就会大面积失分【复算，逐条查看】。附录 E.1 示例 1 同样要求"Provide a complete list of his major works … ensuring that no representative work is omitted"，评分项逐条列出约 40 篇著作（第 23 至 26 页）【自述】。
+- <strong>按答案裁题。</strong> 附录 E.1 第 2 条允许只取原文一节或一张表，并且"may avoid overly subjective parts of the source article, since a model is unlikely to reproduce the exact same analysis"（第 29 页）；第 3 条要求规定表格列名；第 9 条要求评分项太多时"shrink the scope of the task"。示例 2 在题目里直接列出 13 种灵敏放大器的缩写并规定表格恰好 13 行（第 26 页），与第 5 条"假定用户不是专家、叫不出领域内的方法"和第 9 条"不要直接列出要查的实体"相矛盾【自述】。数据中第 120 题也在题目中列出了 13 个国家【复算】。题目因此近于原文提纲，测的是"按提纲把内容找回来"，测不到智能体自己界定问题的能力【推断】。
+- <strong>说错不扣分，提纲以外不查。</strong> 见第 4.1 节。评分只看评分项是否命中，评分项以外的论断（包括编造的来源和数字）不检查【复算，读提示词和代码】。这与"能识破看似正确的幻觉"的说法只在评分项覆盖的范围内成立【推断】。
+- <strong>"甄别来源"只写在定义里。</strong> 表 2 称信息召回包括"checking its reliability through source credibility and cross-validation"，仓库说明文件写"cross-check all key information"。按关键词检索 9,415 条评分项（来源、可信、可靠、权威、矛盾、引用等中英文词），没有发现评价智能体自己如何甄别来源、处理矛盾的评分项；命中的多是内容本身（例如"明确引用某篇论文"）；只有第 69 题有一条"排除企业宣传、未发表报告等非合规来源"【复算，关键词检索，可能有遗漏】。
+- <strong>没有外部效标。</strong> 论文没有检验"本基准分高的报告，专家整体评阅是否也认为更好"【自述】。
+- <strong>没有不联网基线。</strong> 来源文章多为 2020 至 2025 年发表的开放获取综述，评分项 2025 年 11 月起公开在代码仓库；论文没有报告智能体不联网时的得分，分不清得分是查出来的还是记得的【自述，污染可能性为推断】。
+- <strong>泄漏检测只看引用。</strong> −1 只在报告"引用"了被屏蔽文章时才触发（附录 E.2）；智能体读了原文但不引用，或引用镜像网址，检测不到【推断】。屏蔽规则本身把原文标题告诉了智能体（第 5.2 节，第 9 页）【自述】。</p>
+<p><strong>证据等级：</strong> 设计规则为【自述】；数据中的例子和关键词检索为【复算】；对能力含义的解读为【推断】。</p>
+<p><strong>我们的判断：</strong> 这是四环中最弱的一环，主要是<strong>设计缺陷</strong>：把"与一篇专家文章重合多少"当作"深度研究做得多好"，而这篇文章本身的正确性和完整性没有核验，说错和没提同等对待，评分项以外的内容不查。"甄别来源"一项是论文<strong>声称了而没做到</strong>。缺少外部效标和不联网基线属于<strong>缺证据</strong>。精读页"它很客观，但客观地测量了一个偏掉的东西"的判断，核对后成立。
+Bean 检查项：给出精确、可操作的定义——部分做了（图 1 和附录 E.1 把深度研究定义为信息召回、分析、呈现三部分，可操作，但没有说明为什么是这三部分）；说明范围和排除的方面——部分做了（第 5.3 节、第 7 节承认"按用户背景调整呈现"没有实现）；子成分分开测——做了（表 3 分维度报告），但总分把三者按评分项条数合并（见第 6 节）；控制无关任务——没做（记忆可以替代查找，没有不联网基线）；常见失败的定性和定量分析——部分做了（只有分维度分数，没有失败案例分析）；失败是否与无关因素相关——部分做了（检验了语言和话题，没有检验报告长度、格式等）；与真实应用的关联——部分做了（话题来自真实查询分布，但题目被裁成原文形状）；任务和指标的选择理由——做了论述，但"与原文相似"作为分析维度的标准没有论证；检测污染——部分做了（只有基于引用的泄漏率）；保留未公开的题目——没做；调查来源材料是否进入训练语料——没做。</p>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>它声称：</strong> 8 个系统可以排序，OpenAI o3 深度研究最强（45.40），通义 DeepResearch 最弱（29.89）；最强的系统也不到 50%，与人类专家差距很大。</p>
+<p><strong>证据：</strong>
+- 表 3（第 7 页）：相邻名次的差距，前七名之间为 0.02 到 2.62 分（第五名 Qwen3-Max 39.25 与第六名 Grok 39.23 只差 0.02），第七名与第八名相差 8.69 分；没有置信区间【复算，按表 3 相减】。
+- "与人类专家的差距"：来源文章在自己的评分项上必然达到 90% 以上，因为第 3.1.3 节的自检规定信息召回或分析低于 90% 就重新生成（第 6 页）。用这个按构造得来的上限与智能体对比，差距中有一部分来自"评分项就是从原文拆出来的"。论文没有请另一位专家在同样条件下（不看原文）重做题目【自述，循环论证的判断为推断】。
+- 报告前后不一致：表 6（语言）和表 8（领域）只有 7 个系统，没有 Gemini-3-Pro；表 10 的平均泄漏率 3.64%，而表中 8 个数的平均为 3.42%，去掉 Gemini-3 后 7 个数的平均为 3.64%【复算】。看起来 Gemini-3-Pro 是后来加入的，附表没有跟着更新【推断】。
+- 评委 Gemini-2.5-Pro 与两个被测系统同属 Gemini 家族，论文没有讨论自我偏好【自述】。对"是否命中某条事实"这类判断，影响可能有限【推断】。
+- 缺失报告的处理：仓库说明文件写，现行分数"average each system's valid results"，第 112、114 题因"identified issues"暂时从排行榜计分中剔除（2026 年 10 月）【自述】。聚合代码按有结果的题目求平均【复算，读代码】。Hugging Face 上各系统报告文件数不同（127 到 133）【复算】。论文没有说明各系统是否都交齐了 132 份报告、缺的怎样计分【自述】。</p>
+<p><strong>证据等级：</strong> 名次差距和平均数为【复算】；"差距"的循环性和附表未更新为【推断】。</p>
+<p><strong>我们的判断：</strong> 不够。前七名之间的排序没有统计依据，属于<strong>缺证据</strong>；"与人类专家差距很大"这一结论有一部分由构造规则决定，属于<strong>设计缺陷</strong>。如果系统交的报告数不同而按有效题目平均，名次比较的是不同题目子集上的平均，这一点论文没有交代，属于<strong>缺证据</strong>。
+Bean 检查项：为主要分数报告不确定性估计——没做；与同类评测比较异同——部分做了（表 1 只做定性对比，没有与初代基准或人工评阅做相关分析）；讨论构念效度方面的局限和取舍——部分做了（第 7 节讨论了泄漏、人工标注主观性和呈现维度，没有讨论"单篇文章作标准答案"的局限）；提出改进方向——做了（第 5.3 节）。</p>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：题目按来源文章的时间范围设截止年份。按题目正文中出现的最大年份统计：2019 年及以前 17 道，2020 年 11 道，2021 年 15 道，2022 年 20 道，2023 年 22 道，2024 年 24 道，2025 年 7 道，没有年份 16 道【复算】，与精读页一致。题目和评分项自 2025 年 11 月以来没有改动（本地 2025-11 版与 2026-10-28 版逐字段比较，0 处不同【复算】；仓库提交记录显示该文件只在 2025-11-17、2026-02-24、2026-05-14 有过提交【自述】）。没有年份的 16 道题，答案会随网络信息变化而过时【推断】。检查"所用材料不超过截止时间"的评分项只有十几条（关键词检索得到约 15 至 18 条，例如第 11、36、71、89、110 题），多在呈现维度，可能有遗漏【复算】。</li>
+<li><strong>污染</strong>：来源文章为已发表的开放获取文章；评分项 2025 年 11 月起在代码仓库公开，部分系统的报告 2026 年 2 月起在 Hugging Face 公开；屏蔽规则写在提示词里，等于告诉智能体原文标题；泄漏检测只依据引用；没有不联网基线，没有保留未公开题目【自述加推断】。表 10 的泄漏率是被打 −1 的评分项所占比例（读聚合代码得知，代码中称为 blocked_rate），不是"看过原文的报告"所占比例；Qwen 最高，为 13.20%（第 23 页）【复算，读代码；表 10 是否由这段代码算出为推断】。</li>
+<li><strong>可复现</strong>：提示词（附录 E）、评分代码、题目和评分项都公开，这是优点【自述】。但：评委逐条输出和人工标注没有公开；通义 DeepResearch 的报告没有公开；论文所用评委 Gemini-2.5-Pro 将退役，官方评委已换成 GPT-5.5，现存两个排行榜（"Gemini 2.5 Eval"作为历史视图保留）；被测系统是 2025 年 11 月的商业产品，无法重新运行到同一版本；每个系统只运行一次【自述】。因此表 3 的分数，在评委退役后只能用已公开的报告和旧分支代码部分复算，表 4、表 5、表 10 和方差分析不能复算【推断】。</li>
+<li><strong>利益关系</strong>：作者来自中国科学技术大学和 Metastone 科技公司；8 个被测系统都是第三方产品，作者自己的系统不在榜上【自述】。没有发现直接的利益冲突。向官方排行榜提交需要提供可用的 GPT-5.5 接口密钥（仓库说明文件），这是参与门槛，不是利益冲突【自述】。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>第一阶段第 3.2 节的初步表把本基准列为"评估来源的质量和可信度"的例子之一。核对后，这一点只在维度定义中出现，没有落实为评分项（见下表"甄别"一行），初步表应当据此修正。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>切题与弄清真实需要</td>
+<td>部分评，且空间被题目压缩</td>
+<td>切题由评分项隐含：评分项只覆盖题目所问。"弄清真实需要、审视前提和概念边界"不评；而且附录 E.1 第 3 条要求"For ambiguous concepts, provide strict definitions"，概念边界已在题目中替智能体划好（第 29 页）。这是有意的设计，不是声称了而没做到【自述】</td>
+</tr>
+<tr>
+<td>时效与截止时间点</td>
+<td>部分评</td>
+<td>题目写明时间范围（第 3.1.2 节，第 5 页）；十几条评分项检查不超出截止时间（关键词检索约 15 至 18 条）【复算】。"足够新"不评，因为题目是历史题，本来不打算评【推断】</td>
+</tr>
+<tr>
+<td>系统全面的查找及过程交代</td>
+<td>只评结果，不评过程</td>
+<td>"全面"以命中原文要点的比例衡量（附录 E.1 第 7 条"as comprehensive as possible"）；查找过程的交代不评，论文也没有声称要评【自述】</td>
+</tr>
+<tr>
+<td>甄别来源与处理矛盾</td>
+<td>声称了，没做到</td>
+<td>表 2 称信息召回包括"checking its reliability through source credibility and cross-validation"（第 5 页）；评分项中没有发现评价智能体甄别来源、处理矛盾的条目，只有第 69 题一条来源排除规则【复算，关键词检索】</td>
+</tr>
+<tr>
+<td>分析和整合（历史和全部现状、性质和内在联系、区分事实和判断、其他解释、不迎合）</td>
+<td>部分评，以"与原文相似"为准</td>
+<td>分析维度评"whether those conclusions are similar to those in the human article"（第 23 页），例如"解释VIX对GVZ的单向因果关系是'flight-to-safety'效应的体现"（第 9 题）。区分事实和判断、考虑其他解释、不迎合，都不评【复算】。附录 E.1 区分"facts"与"viewpoints"，是给评分项分类，不是要求报告区分【自述】</td>
+</tr>
+<tr>
+<td>有理有据与引用准确</td>
+<td>基本不评</td>
+<td>第 2.1 节认为"引文是否支持论断"不足以核验正确性，改用内容比对（第 3 页）；表 2 把"transparent citation"放进呈现维度，但呈现类 746 条中只有 6 至 7 条涉及引用准确或标明来源（第 11、23、52、56、61、81、116 题）【复算，关键词检索】。引用了被屏蔽文章记 −1，是防泄漏，不是评引用准确</td>
+</tr>
+<tr>
+<td>结论准确具体清楚并说明把握</td>
+<td>只评"准确"，且以原文为准</td>
+<td>数值类评分项要求"exact values must be explicitly listed and match the rubric"（第 29 页），含数字的信息召回评分项 3,082 条，占 44%【复算】。"说明把握"和"敢于下判断"不评，论文没有声称要评【自述】</td>
+</tr>
+<tr>
+<td>深：本质</td>
+<td>部分评，以原文为准</td>
+<td>分析类评分项要求因果或机制解释，例如示例 2"Provide mechanism-to-cost causal explanations"（第 28 页），但只奖励与原文相同的机制【自述】</td>
+</tr>
+<tr>
+<td>深：全体（历史和全部现状）</td>
+<td>部分评，范围由原文决定</td>
+<td>题目可以要求历史演变（第 5 题"从历史角度看，建议的股票数量是如何变化的"），但"全部现状"即原文覆盖的范围；原文以外的方面不得分【复算】</td>
+</tr>
+<tr>
+<td>深：内部联系</td>
+<td>部分评，以原文为准；结构上倾向"多而不连"</td>
+<td>示例 1 有"Explicitly explain the relation between decentralization and the rise of community/ecomuseums"（第 26 页）。但附录 E.1 第 11、13 条要求评分项不可再分、彼此独立，总分是独立命中的计数，报告有没有把各事实联成一个解释，除少数分析类评分项外不计分。按第一阶段第 4.3b 节的分级，这种计分结构奖励的是第三级"多而不连"【推断】</td>
+</tr>
+<tr>
+<td>写作是否混入核心、权重多少</td>
+<td>混入，约 8%</td>
+<td>呈现维度 746 条，占 7.9%；总分按每题全部评分项的通过比例计算，等于按条数加权：信息召回约 74%、分析约 18%、呈现约 8%。按这个权重用表 3 的分维度分数推算总分，与报告的总分相差 0.2 至 0.6 分，而三个维度的简单平均要高出 13 至 18 分【复算】。呈现维度里还混有格式服从（表格列名、行数）和内容覆盖（"覆盖 rubric 中的全部条目"）【复算】</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>是</td>
+<td>总分即全部评分项的通过比例（第 3.1.2 节，第 5 页；聚合代码）【复算】</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>没有</td>
+<td>编造来源、编造数字不扣分；−1 只用于引用被屏蔽文章，且按条计、不否决整份报告【复算】</td>
+</tr>
+</tbody>
+</table></div>
+<p>与第一阶段第 4.4 节的问题对照：本基准正是"事先把要点写成标准答案"的做法。附录 E.1 第 2 条承认模型"unlikely to reproduce the exact same analysis"，于是选择回避原文中主观的部分，而不是改变判分方式。结果是只能奖励"想到了出题人想到的"，理解深刻、看到了原文没写的东西，在这套规则下得零分【推断】。按第一阶段第五节交付形式的五个部分，本基准的题目不要求报告写"把握程度"和"查找与来源说明"【复算】。</p>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>标准答案只有一篇文章，同样合理的其他内容得零分</td>
+<td>附录 E.1"as similar as possible to the human article"（第 23 页）；第 5、117、120 题的评分项</td>
+<td>自述、复算</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>说错与没提同等对待，评分项以外的论断不查，没有致命缺陷机制</td>
+<td>附录 E.2 三档定义（第 29 页）；聚合代码只计 1</td>
+<td>复算</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>维度定义声称评来源可信度和交叉核验，评分项中没有落实</td>
+<td>表 2（第 5 页）；评分项关键词检索</td>
+<td>复算（关键词检索，可能有遗漏）</td>
+<td>测对了东西</td>
+<td>设计缺陷（声称了而没做到）</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>来源文章的正确性和完整性没有核验，自检和专家审核都只核对"忠于原文"</td>
+<td>第 3.1.1 节"reflecting a high degree of credibility"（第 4 页）；第 3.1.3 节"remain fully consistent with the source article"（第 6 页）</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>按答案裁题，题目近于原文提纲，与"模仿非专家口吻""不直接列出实体"的规则矛盾</td>
+<td>附录 E.1 第 2、3、5、9 条及示例 2（第 26、29 页）；第 120 题列出 13 国</td>
+<td>自述、复算</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>评委验证规模小（10 份报告、738 条判断），选型与验证同一组样本，没有标注者信息和一致性，没有重复评分稳定性</td>
+<td>第 4.3 节、表 4、表 5（第 8 页）；仓库说明文件</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D7</td>
+<td>论文发表后官方评委换成 GPT-5.5，原评委退役，两个排行榜的分数可比性没有证据</td>
+<td>仓库说明文件"News"2026 年 8 月、10 月</td>
+<td>自述</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>每个系统只运行一次，没有置信区间；前七名相邻差距 0.02 至 2.62 分；领域检验效力不足</td>
+<td>表 3（第 7 页）；表 7（第 14 页）；第 5.1 节</td>
+<td>复算</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>D9</td>
+<td>"与人类专家差距很大"部分由构造规则决定</td>
+<td>第 3.1.3 节 90% 自检阈值（第 6 页）；摘要</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D10</td>
+<td>污染与泄漏防不住：提示词中给出原文标题，检测只看引用，评分项和报告公开，没有不联网基线</td>
+<td>第 5.2 节（第 9 页）；附录 E.2；表 10（第 23 页）</td>
+<td>自述、推断</td>
+<td>测对了东西；经得起复核</td>
+<td>设计缺陷加缺证据</td>
+</tr>
+<tr>
+<td>D11</td>
+<td>报告前后不一致：9,430 与 9,415；"132 articles"与实际 131 篇；表 10 平均值只按 7 个系统算；表 6、表 8 没有 Gemini-3-Pro；"binary (0/1)"与三档；许可"只保留 CC-4.0"与一道 CC0</td>
+<td>摘要；第 3.1.1、4.1.1 节；附录 A.2、D、E.2；表 9 第 124 行</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>缺证据（报告不严谨）</td>
+</tr>
+<tr>
+<td>D12</td>
+<td>构造痕迹在专家审核后仍然留存：约 7 条呈现类评分项引用"rubric"或"source article"（第 24、40、54、56、61、88、102 题），其中第 54 题要求"accurately transcribed from the source article"，而原文是禁止查看的；多个领域标签与内容不符（第 13、74、89、112、131 题）；第 112、114 题 2026 年 10 月因"identified issues"被剔除</td>
+<td>评分项逐条查看；仓库说明文件</td>
+<td>复算、自述</td>
+<td>测对了东西；经得起复核</td>
+<td>设计缺陷（质量控制）</td>
+</tr>
+<tr>
+<td>D13</td>
+<td>总分按评分项条数隐含加权，信息召回约占 74%，呈现约 8% 混入总分</td>
+<td>附录 A.2 均值（第 14 页）；表 3；聚合代码</td>
+<td>复算</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>D14</td>
+<td>缺失报告按"有效结果"求平均，不计零分；论文没有说明各系统交了多少份</td>
+<td>仓库说明文件；聚合代码；Hugging Face 文件数 127 至 133</td>
+<td>自述、复算、推断</td>
+<td>测得稳；经得起复核</td>
+<td>缺证据</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>本轮情况</th>
+<th>数据或代码是否足以复算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>评分项总数 9,430</td>
+<td>摘要、第 1 节</td>
+<td>已复算：附录 A.2 三个均值之和 71.327 乘以 132 得 9,415；数据中逐条计数也是 9,415</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>表 10 平均泄漏率 3.64%</td>
+<td>第 23 页</td>
+<td>已复算：8 个数平均 3.42%；去掉 Gemini-3 后平均 3.637%</td>
+<td>足够（仅凭表格）</td>
+</tr>
+<tr>
+<td>表 3 总分与分维度分数的关系</td>
+<td>第 7 页</td>
+<td>已复算：按条数加权推算与报告值相差 0.2 至 0.6 分</td>
+<td>足够（仅凭表格和附录 A.2）</td>
+</tr>
+<tr>
+<td>表 6 中英文分数与表 3 总分一致</td>
+<td>第 9 页</td>
+<td>已复算：7 个系统的中英文均值的平均与表 3 一致（Grok 相差不到 0.02，属舍入）</td>
+<td>足够（仅凭表格）</td>
+</tr>
+<tr>
+<td>表 7 各领域题数；17 个领域只有 2 至 6 道</td>
+<td>第 14 页</td>
+<td>已复算</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>96 个种子、36 对；MDPI 67 篇；含数字的信息召回评分项 3,082 条</td>
+<td>精读页依据数据</td>
+<td>已复算</td>
+<td>足够</td>
+</tr>
+<tr>
+<td>表 3 各系统总分及置信区间</td>
+<td>第 7 页</td>
+<td>未复算</td>
+<td>部分足够：7 个系统的报告在 Hugging Face 上，评分代码在 <code>gemini-25</code> 分支；需要重新调用评委，原评委即将退役；评委逐条输出没有公开</td>
+</tr>
+<tr>
+<td>表 4、表 5 评委一致性</td>
+<td>第 8 页</td>
+<td>未复算</td>
+<td>不足：人工标注和那 10 份报告的清单没找到</td>
+</tr>
+<tr>
+<td>第 5.1 节方差分析 p 值</td>
+<td>第 9 页</td>
+<td>未复算</td>
+<td>不足：需要逐题分数，没有公开</td>
+</tr>
+<tr>
+<td>表 10 各系统泄漏率</td>
+<td>第 23 页</td>
+<td>未复算</td>
+<td>不足：需要评委逐条输出</td>
+</tr>
+<tr>
+<td>专家审核约 2.5 分钟每条</td>
+<td>精读页推算</td>
+<td>已复算：400 小时乘 60 除以 9,415 约 2.55 分钟（论文只说"超过 400 小时"，所以这是上限附近的估计）</td>
+<td>足够</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>场景：5 个智能体，比赛评审，第一轮只对报告排名，先做基础级。</p>
+<ol>
+<li><strong>可以借鉴的</strong>：评分项"自带答案、不可再分"，让不懂行的评委也能逐条比对；评委逐条输出"evidence"，即支持判定的原句，这对比赛"经得起复核"很有用，参赛者可以逐条申诉。题目写明时间范围、分点子问题，也可以借鉴。</li>
+<li><strong>不能照搬的</strong>：
+   - 只拿一篇专家文章当标准答案，会把"想到了出题人想到的"当作"深"，与第一阶段第 4.3b 节的定义相反。我们需要允许"同样合理的其他内容"得分，例如按条件判（"列出至少若干项符合某条件、经核验属实的研究"），并把 5 份报告中核验为真的新论断补进评分标准。
+   - 说错不扣分、评分项以外不查，会形成激励：参赛者只要把报告写长、塞进更多事实，就能提高命中率，这正是第一阶段要防的"假深"。我们的规则至少要有"提到但说错"一档，并抽查评分项以外论断的准确率；编造来源应作为致命缺陷候选。
+   - 按条数隐含加权，会让信息召回压倒分析，也让写作混入总分。第一阶段已把写作定为二级可选，计分时应单列。</li>
+<li><strong>对"测得稳"的提醒</strong>：本基准的名次差距可以小到 0.02 分而没有任何不确定性估计。5 个智能体的比赛同样会出现接近的名次，我们需要对同一批报告重复评分、换评委评分，并对评分项做重抽样估计名次的稳定性。</li>
+<li><strong>对"经得起复核"的提醒</strong>：本基准在一年之内就因评委退役换了评委，形成两个不可比的排行榜。比赛应固定评委版本，公开评委逐条输出，并保存被引网页的存档。</li>
+<li><strong>如果直接借用本基准的一道题</strong>：要先做不联网基线，确认智能体没有背过；要在检索层面屏蔽原文和本基准的公开数据页，光靠提示词不够（论文自己也承认，第 5.2 节）；不要把屏蔽对象的标题写进题目。更稳妥的是按第一阶段的定义自己出新题。</li>
+</ol>
+<h2 id="_1">精读页勘误</h2>
+<ol>
+<li>精读页写"22 个领域里 15 个只有 2–6 题"。按表 7 和数据，是 17 个领域只有 2 至 6 道题【复算】。</li>
+<li>精读页第 6.6 节写"每个领域只有 2–6 题（科技 23 题除外）"。实际有 5 个领域在 10 道以上：科学与技术 23、金融与商业 15、软件开发 13、健康 12、教育与就业 10【复算】。结论"检验效力很低"仍然成立，但理由要改为"17 个小领域各只有 2 至 6 道"。</li>
+<li>精读页第 6.6 节写"排名相邻的系统差距在 0.02–2.6 分之间"。漏了第七名 Perplexity（38.58）与第八名通义（29.89）之间的 8.69 分；应为"前七名相邻差距 0.02 至 2.62 分"【复算】。</li>
+<li>精读页第 8 节写"数据、评分脚本和提示词全部公开。本文的每个数字都能复核"。说过头了：评委逐条输出、人工标注、通义的报告都没有公开，表 4、表 5、表 10 和方差分析不能复核【复算，查仓库和 Hugging Face 文件清单】。</li>
+<li>精读页写"引用了原文的句子记 −1，不计入得分"。按聚合代码，−1 留在分母中，等于按未通过计；"不计入得分"容易被读成"从分母中剔除"【复算，读代码】。同理，"泄漏率 0.24% 到 13.2%，平均 3.64%"是按评分项计的比例，不是按报告计；3.64% 是 7 个系统的平均，不含 Gemini-3【复算】。</li>
+<li>精读页写"评委是 Gemini-2.5-Pro"，对论文而言正确，但已过时：仓库 2026 年 8 月起官方评委换成 GPT-5.5，2026 年 10 月起第 112、114 题从排行榜计分中剔除。精读页写于 2026-10-28，没有提到这两项变化【自述，仓库说明文件】。</li>
+<li>精读页第 7 节写"2026-02-24：加了 license 字段；2026-05-14：重写了文件，没有实质改动"。仓库提交记录中，2026-05-14 那次提交的说明是"Add license field to tasks_and_rubrics.jsonl"，说明文件也把"Per-task License Metadata Added"记在 2026 年 5 月；2026-02-24 那次也改动了 131 行。哪一次加了 license 字段，<strong>不确定</strong>，可能是精读页把两次的内容写反了。本地标为"v_2026-02"的文件与 2026-10-28 拉取的当前文件逐字节相同，也可能是当时的标注有误。这一条不影响"题目和评分项自 2025 年 11 月以来没有改动"的结论（已逐字段比较 2025-11 版与当前版）。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2601.08536_DeepResearch-Bench-II.md</code></footer>
+</div>
+</body>
+</html>

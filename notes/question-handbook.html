@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>深度研究出题手册</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&display=swap">
+<style>
+  /* 版式：单栏阅读，宽 46em；"深"用湖水由浅到深的四层色带表示，批改用红笔楷体 */
+  :root {
+    --paper: #f4f7f9;
+    --sheet: #ffffff;
+    --ink: #13293d;
+    --ink-2: #4d6274;
+    --rule: #d3dde5;
+    --accent: #1d6a86;
+    --lake-1: #e1eff4; --lake-1-fg: #13293d;
+    --lake-2: #bcdbe7; --lake-2-fg: #13293d;
+    --lake-3: #5f9fbb; --lake-3-fg: #ffffff;
+    --lake-4: #245f7c; --lake-4-fg: #ffffff;
+    --red: #b8322a;
+    --red-wash: #fbeeec;
+    --display: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+    --body: -apple-system, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --hand: "Kaiti SC", "STKaiti", "KaiTi", "BiauKai", "Noto Serif SC", serif;
+    --mono: "SFMono-Regular", Menlo, Consolas, "PingFang SC", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0c171f; --sheet: #12212b; --ink: #e2ecf2; --ink-2: #9db2c1; --rule: #253744;
+      --accent: #72c3df;
+      --lake-1: #172c38; --lake-1-fg: #e2ecf2;
+      --lake-2: #1c3f51; --lake-2-fg: #e2ecf2;
+      --lake-3: #22566e; --lake-3-fg: #f2f8fb;
+      --lake-4: #2e7898; --lake-4-fg: #ffffff;
+      --red: #ff8a7a; --red-wash: #34201e;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0c171f; --sheet: #12212b; --ink: #e2ecf2; --ink-2: #9db2c1; --rule: #253744;
+    --accent: #72c3df;
+    --lake-1: #172c38; --lake-1-fg: #e2ecf2;
+    --lake-2: #1c3f51; --lake-2-fg: #e2ecf2;
+    --lake-3: #22566e; --lake-3-fg: #f2f8fb;
+    --lake-4: #2e7898; --lake-4-fg: #ffffff;
+    --red: #ff8a7a; --red-wash: #34201e;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font: 16px/1.85 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0 64px;
+  }
+  .wrap { max-width: 46em; margin: 0 auto; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.35; }
+  h2 { font-size: 1.6rem; font-weight: 900; margin: 3.2rem 0 .8rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); }
+  h3 { font-size: 1.15rem; font-weight: 600; margin: 1.8rem 0 .5rem; }
+  p { margin: .7rem 0; }
+  ul, ol { padding-left: 1.4em; margin: .6rem 0; }
+  li { margin: .25rem 0; }
+  strong { font-weight: 650; }
+  .muted { color: var(--ink-2); }
+  .small { font-size: .88rem; }
+  .eyebrow { font-size: .8rem; letter-spacing: .14em; color: var(--ink-2); }
+
+  /* 开头 */
+  header.hero { padding-block: 3rem 1rem; }
+  header.hero h1 { font-size: clamp(2.1rem, 7vw, 3.2rem); font-weight: 900; margin: .3rem 0 .8rem; letter-spacing: .02em; }
+  .lede { font-size: 1.1rem; }
+  .meta { font-size: .85rem; color: var(--ink-2); margin-top: 1rem; }
+  .deliver { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5em, 1fr)); gap: 10px; margin: 1.6rem 0 .4rem; padding: 0; list-style: none; }
+  .deliver li { margin: 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: .8rem .9rem; min-width: 0; }
+  .deliver b { display: block; font-family: var(--display); font-weight: 600; font-size: 1.02rem; }
+  .deliver span { font-size: .86rem; color: var(--ink-2); line-height: 1.6; display: block; margin-top: .2rem; }
+  nav.toc { margin: 1.6rem 0 0; font-size: .9rem; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  nav.toc a { text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  /* 定义框 */
+  .def { background: var(--sheet); border: 1px solid var(--rule); border-left: 4px solid var(--lake-4); border-radius: 4px 8px 8px 4px; padding: .9rem 1.1rem; margin: 1rem 0; }
+  .def .term { font-family: var(--display); font-weight: 900; font-size: 1.1rem; margin-right: .3em; }
+  .src { font-size: .82rem; color: var(--ink-2); margin-top: .4rem; }
+
+  /* 湖盆：四层深度 */
+  figure { margin: 1.4rem 0; }
+  figcaption { font-size: .85rem; color: var(--ink-2); margin-top: .6rem; }
+  .basin { display: grid; grid-template-columns: 2.2rem 1fr; gap: 10px; }
+  .gauge { position: relative; border-radius: 3px; background:
+      repeating-linear-gradient(to bottom, var(--ink-2) 0 2px, transparent 2px 22px) left / 10px 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--ink-2) 0 1px, transparent 1px 11px) left / 5px 100% no-repeat;
+    border-left: 2px solid var(--ink-2); font-size: .78rem; color: var(--ink-2); }
+  .gauge span { position: absolute; left: 14px; writing-mode: vertical-rl; letter-spacing: .2em; }
+  .gauge .top { top: 4px; } .gauge .bot { bottom: 4px; }
+  .layers { display: grid; gap: 0; min-width: 0; }
+  .surface { font-size: .8rem; color: var(--ink-2); border-bottom: 2px dashed var(--lake-3); padding-bottom: 4px; margin-bottom: 0; }
+  .band { padding: .8rem 1rem; min-width: 0; }
+  .band .lv { font-family: var(--display); font-weight: 900; font-size: 1.05rem; margin-right: .5em; }
+  .band .what { font-size: .92rem; }
+  .band .eg { display: block; font-size: .88rem; margin-top: .25rem; opacity: .92; }
+  .b1 { background: var(--lake-1); color: var(--lake-1-fg); }
+  .b2 { background: var(--lake-2); color: var(--lake-2-fg); margin-inline: 2.5%; }
+  .b3 { background: var(--lake-3); color: var(--lake-3-fg); margin-inline: 5%; }
+  .b4 { background: var(--lake-4); color: var(--lake-4-fg); margin-inline: 7.5%; border-radius: 0 0 40px 40px; padding-bottom: 1.2rem; }
+
+  /* 提醒三条 */
+  .notes3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(13em, 1fr)); gap: 10px; margin: 1rem 0; }
+  .notes3 div { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: .8rem .9rem; font-size: .92rem; min-width: 0; }
+  .notes3 b { display: block; font-family: var(--display); font-size: 1.02rem; margin-bottom: .2rem; }
+
+  /* 一道题的两半 */
+  .split { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; align-items: stretch; margin: 1.2rem 0; }
+  .half { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: .9rem 1rem; min-width: 0; }
+  .half h4 { font-family: var(--display); font-size: 1.1rem; margin: 0 0 .3rem; }
+  .half ul { font-size: .9rem; margin: .3rem 0; }
+  .half .to { font-size: .85rem; margin-top: .5rem; padding-top: .5rem; border-top: 1px dashed var(--rule); color: var(--ink-2); }
+  .half .to b { color: var(--ink); }
+  .wall { display: flex; align-items: center; justify-content: center; padding: 0 12px; }
+  .wall span { writing-mode: vertical-rl; letter-spacing: .3em; font-size: .82rem; color: var(--red); border-left: 3px double var(--red); padding-left: 6px; font-family: var(--hand); font-size: .95rem; }
+  @media (max-width: 620px) {
+    .split { grid-template-columns: 1fr; }
+    .wall { padding: 10px 0; }
+    .wall span { writing-mode: horizontal-tb; letter-spacing: .1em; border-left: 0; border-top: 3px double var(--red); padding: 6px 0 0; }
+  }
+
+  /* 七步 */
+  ol.steps { list-style: none; padding: 0; margin: 1.2rem 0; counter-reset: s; }
+  ol.steps > li { counter-increment: s; position: relative; padding: 0 0 1.4rem 3.2rem; margin: 0; border-left: 2px solid var(--rule); margin-left: 1.1rem; padding-left: 2.2rem; }
+  ol.steps > li:last-child { border-left-color: transparent; }
+  ol.steps > li::before { content: counter(s); position: absolute; left: -1.15rem; top: -.1rem; width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    background: var(--lake-4); color: var(--lake-4-fg); font-family: var(--display); font-weight: 900; display: grid; place-items: center; font-size: 1.05rem; }
+  ol.steps h3 { margin: 0 0 .3rem; font-size: 1.12rem; }
+  .back { font-family: var(--hand); color: var(--red); font-size: 1.02rem; margin-top: .4rem; }
+  .back::before { content: "↺ "; font-family: var(--body); }
+
+  /* 写到什么程度为止 */
+  .stop { background: var(--sheet); border: 1px solid var(--rule); border-top: 4px solid var(--lake-3); border-radius: 4px 4px 8px 8px; padding: .8rem 1.1rem; margin: 1rem 0; }
+  .stop h4 { font-family: var(--display); font-size: 1.05rem; margin: .2rem 0 .3rem; }
+  .formula { font-family: var(--display); font-weight: 600; font-size: 1.1rem; text-align: center; background: var(--lake-1); color: var(--lake-1-fg); border-radius: 6px; padding: .5rem 1rem; margin: .7rem 0; }
+  .stop table { min-width: 30em; }
+
+  /* 题目卡 */
+  .qcard { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; margin: 1rem 0; box-shadow: 0 1px 0 var(--rule), 0 6px 16px -10px var(--rule); }
+  .qcard .head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: .55rem 1rem; border-bottom: 2px solid var(--lake-3); font-size: .82rem; color: var(--ink-2); letter-spacing: .08em; }
+  .qcard dl { margin: 0; }
+  .qcard .row { display: grid; grid-template-columns: 5.5em 1fr; gap: 12px; padding: .55rem 1rem; border-bottom: 1px solid var(--rule); }
+  .qcard .row:last-child { border-bottom: 0; }
+  .qcard dt { font-weight: 650; color: var(--ink-2); font-size: .92rem; }
+  .qcard dd { margin: 0; min-width: 0; }
+
+  /* 表格 */
+  .scroll { overflow-x: auto; margin: 1rem 0; -webkit-overflow-scrolling: touch; }
+  table { border-collapse: collapse; width: 100%; min-width: 38em; font-size: .88rem; line-height: 1.65; background: var(--sheet); }
+  th, td { border: 1px solid var(--rule); padding: .5rem .6rem; text-align: left; vertical-align: top; }
+  th { font-weight: 650; color: var(--ink-2); background: var(--paper); white-space: nowrap; }
+  td.id { font-family: var(--mono); font-size: .82rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .chip { display: inline-block; padding: 0 .5em; border-radius: 4px; font-size: .8rem; white-space: nowrap; line-height: 1.7; }
+  .c1 { background: var(--lake-1); color: var(--lake-1-fg); border: 1px solid var(--lake-2); }
+  .c2 { background: var(--lake-2); color: var(--lake-2-fg); }
+  .c3 { background: var(--lake-3); color: var(--lake-3-fg); }
+  .c4 { background: var(--lake-4); color: var(--lake-4-fg); }
+  .core { font-weight: 700; }
+  td.src a { word-break: break-all; }
+
+  /* 浅答案与深答案 */
+  .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(16em, 1fr)); gap: 12px; margin: 1rem 0; }
+  .ans { border-radius: 8px; padding: .9rem 1rem; min-width: 0; }
+  .ans.shallow { background: var(--lake-1); color: var(--lake-1-fg); }
+  .ans.deep { background: var(--lake-4); color: var(--lake-4-fg); }
+  .ans .tag { font-size: .78rem; letter-spacing: .12em; opacity: .85; }
+  .ans blockquote { margin: .4rem 0; font-family: var(--display); font-weight: 600; font-size: 1.05rem; line-height: 1.7; }
+  .ans .note { font-size: .88rem; }
+  .pen { font-family: var(--hand); color: var(--red); font-size: 1.02rem; line-height: 1.7; }
+  .ans.shallow .pen { display: block; margin-top: .4rem; }
+
+  /* 红笔批改 */
+  .bad { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: .9rem 1rem; margin: .9rem 0; }
+  .bad .q { font-family: var(--display); font-weight: 600; font-size: 1.05rem; text-decoration: underline wavy var(--red); text-decoration-thickness: 1px; text-underline-offset: 6px; }
+  .bad .pi { margin-top: .5rem; }
+  .bad .pi b, .bad .gai b { font-family: var(--hand); color: var(--red); font-weight: 400; font-size: 1.1rem; margin-right: .3em; }
+  .bad .gai { margin-top: .3rem; font-size: .95rem; }
+  .bad .gai b { color: var(--accent); }
+
+  /* 自查清单 */
+  .check { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: .4rem 1rem 1rem; }
+  .check h3 { margin-top: 1rem; font-size: 1.02rem; }
+  .check label { display: grid; grid-template-columns: 1.4em 1fr; gap: 8px; align-items: start; padding: .3rem 0; cursor: pointer; }
+  .check input { width: 1.1em; height: 1.1em; margin-top: .4em; accent-color: var(--lake-4); }
+  .check input:checked + span { color: var(--ink-2); text-decoration: line-through; text-decoration-color: var(--lake-3); }
+  .tally { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: .8rem; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  button { font: inherit; font-size: .88rem; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: .3rem .8rem; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+
+  /* 模板 */
+  .tpl { position: relative; margin: 1rem 0; }
+  .tpl pre { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 1rem; padding-top: 2.6rem; margin: 0; overflow-x: auto; font-family: var(--mono); font-size: .84rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .tpl button { position: absolute; top: .5rem; right: .5rem; }
+  .tpl .name { position: absolute; top: .65rem; left: 1rem; font-size: .8rem; color: var(--ink-2); letter-spacing: .08em; }
+
+  /* 常见问题 */
+  dl.faq dt { font-family: var(--display); font-weight: 600; font-size: 1.05rem; margin-top: 1.2rem; }
+  dl.faq dd { margin: .3rem 0 0; }
+
+  ol.refs { font-size: .86rem; color: var(--ink-2); }
+  ol.refs a { word-break: break-all; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  html { scroll-behavior: smooth; }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">给大学一年级同学</div>
+  <h1>深度研究出题手册</h1>
+  <p class="lede">智能体能替人上网查资料、写调研报告。要比较几个智能体谁做得好，先得有一道好题。这本手册教你出这样一道题：题面看起来平常，但只有真正往深处查的报告，才能把它答好。</p>
+  <p>出完一道题，你要交出四样东西：</p>
+  <ul class="deliver">
+    <li><b>题目卡</b><span>同一道题写成三个版本：四栏的评委版留给评委，提问版和裸题版交给智能体。</span></li>
+    <li><b>深度地图</b><span>只给评委看。写明往深处查，结论会在哪里改变；核心要点一条不漏。</span></li>
+    <li><b>泄露检查记录</b><span>另一位同学检查题目卡有没有暗示答案。</span></li>
+    <li><b>闭卷对照记录</b><span>不让模型上网时，它能答到哪一步。</span></li>
+  </ul>
+  <nav class="toc" aria-label="目录">
+    <a href="#words">一 三个词</a><a href="#halves">二 一道题的两半</a><a href="#steps">三 出题七步</a>
+    <a href="#example-lake">四 实例：淡水湖</a><a href="#example-eu">五 实例：欧盟法规</a><a href="#redpen">六 红笔批改</a>
+    <a href="#checklist">七 自查清单</a><a href="#templates">八 模板</a><a href="#faq">九 常见问题</a><a href="#sources">出处</a>
+  </nav>
+  <p class="meta">第 3 版，2026 年 10 月 30 日。比赛怎样运行、怎样评审，见<a href="rules.html">《深度研究比赛规则手册》</a>。依据论文工作稿《什么是智能体的"深度研究"：一个严格的定义，及据此给报告排名的方法与检验》第 3.1 节和第 3.3 节，以及《对照报告收集规程》和《评审细则》。</p>
+</header>
+
+<!-- 一 -->
+<h2 id="words">一　先弄懂三个词</h2>
+
+<div class="def"><span class="term">调研</span>为了回答提问者的一个具体问题，用截至某一天已经存在的信息，系统地查找、甄别、分析和整合，得出有理有据的结论。
+  <div class="src">结论可以是描述现状、解释原因、预测未来或建议行动。做问卷、做访谈这类收集新一手资料的工作，探索人类还没有答案的科研前沿，以及不查资料、凭记忆作答，都不算这里说的调研。</div>
+</div>
+
+<div class="def"><span class="term">深</span>调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。推进得越远，调研就越深。
+  <div class="src">依据毛泽东《实践论》对"认识由浅入深"的刻画。原文说，全体是"事情的历史和全部现状"，本质是"事情的性质及此一事情和其它事情的内部联系"。</div>
+</div>
+
+<div class="def"><span class="term">深度研究</span>以推进到本质、全体和内部联系为目标的调研。由智能体自主完成的，就是智能体的深度研究。</div>
+
+<p>"深"可以分成四层。把一道题想象成一片湖：智能体一开始只看到水面，往下查得越多，看到的层越深。下图每一层都用后面实例一的题目"中国最大的淡水湖是哪一个"举例。</p>
+
+<figure>
+  <div class="basin">
+    <div class="gauge" aria-hidden="true"><span class="top">浅</span><span class="bot">深</span></div>
+    <div class="layers">
+      <div class="surface">水面：一次检索就能看到的</div>
+      <div class="band b1"><span class="lv">现象</span><span class="what">事情本身的事实和表面特征。</span><span class="eg">例：鄱阳湖是我国最大的淡水湖。</span></div>
+      <div class="band b2"><span class="lv">全体</span><span class="what">事情的历史和全部现状，包括容易被忽略的方面、例外和反例。</span><span class="eg">例：鄱阳湖的水面随季节涨落，涨水和枯水时面积相差好几倍。</span></div>
+      <div class="band b3"><span class="lv">内部联系</span><span class="what">这件事和别的事之间的因果、制约、依赖。</span><span class="eg">例：湖面的高低，由流进湖里的五条河和长江的水位共同决定。</span></div>
+      <div class="band b4"><span class="lv">本质</span><span class="what">事情的性质，包括一个词的名与实。</span><span class="eg">例："最大"按什么算？和俄罗斯共有的界湖算不算"中国的湖"？</span></div>
+    </div>
+  </div>
+  <figcaption>图 1　四层深度。它们不是要逐格填满的表，而是一把尺子，用来看一份报告推进到了哪里。"各有所长""技术在不断进步"这类抽象的套话，不算本质。</figcaption>
+</figure>
+
+<h3>看似很浅的题，也能挖深</h3>
+<p>"法国的首都是哪里？"一次检索就能答：巴黎。这个例子是本研究的发起人在讨论中提出的：理解深刻的人会用历史的眼光再看一眼。</p>
+<ul>
+  <li><strong>全体。</strong>历史上并非一直如此。1682 至 1789 年，王室和政府在凡尔赛；1871 至 1879 年，议会在凡尔赛开会；1914 年和 1940 年，政府曾撤到波尔多。</li>
+  <li><strong>本质。</strong>"首都"有名与实之分。1940 至 1944 年维希政权时期，巴黎名义上仍是首都，政府却设在维希。</li>
+</ul>
+<p>所以，挖深的空间不全由题目决定，有一部分要靠理解打开。这也是我们可以出"看似简单"的题的原因。</p>
+
+<h3>三个容易弄混的地方</h3>
+<div class="notes3">
+  <div><b>深不是长</b>我们试评过六份真实报告。一份四万多字的报告，写对的深层要点反而比一份三万多字的少 6 条。</div>
+  <div><b>深不是难</b>题目难，是题目的性质；深，是调研做到了哪一步。一道人人看得懂的题，照样能分出深浅。</div>
+  <div><b>深不是用了深度研究模式</b>同一次试评中，一份不到两千字的普通联网问答，排进了第一档。</div>
+</div>
+
+<!-- 二 -->
+<h2 id="halves">二　一道题分成两半</h2>
+<p>一道题由两份材料组成。题目卡交给智能体，深度地图只有评委能看。</p>
+
+<figure>
+  <div class="split">
+    <div class="half">
+      <h4>题目卡</h4>
+      <ul><li>提问版：用提问者的口吻，一两句话说清谁在问、为什么问、问什么、截至哪天</li><li>裸题版：只有问题本身</li><li>两个版本都附统一的交付要求和说明</li></ul>
+      <div class="to">交给 <b>智能体</b>；四栏的评委版留给评委</div>
+    </div>
+    <div class="wall"><span>智能体看不到深度地图</span></div>
+    <div class="half">
+      <h4>深度地图</h4>
+      <ul><li>浅答案：只看现象时的答案</li><li>挖深之后，结论或建议在哪里改变</li><li>要点表：每条要点的层级、重要性和出处，核心要点一条不漏</li></ul>
+      <div class="to">只给 <b>评委</b></div>
+    </div>
+  </div>
+  <figcaption>图 2　题目卡和深度地图要分开。</figcaption>
+</figure>
+
+<p><strong>为什么要分开。</strong>如果题面写着"请考虑历史"，我们测到的只是智能体会不会照着做，测不到它能不能自己想到。往哪里挖、挖到什么，只写在深度地图里。</p>
+<p><strong>深度地图是必需的，但它不是标准答案。</strong>它是出题人在看到任何报告之前，预先登记下来的三样东西：浅答案、转折点、核心要点。它有三个用处：</p>
+<ol>
+  <li><strong>题目的入场券。</strong>地图要证明，这道题往深处查，结论会改变。没有合格的地图，题目不能用。</li>
+  <li><strong>预先登记层级和重要性。</strong>评审时，评委把几份报告的要点和地图上的要点合在一起，逐条判断。地图上已有的要点，地图标的层级和重要性就是默认值；评委组要改，必须依据来源或定义写出理由。地图写在看到报告之前，出题人不知道哪家会写什么，所以这些标注对各家都是中立的。</li>
+  <li><strong>说明绝对水平。</strong>几份报告都没写到的核心要点，说明"谁都不够深"。只拿报告互相比较，看不出这一点。这一条只用来说明情况，不影响名次。</li>
+</ol>
+<p>它不做两件事。<strong>不封顶</strong>：智能体写出地图上没有、但正确又切题的深层内容，同样得分。<strong>不定对错</strong>：每条要点对不对，一律看来源，不看地图。</p>
+
+<!-- 三 -->
+<h2 id="steps">三　出题七步</h2>
+<p>七步按顺序做。有三处检查不通过，要退回前面重做。</p>
+
+<ol class="steps">
+  <li>
+    <h3>选话题</h3>
+    <ul>
+      <li>选你和评委有能力判断对错的领域。</li>
+      <li>截至运行当天，相关信息已经公开，查得到。</li>
+      <li>不需要问卷、访谈这类新的一手资料。</li>
+      <li>不选科研前沿上还没有答案的问题。</li>
+      <li>不选和被评智能体自己有关的话题，比如"哪家智能体最好"。否则等于让被评者评自己，评委也容易从内容认出是谁写的。</li>
+    </ul>
+    <p>一共出两道题，两种题型各出一道：</p>
+    <ul>
+      <li><strong>看似简单型</strong>：字面答案人人知道，挖深的空间要靠理解打开。例如实例一，中国最大的淡水湖。</li>
+      <li><strong>开放时效型</strong>：本身开放、涉及面广、信息更新快，考查广度、由表及里和材料的新旧。例如实例二，欧盟《人工智能法》。</li>
+    </ul>
+  </li>
+  <li>
+    <h3>先写浅答案，再往深处查</h3>
+    <p>先写下只看现象时的答案。然后沿着图 1 的四层往下查：它的历史和全部现状是什么？它和别的事有什么因果？题目里的关键词，指的到底是什么？</p>
+    <p><strong>判断标准：挖深会不会改变结论。</strong>查到深处以后，给提问者的结论或建议会变，这道题就留有挖深的空间。不会变，就换题。</p>
+    <p class="muted small">例如"100 摄氏度等于多少华氏度"。温标的历史可以讲很多，但答案始终是 212 华氏度。挖得再深，结论也不变，这道题就分不出深浅。</p>
+    <div class="back">结论不变：回到第 1 步，换题</div>
+  </li>
+  <li>
+    <h3>写题目卡</h3>
+    <p>先写评委版，四项：提问者、用途、问题、截止时间。再写交给智能体的两个版本：</p>
+    <ul>
+      <li><strong>提问版</strong>：用提问者的口吻，把四项写成一两句话，内容和评委版一致，不多也不少。真实的用户不会填表，所以不用"【提问者】"这样的标签。</li>
+      <li><strong>裸题版</strong>：只有问题本身，就像用户只打了一句话。</li>
+    </ul>
+    <p>两个版本后面都原样附上第八节模板里的"交付要求"和"说明"，一字不改。题目文本就是智能体收到的唯一输入，任何人都不能针对某一道题改写。写评委版时注意：</p>
+    <ul>
+      <li>提问者写到具体的人：身份和处境。不必是真人，但要像真的。</li>
+      <li>用途写他要拿结果做什么决定。</li>
+      <li>问题用他会说的话来问。</li>
+      <li>不点名要查的网站、机构或方法，不提示往哪里挖。</li>
+      <li>不规定篇幅和格式。篇幅不是评分依据。</li>
+      <li>只用文字，一次给全。</li>
+    </ul>
+  </li>
+  <li>
+    <h3>写深度地图</h3>
+    <p>写三部分：浅答案；挖深之后结论在哪里改变；要点表。要点表每一行写：</p>
+    <ul>
+      <li><strong>要点</strong>：一句话，一条独立的认识；</li>
+      <li><strong>层级</strong>：现象、全体、内部联系、本质，四选一；</li>
+      <li><strong>重要性</strong>：核心或一般，核心指回答这道题不能缺少的认识；</li>
+      <li><strong>依据</strong>：出处网址，以及你有多大把握。</li>
+    </ul>
+    <p><strong>一定要在看到任何智能体的报告之前写好，并写上日期。</strong>我们第一次试评时，深度地图是读过报告之后才写的，这成了那次试评的一个局限。</p>
+    <div class="stop">
+      <h4>写到什么程度为止</h4>
+      <p>下面五条都做到了，地图才算写完：</p>
+      <ol>
+        <li><strong>浅答案</strong>：写出只看现象时的答案。</li>
+        <li><strong>转折点</strong>：至少一处，查到内部联系或本质之后，结论或建议改变了；转折点用到的每条要点都有出处。</li>
+        <li><strong>四层都查过</strong>：现象、全体、内部联系、本质，每层至少一条要点。某一层确实找不到，写明查了什么。</li>
+        <li><strong>核心要点写全</strong>：回答这道题不能缺少的认识，一条不漏。一般要点不求全，能让评委看出每一层是什么样子就够了。</li>
+        <li><strong>两人对过</strong>：两位出题人各自独立列出核心要点，再用下面"数鱼的办法"对照，判断写全了没有。</li>
+      </ol>
+      <p><strong>为什么只要求核心要点写全。</strong>地图上写了、却没有一份报告写到的要点，对每一份报告都是零分，不影响名次。地图真正影响名次的，是它预先登记的层级和重要性，其中分量最重的是"核心"。核心要点漏掉了，就只能由评委在看过报告之后再定，那样的判定没有事先登记的好。</p>
+      <h4>怎样判断写全了：数鱼的办法</h4>
+      <p>生态学家估计一个湖里有多少条鱼，用"捕获—再捕获"的办法：先捞一网，做上记号放回去；过几天再捞一网，看其中有多少条带记号。第二网里带记号的越多，说明没被捞到过的鱼越少。软件工程里也用同样的办法，根据几位审查员各自找到的缺陷和重合，估计还有多少缺陷没被找到<a href="#ref7">[7]</a>。</p>
+      <p>两位出题人各自独立列核心要点，就是各捞一网。甲列了 a 条，乙列了 b 条，两人都列到的有 c 条：</p>
+      <p class="formula">估计的核心要点总数 ≈ a × b ÷ c</p>
+      <p>两人合并后共有 a + b − c 条。合并后的条数和估计总数相差不到 1 条〔默认〕，就算写全了；差得多，两人就针对只有一个人列到的方向，各自再查一轮，然后重新对照。两人一条都没重合（c = 0），说明离写全还很远。</p>
+      <div class="scroll"><table>
+        <thead><tr><th>甲列的</th><th>乙列的</th><th>都列到的</th><th>估计总数</th><th>合并后</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>4</td><td>5</td><td>4</td><td>4 × 5 ÷ 4 = 5</td><td>5</td><td>写全了</td></tr>
+          <tr><td>4</td><td>4</td><td>2</td><td>4 × 4 ÷ 2 = 8</td><td>6</td><td>还差约 2 条，继续查</td></tr>
+        </tbody>
+      </table></div>
+      <p class="muted small">这个办法有前提：两人对照之前不商量；每条要点被找到的机会差不多。两人都只找到容易找的那几条，估计会偏低；两人都没想到的同一个方向，它估计不出来。所以还要请领域专家审阅，赛后还有覆盖审计。</p>
+      <p class="small">还有一条参考：实例一的核心要点是 4 条。核心要点写到十条以上还在增加，多半是题目太宽，应当收窄问题，而不是继续加要点。</p>
+    </div>
+    <p>正式比赛对地图还有几道关：两人独立写、按上面的办法对照；请一位领域专家审阅；运行前公布地图的校验值，赛后公开全文；赛后统计评委判为核心、地图上却没有的要点有几条。详见<a href="rules.html">《深度研究比赛规则手册》</a>第四节。</p>
+  </li>
+  <li>
+    <h3>自查</h3>
+    <p>对照第七节的清单逐条勾选。</p>
+  </li>
+  <li>
+    <h3>请另一位同学做泄露检查</h3>
+    <p>只给他题目卡，不给深度地图，请他回答三个问题：</p>
+    <ul>
+      <li>题面有没有暗示该往哪里挖？</li>
+      <li>题面有没有直接给出中间答案？</li>
+      <li>题面有没有点名要查的来源或方法？</li>
+    </ul>
+    <p>出题人自己往往看不出自己的暗示，所以要换一个人看。记下检查人、日期、发现了什么、怎么改的。</p>
+    <div class="back">发现泄露：回到第 3 步，改题目卡</div>
+  </li>
+  <li>
+    <h3>闭卷对照</h3>
+    <p>找一个不参赛的模型，而且它和参赛的智能体不是同一家公司的同一系列。关掉联网，把题目卡交给它答。拿它的回答对照深度地图：不查资料就已经答到了大部分核心要点，说明这道题太浅，或者答案早已被模型记住了。</p>
+    <p class="muted small">闭卷对照只能筛掉坏题，不能证明题好。</p>
+    <div class="back">闭卷就答中了：回到第 1 步或第 2 步</div>
+  </li>
+</ol>
+
+<!-- 四 -->
+<h2 id="example-lake">四　实例一：中国最大的淡水湖</h2>
+<p>这是一道看似简单型的题。题目卡取自《对照报告收集规程》，深度地图是本手册的示范。</p>
+
+<div class="qcard">
+  <div class="head"><span>题目卡　第一题　评委版</span><span>看似简单型</span></div>
+  <dl>
+    <div class="row"><dt>提问者</dt><dd>一家少儿出版社的地理科普编辑。</dd></div>
+    <div class="row"><dt>用途</dt><dd>要在一本给初中生的地理科普书里，写一句关于"中国最大的淡水湖"的话，要求准确、经得起推敲。</dd></div>
+    <div class="row"><dt>问题</dt><dd>中国最大的淡水湖是哪一个？</dd></div>
+    <div class="row"><dt>截止时间</dt><dd>只使用截至〔运行当日〕已经公开的信息。</dd></div>
+    <div class="row"><dt>附</dt><dd class="muted">统一的交付要求和说明，见第八节。</dd></div>
+  </dl>
+</div>
+
+<p><strong>这张卡写对了什么。</strong>没有一个字提到季节、历史或统计口径。提问者和用途让"准确、经得起推敲"有了具体的含义：这句话要印进书里，给初中生看。</p>
+
+<p>上面是评委版。交给智能体的两个版本如下，后面都附统一的交付要求和说明：</p>
+<div class="qcard">
+  <div class="head"><span>第一题　提问版</span><span>交给智能体</span></div>
+  <dl><div class="row"><dt>原文</dt><dd>我是一家少儿出版社的地理科普编辑，正在编一本给初中生看的地理科普书，想在书里写一句关于"中国最大的淡水湖"的话，要准确、经得起推敲。中国最大的淡水湖是哪一个？只使用截至〔运行当日〕已经公开的信息。</dd></div></dl>
+</div>
+<div class="qcard">
+  <div class="head"><span>第一题　裸题版</span><span>交给智能体</span></div>
+  <dl><div class="row"><dt>原文</dt><dd>中国最大的淡水湖是哪一个？</dd></div></dl>
+</div>
+
+<h3>深度地图（示范）</h3>
+<p><strong>浅答案：</strong>鄱阳湖。</p>
+<p><strong>挖深之后，结论在哪里改变：</strong>答案的名字不变，但书里这句话的写法变了。只写"鄱阳湖，面积多少平方公里"，经不起推敲；要说明湖面随季节涨落，给数字时注明水位或时间，并且清楚"最大"不包括界湖、不包括咸水湖。</p>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>编号</th><th>要点</th><th>层级</th><th>重要性</th><th>依据</th></tr></thead>
+  <tbody>
+    <tr><td class="id">L1</td><td>鄱阳湖通常被称为我国最大的淡水湖，新华社的报道就这样称呼它。</td><td><span class="chip c1">现象</span></td><td class="core">核心</td><td class="src">[1]</td></tr>
+    <tr><td class="id">L2</td><td>鄱阳湖的水面随季节涨落极大，有"洪水一片，枯水一线"的说法。一篇 1985 年的论文记载：水位 21 米时，水面约 3,960 平方公里；水位 12 米时，只有约 500 平方公里；冬春枯水季节，露出大片湖滩草洲。</td><td><span class="chip c2">全体</span></td><td class="core">核心</td><td class="src">[2]</td></tr>
+    <tr><td class="id">L3</td><td>近年枯水越来越常见。2022 年 9 月 23 日，星子站水位退到 7.10 米，刷新 1951 年有记录以来的最低值，当时通江水体面积只有 244 平方公里。2025 年截至 12 月 14 日，已有 217 天低于 12 米的枯水线。</td><td><span class="chip c2">全体</span></td><td>一般</td><td class="src">[3] [1]</td></tr>
+    <tr><td class="id">L4</td><td>"最大"要先说清按什么算：哪个水位、哪种口径（水面面积、通江水体面积，还是蓄水量）。3,960、500、244 平方公里，都是有出处的"鄱阳湖面积"。只给一个数字、不说口径，这句话就经不起推敲。</td><td><span class="chip c4">本质</span></td><td class="core">核心</td><td class="src">[2] [3]</td></tr>
+    <tr><td class="id">L5</td><td>湖面的高低，由入湖河流的来水和长江的水位共同决定。鄱阳湖汇集赣江、修河、抚河、饶河、信江五条河的水，在湖口与长江相通。2022 年的枯水，江西省水文监测中心解释为降雨偏少六成、五河入湖水量偏少近六成，加上长江干流水位偏低。</td><td><span class="chip c3">内部联系</span></td><td>一般</td><td class="src">[2] [3]</td></tr>
+    <tr><td class="id">L6</td><td>"中国的淡水湖"有边界问题。中俄界湖兴凯湖全湖约 4,380 平方公里，比鄱阳湖涨水时还大，但在中国境内的部分只有 1,000 余平方公里。说"最大"，要清楚是否把界湖算进来。</td><td><span class="chip c4">本质</span></td><td class="core">核心</td><td class="src">[4]</td></tr>
+    <tr><td class="id">L7</td><td>"淡水"也有边界。青海湖比鄱阳湖大（2021 年 9 月底水体面积约 4,626 平方公里），但它是咸水湖：含盐度超过每升 1 克的湖叫咸水湖。所以"最大的湖"和"最大的淡水湖"是两个问题。</td><td><span class="chip c4">本质</span></td><td>一般</td><td class="src">[5]</td></tr>
+    <tr><td class="id">L8</td><td>排名在历史上可能变过。据赵淑清、方精云的研究，洞庭湖水体面积从 20 世纪 30 年代的约 5,075 平方公里，减少到 1998 年的约 2,918 平方公里，主要原因是围湖造田。按这组数字，当年的洞庭湖比今天鄱阳湖涨水时还大；当年谁是第一，还要查同一时期鄱阳湖的数字。</td><td><span class="chip c2">全体</span></td><td>一般</td><td class="src">[6]，把握：中（只找到转引，原论文待查）</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="muted small">依据栏的出处，是编写本手册时（2026 年 10 月 30 日）查到的，多数是新闻报道和论文摘要。正式出题时，要尽量追到原始出处，比如水文部门的监测数据和原论文。查不到原始出处的，像 L8 一样标明把握。</p>
+<p class="small"><strong>对照"写到什么程度为止"。</strong>浅答案有；转折点落在本质层（L4、L6）；四层都有要点；核心要点 4 条（L1、L2、L4、L6）。只差第 5 条：这份示范只有一个人写，没有做两人对照，所以按规则还不算写完。</p>
+
+<h3>挖深会改变结论：两种写法对比</h3>
+<div class="answers">
+  <div class="ans shallow">
+    <div class="tag">只看现象</div>
+    <blockquote>"中国最大的淡水湖是鄱阳湖，面积 3,960 平方公里。"</blockquote>
+    <span class="pen">批：这是水位 21 米时的数字。2022 年 9 月枯水时，通江水体只剩 244 平方公里。只给一个数，不说口径，经不起推敲。</span>
+  </div>
+  <div class="ans deep">
+    <div class="tag">推进到全体和本质</div>
+    <blockquote>"鄱阳湖是我国最大的淡水湖。它的湖面随季节涨落，涨水时一片汪洋，枯水时只剩几条水道，人们说它'洪水一片，枯水一线'。"</blockquote>
+    <div class="note">附给编辑的说明：书里要写面积，就注明是什么水位或哪一年；"最大"不包括中俄界湖兴凯湖；我国最大的湖是青海湖，但它是咸水湖。</div>
+  </div>
+</div>
+<p>名字没变，给编辑的建议变了。这就是第 2 步要的"挖深会改变结论"。</p>
+
+<!-- 五 -->
+<h2 id="example-eu">五　实例二：欧盟《人工智能法》</h2>
+<p>这是一道开放时效型的题。题目卡同样取自《对照报告收集规程》。</p>
+
+<div class="qcard">
+  <div class="head"><span>题目卡　第二题　评委版</span><span>开放时效型</span></div>
+  <dl>
+    <div class="row"><dt>提问者</dt><dd>一家中国人工智能创业公司的海外业务负责人。公司约 80 人，准备以开源方式向欧盟市场发布一个通用大模型。</dd></div>
+    <div class="row"><dt>用途</dt><dd>决定发布之前要做哪些合规准备，以及要不要调整开源的方式。</dd></div>
+    <div class="row"><dt>问题</dt><dd>欧盟《人工智能法》对我们以开源方式发布通用大模型有什么影响？发布之前我们需要做哪些准备？要不要调整开源的方式？</dd></div>
+    <div class="row"><dt>截止时间</dt><dd>只使用截至〔运行当日〕已经公开的信息。</dd></div>
+    <div class="row"><dt>附</dt><dd class="muted">统一的交付要求和说明，见第八节。</dd></div>
+  </dl>
+</div>
+
+<p><strong>注意"约 80 人"这个细节。</strong>它是提问者处境的一部分，不是提示。法规对中小企业有没有特殊安排，题面一个字也没提；能不能从"约 80 人"联想到去查，要看智能体自己。</p>
+
+<div class="qcard">
+  <div class="head"><span>第二题　提问版</span><span>交给智能体</span></div>
+  <dl><div class="row"><dt>原文</dt><dd>我是一家中国人工智能创业公司的海外业务负责人。我们公司约 80 人，准备以开源方式向欧盟市场发布一个通用大模型，发布之前我得决定要做哪些合规准备、要不要调整开源的方式。欧盟《人工智能法》对我们以开源方式发布通用大模型有什么影响？发布之前我们需要做哪些准备？要不要调整开源的方式？只使用截至〔运行当日〕已经公开的信息。</dd></div></dl>
+</div>
+<div class="qcard">
+  <div class="head"><span>第二题　裸题版</span><span>交给智能体</span></div>
+  <dl><div class="row"><dt>原文</dt><dd>欧盟《人工智能法》对以开源方式发布通用大模型有什么影响？</dd></div></dl>
+</div>
+
+<p><strong>深度地图要往哪些方向写。</strong>下面是出题时整理的方向，还不是成稿：</p>
+<ul>
+  <li>法规中"开源"一词的边界，以及豁免的条件；</li>
+  <li>"系统性风险"的门槛；</li>
+  <li>各项义务分阶段生效的时间，以及后来有没有调整；</li>
+  <li>配套的指南和行为准则；</li>
+  <li>各方对条款理解上的分歧；</li>
+  <li>对中小企业的特殊安排；</li>
+  <li>不确定之处有多大。</li>
+</ul>
+<p>这道题的信息更新很快，地图上每一条的对错都要以截止那天为准。所以它的深度地图，要等运行日期定下来以后，在运行之前写成。</p>
+
+<!-- 六 -->
+<h2 id="redpen">六　红笔批改：七道不合格的题</h2>
+<p>下面每道题都有一处毛病。先自己想一想，再看红笔批语。</p>
+
+<div class="bad">
+  <div class="q">请从历史变迁、季节变化和统计口径三个角度，分析中国最大的淡水湖。</div>
+  <div class="pi"><b>批</b>把深度地图写进了题面。这样测到的只是智能体会不会照着做。</div>
+  <div class="gai"><b>改</b>删掉三个角度，补上提问者、用途和截止时间。</div>
+</div>
+<div class="bad">
+  <div class="q">鄱阳湖枯水期面积会大幅缩小，那么中国最大的淡水湖还是它吗？</div>
+  <div class="pi"><b>批</b>题面给出了中间答案，智能体不用自己查到季节变化。</div>
+  <div class="gai"><b>改</b>只问"中国最大的淡水湖是哪一个"。</div>
+</div>
+<div class="bad">
+  <div class="q">各家大语言模型的深度研究功能，哪家做得最好？请做一份综合分析。</div>
+  <div class="pi"><b>批</b>没有提问者、用途和截止时间；话题就是被评的产品本身。这是我们 2026 年 3 月真用过的题：事后只能猜提问者和用途，报告写的又是各家自己，去掉产品名也藏不住是谁。</div>
+  <div class="gai"><b>改</b>换一个和参赛产品无关的话题。</div>
+</div>
+<div class="bad">
+  <div class="q">请调查我校大一新生每天使用手机的时间。</div>
+  <div class="pi"><b>批</b>要做问卷才能回答，属于收集新的一手资料，不在本手册说的调研之内。</div>
+  <div class="gai"><b>改</b>改成用已公开资料能回答的问题，例如"截至今天，国内有哪些公开的大学生手机使用调查，结论是否一致"，并补上提问者和用途。</div>
+</div>
+<div class="bad">
+  <div class="q">暗物质到底是什么？</div>
+  <div class="pi"><b>批</b>这是科研前沿上还没有答案的问题，评委也无从判断对错。调研不以推进人类知识的前沿为目标。</div>
+  <div class="gai"><b>改</b>改成现状调研，例如"一位科普作者要写一篇文章，介绍截至今天科学界对暗物质有哪些主要假说、各有什么证据"。</div>
+</div>
+<div class="bad">
+  <div class="q">100 摄氏度等于多少华氏度？</div>
+  <div class="pi"><b>批</b>可讲的东西不少，但挖得再深，答案还是 212 华氏度。挖深不改变结论，就分不出深浅。</div>
+  <div class="gai"><b>改</b>换题。</div>
+</div>
+<div class="bad">
+  <div class="q">请写一份不少于一万字的报告，分析中国最大的淡水湖。</div>
+  <div class="pi"><b>批</b>篇幅不是评分依据，规定字数只会鼓励注水。试评时，我们故意往一份报告里塞了一段无关的背景，它一分也没有得到。</div>
+  <div class="gai"><b>改</b>删掉字数要求，只附统一的交付要求。</div>
+</div>
+
+<!-- 七 -->
+<h2 id="checklist">七　交卷前的自查清单</h2>
+<p>逐条勾选。勾选只保存在你自己的浏览器里。</p>
+<div class="check" id="check">
+  <h3>题目卡</h3>
+  <label><input type="checkbox" id="k01"><span>写了提问者，具体到身份和处境</span></label>
+  <label><input type="checkbox" id="k02"><span>写了用途：他要拿结果做什么决定</span></label>
+  <label><input type="checkbox" id="k03"><span>问题用的是提问者会说的话</span></label>
+  <label><input type="checkbox" id="k04"><span>写了截止时间："只使用截至〔运行当日〕已经公开的信息"</span></label>
+  <label><input type="checkbox" id="k05"><span>原样附上了统一的交付要求和说明</span></label>
+  <label><input type="checkbox" id="k06"><span>没有提示往哪里挖，比如历史、口径、分歧、前提</span></label>
+  <label><input type="checkbox" id="k07"><span>没有给出中间答案</span></label>
+  <label><input type="checkbox" id="k08"><span>没有点名要查的网站、机构或方法</span></label>
+  <label><input type="checkbox" id="k09"><span>没有规定篇幅和格式</span></label>
+  <label><input type="checkbox" id="k10"><span>只用文字，一次给全</span></label>
+  <label><input type="checkbox" id="k11"><span>话题和被评的智能体无关，不需要一手资料，也不是科研前沿</span></label>
+  <label><input type="checkbox" id="k20"><span>写了提问版：提问者口吻，内容和评委版一致，不多不少，不加标签</span></label>
+  <label><input type="checkbox" id="k21"><span>写了裸题版：只有问题本身</span></label>
+  <h3>深度地图</h3>
+  <label><input type="checkbox" id="k12"><span>在看到任何报告之前写好，写了日期</span></label>
+  <label><input type="checkbox" id="k13"><span>写了浅答案</span></label>
+  <label><input type="checkbox" id="k14"><span>写清了挖深之后，结论或建议在哪里改变</span></label>
+  <label><input type="checkbox" id="k15"><span>每条要点标了层级和重要性</span></label>
+  <label><input type="checkbox" id="k16"><span>每条要点附了出处，查不到原始出处的标了把握</span></label>
+  <label><input type="checkbox" id="k17"><span>没有拿"各有所长"之类的套话充当本质</span></label>
+  <label><input type="checkbox" id="k22"><span>至少一处"挖深会改变结论"的转折点落在内部联系或本质层</span></label>
+  <label><input type="checkbox" id="k24"><span>四层都查过；找不到要点的层，写明了查了什么</span></label>
+  <label><input type="checkbox" id="k23"><span>两位出题人各自独立列过核心要点，对照之前没有商量</span></label>
+  <label><input type="checkbox" id="k25"><span>用数鱼的办法对照过：合并后的核心要点条数，和估计总数相差不到 1 条</span></label>
+  <h3>检查</h3>
+  <label><input type="checkbox" id="k18"><span>另一位同学做了泄露检查，记下了结果</span></label>
+  <label><input type="checkbox" id="k19"><span>做了闭卷对照，记下了所用模型和结果</span></label>
+  <div class="tally"><span id="tally">已勾 0 / 25</span><button type="button" id="reset">全部清空</button></div>
+</div>
+
+<!-- 八 -->
+<h2 id="templates">八　模板</h2>
+<p>复制下面的模板去填。题目卡里"交付要求"和"说明"两段，每道题都一样，不要改。</p>
+
+<div class="tpl">
+  <span class="name">题目卡模板</span>
+  <button type="button" data-copy="tpl-card">复制</button>
+<pre id="tpl-card">一、评委版（只给评委）
+【提问者】（具体到身份和处境，例如：一家少儿出版社的地理科普编辑。）
+【用途】（他要拿结果做什么决定。）
+【问题】（用提问者会说的话。）
+【截止时间】只使用截至〔运行当日〕已经公开的信息。
+
+二、提问版（交给智能体）
+（用提问者的口吻，把上面四项写成一两句话，内容不多不少，不加标签。）
+
+三、裸题版（交给智能体）
+（只写问题本身。）
+
+四、附在提问版和裸题版之后，一字不改
+
+【交付要求】
+请交付一份书面报告。版式不限，但必须包含以下五个部分：
+1. 主要结论：放在报告开头。
+2. 论证与解释。
+3. 出处：每个关键结论都标明来源，给出可以点开的网址和取用日期，尽量使用原始出处。
+4. 把握程度：主要判断各有多大把握，为什么。
+5. 查找与来源说明：你查了哪些方面，用了哪些来源，其中哪些可靠、哪些不可靠，还有哪些信息缺口。
+
+【说明】
+本题已包含全部信息，请直接开始，不需要向我确认。如果有不清楚的地方，请按你的理解进行，并在报告中写明你的理解和假设。</pre>
+</div>
+
+<div class="tpl">
+  <span class="name">深度地图模板</span>
+  <button type="button" data-copy="tpl-map">复制</button>
+<pre id="tpl-map">题目编号：
+出题人：
+写成日期：（必须早于看到任何报告）
+
+一、浅答案（只看现象时的答案）
+
+
+二、挖深之后，结论或建议在哪里改变
+
+
+三、要点表
+编号 ｜ 要点 ｜ 层级（现象／全体／内部联系／本质） ｜ 重要性（核心／一般） ｜ 依据（出处网址） ｜ 把握（高／中／低）
+1 ｜ ｜ ｜ ｜ ｜
+2 ｜ ｜ ｜ ｜ ｜
+（找不到要点的层，写明查了什么：）
+
+四、两人对照记录（对照之前不商量）
+甲：　　　列出核心要点　　条
+乙：　　　列出核心要点　　条
+两人都列到的：　　条
+估计总数 = 甲的条数 × 乙的条数 ÷ 都列到的条数 =
+合并后的条数 = 甲 + 乙 − 都列到的 =
+结论：写全了／继续查（针对只有一人列到的方向）
+
+五、泄露检查记录
+检查人：
+日期：
+发现了什么：
+怎么改的：
+
+六、闭卷对照记录
+所用模型（不参赛，且和参赛者不是同一家公司的同一系列）：
+日期：
+不联网答到了哪些核心要点：
+结论：保留／改题／换题</pre>
+</div>
+
+<!-- 九 -->
+<h2 id="faq">九　常见问题</h2>
+<dl class="faq">
+  <dt>智能体的开发者能不能根据题目里的提问者和用途，去改写提示词？</dt>
+  <dd>不能针对题目改。题目文本原样作为智能体收到的唯一输入，一次给全；任何人都不能针对某一道题改写、补充或删减，开发者不行，主办方也不行。开发者能做的，是在看到题目之前把智能体定下来：系统提示词、检索策略、工作流程，所有题目都用同一套，其中也可以让智能体专门利用提问者和用途这两类信息。理由有三：理解提问者要什么，本身就是被测的能力，看了题再改写，测到的是人；改写时很难不把"往哪里挖"写进去；各家收到的输入要逐字相同，名次才可比。为了让这条规则能执行，比赛规则规定参赛方在题目公布前冻结并申报智能体，由主办方统一运行，运行日志里的输入要和题目文本逐字一致，见<a href="rules.html">《深度研究比赛规则手册》</a>第二节和第五节。</dd>
+  <dt>真实使用时，用户很少写明自己是谁、要做什么。题目这样写，符合真实场景吗？</dt>
+  <dd>不完全符合。真实请求往往只有一句话：DRACO 论文举的一条 Perplexity 用户原话是"tax efficient investing with irregular freelance income base on my situation"，说了"按我的情况"，却没说是什么情况。产品也常常反问，补的正是读者、范围、用途这类信息。评委版仍然写明提问者和用途，是因为评委要有参照，才能判断切不切题；基础级又不允许交互，所以交给智能体的题目相当于"澄清之后的提问"。这个取舍的代价是，基础级测不到"从一句话里推断真实需要"。所以我们做了三件事：交给智能体的是提问者口吻的一两句话，不是带标签的表格；每道题另跑一个只有问题本身的裸题版，名次单独公布，看两者是否一致；"从一句话推断需要"留给进阶的交互形态专门去测。统一的交付要求也不是真实用户会提的，它是为了让评委能评、让各家可比。</dd>
+  <dt>深度地图是不是可有可无？它写多写少有弹性，会不会让评分不客观、不权威？</dt>
+  <dd>
+    <p>不是可有可无。它是必需的，但不是标准答案，三个用处见第二节。至于弹性，要分开看地图影响名次的两条路。</p>
+    <p><strong>第一条路：地图上写了哪些要点。</strong>这一条不影响名次。地图上写了、却没有一份报告写到的要点，对每一份报告都是零分；有报告写到的要点，本来就会进入要点池。我们在第一次试评的数据上核对过：去掉地图上那 2 条谁都没写到的要点，6 份报告的净分和名次完全不变。规则还规定，估计名次有多大把握时的重抽样，只在至少一份报告写到的要点中进行。这样，地图写多写少，对名次的影响严格为零。</p>
+    <p><strong>第二条路：地图给要点标的层级和重要性。</strong>这一条会影响分数，所以规则把它管住：地图上的标注是事先登记的默认值，评委组改动要写依据；地图上没有的要点，评委判定时看不到它出自哪份报告、出自几份报告，判为核心的列入人工审计；有争议的标注，包括评委组改动过的地图标注，在比较两份报告时，按对领先一方最不利的方式再算一遍，仍然领先才算分开。也就是说，有争议的判定只能让两份报告并列，不能把它们拉开。试评中，把地图上 8 条要点的重要性全部反过来，名次不变；把全部 122 条要点的重要性抹平，原来分开的 12 对报告中有 1 对变成分不开。信息检索评测有过类似的研究：不同评委对"相关不相关"的判断常常不一致，但给检索系统排出的先后大体一致<a href="#ref8">[8]</a>。</p>
+    <p><strong>剩下的弹性在出题人这一侧。</strong>地图漏掉核心要点，评委就要在看过报告之后再定。所以第三步写明了写到什么程度为止；赛后还要数一数，评委判为核心、地图上却没有的要点有几条，每道题超过 1 条〔默认〕，就在审计结果里记为"地图核心要点不全"。试评那张地图就不合格：评委判为核心的 11 条要点中，有 8 条地图上没有。这可能是地图漏了，也可能是评委把核心判宽了，审计就是要把这种情况摆出来查。</p>
+    <p><strong>权威性</strong>来自两点：地图在运行前封存、赛后公开，谁都能核对它没有被改过；每一个分开的名次，都不依赖任何有争议的判定。代价是分开的名次可能变少。"最不利重算"这条规则还没有在真实比赛中检验过，计分程序也还要按它更新。</p>
+  </dd>
+  <dt>凭什么相信能写出好的深度地图？</dt>
+  <dd>不能事先保证，只能把要求写清楚、把关设够，让问题能被发现。要求是第三步"写到什么程度为止"的五条。关有五道：入选条件（至少一处转折点落在内部联系或本质层，每条附出处）；两位出题人独立编写，用数鱼的办法判断核心要点写全了没有；领域专家审阅；运行前公布地图的校验值、赛后公开全文，证明没有看了报告再改；赛后统计评委判为核心、地图上却没有的要点有几条。地图偏弱，后果有两种：一是放过一道浅题，各家拉不开差距；二是核心要点漏得多，评委要在看过报告之后再定，判定不如事先登记的好。后一种会被赛后审计数出来。这五道关够不够，要等第一届的审计数字来回答。</dd>
+  <dt>题目越难越好吗？</dt>
+  <dd>不是。深是调研的深，不是题目的难。实例一人人看得懂，照样能分出深浅。</dd>
+  <dt>深度地图要写得很全吗？</dt>
+  <dd>核心要点要全，一般要点不求全。地图上谁都没写到的要点不影响名次，所以一般要点多写无益；核心要点漏了，评委就要在看过报告之后再定。写到什么程度为止，见第三步的五条；核心要点写全了没有，用数鱼的办法判断。实例一写了 8 条，其中核心 4 条。</dd>
+  <dt>为什么截止时间定在运行当天？</dt>
+  <dd>所有智能体在同一天运行，截止时间取当天，就不会出现"用了截止之后的材料"的问题。评委判断对错和新旧，也以这一天为准。</dd>
+  <dt>智能体反问我，或者要我确认研究计划，怎么办？</dt>
+  <dd>一律回复："题目已包含全部信息，请按你的理解直接进行，并在报告中写明你的理解和假设。"界面只能点"批准计划"的，直接批准，不作修改。记下它问了什么。</dd>
+  <dt>可以出带图片、要多轮对话的题吗？</dt>
+  <dd>这本手册只讲基础级：只用文字，一次给全，不交互。带图片或文件的多模态题、允许多轮对话的交互题，是两种不同的进阶形态，以后另写。</dd>
+  <dt>深度地图写错了怎么办？</dt>
+  <dd>对错一律看来源，地图上的事实错误会在评审时被发现。地图标错了层级或重要性，评委组可以改，但要写依据；改动过的标注算有争议，只能让名次并列，不能把名次拉开。所以每条都要附出处，把握不足的要标明。</dd>
+</dl>
+
+<h2 id="sources">出处</h2>
+<p class="small muted">实例一深度地图引用的资料，2026 年 10 月 30 日查阅。</p>
+<ol class="refs">
+  <li>新华社：《鄱阳湖跌破极枯水位　通江水体面积减九成》，2025 年 12 月 14 日。<a href="https://www.news.cn/local/20251214/aeaf6989e1ed48cfa6fb76005a1769fd/c.html">news.cn</a></li>
+  <li>《鄱阳湖的鹤类》，《野生动物学报》，1985 年（摘要）。<a href="https://doaj.org/article/4768073c46084aa68779cb49d4ce2d5e">doaj.org</a></li>
+  <li>界面新闻：鄱阳湖星子站水位刷新有纪录以来最低值，2022 年 9 月 23 日。<a href="https://www.jiemian.com/article/8119349.html">jiemian.com</a></li>
+  <li>中国新闻网：兴凯湖进入禁渔期的报道，2017 年 11 月 5 日。<a href="https://www.chinanews.com/gn/2017/11-05/8368770.shtml">chinanews.com</a></li>
+  <li>中国日报网：青海湖水体面积达 2004 年以来最大值，2021 年 10 月 22 日。<a href="https://language.chinadaily.com.cn/a/202110/22/WS617249aaa310cdd39bc70974.html">chinadaily.com.cn</a></li>
+  <li>36 氪对洞庭湖面积变化的报道，转引赵淑清、方精云《围湖造田和退田还湖活动对洞庭湖区近 70 年土地覆盖变化的影响》。<a href="https://www.36kr.com/p/2854774651800195">36kr.com</a></li>
+</ol>
+<p class="small muted">方法的出处：</p>
+<ol class="refs" start="7">
+  <li id="ref7">Eick S G, Loader C R, Long M D, Votta L G, Vander Wiel S A. Estimating software fault content before coding. 第 14 届国际软件工程会议（ICSE 1992）论文集，第 59–65 页。用捕获—再捕获法，根据几位审查员各自找到的缺陷估计缺陷总数。</li>
+  <li id="ref8">Voorhees E M. Variations in relevance judgments and the measurement of retrieval effectiveness. Information Processing and Management, 2000, 36(5): 697–716。<a href="https://doi.org/10.1016/S0306-4573(00)00010-8">doi.org</a></li>
+</ol>
+<p class="small muted">"法国首都"一例的史实，据维基百科"法国首都列表"和凡尔赛宫官网核对。试评数字出自论文工作稿第 4 节；第九节"可有可无"一问中的三组重算，是 2026 年 10 月 30 日用试评数据和计分程序做的。</p>
+
+<footer>深度研究出题手册，第 3 版，2026 年 10 月 30 日。"深"的定义依据《实践论》，"调研"的精神依据《反对本本主义》。</footer>
+</div>
+
+<script>
+(function () {
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('#check input[type=checkbox]'));
+  var tally = document.getElementById('tally');
+  var KEY = 'question-handbook-check-v1';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
+  function save(state) { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function update() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    tally.textContent = '已勾 ' + n + ' / ' + boxes.length + (n === boxes.length ? '，可以交卷了' : '');
+  }
+  var state = load();
+  boxes.forEach(function (b) {
+    b.checked = !!state[b.id];
+    b.addEventListener('change', function () { state[b.id] = b.checked; save(state); update(); });
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    boxes.forEach(function (b) { b.checked = false; }); state = {}; save(state); update();
+  });
+  update();
+
+  document.querySelectorAll('button[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pre = document.getElementById(btn.getAttribute('data-copy'));
+      var text = pre.textContent;
+      function done(msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = '复制'; }, 1800); }
+      function fallback() {
+        var r = document.createRange(); r.selectNodeContents(pre);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        done('已选中，请按复制键');
+      }
+      try {
+        navigator.clipboard.writeText(text).then(function () { done('已复制'); }, fallback);
+      } catch (e) { fallback(); }
+    });
+  });
+})();
+</script>
+
+</html>

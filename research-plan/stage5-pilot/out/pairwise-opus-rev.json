@@ -1,0 +1,96 @@
+{
+ "judge": "opus",
+ "order": "rev",
+ "pairs": [
+  {
+   "first": "D",
+   "second": "C",
+   "verdict": "first",
+   "reason": "D的材料到2026年2月（Gemini 3.1 Pro、Opus 4.6、Kimi K2.5），附来源清单和检索记录，并交代了缺少延迟与订阅性价比统一对比的局限；C的主要事实停在2025年（如称ChatGPT深度研究仅对200美元/月的Pro用户开放、OpenAI计划扩展到Plus），且全篇没有可追溯的出处。D把SWE-bench、API价格等模型指标混进来是缺点，但整体仍胜一筹。"
+  },
+  {
+   "first": "E",
+   "second": "A",
+   "verdict": "first",
+   "reason": "E直接回答了哪家适合谁（英文严肃研究选ChatGPT、检索综述选Perplexity、中文场景选Kimi），并附内联来源；A把ChatGPT的Search模式当成其深度研究来评、全篇没有给出哪家更好的判断，还有“DeepSeek (Moonshot.ai)”“GPT-5尚未上线”等错误。"
+  },
+  {
+   "first": "D",
+   "second": "B",
+   "verdict": "first",
+   "reason": "D审视了“哪家最好”的前提（称其“已成为伪命题”，改按准确性、内部数据、工程任务等场景组织回答），材料新且列出来源和检索记录；B的分档只靠一次未注明出处的实测（36页/25个来源、48页/100个来源），没有任何查找交代。"
+  },
+  {
+   "first": "E",
+   "second": "D",
+   "verdict": "second",
+   "reason": "E的关键判断依赖2025年初的材料，如称Claude 3.5 Sonnet不支持联网、Gemini没有专门的深度调研模式，与截止时的实际情况不符；D覆盖了2026年初各家现行的深度研究功能（ChatGPT可编辑研究计划、Gemini穿透Workspace、Kimi K2.5智能体集群）并列出来源，尽管有夸大和跑题。"
+  },
+  {
+   "first": "E",
+   "second": "C",
+   "verdict": "second",
+   "reason": "C把Gemini、Claude正确地当作有专门深度研究功能的产品，并分析技术路径与速度、深度、成本的权衡（如多智能体架构token消耗约为普通聊天15倍、因而偏企业级场景）；E误称Claude无联网、Gemini无专门深度研究模式，还拿清华对DeepSeek R1的数据分析实验充当深度研究的证据。"
+  },
+  {
+   "first": "E",
+   "second": "B",
+   "verdict": "second",
+   "reason": "B对比了各家深度研究产品的实测表现，并指出DeepSeek、Kimi强在底层模型、作为深度研究产品尚不成熟，抓住了问题的概念边界；E虽有内联来源，但核心判断建立在过时材料上（Claude 3.5 Sonnet无联网、Kimi k1.5、Gemini Thinking），对Claude和Gemini的定位因此出错。"
+  },
+  {
+   "first": "F",
+   "second": "B",
+   "verdict": "first",
+   "reason": "F引用2026年初的四个深度研究专项评测（DeepResearch Bench、DRACO、LiveDRBench、MMDR-Bench），注明DRACO是Perplexity自己发布的，并对各评测结论相互冲突给出了解释；B的分档只靠一次来源不明的实测页数和来源数，没有查找交代。"
+  },
+  {
+   "first": "F",
+   "second": "A",
+   "verdict": "first",
+   "reason": "F切题地用多个深度研究评测回答哪家更好，并按需求给出选择；A评的是ChatGPT Search而不是其深度研究，示例输出是虚构的（如“Positano (near Paris)”），全篇没有给出哪家更好的结论。"
+  },
+  {
+   "first": "D",
+   "second": "A",
+   "verdict": "first",
+   "reason": "D覆盖了各家截至2026年初的深度研究功能，并按场景给出明确推荐；A漏掉了ChatGPT Deep Research这一核心产品，时间线也有误（如称Gemini Deep Research于2024年12月基于Gemini 3推出、Opus 4发布于2025年11月），且没有比较结论。"
+  },
+  {
+   "first": "C",
+   "second": "B",
+   "verdict": "first",
+   "reason": "C解释了各家差异的来由（端到端训练、多智能体、开源推理加外部检索三条路径及各自的速度、深度、成本代价），并提醒幻觉率测量方法不同、不能直接比较；B只罗列各家特点和一次实测的页数，没有分析也没有出处。"
+  },
+  {
+   "first": "F",
+   "second": "C",
+   "verdict": "second",
+   "reason": "C分析了差异的成因，如ChatGPT只引用采信的来源导致过程不可复现、DeepSeek R1没有原生检索需要外接、Gemini求速度而压缩了验证深度；F只并列四个评测的头条结论，除DRACO外没有审视评测出处（如百度千帆夺冠的来源），并把结果冲突简单归为“专业化分工”，也没有涉及Claude。C的材料偏旧，这一点不如F，但不足以抵消分析上的差距。"
+  },
+  {
+   "first": "C",
+   "second": "A",
+   "verdict": "first",
+   "reason": "C围绕深度研究功能给出综合评分和按场景的选型，并分析了各家局限（如Gemini在“脂肪因子与痴呆症”实测中出现主题理解偏差）；A评的是ChatGPT Search而不是深度研究，没有比较结论，还有“DeepSeek没有消费端界面”等事实错误。"
+  },
+  {
+   "first": "B",
+   "second": "A",
+   "verdict": "first",
+   "reason": "B切题地给出分档判断和按需求的选择建议，并指出DeepSeek、Kimi作为深度研究产品尚不成熟；A虽引用了官方文档、标注了“未经证实的公关说法”，但漏评ChatGPT深度研究、时间线多处有误，也没有回答哪家更好。"
+  },
+  {
+   "first": "F",
+   "second": "E",
+   "verdict": "first",
+   "reason": "F依据2026年初的深度研究专项评测，并注意到DRACO由Perplexity自己发布；E的材料停在2025年初（Claude 3.5 Sonnet、Kimi k1.5、Gemini Thinking），并据此得出Gemini、Claude不是专门深度研究产品的错误判断。"
+  },
+  {
+   "first": "F",
+   "second": "D",
+   "verdict": "second",
+   "reason": "D把各家现行深度研究的机制与适用场景联系起来（如Kimi智能体集群对应大范围并行搜集、Gemini穿透Workspace对应企业内部数据），附来源清单和检索记录；F只并列四个评测结论，分析单薄，也没有涉及Claude。D把SWE-bench、API价格混进来、称Perplexity能做“零幻觉事实核查”而无依据，削弱了优势，但整体仍胜过F。"
+  }
+ ]
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>共性定义</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .def{background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:12px 18px;margin:14px 0}
+  .def .t{color:var(--accent2);font-weight:650;font-size:14px;margin-bottom:4px}
+  .def p{margin:4px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  td.c{text-align:center}
+  .y{color:var(--ok)} .n{color:var(--muted)}
+  .bar{display:inline-block;height:8px;border-radius:4px;background:var(--accent);vertical-align:middle;margin-right:6px}
+  .eg{background:var(--panel2);border-radius:8px;padding:8px 14px;margin:10px 0;font-size:14px}
+  .note{font-size:13px;color:var(--muted)}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ header h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<header>
+  <h1>从 23 篇的共性提炼四个定义</h1>
+  <p class="dek">回答索引页留言："根据所有文章中的共性，定义：1. 什么是'Deep Research Benchmark'上下文中的 Research 和 Benchmark；2. 什么是 Deep Research；3. 什么是 Deep Research Benchmark。"</p>
+  <div class="meta">写于 2026-10-29。做法：把每篇论文自己描述 Deep Research 的那一两句话，按"提到了哪些特征"逐条编码，再按"多少篇支持"来取共性（编码见附录，可逐行核对）。前两页《<a href="overview-definitions.html">有没有定义 Research / Deep Research</a>》《<a href="overview-benchmark.html">怎么理解 Benchmark</a>》是这一页的原料。</div>
+</header>
+
+<h2 id="s0"><span class="no">0</span>四个定义</h2>
+<div class="def"><div class="t">① Research（在 DR Benchmark 的语境里）</div>
+<p>为回答用户提出的一个信息需求，从<strong>已有的外部信息</strong>（通常是公开网络）中查找、阅读并<strong>整合</strong>证据，得出结论的过程。研究对象是已有信息，不产生新数据。</p></div>
+<div class="def"><div class="t">② Benchmark（在 DR Benchmark 的语境里）</div>
+<p>一套<strong>可重复执行的比较程序</strong>：给多个系统同一组任务，在规定的运行条件下，按<strong>事先确定的判分依据</strong>（通常由自动评委执行）给出可以互相比较的分数或名次。</p></div>
+<div class="def"><div class="t">③ Deep Research</div>
+<p>由 AI 智能体<strong>自主</strong>完成的 Research，"深"在于问题<strong>无法靠一次检索或单一来源回答</strong>：需要多步、多跳的搜索，并在多条信息之间推理、整合。交付形式（短答案、结论清单、长报告）<strong>不是</strong>定义的一部分。</p></div>
+<div class="def"><div class="t">④ Deep Research Benchmark</div>
+<p>用来比较 Deep Research 系统的 Benchmark。它的任务必须满足③（一次检索解决不了），评测对象是<strong>端到端的系统</strong>（模型 + 工具 + 检索环境），判分主要看<strong>交付结果</strong>：内容对不对、全不全；少数还看引用和过程。</p></div>
+
+<div class="lead"><ul>
+  <li><strong>这是"共性"，也就是现状的最大公约数，不等于"应该怎样"。</strong>共性里有几处公认的缺口（第 5 节），你的方案应该在共性的基础上明确写出"我们在哪里偏离共性、为什么"。</li>
+  <li><strong>一个意外的发现：</strong>大家用法的交集，恰好就是 LiveDRBench 正式定义的两个轴，搜索强度和推理强度。唯一的出入是，多数论文默认要交长报告，LiveDRBench 则明确说报告不是本质。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>怎么取"共性"</h2>
+<ul>
+  <li><strong>Research 和 Deep Research：</strong>用 20 篇和 DR 直接相关的论文（23 篇去掉 Why LMs Hallucinate、Rubric-Guided RL 综述，以及只谈科研的 Verification Gap 综述）。只编码每篇<strong>自己怎么描述</strong> DR，不看它评了什么。</li>
+  <li><strong>Benchmark 和 DR Benchmark：</strong>用 18 个评测工具（16 个 benchmark，加上 DREAM 和 DR-Arena 两个评测框架），编码它们<strong>实际怎么做</strong>。</li>
+  <li><strong>取舍规则：</strong>约四分之三以上的论文支持的，写进定义；一半上下的，算"常见形态"，不写进定义；少数提到的，算"个别主张"。</li>
+  <li>编码是我按原文判断的，个别格子可能有争议。附录列了全部 20 行，可以逐行核对。</li>
+</ul>
+
+<h2 id="s2"><span class="no">2</span>Research：各篇共同的意思</h2>
+<div class="tbl"><table>
+<tr><th>特征</th><th>支持篇数（共 20）</th><th>处理</th></tr>
+<tr><td>由用户的问题或需求驱动</td><td><span class="bar" style="width:100px"></span>20</td><td>写进定义</td></tr>
+<tr><td>查找、检索外部信息</td><td><span class="bar" style="width:100px"></span>20</td><td>写进定义</td></tr>
+<tr><td>整合多条信息</td><td><span class="bar" style="width:75px"></span>15</td><td>写进定义</td></tr>
+<tr><td>标明出处、引用</td><td><span class="bar" style="width:30px"></span>6</td><td>个别主张（但很多 benchmark 在评分时会查，见第 4 节）</td></tr>
+<tr><td>核实、处理冲突证据</td><td><span class="bar" style="width:15px"></span>3</td><td>个别主张（DRACO、DREAM、MiroEval）</td></tr>
+<tr><td>做实验、产生新数据</td><td>0</td><td>明确不在范围内</td></tr>
+</table></div>
+<p>所以 DR 语境里的 Research 就是<strong>调研</strong>：围绕一个问题查找、读懂、整合已有信息。前一页说过，按科研全流程（提出想法 → 读文献 → 做实验 → 分析 → 写作 → 评审）来看，它只覆盖"读文献"这一步。</p>
+
+<h2 id="s3"><span class="no">3</span>Deep Research：共同的"深"是什么</h2>
+<div class="tbl"><table>
+<tr><th>特征</th><th>支持篇数（共 20）</th><th>处理</th></tr>
+<tr><td>由智能体自主执行</td><td><span class="bar" style="width:100px"></span>20</td><td>写进定义</td></tr>
+<tr><td><b>多步 / 多跳，或需要推理</b>，即一次检索解决不了</td><td><span class="bar" style="width:80px"></span>16</td><td>写进定义，这就是"深"</td></tr>
+<tr><td>整合多条信息</td><td><span class="bar" style="width:75px"></span>15</td><td>写进定义</td></tr>
+<tr><td>交付长报告</td><td><span class="bar" style="width:60px"></span>12</td><td>常见形态，<b>不写进定义</b></td></tr>
+<tr><td>明说要多个来源</td><td><span class="bar" style="width:50px"></span>10</td><td>并入"一次检索 / 单一来源解决不了"</td></tr>
+<tr><td>规划、拆解问题</td><td><span class="bar" style="width:40px"></span>8</td><td>常见做法，不写进定义</td></tr>
+<tr><td>需要专家级水平</td><td><span class="bar" style="width:35px"></span>约 7</td><td>个别主张</td></tr>
+</table></div>
+<h3>为什么"长报告"不写进定义</h3>
+<p>20 篇的交付形式分布是：长报告 12、长回答或交付物 2、<b>短答案 4</b>（BrowseComp-Plus、DeepResearch-9K、LiveBrowseComp、Search-Time Contamination）、结论清单 1（LiveDRBench）、两两比较的回答 1（DR-Arena）。有 6 篇不交报告，照样叫 Deep Research，LiveDRBench 更是明说报告不是本质。所以交付形式只能当参数，不能当定义。</p>
+<h3>没达到"深"的 4 篇</h3>
+<p>DeepFact、Reference Hallucinations、LiveBrowseComp、Search-Time Contamination 描述 DR 时没提多步或推理。它们关心的是窄的一个侧面（事实、引用、污染），只是沿用了"Deep Research"这个词。这并不说明它们反对"深"的含义。</p>
+<div class="eg"><b>按③判断几道题</b>（例子是我编的）<br>
+"法国首都是哪里"：一次检索就够，<b>不是</b> DR。<br>
+"2025 年以来美国公司发布的开源权重模型，各自的推理延迟"：要搜很多来源、逐个核对后汇总，<b>是</b> DR，交付形式可以是一张表。<br>
+"某篇综述文章已经把答案列好了的问题"：一次检索就够，<b>不是</b> DR。LiveDRBench 特别提醒过这种情况：同一道题，网上出现一篇汇总文章之后，就不再是 DR 了。</div>
+
+<h2 id="s4"><span class="no">4</span>Benchmark 与 DR Benchmark：18 个工具实际怎么做</h2>
+<div class="tbl"><table>
+<tr><th>特征</th><th>篇数（共 18）</th><th>处理</th></tr>
+<tr><td>有一组任务</td><td><span class="bar" style="width:100px"></span>18</td><td>写进 ②</td></tr>
+<tr><td>比较多个系统，给出分数或名次</td><td><span class="bar" style="width:100px"></span>18</td><td>写进 ②</td></tr>
+<tr><td>判卷自动化（基本是 LLM 评委）</td><td><span class="bar" style="width:94px"></span>17</td><td>写进 ②，用"通常"（例外：Expert Consulting 以人类专家为主）</td></tr>
+<tr><td>事先定好判分依据（答案、清单或评分项）</td><td><span class="bar" style="width:89px"></span>16</td><td>写进 ②（例外：DREAM 不依赖参考答案，DR-Arena 只做两两比较）</td></tr>
+<tr><td>考场是实时网络</td><td><span class="bar" style="width:89px"></span>16</td><td>写进 ④ 的"端到端系统"（例外：BrowseComp-Plus、DR³-Eval 用固定语料）</td></tr>
+<tr><td>评的是 DR 系统本身</td><td><span class="bar" style="width:94px"></span>17</td><td>写进 ④（例外：DeepFact 评的是<b>事实核查器</b>，是"给评委出的考卷"）</td></tr>
+<tr><td>判分看内容对不对</td><td>几乎全部</td><td>写进 ④</td></tr>
+<tr><td>判分看引用</td><td>约三分之一</td><td>写进 ④，用"少数"</td></tr>
+<tr><td>判分看过程（搜索行为、交互代价等）</td><td>约 4</td><td>写进 ④，用"少数"（MiroEval、DailyReport、BrowseComp-Plus、IDRBench）</td></tr>
+</table></div>
+<p>有一个要点各篇做法一致，却很少有人写出来：<strong>被评的是整个系统，不是模型。</strong>16 个工具让系统在实时网络上答题，同一个模型换个搜索引擎、换一天跑，分数都会变。BrowseComp-Plus 正是为了把模型和检索器拆开，才改用固定语料。</p>
+
+<h2 id="s5"><span class="no">5</span>共性之外：共性里公认缺的几块</h2>
+<p>下面几条，各篇都意识到了问题，却没有一条进入"共性"。你的方案如果要比现状好，就该在这里偏离共性：</p>
+<ul>
+  <li><strong>时间点。</strong>没有一个定义带截止日期，可事实会变。DR-Arena 说固定考卷会"temporal misalignment"，LiveBrowseComp 专门用 90 天内的新事实出题。<b>建议：</b>在①里加"截至某个日期"。</li>
+  <li><strong>非搜不可。</strong>③说"一次检索解决不了"，却没说"不能凭记忆答"。做了闭卷检查的只有 MiroEval、LiveBrowseComp、From Simple QA 三篇，LiveDRBench 只把它列为要求，没有实际检查。<b>建议：</b>在④里加"任务要先通过闭卷基线检查"。</li>
+  <li><strong>"深"的门槛。</strong>共性只说"一次检索解决不了"，没有量化。<b>建议：</b>借 LiveDRBench 的门槛（专家要 10 分钟以上、20 段以上材料），但要说明这两个数字是约定，不是证明出来的。</li>
+  <li><strong>效度。</strong>②只要求"可重复、可比较"（信度），没要求"测的是我们想测的"（效度）。<b>建议：</b>在④里加"分数要经过 benchmark 之外的证据检验"，比如专家独立评判，而且要在条目级检验，因为 5 个 Agent 的排名一致性说明不了什么。</li>
+  <li><strong>答错和不答。</strong>共性里没有区分两者。<b>建议：</b>按 Why LMs Hallucinate 的思路，让答错比不答更吃亏。</li>
+</ul>
+<p class="note">和前一页第 5 节的工作定义草稿对照：那份草稿就是①③加上"截止日期"和"门槛"两处偏离，两者一致。</p>
+
+<h2 id="s6"><span class="no">6</span>附录：20 篇的编码</h2>
+<p class="note">依据是每篇摘要和引言里描述 DR 的句子。✓ = 原文明确提到；空 = 没提，不代表反对。"深"= 提到多步、多跳、迭代或推理任一项。</p>
+<div class="tbl"><table>
+<tr><th>论文</th><th>搜索</th><th>深</th><th>整合</th><th>核实</th><th>引用</th><th>交付形式</th></tr>
+<tr><td>LiveDRBench</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td class="c y">✓</td><td>结论清单</td></tr>
+<tr><td>BrowseComp-Plus</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td></td><td>短答案</td></tr>
+<tr><td>IDRBench</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td>报告</td></tr>
+<tr><td>DeepResearch Bench II</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td>报告</td></tr>
+<tr><td>DR-Arena</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td>回答（两两比较）</td></tr>
+<tr><td>MMDeepResearch-Bench</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td class="c y">✓</td><td>报告</td></tr>
+<tr><td>DRACO</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td>报告</td></tr>
+<tr><td>DREAM</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td>报告</td></tr>
+<tr><td>DeepResearch-9K</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td></td><td>短答案</td></tr>
+<tr><td>DeepFact</td><td class="c y">✓</td><td></td><td class="c y">✓</td><td></td><td></td><td>报告</td></tr>
+<tr><td>MiroEval</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td>报告</td></tr>
+<tr><td>Reference Hallucinations</td><td class="c y">✓</td><td></td><td></td><td></td><td class="c y">✓</td><td>报告</td></tr>
+<tr><td>DR³-Eval</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td class="c y">✓</td><td>报告</td></tr>
+<tr><td>Expert Consulting</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td></td><td>交付物</td></tr>
+<tr><td>LiveBrowseComp</td><td class="c y">✓</td><td></td><td class="c y">✓</td><td></td><td></td><td>短答案</td></tr>
+<tr><td>Search-Time Contamination</td><td class="c y">✓</td><td></td><td></td><td></td><td></td><td>短答案</td></tr>
+<tr><td>DailyReport</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td>报告</td></tr>
+<tr><td>FinResearchBench II</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td>报告</td></tr>
+<tr><td>From Simple QA</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td>长回答</td></tr>
+<tr><td>LifeSearch</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td></td><td></td><td>报告</td></tr>
+<tr><th>合计</th><th>20</th><th>16</th><th>15</th><th>3</th><th>6</th><th>报告 12 · 长回答 / 交付物 2 · 短答案 4 · 其他 2</th></tr>
+</table></div>
+<p class="note">局限：关键词定位后人工判断，编码只看"怎么描述 DR"，不看"实际评了什么"（后者见第 4 节）。双栏 PDF 抽出的文本偶有串栏。</p>
+
+<footer>相关：<a href="overview-definitions.html">有没有定义 Research / Deep Research</a> · <a href="overview-benchmark.html">怎么理解 Benchmark</a> · <a href="overview-tools.html">评测工具一览</a> · <a href="2508.04183_LiveDRBench.html">LiveDRBench</a></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Research 的定义</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+    --warn:#fcd34d; --ok:#6ee7b7; --bad:#fca5a5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  header h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  header .dek{color:var(--dim);font-size:15px;margin:0 0 10px}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff}
+  h2 .no{color:var(--accent);margin-right:8px}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  .lead{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:12px 18px;margin:20px 0}
+  .lead li{margin:6px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600;white-space:nowrap}
+  .cat{display:inline-block;min-width:22px;text-align:center;font-weight:700;border-radius:5px;padding:0 6px;font-size:12.5px}
+  .cA{background:rgba(52,211,153,.18);color:#6ee7b7} .cB{background:rgba(96,165,250,.18);color:#93c5fd}
+  .cC{background:rgba(245,158,11,.16);color:#fcd34d} .cD{background:rgba(248,113,113,.14);color:#fca5a5}
+  .cE{background:rgba(107,114,128,.25);color:#9aa3b2}
+  blockquote{margin:12px 0;padding:8px 16px;border-left:3px solid var(--line);background:var(--panel);
+    border-radius:0 8px 8px 0;color:#d8dce4;font-size:14px}
+  blockquote .src{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
+  .eg{background:var(--panel2);border-radius:8px;padding:8px 14px;margin:10px 0;font-size:14px}
+  .note{font-size:13px;color:var(--muted)}
+  code{font:12.5px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel2);padding:1px 5px;border-radius:4px;color:#d8dce4}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ header h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<header>
+  <h1>这 23 篇有没有定义 Research 和 Deep Research</h1>
+  <p class="dek">回答索引页留言："对于 Deep Research，在每篇文章里，有没有给出一个确切的定义。首先，什么是 Research？第二，什么是 Deep 的 Research？"</p>
+  <div class="meta">核查于 2026-10-29：用 pdftotext 抽出 23 篇全文，逐篇看了引言里描述 deep research 的句子，又在全文里搜了 define / refer to / formally / definition 这类措辞。下面的英文引文都是原文。</div>
+</header>
+
+<h2 id="s0"><span class="no">0</span>结论</h2>
+<div class="lead"><ul>
+  <li><strong>没有好好定义。</strong>23 篇里只有 1 篇（LiveDRBench）写了一个能拿来检验的正式定义。另有 3 篇各有一句话的定义，其中 2 篇是从文件夹外的两篇综述里借的。其余的直接拿来用，最多描述一下"这类 Agent 会做什么"。</li>
+  <li><strong>"Research"本身，没有一篇定义。</strong>从用法看，它指的是<strong>调研</strong>：把已有的信息找出来、核对、综合，写成带出处的结论。它不是<strong>科研</strong>意义上的产出新知识。</li>
+  <li><strong>"Deep"至少有 6 种意思，各篇各说各的：</strong>搜得多、跳得多、想得难、过程长、产出长、要专长。LiveDRBench 明说本质不在长报告，但多数 benchmark 恰恰是给长报告打分；另一些只要一个短答案，也叫 Deep Research。</li>
+  <li><strong>对你的影响：</strong>5 个 Agent 的评测，打分之前要先写下你自己的工作定义（见第 5 节）。否则同一个分数，在不同人眼里测的是不同的东西。</li>
+</ul></div>
+
+<h2 id="s1"><span class="no">1</span>23 篇按"定义得多认真"分五档</h2>
+<div class="tbl"><table>
+<tr><th>档</th><th>篇数</th><th>论文</th><th>怎么说的</th></tr>
+<tr><td><span class="cat cA">甲</span> 正式定义</td><td>1</td><td><a href="2508.04183_LiveDRBench.html">LiveDRBench</a></td><td>"Definition 1"，给了两个门槛（见第 4 节）。副标题就叫 <i>A Benchmark and Formal Definition</i>。</td></tr>
+<tr><td><span class="cat cB">乙</span> 一句话定义</td><td>3</td><td>DRACO、<a href="2603.28407_MiroEval.html">MiroEval</a>、<a href="2601.12346_MMDeepResearch-Bench.html">MMDR-Bench</a></td><td>
+  <b>DRACO</b>：拆解复杂问题 → 反复搜多种来源 → 综合成有结构、带引用的报告。出处是 Zhang et al. 2025 的综述。<br>
+  <b>MiroEval</b>："broadly defined as"自主、多步地调查复杂信息需求：反复搜索、收集证据、核实、综合。出处是 Huang et al. 2025、Zhang et al. 2025 等。<br>
+  <b>MMDR</b>：自己定义的多模态版本：多轮浏览 + 收集证据 + 写报告，同时要读懂给定的图片。<br>
+  三者都没有门槛，没法用来判断"这道题算不算 Deep Research"。</td></tr>
+<tr><td><span class="cat cC">丙</span> 有拆解维度，没下定义</td><td>3</td><td><a href="2601.08536_DeepResearch-Bench-II.html">DRB II</a>、<a href="2601.10504_DR-Arena.html">DR-Arena</a>、<a href="2608.02163_From-Simple-QA-to-Deep-Research.html">From Simple QA</a></td><td>
+  <b>DRB II</b>：三层框架，"information seeking, analyzing, and writing"，对应三个评分维度。<br>
+  <b>DR-Arena</b>：深度（推理跳数）× 宽度（要收集的信息量），借自 Lan et al. 2025。<br>
+  <b>From Simple QA</b>：没有直接定义，而是用造题过程来体现：简单问答一轮轮加"要回答的方面"和"推理跳数"，最后变成 deep research 题。它引了 LiveDRBench 的定义。</td></tr>
+<tr><td><span class="cat cD">丁</span> 只描述"它会做什么"</td><td>13</td><td>BrowseComp-Plus、<a href="2601.06676_IDRBench.html">IDRBench</a>、<a href="2602.18940_DREAM.html">DREAM</a>、<a href="2603.01152_DeepResearch-9K.html">DeepResearch-9K</a>、DeepFact、Reference Hallucinations、DR³-Eval、Expert Consulting、<a href="2605.28721_LiveBrowseComp.html">LiveBrowseComp</a>、Search-Time Contamination、<a href="2606.12871_DailyReport.html">DailyReport</a>、FinResearchBench II、LifeSearch</td><td>典型句式是"Deep Research Agents 能够规划、搜索、综合、生成长报告"，或者直接拿 OpenAI / Gemini Deep Research 这两个产品当例子。DailyReport 和 LiveBrowseComp 干脆叫它们 Search Agents。</td></tr>
+<tr><td><span class="cat cE">戊</span> 不以 DR 为主题</td><td>3</td><td><a href="2608.05179_Survey-Verification-Gap.html">Verification Gap 综述</a>、Why LMs Hallucinate、Rubric-Guided RL 综述</td><td>Verification Gap 例外：它是 23 篇里<strong>唯一定义了"Research"的</strong>，但说的是科研（见第 2 节）。</td></tr>
+</table></div>
+<p class="note">被引用的情况：LiveDRBench 的正式定义，在另外 22 篇里只有 DeepFact 和 From Simple QA 引了。这个定义没有成为共识。</p>
+
+<h2 id="s2"><span class="no">2</span>什么是 Research：没人定义，用法上是"调研"</h2>
+<p>23 篇里没有一篇写过"research 是什么"。但从用法看，意思很一致：<strong>在已有的信息里找、核对、综合</strong>。五条证据：</p>
+<ol>
+  <li><b>DRB II</b> 把 Deep Research 拆成"找信息 → 分析 → 写作"三层。整个流程里没有"做实验、产生新数据"这一步。</li>
+  <li><b>LiveDRBench</b> 说"The DR task extends the multi-hop RAG task"。它把 Deep Research 定位成多跳检索问答的加强版，答案是"搜出来的一组结论"。</li>
+  <li><b>DailyReport、LiveBrowseComp</b> 直接把这类系统叫 <i>Search Agents</i>（搜索 Agent）。</li>
+  <li><b>Verification Gap 综述</b>把"Deep-Research Agents"（§6.2）归在"文献与写作类 Agent"下面，和做实验、写代码的 Agent 分开。它说这类 Agent 典型的失败"不是实验搞砸了，而是结论没有依据，或者引文并没有说它声称的那些话"。</li>
+  <li><b>Reference Hallucinations</b> 开头说"every provider offers a 'deep research' mode that generates long-form reports with inline citations"。可见这个词是先作为<strong>产品模式的名字</strong>出现的。DRB II、LiveBrowseComp 也都拿 OpenAI / Gemini Deep Research 当原型。学术界的定义是事后补的。</li>
+</ol>
+
+<h3>对照：唯一定义了 Research 的那篇</h3>
+<blockquote>LLM agents are increasingly deployed across the scientific research lifecycle: generating ideas, reviewing literature, designing and running experiments, analyzing results, drafting manuscripts, and reviewing them.
+<span class="src">— Verification Gap 综述，摘要</span></blockquote>
+<p>按这个"科研全流程"来看，今天说的 Deep Research 只覆盖其中的<strong>"读文献"</strong>一步，外加一点"分析"。</p>
+
+<div class="eg"><b>一个例子看区别</b>（我编的，不出自论文）<br>
+<b>调研</b>：2025 年以来美国公司发布了哪些开源权重模型？各自的推理延迟是多少？答案已经散落在网上，任务是找全、找对、注明出处。<br>
+<b>科研</b>：这些模型的延迟为什么差这么多？设计一个实验来验证。这需要产生新证据。<br>
+23 篇的 benchmark 测的都是前一种。</div>
+
+<p><strong>这会直接决定评什么。</strong>既然是调研，各篇打分的就是"找到没有、对不对、引文真不真"，几乎不给"新见解"打分。DRB II 和 From Simple QA 有"分析"维度，但也是拿<strong>事先定好</strong>的参考结论来对答案：DRB II 的参考结论来自专家文章，From Simple QA 的来自出题流程自己生成的评分项。所以连"分析"测的都是"你有没有得出事先预定的那些结论"。</p>
+
+<h2 id="s3"><span class="no">3</span>什么是 Deep：至少 6 种意思</h2>
+<div class="tbl"><table>
+<tr><th>"Deep"指的是</th><th>谁这么用</th><th>论文里的例子</th></tr>
+<tr><td><b>① 搜得多</b>（广度）</td><td>LiveDRBench（"high fan-out"）、DR-Arena 的"宽度"</td><td>"列出所有满足某某条件的东西"；要比较一台游戏机和同期竞品的电池参数</td></tr>
+<tr><td><b>② 跳得多</b>（链条深度）</td><td>DR-Arena 的"深度"：要几步搜索才能推到答案</td><td>"找出某人设计的那台 1989 年的掌机"，先要推出"某人"是谁，再推掌机</td></tr>
+<tr><td><b>③ 想得难</b>（推理强度）</td><td>LiveDRBench：找信息、处理信息、组合信息，至少一步要动脑</td><td>"2024 年以来满足某些条件的英语电影"：片单好找，逐部核对条件要推理</td></tr>
+<tr><td><b>④ 过程长</b>（多步、长程、反复迭代）</td><td>DRACO、MiroEval、DR³-Eval、IDRBench、DeepResearch-9K</td><td>它们拿来对比的都是"一次性问答"或普通检索增强（RAG）</td></tr>
+<tr><td><b>⑤ 产出长</b>（长报告 + 引用）</td><td>DRB II、DeepFact、Reference Hallucinations、LifeSearch、MMDR</td><td>"comprehensive investigative reports"、"long-form reports with inline citations"</td></tr>
+<tr><td><b>⑥ 要专长</b></td><td>Expert Consulting、From Simple QA、DREAM</td><td>"requires domain knowledge"、"analyst-grade reports"</td></tr>
+</table></div>
+
+<h3>三处互相矛盾</h3>
+<ul>
+  <li><b>本质是不是长报告？</b>LiveDRBench 说"the core defining feature of deep research is not the production of lengthy report-style outputs"。可 DRB II、DRACO、DeepFact、MiroEval 等大多数 benchmark 恰恰是给长报告打分。</li>
+  <li><b>LiveDRBench 的"深"其实是"宽"。</b>它说的核心特征"high fan-out over concepts"，是说要同时铺开很多概念去搜。用 DR-Arena 的术语讲，这叫宽度，不叫深度。</li>
+  <li><b>短答案也叫 Deep Research。</b>BrowseComp-Plus、LiveBrowseComp 的题只要一个短答案（一个名字、一个数字），但它们照样把被测的系统叫 Deep-Research Agents。同一个词，从"一个短答案"一直覆盖到"一份上万字的报告"。</li>
+</ul>
+
+<h2 id="s4"><span class="no">4</span>唯一的正式定义，经得起推敲吗</h2>
+<blockquote>Given a document corpus C, query set Q, and an ideal human expert who does not already know the answer to any query q ∈ Q, a query q is said to be a deep research query if answering it requires processing a large number of information units (search intensity) and at least one of the following subtasks — finding the required information units, processing them, or combining them — requires non-trivial reasoning (reasoning intensity).
+<span class="src">— LiveDRBench，Definition 1（§3.1）</span></blockquote>
+<p>翻成白话：<strong>一个本来不知道答案的专家，要处理很多信息块（搜索强度），而且"找、读、拼"三步里至少一步要动脑（推理强度），这道题才算 Deep Research。</strong>紧接着它给了两个门槛：</p>
+<ul>
+  <li>推理强度：专家借助网络搜索，预计要花 <strong>10 分钟以上</strong>；</li>
+  <li>搜索强度："a typical threshold may be" <strong>20 个信息块</strong>（一个信息块约等于一段话），通过<strong>至少 10 次搜索</strong>得到。</li>
+</ul>
+<h3>好在哪</h3>
+<ul>
+  <li>能拿来检验：给一道题，可以问"专家要不要 10 分钟、要不要 20 段材料"。</li>
+  <li>是<strong>相对</strong>的：同一道题，换一个语料库、换一个已经知道答案的人，就可能不算了。这比"题目看起来很难"诚实。</li>
+  <li>能和多跳问答分开：多跳问答一般只要 3–5 个信息块。</li>
+</ul>
+<h3>弱在哪</h3>
+<ul>
+  <li><strong>门槛是拍出来的。</strong>原文用的是"we posit"（我们设定）和"a typical threshold may be"（一个典型门槛可以是），没有数据支持为什么是 10 分钟、20 块。</li>
+  <li><strong>"理想专家"没法测。</strong>什么样的专家、多快算"理想"，没有说明。</li>
+  <li><strong>故意不管分析和写作。</strong>它把输出压缩成一组结论，只评结论找得全不全、对不对。DRB II 第二、三层（分析、写作）在这个定义下不算 Deep Research 的一部分。</li>
+  <li><strong>定义是照着自己的评分方式写的。</strong>它把答案定义成"一组结论"，而它的评分恰好就是在结论上算精确率和召回率。原文也承认，这样定义的好处之一是能统一各类题目的评分。这让定义和评测互相印证，但并没有从外部论证"Deep Research 就该这样定义"。</li>
+</ul>
+
+<h2 id="s5"><span class="no">5</span>对你 5 个 Agent 评测的启示</h2>
+<ol>
+  <li><strong>打分前先写一句工作定义</strong>，至少说清"这次测的是调研，还是要求有新见解"。下面是一个草稿，供你改：
+    <div class="eg">本次评测的 Deep Research：给定一个问题和一个截止日期，在公开可查的信息里，<b>找到并核对足够多的来源</b>（专家手工完成至少要 10 分钟、20 段以上材料），把它们<b>综合成带出处、能逐条核对的结论</b>。不要求产出新数据。</div></li>
+  <li><strong>用 LiveDRBench 的两个门槛给你的 Prompt 做入场检查。</strong>如果专家几分钟、搜三五次就能答，这道题就不算 Deep Research：5 个 Agent 多半都能答对，分差主要来自文笔。</li>
+  <li><strong>每条评分项都标上测的是 6 种"深"里的哪一种</strong>（搜得多 / 跳得多 / 想得难 / 过程长 / 产出长 / 要专长）。这样最后能按维度看分，而不是只看一个总分。比如某个 Agent 总分高，可能只是因为报告写得长。</li>
+  <li><strong>如果你想测"新见解"</strong>，这 23 篇没有现成办法，只能靠专家判断。这和你心得笔记里记的"人类专家盲测对比"是同一个方向，这里只是记下这个联系，不展开。</li>
+</ol>
+
+<h2 id="s6"><span class="no">6</span>说明</h2>
+<ul>
+  <li><strong>两句话定义的出处在文件夹外：</strong>Zhang et al. 2025, <i>Deep research: A survey of autonomous research agents</i>（arXiv 2508.12752）和 Huang et al. 2025, <i>Deep research agents: A systematic examination and roadmap</i>。DRACO 和 MiroEval 的定义都引自它们；DR-Arena 的深度 / 宽度引自 Lan et al. 2025。这三篇没有下载，所以没核对它们自己有没有给出更严格的定义。</li>
+  <li><strong>可能有遗漏：</strong>双栏 PDF 抽出的文本有时左右栏会串在一起。我是按关键词定位后逐段读的，如果某篇把定义写在附录里、又没用 define / refer to 这类词，可能会漏掉。</li>
+  <li>"调研 vs 科研"那个例子是我编的；其余例子都出自论文。</li>
+</ul>
+
+<footer>相关精读：<a href="2508.04183_LiveDRBench.html">LiveDRBench</a> · <a href="2601.08536_DeepResearch-Bench-II.html">DeepResearch Bench II</a> · <a href="2601.10504_DR-Arena.html">DR-Arena</a> · <a href="2608.05179_Survey-Verification-Gap.html">Verification Gap</a> · <a href="overview-tools.html">评测工具一览</a></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审视记录：Evaluating Deep Research Agents on Expert Consulting Work（arXiv 2605.17554）</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">第二阶段审视记录。本页由 <code>research-plan/stage2-records/2605.17554_Expert-Consulting.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#evaluating-deep-research-agents-on-expert-consulting-workarxiv-260517554">审视记录：Evaluating Deep Research Agents on Expert Consulting Work（arXiv 2605.17554）</a><ul>
+<li><a href="#1">1. 基本信息</a></li>
+<li><a href="#2">2. 它声称能说明什么</a></li>
+<li><a href="#3">3. 四个组成部分</a></li>
+<li><a href="#4">4. 论证链四环</a></li>
+<li><a href="#5">5. 贯穿性问题</a></li>
+<li><a href="#6">6. 对照第一阶段的定义</a></li>
+<li><a href="#7">7. 问题清单</a></li>
+<li><a href="#8">8. 可复算的关键数字</a></li>
+<li><a href="#9">9. 对我们场景的含义</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="evaluating-deep-research-agents-on-expert-consulting-workarxiv-260517554">审视记录：Evaluating Deep Research Agents on Expert Consulting Work（arXiv 2605.17554）</h1>
+<p>审视日期：2026-10-29。审视对象为 arXiv 第三版（PDF 页眉为 arXiv:2605.17554v3，2026 年 6 月 25 日）。以下页码均指该 PDF 的页码。</p>
+<h2 id="1">1. 基本信息</h2>
+<ul>
+<li><strong>日期</strong>：arXiv 第一版 2026 年 5 月 17 日；第二版 2026 年 5 月 30 日，为撤回版（arXiv 页面标注 withdrawn，备注 "Updating the paper with more data. Will resubmit"）；第三版 2026 年 6 月 25 日。</li>
+<li><strong>作者及机构</strong>：Tanmay Asthana、Aman Saksena、Divyansh Sahu，Deccan AI Research。</li>
+<li><strong>发表情况</strong>：预印本，未见会议或期刊信息。</li>
+<li><strong>数据和代码是否公开</strong>：</li>
+<li>代码：论文给出 <code>https://anonymous.4open.science/status/dra-response-gen-4288</code>（第 2 页"Reproducibility"一段；附录 O，第 23 页）。2026-10-29 用 <code>curl -sI</code> 检查，该地址返回 200；对应的仓库地址 <code>/r/dra-response-gen-4288</code> 也存在（302 跳转到文件列表）。我们只读取了顶层文件列表和说明文件，没有下载其他内容。顶层是题目调度、三个智能体的适配器、结果存储、导出和诊断脚本。说明文件的架构图把评分器画在仓库之外（"Scorer\nexternal"）。顶层没有看到验证项规格、评分工作簿或总分计算脚本；子目录列表读取失败（接口返回 <code>not_connected</code>），所以不能排除它们在子目录里。</li>
+<li>题目和评分材料：论文三处说法互相矛盾。摘要说"The benchmark, evaluation code, and full prompt corpus are publicly released"（第 1 页）；第 3.3 节说"the verifier suite for each task is included in the public codebase released alongside this paper (Appendix O)"（第 4 页）；第 2 页和第 3.2 节说"Dataset (70-prompt corpus and grading workbook) will be released publicly on paper publication"，附录 O 说"The 70-prompt corpus will be released separately"（第 23 页）。截至核查日，没有找到公开的题目集、验证项规格或评分工作簿。</li>
+<li>许可：论文和仓库说明文件中都没有找到许可说明。</li>
+<li><strong>阅读依据</strong>：全文精读（25 页，含附录 A 至 O）。关键表格和数字对照 PDF 页面图像核实。另读了代码仓库的说明文件（只作为作者自述）。</li>
+</ul>
+<h2 id="2">2. 它声称能说明什么</h2>
+<ol>
+<li>测的是什么："What our benchmark actually measures is whether a frontier deep research agent can do the kind of structured, multi-document, decision-grade research a management consultant gets paid to do."（第 6 节，第 8 页）</li>
+<li>区分能力："These per-agent signatures, the prompt-class-conditional effect sizes, and the criterion correlation structure together support this benchmark as a discriminating evaluation framework for frontier deep research agents."（第 1 节，第 2 页）</li>
+<li>验证项的作用："Binary verifiers provide automatable, objective pass/fail gates that prevent high-quality-looking but factually incorrect responses from receiving inflated scores"（第 3.3 节，第 4 页）</li>
+<li>序数评分的作用："This second evaluation dimension is the methodological contribution that catches 'mechanically correct but analytically shallow' responses invisible to binary-only instruments."（第 4.7 节，第 7 页）</li>
+<li>认知陷阱的作用："These keep the benchmark hard for shallow heuristics; a benchmark with only clean inputs would systematically understate the difficulty of professional research work."（第 1 节，第 2 页）</li>
+<li>总分与专家判断一致："The 90.5% VRS-SME concordance validates VRS as a faithful summary of human expert judgment."（附录 B.1，第 9 页）</li>
+<li>两种用途："For research-grade benchmark use, the continuous VRS view is more informative; for production-readiness assessment, the binary view is decision-relevant."（附录 B.1，第 9 页）</li>
+<li>稳健性："The headline conclusions reported in this paper are therefore robust to the weighting choice."（第 3.3 节，第 5 页）</li>
+</ol>
+<h2 id="3">3. 四个组成部分</h2>
+<ul>
+<li><strong>题目</strong></li>
+<li>来源：70 道管理咨询题，由领域专家（论文称 subject-matter expert）编写（第 3.2 节，第 3 页）。题目按要测的能力分为五类：受限调研题（Constrained Research Prompt）13 道、相关性压缩题（Relevance Compression Prompt）18 道、结构合规题（Structural Compliance Prompt）18 道、隐含分解题（Latent Decomposition Prompt）13 道、失误敏感题（Failure-Sensitive Prompt）8 道（第 3.2 节；表 2，第 5 页）。</li>
+<li>每道题附 2 至 4 个专有输入文件，格式有 CSV、XLSX、PDF、DOCX，大小 2KB 至 430KB；部分题要求智能体写代码生成输出文件（第 3.2 节）。</li>
+<li>抽样方式：目标抽样。题目由专家按设计编写，一位有 15 年以上管理咨询经验的首席专家审核其"realism and difficulty calibration"（第 3.2 节，第 3 页）。不是从真实客户需求中随机抽取。不复用已有数据集。</li>
+<li>认知陷阱：两类。一是模仿人为错误，例如表格之间单位不一致、脚注与正文矛盾、日期格式不标准；二是精度陷阱，即至少有一步计算让"取第一个看起来合理的数""不加权就求平均"的做法得出自信但错误的答案（第 3.2 节）。多少道题含有陷阱，论文只说"Many of the prompts"（第 2 页），没有给出数字。</li>
+<li>附录 L 的五个例子中有三个是印度企业、以卢比计价，附录 E 的引用例子也是印度的物流题；另两个是美国企业和全球服装企业。推断：题目集可能偏印度情境，论文没有说明题目的地区分布。</li>
+<li><strong>判分标准</strong>：两层。</li>
+<li>第一层：每题若干二元验证项（平均每题 14.9 个，表 4），检查最终答案（多为唯一答案或"golden range"）、陷阱是否识破、引用是否有效、输出文件是否合格等（附录 N.2）。</li>
+<li>第二层：五项 0 至 3 分的序数评分（表 3，第 6 页；表 18，第 22 页）：数据完整性（Data Integrity，附录中全称 Data Integrity &amp; Source Discipline）、分析严谨性（Analytical Rigor）、相关与聚焦（Relevance &amp; Focus）、执行精度（Execution Precision）、格式与可交付性（Format &amp; Deliverability）。</li>
+<li>合成：VRS（Verifier-Rubric Score，0 至 100）。宽松版为 0.5 × 验证项通过率 + 0.5 × 五项平均分 ÷ 3 × 100；严格版在任一项为 0 时总分记 0（公式 1、2，第 4 页）。另设 ACCEPT 门槛：五项均大于 0、五项平均分不低于 2.5、验证项通过率不低于 80%（公式 3）。主结果用严格版。</li>
+<li><strong>判卷方式</strong>：人工为主。</li>
+<li>每个"题目 × 智能体"格子由一位领域专家打分，专家来自"a recruited pool of former MBB and Big Four consultants"（第 3.3 节，第 4 页）。</li>
+<li>再由另一组的第二位专家做质量复核，可以确认、修改或退回（第 3.3 节；附录 N）。</li>
+<li>二元验证项也由专家给 0 或 1：质量复核规程写的是复核者核对"the primary SME's 0/1"、给出"corrected 0/1 verifier"，"missing scores on any verifier"会触发退回（附录 N.1、N.2，第 21 页）。只有结构合规题的 JSON 解析被描述为程序检查（附录 L.3，第 18 页）。所以"deterministic"指的是这些检查有确定的正确答案，而不是由程序判定（推断）。</li>
+<li>大语言模型只用于事后给专家的文字说明分类失败标签（Claude Opus 4.5，第 4.5 节）。</li>
+<li><strong>运行环境</strong>：</li>
+<li>三个智能体：Claude Opus 4.6 加网页搜索（Anthropic Messages 应用程序接口）、o3-deep-research（OpenAI Responses 应用程序接口加 Containers）、Gemini 3.1 Pro 深度研究（Google Interactions 应用程序接口）（第 1 节、第 3.4 节）。代码仓库说明文件中，Gemini 一栏写的是 <code>deep-research-pro-preview-12-2025</code>，与论文的"Gemini 3.1 Pro"名称不一致，我们无法确认二者是否同一模型。</li>
+<li>Claude 是作者自己写的工具调用循环（仓库说明："The only adapter where the full agent loop is visible"），不是 Anthropic 的 Research 产品。</li>
+<li>网络：实时网络；部分题目要求只用给定文件。仓库说明把相关性压缩题和隐含分解题列为闭卷，受限调研题为半开放，失误敏感题和结构合规题为开放。</li>
+<li>时间点：论文没有给出运行日期。附录中的解题逻辑出现"spot rate for 22/04/2026"（第 16 页）和"In mid-2026"（第 20 页）。每个格子只运行一次。</li>
+</ul>
+<h2 id="4">4. 论证链四环</h2>
+<h3 id="41">4.1 评分环节</h3>
+<p><strong>它声称了什么</strong>：验证项客观、可自动化；以专家打分为锚，避开大语言模型评委的已知偏差（第 2 节："we therefore anchor on SME annotation"）；质量复核起纠错作用；总分与专家判断一致率 90.5%。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li><strong>没有评分者间一致性。</strong> 每格只有一位专家打分。第 5 节："This provides an error-correction pass against rubric–evidence mismatches and surfaces fabricated citations, but does not yield a Cohen's κ inter-rater reliability statistic since QC is an asymmetric defensibility check rather than a parallel re-annotation."（第 8 页）正式的一致性研究被推迟到下一版："A formal IRR study with parallel double-grading on a held-out subset is in preparation"。证据等级：自述。</li>
+<li><strong>质量复核的结果没有报告。</strong> 附录 N 详细写了复核规程（确认、修改、退回的条件；对最终答案、陷阱、引用、输出文件验证项的重新推导；引用核查要打开来源，确认来源存在、支持该论断、在授权清单内）。但全文没有报告复核中确认、修改、退回各占多少，修改了多少个验证项、多少个零分。证据等级：没找到。</li>
+<li><strong>盲评情况不明。</strong> 论文没有说明评分专家是否知道答卷来自哪个智能体，没有说明专家人数，没有说明同一道题的三份答卷是否由同一位专家打分，也没有说明出题专家是否给自己出的题打分。证据等级：没找到。另外，三个智能体的交付物形态差别明显（附录 K.1：Gemini 生成文件的代码常出错，Claude 有时把应当写成文件的内容直接写在回复里），即使不告知身份也很难真正盲评（推断）。</li>
+<li><strong>"专家规则"本身会改变零分。</strong> 附录 N.5 规定：如果专家的文字说明描述的是 1 分的表现却打了 0 分，复核者应改为 1 分（第 22 至 23 页）。零分直接决定严格版总分是否清零、是否进入 ACCEPT，而这种修改的次数没有报告。证据等级：自述加没找到。</li>
+<li><strong>五项评分高度相关，原因无法区分。</strong> 表 11 的皮尔逊相关为 0.45 至 0.74，平均约 0.60（第 12 页）；验证项通过率与五项平均分的斯皮尔曼相关为 0.80（附录 G.1）。作者解释为"2-3 underlying latent factors"。但每格五项由同一人一次打完，而复核规程的检查 B 要求"Execution Precision should track the numeric-verifier pass rate"、"Data Integrity &amp; Source Discipline should track the primary-source/trap verifier outcome"（附录 N.4，第 22 页），即复核时会把评分往验证项结果上拉。所以这些相关有多少来自真实结构、多少来自晕轮效应和复核规程，无法分开。证据等级：推断。</li>
+<li><strong>"90.5% 一致"无定义，并且是循环论证。</strong> 这个数字只出现在附录 B.1 末尾一句（第 9 页），全文没有说明"concordance"怎么算、和什么比。VRS 本身就是由专家给的分数算出来的，用它与专家判断一致来"验证"它，不构成证据。证据等级：推断。</li>
+<li><strong>标准答案有计算错误。</strong> 结构合规题示例的解题逻辑写道："Annual cost before = 103 × 1,500,000 = INR 154.5 Cr. Annual cost after = 90.64 × 1,500,000 = INR 135.96 Cr. Absolute savings = INR 18.54 Cr"（附录 L.3，第 18 页）。103 × 1,500,000 = 154,500,000 卢比，按 1 千万（crore）= 10,000,000 换算是 15.45 千万，不是 154.5 千万；后两个数同样大了 10 倍。百分比和最终决策不受影响。题面又要求"All monetary values → INR Crores (2 decimal places)"，并且这一类题测的正是精度和单位。如果实际验证项按 154.5 判数值，算对的智能体反而会被判错。证据等级：复算（依据论文印出的数字）。我们不知道实际验证项规格中是否有同样的错误，因为规格未公开。</li>
+<li><strong>标准答案依赖运行日期。</strong> 失误敏感题示例要求实时查询 VLSFO（极低硫燃料油）的全球 20 港均价，标准决策是"SIGN FIXED CONTRACT"（附录 L.5，第 20 页）。按论文给的数，固定合同 990 万美元，现货基础运费 495 万美元，总耗油 8,100 吨，所以只有油价高于约 611 美元/吨时固定合同才更便宜（(9,900,000 − 4,950,000) ÷ 8,100 = 611.1）。论文给出的可接受范围"Total Spot Cost: varies between $9.6M and $10.5M"对应油价约 574 至 685 美元/吨，其中 574 至 611 这一段，正确决策应当反过来。论文写的是"assuming VLSFO is trading above $612/ton (which it historically does)"。证据等级：复算（依据论文印出的数字）。运行日期未报告，所以无法核对各智能体运行时的油价。</li>
+<li><strong>题面泄露了答案的一部分。</strong> 相关性压缩题示例的题面要求"Mandatory final line: 'Top Priority: Implement AI-powered call routing and real-time coaching to address AHT and FCR gaps, driving cost efficiency and NPS improvement.'"（附录 L.2，第 17 页），而标准答案的建议正是"AI routing + real-time coaching"。证据等级：推断。这道题的"建议"部分不能区分智能体。</li>
+<li>
+<p><strong>运行条件不对称。</strong> 论文说"All three agents themselves write the Python code that produces output files; only the execution environment differs, so file-generation failures are attributable to model code quality, not infrastructure asymmetries."（第 3.4 节，第 5 页）。代码仓库说明文件显示：</p>
+<ul>
+<li>Gemini 适配器最多做 4 轮研究，代码执行失败时把报错和代码发回 Gemini 修复，最多 3 次；另外两个适配器没有这种修复。</li>
+<li>输入文件：Gemini 只有 PDF 原样上传，XLSX、DOCX、PPTX、CSV 转成内联文本塞进题面；o3 用文件上传；Claude 的 PDF 原样上传，其余转为文本。</li>
+<li>闭卷限制只对 Claude 是硬限制，o3 和 Gemini 的闭卷结果"should be treated as advisory"；而且默认设置 <code>enforce_iat = False</code> 时，所有智能体在所有题目上都开着网页搜索。论文没有说正式运行时是否打开了这个开关。</li>
+<li>Claude 的循环有迭代次数、费用和超时预算，超出即强制停止；预算数值论文没有报告。</li>
+</ul>
+<p>证据等级：自述（仓库说明文件）。它与论文第 3.4 节的说法不一致。
+11. <strong>失败标签的分类一致性低。</strong> 用大语言模型分类与用正则表达式分类，平均杰卡德相似度为 0.339（第 4.5 节，第 7 页）。各智能体"失败特征"的叙述（例如 Claude 编造数据最多）建立在这套标签上。证据等级：自述。</p>
+</li>
+</ol>
+<p><strong>我们的判断</strong>：评分环节的证据不够。缺证据的部分是评分者间一致性、质量复核的修改率和盲评。设计层面的问题是：标准答案有单位错误；有的标准答案依赖运行日期；有的题面泄露了答案；三个智能体的运行条件不对称，而论文称没有不对称。</p>
+<h3 id="42">4.2 推广环节</h3>
+<p><strong>它声称了什么</strong>：五类题目上的差异是真实的，"Cohen's d &gt; 1.0 on two of five classes"（第 6 节）。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ul>
+<li>70 道题，每类 8 至 18 道。作者自己承认："At these sizes Cohen's d &gt; 0.8 thresholds describe magnitude rather than inferential precision"（第 5 节，第 8 页）。证据等级：自述。</li>
+<li>单一领域（管理咨询）。作者承认"generalization to other professional domains requires parallel datasets"（第 5 节）。</li>
+<li>每格只运行一次。作者自己记录了运行之间的差异："o3's no_files_read count (3) is the lowest ... the count dropped from 20 (v2) to 3, confirming run-to-run variance"（第 4.5 节，第 7 页）。也就是说，在不同版本之间重新运行，同一智能体的一项失败计数从 20 变成 3。</li>
+<li>不确定性估计：只有表 17 给出了最佳模型几个指标的 95% 自助法置信区间；第 5 节说下一版"report bootstrap confidence intervals on every headline metric"；附录 H.1.4 建议"bootstrap CIs and paired-comparison adjustments be added before any external publication"。</li>
+</ul>
+<p><strong>我们的判断</strong>：推广证据不够，原因既有设计限制（单领域、每类题少），也有缺证据（单次运行、缺置信区间）。按第一阶段第 1.2 节，第一轮只对报告排名，这一环对我们不是重点。</p>
+<h3 id="43">4.3 外推环节</h3>
+<p><strong>它声称了什么</strong>：测的是"structured, multi-document, decision-grade research a management consultant gets paid to do"。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li>题目真实性只有首席专家审核这一条（第 3.2 节），没有与真实咨询项目的交付物或客户评价作比较。证据等级：自述。</li>
+<li>跨基准比较只比了验证项通过率与 APEX-v1、APEX-Agents（第 4.7 节）。作者自己说"APEX does not report MC-only scores separately"；"the proximity to APEX-Agents validates that DRA's verifier difficulty is not an outlier"只说明难度相近，不说明测的是同一种能力。证据等级：自述加推断。</li>
+<li><strong>陷阱的效度没有检验。</strong> 没有对照实验（同一道题去掉陷阱再测），没有按陷阱单独报告各智能体的识破率，只有从专家文字说明中分类得到的 <code>trap_not_caught</code> 标签：o3 10 个、Claude 24 个、Gemini 13 个"智能体 × 题目"对（表 9，第 11 页），而这套分类的一致性本身很低（见 4.1 第 11 条）。证据等级：没找到。</li>
+<li><strong>非调研能力混入总分。</strong> 文件生成代码的能力进入评分（例如 Gemini 的 python-docx 用法错误，附录 E）。作者自己写道："Future benchmarks should test file-formatting code generation as a separate dimension rather than conflating it with research quality."（附录 K.1，第 15 页）结构合规题测的是"Algorithmic obedience"（表 2），即严格按 JSON 结构输出，格式错误即判格式项不合格（附录 L.3）。证据等级：自述。</li>
+<li><strong>查找的成分少。</strong> 多数题目的核心是读懂给定文件、找到隐藏的脚注或限定条件、算对数、按格式交付；闭卷题不需要网络查找。受限调研题要求"restrict itself to authorized sources"，考的是遵守来源限制，而不是查得全。证据等级：推断（依据表 2 和附录 L 的例子）。</li>
+</ol>
+<p><strong>我们的判断</strong>：外推证据薄弱。它对"给定材料上的咨询式分析和计算"有一定代表性，这是它的设计选择，不是缺陷。但它把文件生成和格式合规混进总分，作者自己也承认这是混淆，属于设计问题。陷阱是否真的测到"甄别"，缺证据。</p>
+<h3 id="44">4.4 决策环节</h3>
+<p><strong>它声称了什么</strong>：严格版 VRS 上 o3 61.4 &gt; Gemini 52.6 &gt; Claude 38.5；排序对权重选择稳健。</p>
+<p><strong>拿出了什么证据</strong>：</p>
+<ol>
+<li>统计检验：Wilcoxon 符号秩检验加 Bonferroni 校正，只有 o3 与 Claude 之间的差异显著（VRS 差 22.9，校正后 p = 0.001；五项平均分差 0.33，校正后 p = 0.039）；"All other VRS pairs and all ACCEPT-rate comparisons (McNemar, all p &gt; 0.79) are not significant."（第 4.6 节，第 7 页）证据等级：自述。McNemar 检验的三个 p 值（0.815、0.791、1.000）我们按表 15 的不一致对数重算，结果一致。证据等级：复算（依据表中数字）。</li>
+<li>不同汇总方式给出不同排序：严格版 VRS 是 o3 第一；按单题最高分计，Gemini 赢得最多（26.3 道，o3 24.8 道，Claude 18.8 道）；ACCEPT 率三者无差异（15.7%、12.9%、12.9%）。作者自己说："Reporting any one of these views in isolation would mislead."（第 6 节，第 8 页）</li>
+<li><strong>文字与表格大量矛盾。</strong> 以下各处都对照 PDF 页面核实过：
+   - 第 3.3 节（第 5 页）、附录 F.1 正文（第 10 页）和表 16 标题（第 15 页）都写"Claude &gt; Gemini &gt; o3"，与表 4、表 10、第 4.8 节和附录 I 正文的 o3 &gt; Gemini &gt; Claude 正好相反。
+   - 第 3.3 节说"four alternative weightings"、"moves by less than one point"；第 4.8 节说"all five alternative weight schemes"、"maximum shift &lt; 1.5 points"。
+   - 附录 F.1 正文："The o3-Claude gap shrinks from 20.74 points (strict) to 11.89 points (relaxed)"，"o3 gains the most when the strict penalty is removed (+8.85), reflecting that 14 of its 42 attempts had at least one criterion zero"。表 10 是 22.91、11.33、o3 只增加 0.06、Claude 增加 11.65、o3 有零分的是 7/70。
+   - 附录 H.1.4："per-agent ACCEPT rates (o3 9.5%, Claude 9.5%, Gemini 21.4%)"，与表 4 的 15.7%、12.9%、12.9% 不符。9.5% 和 21.4% 正好等于 4/42 和 9/42；表 16 标题中的"baseline 17"也正好等于 4 + 4 + 9，而按表 15 和表 7 算，第三版的 ACCEPT 总数是 29。
+   - 附录 H.1.3 正文：执行精度合并通过率"46.0%"、o3"31.0%"、Gemini"59.5%"、o3 数据完整性"42.9%"；表 14 分别是 42.9%、47.1%、51.4%、58.6%。
+   - 附录 H.1.2 说相关与聚焦、分析严谨性与 ACCEPT 的相关"ρ ≈ 0.39 and 0.55"，附录 I 正文给出 0.466、0.464、0.375、0.306；表 12 是 0.338、0.470、0.491、0.354。
+   - 权重方案 D 的数字，附录 I 正文（验证项通过率 0.20、执行精度 0.21 等）与表 16（验证项通过率 0.19、执行精度 0.20 等）不同。
+   - 附录 H.1.3 说"50 cascading_math_errors tags"，表 9 合计是 96。
+   - 附录 H.1.3 和 K.1 把编造数据说成 o3 的特征（"consistent with o3's fabrication signature"），第 4.5 节和表 9 却是 Claude 的 <code>fabricated_data</code> 标签最多（48 对 17）。
+   - 表 16 的基线行标为宽松版（61.51、50.18、57.15，与表 10 宽松版相同），其余四行是严格版（Claude 约 38.5 至 39.1），不同口径放在一起比较"shift"。
+   - 第 4.8 节称五项之间的相关为斯皮尔曼系数（"mean off-diagonal Spearman ρ = 0.60"），表 11 的标题是皮尔逊相关矩阵。
+   - 按表 5 各类题数加权，Claude 的严格版 VRS 是 37.5，表 4 是 38.5；o3（61.4）和 Gemini（52.6）一致。</li>
+</ol>
+<p>证据等级：复算（依据论文印出的数字）。推断：这些文字来自 42 道题的旧版本，第三版只更新了部分表格。
+4. <strong>严格版的"一票否决"放大了差距。</strong> 严格版与宽松版相比，Claude 少 11.65 分，Gemini 少 4.59 分，o3 少 0.06 分（表 10）。而 ACCEPT 中"任一项为 0"这一条"caught zero unique cases"（附录 H.1.2，第 13 页），即对 ACCEPT 不起作用。所以严格版 VRS 的排序差距有相当一部分来自"有零分就清零"这一规则。</p>
+<p><strong>我们的判断</strong>：只有"o3 好于 Claude"有统计支持；"o3 好于 Gemini""Gemini 好于 Claude"没有。排序依赖汇总方式，作者自己承认。文中大量与表格不一致的文字，使"排序稳健"的说法不能采信，也严重削弱了"经得起复核"。这既是缺证据，也是报告质量问题。</p>
+<h2 id="5">5. 贯穿性问题</h2>
+<ul>
+<li><strong>时效</strong>：没有规定材料的截止时间点。至少有一类标准答案依赖运行当天的市场价格（4.1 第 8 条），汇率按某一天的即期汇率（附录 L.1，"spot rate for 22/04/2026"），而运行日期没有报告。</li>
+<li><strong>污染</strong>：题目和输入文件是专有的、尚未公开，短期内不会进入训练数据。论文没有讨论污染；一旦按承诺公开题目和标准答案，这一保护就消失。开放网络题中，智能体能否在网上找到与输入文件对应的内容，论文没有讨论（推断：输入文件为编写的专有材料，网上应当没有）。</li>
+<li><strong>可复现</strong>：仓库提供运行代码，但说明文件写明评分器在仓库之外；题目、验证项规格、评分工作簿均未找到；每格一次运行、一位专家；文中数字前后矛盾。目前无法复现主要结果。</li>
+<li><strong>利益关系</strong>：作者机构的产品不在排行榜上。论文没有利益声明。作者机构的业务性质论文没有说明，我们没有核实。</li>
+</ul>
+<h2 id="6">6. 对照第一阶段的定义</h2>
+<p>说明：下表中"否"多数属于论文本来不打算评的内容，不是它声称了而没有做到。论文声称了而证据不足的地方，已在第 4 节和第 7 节列出。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>第一阶段的要求</th>
+<th>是否评</th>
+<th>怎么评（引原文）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>弄清真实需要，审视前提和概念边界，切题</td>
+<td>部分</td>
+<td>相关与聚焦一项："Whether the response addresses the asked question without scope drift or filler"（表 3）。"审视前提"只体现在材料层面：陷阱要求识破材料中的矛盾和隐藏的限定条件（第 3.2 节）；隐含分解题要求"identify what needs to be computed before the analysis can proceed"（表 2）。不审视问题本身的前提</td>
+</tr>
+<tr>
+<td>材料截至规定时间点，并且足够新</td>
+<td>否</td>
+<td>没有截止时间点。失误敏感题要求查实时油价，作为陷阱的一部分（附录 L.5），不是作为评分项</td>
+</tr>
+<tr>
+<td>查找系统而全面，过程交代清楚</td>
+<td>否（设计上不考）</td>
+<td>受限调研题考的是"restrict itself to authorized sources"（表 2），即遵守来源限制；闭卷题不查找。没有要求交代查找过程</td>
+</tr>
+<tr>
+<td>甄别来源质量，处理矛盾信息</td>
+<td>部分</td>
+<td>陷阱中的"footnote contradicting body""inconsistent units between tables"（第 3.2 节）考的是处理给定材料内部的矛盾；失误敏感题考"treats the provided policy file as authoritative or independently verifies the live VLSFO index"（附录 L.5）。数据完整性一项的 0 分包括"Completely ignores source constraints"（表 18）。效度未检验（第 4.3 节）</td>
+</tr>
+<tr>
+<td>分析：历史和全部现状、性质和内在联系、推理清楚、事实与判断分开、考虑其他解释、不迎合</td>
+<td>部分</td>
+<td>分析严谨性一项："Whether the reasoning chain is sound, sufficiently deep, and free of logical gaps"（表 3）；3 分为"Strong logic with cause-effect; identifies 'hidden' variables; MECE decomposition of the problem"（表 18）。历史、事实与判断分开、其他解释、不迎合：没有找到</td>
+</tr>
+<tr>
+<td>每个结论能追到依据，引用准确</td>
+<td>是</td>
+<td>数据完整性一项："Whether facts, numbers, citations, and references are accurate"（表 3）；质量复核打开每个被引来源，核对"the cited URL or document resolves ... the source actually supports the specific claim ... and the source is within the authorized-source list"（附录 N.3，第 22 页）</td>
+</tr>
+<tr>
+<td>结论准确、具体、清楚无歧义，敢于下判断，如实说明把握</td>
+<td>部分</td>
+<td>"准确、具体"：验证项核对最终答案和"golden range"（附录 L）；执行精度一项核对计算。"敢于下判断"：多数题面强制要求给出是或否的决策（例如"Give a Yes or No decision"，附录 L.1）。"说明把握"：没有评分项；受限调研题例题要求"state any assumptions"，但不是评分项</td>
+</tr>
+<tr>
+<td>深：本质、全体、内部联系</td>
+<td>部分</td>
+<td>只有分析严谨性 3 分描述中的"cause-effect""hidden variables"与"内部联系""由表及里"相通。"全体"（历史和全部现状）没有涉及</td>
+</tr>
+<tr>
+<td>写作是否混入核心，权重多少</td>
+<td>是，混入</td>
+<td>格式与可交付性是五项之一，内容为"layout, completeness, readability, professional tone"（表 3），占 VRS 的 10%（0.5 × 1/5）；它的 0 分会使严格版总分清零、ACCEPT 不通过；12 个"只差一项"的拒收中有 3 个是这一项（表 13）。结构合规题的验证项还检查 JSON 结构。这一项同时包含"actionable insights"等内容要求（表 18），不是纯写作</td>
+</tr>
+<tr>
+<td>是否加总分</td>
+<td>是</td>
+<td>VRS 为验证项通过率与五项平均分的加权和（公式 1）。ACCEPT 不是加总，而是多个条件同时满足</td>
+</tr>
+<tr>
+<td>有无致命缺陷机制</td>
+<td>有</td>
+<td>严格版 VRS：任一项为 0 则总分为 0（公式 2）；ACCEPT 要求五项均大于 0（公式 3）。数据完整性 0 分的含义是"fabricated data or sources"（表 18），相当于"编造"一类致命缺陷。但任何一项 0 分都触发，包括格式项；这一条在 ACCEPT 上"caught zero unique cases"（附录 H.1.2）</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="7">7. 问题清单</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响"可信"的哪一层</th>
+<th>设计缺陷还是缺证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E1</td>
+<td>每格只有一位专家打分，没有评分者间一致性</td>
+<td>"does not yield a Cohen's κ inter-rater reliability statistic"（第 5 节，第 8 页）</td>
+<td>自述</td>
+<td>测得稳；经得起复核</td>
+<td>缺证据（作者计划下一版补）</td>
+</tr>
+<tr>
+<td>E2</td>
+<td>质量复核的确认、修改、退回比例未报告；复核可把 0 分改为 1 分，次数未报告</td>
+<td>附录 N.1、N.5（第 21 至 23 页）</td>
+<td>没找到</td>
+<td>测得稳；经得起复核</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>E3</td>
+<td>未说明是否盲评、专家人数、同题三卷是否同一人打分</td>
+<td>第 3.3 节、附录 M</td>
+<td>没找到</td>
+<td>测得稳</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>E4</td>
+<td>五项评分高度相关，可能来自晕轮效应和要求评分"track"验证项的复核规程</td>
+<td>表 11（第 12 页）；附录 N.4 检查 B（第 22 页）</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计缺陷（同一人一次打五项、复核规程互相牵连）</td>
+</tr>
+<tr>
+<td>E5</td>
+<td>"90.5% 一致"无定义，并且用专家分数算出的总分去和专家判断比</td>
+<td>附录 B.1（第 9 页）</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>缺证据（并且论证方式不成立）</td>
+</tr>
+<tr>
+<td>E6</td>
+<td>结构合规题示例标准答案差 10 倍（千万换算错误）</td>
+<td>"103 × 1,500,000 = INR 154.5 Cr"（附录 L.3，第 18 页）</td>
+<td>复算</td>
+<td>测对了东西；经得起复核</td>
+<td>设计缺陷（标准答案未独立核对）</td>
+</tr>
+<tr>
+<td>E7</td>
+<td>失误敏感题标准决策依赖运行当天油价，给出的可接受范围包含决策应当相反的区间；运行日期未报告</td>
+<td>附录 L.5（第 20 页）；临界油价 611.1 美元/吨</td>
+<td>复算</td>
+<td>测对了东西；测得稳</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>E8</td>
+<td>相关性压缩题示例的题面写出了标准答案的建议</td>
+<td>"Mandatory final line: 'Top Priority: Implement AI-powered call routing and real-time coaching ...'"（附录 L.2，第 17 页）</td>
+<td>推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>E9</td>
+<td>三个智能体的运行条件不对称（修复重试、输入文件处理、闭卷限制强弱、默认开网），与论文"只有执行环境不同"的说法矛盾</td>
+<td>第 3.4 节（第 5 页）；代码仓库说明文件</td>
+<td>自述（仓库说明）</td>
+<td>测对了东西；经得起复核</td>
+<td>设计缺陷，并且论文自述不准确</td>
+</tr>
+<tr>
+<td>E10</td>
+<td>陷阱的效度未检验：没有去掉陷阱的对照，没有按陷阱报告识破率，题目中有多少陷阱不明</td>
+<td>第 3.2 节；表 9</td>
+<td>没找到</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>E11</td>
+<td>文件生成代码能力和格式合规混入总分，作者自己承认混淆</td>
+<td>附录 K.1（第 15 页）；表 2</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>E12</td>
+<td>失败标签的两种分类方法一致性低，"失败特征"叙述依据不足</td>
+<td>平均杰卡德相似度 0.339（第 4.5 节，第 7 页）</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>缺证据</td>
+</tr>
+<tr>
+<td>E13</td>
+<td>排序只有 o3 好于 Claude 显著，其余不显著；ACCEPT 三者无差异</td>
+<td>第 4.6 节（第 7 页）；表 15</td>
+<td>自述；McNemar p 值复算一致</td>
+<td>测得稳</td>
+<td>缺证据（样本小）</td>
+</tr>
+<tr>
+<td>E14</td>
+<td>文字与表格大量矛盾：排序方向、差距、ACCEPT 率、通过率、相关值、权重、标签计数</td>
+<td>第 3.3 节、附录 F.1、H.1.2 至 H.1.4、I、K.1，表 16 标题，对照表 4、5、9、10、12、14、15</td>
+<td>复算</td>
+<td>经得起复核</td>
+<td>报告质量问题（推断为旧版残留）</td>
+</tr>
+<tr>
+<td>E15</td>
+<td>严格版排序差距相当一部分来自"有零分即清零"，而这一条对 ACCEPT 不起作用</td>
+<td>表 10（第 12 页）；附录 H.1.2（第 13 页）</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计问题（零分规则对任何一项都生效）</td>
+</tr>
+<tr>
+<td>E16</td>
+<td>每格只运行一次，作者自己记录到重新运行后计数从 20 变为 3</td>
+<td>第 4.5 节（第 7 页）</td>
+<td>自述</td>
+<td>测得稳</td>
+<td>设计限制（对我们第一轮影响小）</td>
+</tr>
+<tr>
+<td>E17</td>
+<td>公开情况前后矛盾，题目、验证项、评分工作簿均未找到；评分器不在代码仓库内</td>
+<td>第 1、2、3、4、23 页；仓库说明</td>
+<td>自述加核查</td>
+<td>经得起复核</td>
+<td>缺证据</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="8">8. 可复算的关键数字</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>数字</th>
+<th>位置</th>
+<th>本轮是否复算</th>
+<th>结果或所需材料</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>McNemar 检验 p 值 0.815、0.791、1.000</td>
+<td>表 15</td>
+<td>已复算（用表中不一致对数）</td>
+<td>一致</td>
+</tr>
+<tr>
+<td>表 15 与表 7 的 ACCEPT 总数</td>
+<td>表 7、15</td>
+<td>已复算</td>
+<td>两表一致，均为 29（o3 11、Claude 9、Gemini 9），与表 4 一致；与附录 H.1.4 和表 16 标题不一致</td>
+</tr>
+<tr>
+<td>各项平均分合成五项平均分</td>
+<td>表 8 对表 4</td>
+<td>已复算</td>
+<td>1.886、1.55、1.684，一致</td>
+</tr>
+<tr>
+<td>宽松版 VRS</td>
+<td>表 4 的 V 与五项平均分代入公式 1，对表 10</td>
+<td>已复算</td>
+<td>61.6、50.1、57.1，与表 10 的 61.51、50.18、57.15 在四舍五入范围内一致</td>
+</tr>
+<tr>
+<td>按类加权的严格版 VRS</td>
+<td>表 5 对表 4</td>
+<td>已复算</td>
+<td>o3 61.4、Gemini 52.6 一致；Claude 37.5 对 38.5，不一致</td>
+</tr>
+<tr>
+<td>表 9 中的倍数（2.8 倍、9 倍、2.4 倍、2.75 倍）</td>
+<td>第 4.5 节</td>
+<td>已复算</td>
+<td>一致</td>
+</tr>
+<tr>
+<td>结构合规题示例的年成本</td>
+<td>附录 L.3</td>
+<td>已复算</td>
+<td>应为 15.45 千万卢比，论文写 154.5</td>
+</tr>
+<tr>
+<td>失误敏感题示例的临界油价和可接受范围</td>
+<td>附录 L.5</td>
+<td>已复算</td>
+<td>临界 611.1 美元/吨；可接受范围对应 574 至 685 美元/吨</td>
+</tr>
+<tr>
+<td>受限调研题示例的市场规模推算</td>
+<td>附录 L.1</td>
+<td>已复算</td>
+<td>在论文所用约数范围内一致（4,350、1,750、约 1,300、3,050 千万卢比）</td>
+</tr>
+<tr>
+<td>Wilcoxon 检验、自助法置信区间、五项相关矩阵、"90.5% 一致"</td>
+<td>第 4.6 节、表 11、表 17、附录 B.1</td>
+<td>不能复算</td>
+<td>需要逐格评分数据，未公开；"90.5%"没有定义</td>
+</tr>
+<tr>
+<td>验证项通过率、ACCEPT、VRS 的原始计算</td>
+<td>表 4</td>
+<td>不能复算</td>
+<td>需要评分工作簿，未公开</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="9">9. 对我们场景的含义</h2>
+<p>我们的场景：5 个智能体，比赛评审，第一轮只对报告排名。</p>
+<ol>
+<li><strong>范围不同。</strong> 这里每道题都附带 2 至 4 个输入文件。按第一阶段第六节，题目附带文件作为输入属于"进阶形态一"，不在第一轮的基础级内。它的题目形式不能直接用于第一轮，但它的评分做法可以借鉴。</li>
+<li><strong>可以借鉴的做法。</strong>
+   - 两层判分：有确定答案的检查项，加上专家的序数评分。确定答案的检查能挡住"看起来像样、其实算错"的报告。
+   - 质量复核中的引用核查：打开每个被引来源，确认来源存在、确实支持该论断、在允许范围内（附录 N.3）。这正是第一阶段"每个结论都能追到依据，引用准确"的可操作形式；"编造来源即退回"也可以作为致命缺陷的候选。
+   - 在材料中埋入矛盾和隐藏的限定条件，用来考"甄别"。但要像下面第 4 条那样先检验它是否有效。</li>
+<li><strong>不能照搬的做法。</strong>
+   - 每份报告只有一位评分者，不报告一致性。比赛名次要公开，参赛者会质疑，第一阶段第 1.1 节已经说明"经得起复核"分量最重。我们至少需要两位评分者独立打分，报告一致性，并且记录复核修改了什么、改了多少。
+   - "任何一项为 0 就清零"。这会让格式问题与编造数据受到同样的处罚。致命缺陷应当限定在少数几种（例如编造来源、编造数据），而不是任何一项的最低分。
+   - 汇总方式要在比赛前固定并公布。这篇论文显示，同一批答卷用不同的汇总方式，第一名可以不同。</li>
+<li><strong>出题和标准答案要先独立核对。</strong> 本文例题中出现了单位换算错误、依赖运行日期的答案、题面泄露答案三种问题。在比赛中，这三种问题都会直接改变名次，也最容易被参赛者抓住。标准答案应当由出题人之外的人重新推导一遍；凡是依赖实时数据的答案，都要写明以哪一天的数据为准，这与第一阶段"截至某一时间点"的要求一致。</li>
+<li><strong>运行条件的公平。</strong> 本文的三个智能体在修复重试、文件读取、是否能联网上条件不同。第一轮如果由参赛者自己提交报告，这个问题会变成"运行模式要事先规定并核实"（第一阶段第 7.4 节已经注意到有的产品不是深度研究模式）。</li>
+<li><strong>样本量。</strong> 本文 70 道题仍然分不开 3 个智能体的 ACCEPT 率。第一轮只对一两道题上的 5 份报告排名，不需要推广到其他题目，但评分环节的稳定性（换评委、再评一次，名次是否基本不变）必须单独拿出证据，不能靠题目数量来平均掉评分误差。</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-records/2605.17554_Expert-Consulting.md</code></footer>
+</div>
+</body>
+</html>

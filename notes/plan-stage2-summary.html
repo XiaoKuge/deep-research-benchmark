@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第二阶段汇总</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --line:#2a2f3a;
+    --txt:#e7eaf0; --dim:#9aa3b2; --muted:#6b7280; --accent:#8b5cf6; --accent2:#c4b5fd;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font:15.5px/1.85 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 96px;}
+  a{color:var(--accent2)} a:hover{color:#fff}
+  .back{font-size:13px;text-decoration:none;color:var(--dim)}
+  .meta{color:var(--muted);font-size:12.5px;line-height:1.7;margin:4px 0 18px}
+  h1{margin:14px 0 2px;font-size:26px;font-weight:680;letter-spacing:.3px;line-height:1.35}
+  h2{font-size:19px;font-weight:650;margin:40px 0 10px;padding-top:6px;color:#fff;
+    border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:24px 0 6px;color:var(--accent2)}
+  h4{font-size:15px;font-weight:620;margin:18px 0 4px;color:var(--dim)}
+  p{margin:10px 0}
+  ul,ol{margin:8px 0;padding-left:22px} li{margin:3px 0}
+  strong{color:#fff;font-weight:620}
+  code{background:var(--panel2);border-radius:4px;padding:1px 5px;font-size:13px;color:var(--accent2)}
+  blockquote{background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:10px 18px;margin:14px 0}
+  blockquote p{margin:6px 0}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  .tbl{overflow-x:auto;margin:12px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+  th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);font-weight:600}
+  nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 18px;margin:16px 0;font-size:14px}
+  nav.toc ul{padding-left:18px}
+  footer{margin-top:48px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+  @media (max-width:640px){ h1{font-size:22px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="../index.html">← 文献索引</a>
+<div class="meta">18 个评测工具的总表、覆盖表、共同问题、统计、五点观察复核与勘误。本页由 <code>research-plan/stage2-summary.md</code> 生成，修改请改源文件后运行 <code>render_plan.py</code>。</div>
+<nav class="toc"><div class="toc">
+<ul>
+<li><a href="#18">第二阶段汇总：18 个评测工具的审视结果</a><ul>
+<li><a href="#_1">写法说明</a></li>
+<li><a href="#_2">一、总表</a></li>
+<li><a href="#_3">二、对照第一阶段定义的覆盖表</a></li>
+<li><a href="#_4">三、跨工具的共同问题</a></li>
+<li><a href="#bean">四、像 Bean 等人那样的统计</a></li>
+<li><a href="#23_1">五、复核第三稿第 2.3 节的五点初步观察</a></li>
+<li><a href="#_5">六、精读页勘误汇总</a></li>
+<li><a href="#_6">七、对我们场景的启示</a></li>
+<li><a href="#_7">附：汇总中发现的记录间不一致与证据薄弱之处</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<h1 id="18">第二阶段汇总：18 个评测工具的审视结果</h1>
+<p>2026-10-29。依据：<code>stage2-framework.md</code>；《研究计划》第三稿（<code>v3.md</code>）第 1.2 节、第 2.3 节、第五节；第一阶段概念说明（<code>stage1-concepts.md</code>）；<code>stage2-records/</code> 下的 18 份审视记录和 <code>yardsticks.md</code>（三篇测量研究的标尺要点）。</p>
+<p>本文只汇总记录中已有的判断和证据，没有重新审视原文。记录之间说法不一致的地方，照录并注明，不作裁决。</p>
+<h2 id="_1">写法说明</h2>
+<ol>
+<li><strong>工具顺序</strong>按 arXiv 编号排列。</li>
+<li><strong>问题编号</strong>沿用各记录。有几组记录用了相同的前缀：DeepResearch Bench II、DREAM、DeepResearch-9K 都用 D；MMDeepResearch-Bench 和 MiroEval 都用 M；FinResearchBench II 和 From Simple QA 都用 F；LiveDRBench 和 LifeSearch 都用 L。DRACO、DeepFact、DR³-Eval 用不带前缀的数字。所以跨工具引用时，一律写成"工具名加编号"，例如"DREAM D9""DRACO 问题 4"。表格中每一行只涉及一个工具，直接写编号。</li>
+<li><strong>"可信"的三层</strong>沿用第三稿第 1.2 节：测对了东西；测得稳；经得起复核。</li>
+<li><strong>证据等级</strong>沿用框架第二节：复算、自述、推断。部分记录另用了"没找到"（在原文和公开渠道中都没有找到）和"复算（精读页前次，本次未重做）"，本文照录。需要记住一点：各记录的"复算"多数是对论文印出的数字做算术、读公开代码、查元数据，并没有用原始数据重算（见各记录开头的证据等级说明）。</li>
+<li><strong>汇总者的处理</strong>：本文中的分档规则、问题归类、排序和统计口径，是汇总时的处理，不是记录本身的判断。凡属这种情况，都在相应位置写明了依据。</li>
+</ol>
+<hr />
+<h2 id="_2">一、总表</h2>
+<h3 id="11">1.1 三档的判定依据</h3>
+<p><strong>依据的来源。</strong> 论证链四环，依据各记录第 4 节每一环末尾的"判断"或"结论"；四个贯穿性问题，依据各记录第 5 节的对应段落。记录在该处没有给出总结性判断时，改用问题清单中对应问题的"设计缺陷还是缺证据"一栏。</p>
+<p><strong>三档的含义：</strong></p>
+<ul>
+<li><strong>有缺陷</strong>：判断中写明了"设计缺陷"，包括"既有设计缺陷，也有缺证据""设计层面的问题"这类说法；或者判断中点到的问题，在问题清单中被标为"设计缺陷"。</li>
+<li><strong>证据不足</strong>：判断中写的是"缺证据""证据不足""没有证据"，或者"声称未做到""声称未兑现""结论超出证据""声称与做法不符""利益关系披露不足"这类"说了而没有拿出依据"的情况，并且没有写明设计缺陷。</li>
+<li><strong>站得住</strong>：判断对该环节或该问题的主要声称给出了肯定的结论，例如"有证据""站得住""证据充分""做得好""三篇中最好""看不出偏袒""没有发现直接的利益冲突"，并且没有写明设计缺陷或缺证据。</li>
+</ul>
+<p><strong>另外三条规则：</strong></p>
+<ol>
+<li>一条判断中同时出现几档时，取最重的一档。被取舍掉的那部分肯定判断，写在表注里。</li>
+<li>记录常用"设计取舍""设计选择""设计范围""设计局限""设计限制""设计隐患""设计风险"等词。记录是有意把它们和"设计缺陷"分开的，例如 LiveDRBench 记录写"这是它的取舍，不是缺陷"。所以本表不把这些词算作"有缺陷"，遇到时在表注中写明。</li>
+<li>括号中的编号，是记录在该环节或该段落讨论到的问题，其中可能包括标为"设计取舍""报告错误"的问题。它们只说明这一格的依据，不一定都与该格的档次相同。记录中没有编号的，写"无编号"。</li>
+</ol>
+<p><strong>未判</strong>：记录在该处既没有总结性判断，问题清单中也没有对应的问题。</p>
+<h3 id="12">1.2 总表</h3>
+<p>带"＊"的格子在 1.3 节有表注。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>评分环节</th>
+<th>推广环节</th>
+<th>外推环节</th>
+<th>决策环节</th>
+<th>时效</th>
+<th>污染</th>
+<th>可复现</th>
+<th>利益关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>有缺陷（L1、L2、L3）</td>
+<td>证据不足（L8、L11）</td>
+<td>证据不足（L4、L5）</td>
+<td>证据不足（L2、L8、L9）＊</td>
+<td>有缺陷（L6）</td>
+<td>有缺陷（L7）</td>
+<td>证据不足（L10）</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>证据不足（P5、P6、P7）＊</td>
+<td>证据不足（P2、P3、P4）</td>
+<td>有缺陷（P1、P2、P9）＊</td>
+<td>有缺陷（P4、P8、P10）＊</td>
+<td>未判＊</td>
+<td>有缺陷（P1）</td>
+<td>站得住＊</td>
+<td>站得住</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>证据不足（I5、I9、I14）</td>
+<td>证据不足（I10）</td>
+<td>有缺陷（I1、I2、I3、I4、I7、I11）</td>
+<td>证据不足（I6）</td>
+<td>未判＊</td>
+<td>未判＊</td>
+<td>证据不足（I9、I10）</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>有缺陷（D2、D6、D7）</td>
+<td>有缺陷（D8）＊</td>
+<td>有缺陷（D1、D2、D3、D4、D5、D10）</td>
+<td>有缺陷（D8、D9、D11、D14）</td>
+<td>未判＊</td>
+<td>有缺陷（D10）</td>
+<td>证据不足（D7）＊</td>
+<td>站得住</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>有缺陷（A1 至 A7）</td>
+<td>证据不足（A14）＊</td>
+<td>有缺陷（A1、A8、A9、A10、A12）</td>
+<td>有缺陷（A11）</td>
+<td>证据不足（A12）＊</td>
+<td>未判＊</td>
+<td>证据不足（A15）</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>有缺陷（M4、M5、M6、M8、M9、M10、M11）</td>
+<td>证据不足（M7、M14）</td>
+<td>有缺陷（M1、M3、M12、M13、M16、M19）</td>
+<td>证据不足（M7、M8）＊</td>
+<td>有缺陷（M15）＊</td>
+<td>有缺陷（M2）</td>
+<td>证据不足（M6、M17、M18）＊</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>有缺陷（问题 1 至 5）</td>
+<td>证据不足（问题 6、7、9）＊</td>
+<td>有缺陷（问题 8、15、16）＊</td>
+<td>有缺陷（问题 9、10、11）</td>
+<td>有缺陷（问题 14）</td>
+<td>有缺陷（问题 12）</td>
+<td>证据不足（问题 13）</td>
+<td>有缺陷（问题 11）</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>有缺陷（D1、D3、D4、D6、D13）＊</td>
+<td>证据不足（D2、D12）</td>
+<td>有缺陷（D1、D9、D10）</td>
+<td>有缺陷（D5、D7、D8、D12）</td>
+<td>站得住＊</td>
+<td>未判＊</td>
+<td>证据不足（D11）</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>有缺陷（D1、D2、D7、D8、D9）</td>
+<td>有缺陷（D1、D3、D4、D10、D13）</td>
+<td>有缺陷（D5、D6、D11、D12）</td>
+<td>证据不足（D11）</td>
+<td>未判＊</td>
+<td>有缺陷（D12、D13）</td>
+<td>证据不足（D7、D8、D10）</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>证据不足（问题 1、2、4、5、9、10）＊</td>
+<td>证据不足（问题 6、8、14）＊</td>
+<td>证据不足（问题 7、11）＊</td>
+<td>有缺陷（问题 2、3、4、13）＊</td>
+<td>未判＊</td>
+<td>未判＊</td>
+<td>证据不足（问题 13）</td>
+<td>有缺陷（问题 2、3）</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>有缺陷（M1、M5、M8、M9、M10）＊</td>
+<td>有缺陷（M4、M6）</td>
+<td>有缺陷（M5、M7、M11、M13）</td>
+<td>有缺陷（M2、M3、M15）＊</td>
+<td>证据不足（M16）</td>
+<td>未判＊</td>
+<td>证据不足（M17）</td>
+<td>有缺陷（M4）</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>有缺陷（问题 1 至 7）</td>
+<td>证据不足（问题 11、12）＊</td>
+<td>有缺陷（问题 8、9、10、14、16）＊</td>
+<td>证据不足（问题 6、12、13、14）＊</td>
+<td>证据不足（问题 16）</td>
+<td>站得住＊</td>
+<td>站得住＊</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>有缺陷（E1 至 E9、E12）</td>
+<td>证据不足（E16）＊</td>
+<td>有缺陷（E10、E11）</td>
+<td>证据不足（E13、E14、E15）＊</td>
+<td>有缺陷（E7）</td>
+<td>站得住＊</td>
+<td>证据不足（E14、E17）</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>证据不足（B9、B10）＊</td>
+<td>证据不足（B2、B3、B12）</td>
+<td>有缺陷（B1、B5、B6、B7、B13）＊</td>
+<td>证据不足（B3、B4、B8、B12）＊</td>
+<td>有缺陷（B11）</td>
+<td>站得住＊</td>
+<td>证据不足（无编号）＊</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>有缺陷（R2、R3、R4、R8、R9、R13）</td>
+<td>证据不足（R1、R15）</td>
+<td>有缺陷（R5、R6、R7、R10、R11）</td>
+<td>有缺陷（R12、R13）</td>
+<td>有缺陷（R14、R15）</td>
+<td>站得住＊</td>
+<td>证据不足（R1）</td>
+<td>站得住＊</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>证据不足（F7、F8、F9）＊</td>
+<td>证据不足（无编号）</td>
+<td>有缺陷（F1 至 F6、F11）</td>
+<td>证据不足（F15）</td>
+<td>证据不足（F13）</td>
+<td>站得住</td>
+<td>证据不足（F10、F16）</td>
+<td>证据不足（F14）</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>有缺陷（F4、F5、F8、F9）</td>
+<td>有缺陷（F7、F11）</td>
+<td>有缺陷（F2、F3、F6、F12、F13、F15）</td>
+<td>证据不足（F10）</td>
+<td>有缺陷（F14）</td>
+<td>有缺陷（F6、F17）＊</td>
+<td>证据不足（F1）</td>
+<td>证据不足（F9）</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>证据不足（L1 至 L6）＊</td>
+<td>证据不足（L8）＊</td>
+<td>证据不足（L9 至 L14）＊</td>
+<td>证据不足（L15）＊</td>
+<td>站得住＊</td>
+<td>站得住＊</td>
+<td>证据不足（L14、L18）</td>
+<td>证据不足（L19）＊</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="13">1.3 表注（按工具）</h3>
+<p><strong>LiveDRBench</strong>
+- 决策环节：L9（比较条件不一致）在问题清单中标为设计缺陷，但第 4.4 节的判断只写"其余排序缺证据"。判断同时肯定了"OpenAI Deep Research 当时明显领先"这一粗粒度结论。
+- 利益关系：作者全部来自微软，被测系统中没有微软的产品，记录称"不能据此说结果有偏"；但 OpenAI Deep Research "was also integrated with Microsoft Copilot's deep research agent"，并且在本基准上排第一，记录写明"这层关系应当记下"。</p>
+<p><strong>BrowseComp-Plus</strong>
+- 评分环节：判断原文为"短答案准确率的评分大概可靠，但缺证据。检索侧和引用侧的指标依赖不完整的标注，属于设计局限"。P6 标为设计局限，P7 标为设计取舍，按 1.1 节规则 2 不计为"有缺陷"。
+- 外推环节：判断同时写明，在它自己声称的范围内（公平、透明、分开评检索器）"基本成立"。
+- 决策环节：判断肯定"大效应（检索器的作用）可以作决策"；"排行榜层面的比较已偏离论文设定的公平条件"一句对应 P8，P8 标为"设计缺陷（排行榜规则）"。
+- 时效：记录写语料冻结"有利于复现，但不考时效"，排行榜头部已到 95.18%，高于全知测试的 93.49%，"区分力接近用完"；没有定性，也没有编号。
+- 可复现：记录称"三篇中最好"；但评委已从 GPT-4.1 换成 Qwen3-32B，"新旧成绩不完全可比"（P8）。</p>
+<p><strong>IDRBench</strong>
+- 时效：记录推断配对报告生成于 2025 年 4 月前后，"智能体用到的新信息越多，越可能被判为'不像'"；没有定性，也没有编号。
+- 污染：记录推断智能体有可能检索到这批参照报告，论文没有讨论；"是否能在网上检索到，本轮没有核实"；没有编号。
+- 利益关系：作者来自学术机构，没有自家模型参评；GPT-5.1 扮演用户时没有给自家研究模型加分。但 OpenAI 的模型同时担任要点覆盖评委和泄露分类员，这两处没有做换模型检验。</p>
+<p><strong>DeepResearch Bench II</strong>
+- 推广环节：判断中的设计缺陷是"抽样以'能出成题'和'许可允许'为主导，代表性没有论证"，问题清单中没有单独编号；D8 对应判断中"缺证据"的部分。
+- 时效：记录给出了题目截止年份的分布，并推断没有年份的 16 道题"答案会随网络信息变化而过时"；没有定性，也没有编号。
+- 可复现：记录肯定"提示词、评分代码、题目和评分项都公开，这是优点"；但评委逐条输出、人工标注、通义的报告没有公开，评委又已更换（D7）。</p>
+<p><strong>DR-Arena</strong>
+- 推广环节：判断原文为"主要是设计上的局限，也缺证据"。设计上的局限指题型单一，没有编号。
+- 时效：A12 原标"声称与做法不符"（摘要说"real-time"，实际用的是"30 pre-constructed Information Trees"）。
+- 污染：记录指出论文"eliminating ... parametric memorization"的声称"没有检查被测者是否真的搜索"，但没有定性，也没有编号。
+- 利益关系：作者来自四所大学，被测的都是商业模型。考官 Gemini-3-Pro 与被测的 Gemini-2.5-Pro-Grounding 同属一个家族，记录称"看不出偏袒；论文没有单独检验这一点"。</p>
+<p><strong>MMDeepResearch-Bench</strong>
+- 决策环节：判断原文为"主要是缺证据，也有一处设计隐患"，指评委与第 1 至 3 名同属 Gemini 家族，并且本身也是被评系统；对应的 M8 标为缺证据。
+- 时效：M15 标为"设计缺陷（对我们而言）"。记录写明"论文本来不打算处理截止时间问题，这里只记作对我们场景的提醒"。
+- 可复现：记录肯定"数据和代码公开，这是查出上述问题的前提"；但论文表 1 的分数不能用公开材料复算。M6（发表的分数不是按论文描述的流程算出的）原标"实施与报告问题"，M18（版本号不可靠）原标"报告错误"。
+- 利益关系：作者单位含亚马逊，被评系统中没有亚马逊的模型，记录称"看不出自评自夸"；评委与前三名同源属于评委问题（M8）；排行榜第一名"MM-ReSearchArt-v1"与作者团队有无关系，不确定。</p>
+<p><strong>DRACO</strong>
+- 推广环节：判断原文为"推广环节的证据不足，主要是缺证据（第 3、4 点），也有设计上的局限（第 1、2 点）"。第 2 点对应的问题 6 在问题清单中标为"设计缺陷（论文已承认）"，<strong>判断与清单的标注不一致</strong>。
+- 外推环节：判断写"第 1、5 点属于设计选择，第 3、4 点属于设计缺陷，第 2、6 点属于缺证据"。第 2 点（"客观"有两种意思）和第 5 点（广度与深度合在一个方面里）对应的问题 15、16，在问题清单中都标为"设计局限"，与判断的说法也不一致。第 3 点（评分项只奖励"想到了出题人想到的"）在问题清单中没有编号。</p>
+<p><strong>DREAM</strong>
+- 评分环节：判断把"引用完整性的计算口径与图表对不上"列在"设计缺陷"之下，问题清单中对应的 D6 却标为"缺证据（口径未交代）"。
+- 时效：记录写"评分方案在评测时现场生成，所以能惩罚过时内容，这是它的长处"。代价是同一份报告换日期重评，分数会变，对应 D10（设计缺陷，影响测得稳和经得起复核）。
+- 污染：记录推断"污染对它的影响主要在被评系统一侧"，论文没有讨论；没有编号。
+- 利益关系：作者来自 AWS，没有评测 AWS 自己的产品，记录称"看不出自我推销"；但默认评委 Claude Sonnet 4.5 与排第一的 Smolagents 所用的 Claude Opus 4.6 同属一个家族，"生成方案"那一步的底座没有换。</p>
+<p><strong>DeepResearch-9K</strong>
+- 时效：记录写"时效本来不是它关心的问题"，并指出运行日期没有写；没有定性，也没有编号。
+- 利益关系：记录只检查了"被测和被训练的模型中没有百度的模型"。作者用自己的 DeepResearch-R1 框架训练的模型，在图 4 中与 DeepSeek-V3 比较并被称为"state-of-the-art"，记录第 5 节没有把这一点作为利益关系讨论（见第四节第 4 项）。</p>
+<p><strong>DeepFact</strong>（它评的是事实核查器，即"给评委出的考卷"，不直接评深度研究系统；见 DeepFact 记录第 4 节开头）
+- 评分环节：判断把"标签向被审核的智能体靠拢"归为缺证据（被采纳的修改有多少没有报告），而问题清单中对应的问题 2 标为"设计缺陷（论文已部分承认）"，二者不一致。
+- 推广、外推、决策三环：记录在这三环没有写总结性判断，本表按问题清单的标注定档。记录同时肯定了两点：以报告为单位做重抽样"是对的做法"；决策环节的"统计处理比多数评测基准规范"。
+- 时效：问题 12 标为"设计选择（与我们的需要不同）"。标签随新证据更新，与第一阶段"截至某一时间点"的要求相反。
+- 污染：记录指出标签和理由以 MIT 许可明文公开，"核查器可能针对它调优"；没有编号。</p>
+<p><strong>MiroEval</strong>
+- 评分环节：判断中的设计缺陷，指"过程层依赖各家交出的过程记录，而这些记录的完整程度没有交代，也无法检验"；问题清单中对应的 M5 标为缺证据。M10（各系统有分的题数不同）标为设计缺陷。
+- 决策环节：判断同时肯定"多模态组的领先站得住"（精读页的配对重抽样区间为 [+1.45, +7.61]），并指出这 30 道题全部来自自家内测用户。
+- 污染：记录写题目明文公开，没有防泄漏标记；自动生成的题经过"不联网答不好"的过滤，内测改写的题没有这一步。没有定性，也没有编号。</p>
+<p><strong>DR³-Eval</strong>
+- 推广、外推、决策三环：记录在这三环没有写总结性判断，本表按问题清单的标注定档。问题 10、11 标为设计选择，问题 14 标为设计范围，问题 6 标为报告错误。
+- 污染：论文用"不检索"条件做了检查，得分约 20，远低于完整资料库条件，记录据此写"说明凭记忆答不好"。但"没有防泄漏标记"未完全核实；质量检查中"核心事实不能直接搜到"的要求由谁、怎样检查，没有说明。
+- 可复现：记录写"这是 DR³-Eval 着力最多的地方"；不利的一面是评委和向量检索模型都是闭源接口，各模型的作答报告没有看到公开。问题清单中没有对应编号。
+- 利益关系：8 个底座模型都不是作者所在机构发布的，"排行榜上没有自家模型"；但评测框架 DR³-Agent 是作者自己的，与 DeerFlow 的对比结论对自己有利，只在一个子集上做，样本量没有写。</p>
+<p><strong>Expert Consulting</strong>
+- 推广环节：判断原文为"原因既有设计限制（单领域、每类题少），也有缺证据（单次运行、缺置信区间）"。E16 标为"设计限制"。
+- 决策环节：判断原文为"这既是缺证据，也是报告质量问题"。E14 标为"报告质量问题"，E15 标为"设计问题"。
+- 污染：题目和输入文件是专有的、尚未公开，记录称"短期内不会进入训练数据"；同时指出"一旦按承诺公开题目和标准答案，这一保护就消失"。
+- 利益关系：作者机构的产品不在排行榜上；论文没有利益声明；作者机构的业务性质没有核实。</p>
+<p><strong>LiveBrowseComp</strong>
+- 评分环节：判断写"评分环节的可靠性缺证据；解析规则的矛盾需要作者澄清"。第 4.1 节第 3 条讨论的 B10（"答案唯一"只对照了 4 个开源模型的候选答案）在问题清单中标为设计缺陷，判断没有提到。
+- 外推环节：判断同时写明，"在它自己的窄主张上（对当时被测的模型堵住了闭卷捷径），证据充分"。
+- 决策环节：第 4.4 节第 6 条讨论的 B8（工具和系统提示词不统一）在问题清单中标为设计缺陷，判断没有提到。
+- 污染：记录称它是"三篇中唯一把记忆当作核心问题来设计、并拿出直接证据（闭卷基线）的"；但论文自己印出了 3 道带答案的例题，数据说明文件还以明文示范了一道题。第 5 节"时效"一段又指出，"闭卷低于 2%"需要对新模型重测。
+- 可复现：记录评为"低"（评测代码没有找到，逐题结果没有公开，评委规模没有写），问题清单中没有对应编号。其他记录对"材料不公开、无法复算"一律标为缺证据，本表照此记为证据不足。
+- 利益关系：11 个被测模型中没有哈尔滨工业大学或小红书的模型。评测框架 REDSearcher 由作者团队开发（8 位作者中 6 位重合），论文没有讨论各模型在这个框架里的适配程度。</p>
+<p><strong>DailyReport</strong>
+- 污染：记录写"题目新，发布时被训练语料覆盖的风险较低（推断）。但题目没有公开，无法核验"。
+- 利益关系：17 个被测系统中没有美团的模型。通讯作者也是 DeepResearch Bench 和 DeepResearch Bench II 的作者，记录称"不构成利益冲突，记录备查"。</p>
+<p><strong>FinResearchBench II</strong>
+- 评分环节：判断肯定"同一条评分项能否被稳定地执行"这一点"证据相对充分"；"评分项是否正确、判对了是否等于报告好"没有证据，"而且论文本来就不声称有"。不核对事实和引用，判断中称"设计选择，但对金融报告是重大缺口"，问题清单中的 F7 却标为"设计缺陷（对金融报告而言）"。</p>
+<p><strong>From Simple QA</strong>
+- 污染：F6（闭卷仍能拿约 76% 至 79% 的开卷分数，标为"设计缺陷加解读过度"）在第 5 节"污染"一段中被用作"大部分检查点所需的知识已经在模型中"的依据；F17 标为缺证据。</p>
+<p><strong>LifeSearch</strong>
+- 评分环节：判断原文为"在'汇总到系统层面、跨多道题平均'这一层，评分的证据中等偏强。在'单份报告上评分是否可靠'这一层，证据不足"。不核对引用、不惩罚评分项之外的错误，判断中称"设计选择"，问题清单中的 L4 却标为"设计缺陷（对'accuracy'的说法而言）"。
+- 推广环节：判断原文为"推广证据中等"。
+- 外推环节：判断原文为"外推证据中等……前两项是设计选择，后两项是缺证据或设计缺陷"。后两项对应 L11（标为设计选择）和 L12（标为缺证据），记录没有确定是哪一种，本表按问题清单的标注记为证据不足。
+- 决策环节：判断写"前两名的位置有充分的证据；中间一组的先后没有统计依据"。
+- 时效：记录称"这是三篇中处理得最好的一项"。问题在于截止日期之后的信息仍在实时网络上，部分历史值已经取不到，以后重跑会漂移（L17，标为"设计限制"）。
+- 污染：数据没有公开，"目前不会进入训练数据"；记录同时指出，如果按承诺公开，评分项中写有核实过的标准值，题目就可能被污染。
+- 利益关系：L19 原标"利益关系披露不足"。Hy4 Preview（第三）和 Hy3（第十）很可能是腾讯混元系列，未核实。</p>
+<h3 id="14">1.4 总表显示的情况</h3>
+<ol>
+<li><strong>论证链四环共 72 格，没有一格"站得住"。</strong> 其中有缺陷 39 格，证据不足 33 格。分环看：
+   - 评分环节：有缺陷 12，证据不足 6；
+   - 推广环节：有缺陷 4，证据不足 14；
+   - 外推环节：有缺陷 15，证据不足 3；
+   - 决策环节：有缺陷 8，证据不足 10。</li>
+</ol>
+<p>外推环节被判为设计缺陷的最多；推广环节大多停在缺证据。
+2. <strong>"没有一格站得住"是按"取最重的一档"得出的。</strong> 有几份记录对某一环的部分声称给了肯定判断，见 1.3 节，例如：LiveBrowseComp 的窄主张"证据充分"；LifeSearch 系统层面的评分证据"中等偏强"，前两名的位置"有充分的证据"；FinResearchBench II 的评分项"能否被稳定地执行""证据相对充分"；BrowseComp-Plus 的大效应"可以作决策"；MiroEval 多模态组的领先"站得住"。
+3. <strong>贯穿性问题：</strong>
+   - 时效：有缺陷 7，证据不足 4，站得住 2（DREAM、LifeSearch），未判 5。
+   - 污染：有缺陷 7，站得住 6，未判 5。6 个站得住中，有 4 个（Expert Consulting、DailyReport、FinResearchBench II、LifeSearch）的理由是"题目还没有公开"，记录同时指出它们为此付出了可复现的代价。
+   - 可复现：只有 BrowseComp-Plus 和 DR³-Eval 站得住，其余 16 个证据不足。
+   - 利益关系：站得住 12，有缺陷 3（DRACO、DeepFact、MiroEval），证据不足 3（FinResearchBench II、From Simple QA、LifeSearch）。
+4. <strong>同一份记录内部，第 4 节的判断与第 7 节问题清单的标注不一致的，至少有 6 处</strong>：DRACO 问题 6、15、16；DREAM D6；DeepFact 问题 2；MiroEval M5；LifeSearch L4；FinResearchBench II F7。本表按第 4 节的判断定档，不一致之处都写在表注里。</p>
+<hr />
+<h2 id="_3">二、对照第一阶段定义的覆盖表</h2>
+<h3 id="21">2.1 填表规则</h3>
+<p>依据各记录第 6 节"是否评"一栏。</p>
+<ul>
+<li>统一为"评""部分""不评"三种写法。记录写"不打算评""未评""未直接评""声称了，没做到""不进分数""有意排除""基本不评"的，记"不评"。记录写"是（在句子层面）""评（过程层）"的，记"评"。FinResearchBench II 记录写"不确定"的，照录。</li>
+<li>后三列不是"评不评"的问题，所以改用"是／否／部分／不涉及"（写作是否混入核心、是否加总分）和"有／无／部分／不涉及"（有无致命缺陷机制）。"部分"表示记录写的是"少量混入""只有局部的硬门槛"一类说法。</li>
+<li>有 9 份记录把"深"的三项（本质、全体、内部联系）合在一行：BrowseComp-Plus、DR-Arena、DeepResearch-9K、DeepFact、MiroEval、LiveBrowseComp、DailyReport、FinResearchBench II、LifeSearch。本表三列取同一个值。Expert Consulting 也合在一行写"部分"，但正文说明"'全体'（历史和全部现状）没有涉及"，本表据此把"全体"记为"不评"。</li>
+</ul>
+<p><strong>列名对应第一阶段的七个核心环节：</strong></p>
+<ul>
+<li>①：弄清真实需要，审视前提和概念边界，切题；</li>
+<li>②：材料截至规定时间点，并且足够新；</li>
+<li>③：查找系统而全面，查找过程交代清楚；</li>
+<li>④：甄别来源质量，处理互相矛盾的信息；</li>
+<li>⑤：分析，即交代历史和全部现状，讲清性质和内在联系，推理清楚，区分事实和判断，考虑其他解释，不迎合；</li>
+<li>⑥：每个结论都能追到依据，引用准确；</li>
+<li>⑦：结论准确、具体、清楚，敢于下判断，如实说明把握。</li>
+</ul>
+<h3 id="22">2.2 覆盖表</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>①</th>
+<th>②</th>
+<th>③</th>
+<th>④</th>
+<th>⑤</th>
+<th>⑥</th>
+<th>⑦</th>
+<th>深：本质</th>
+<th>深：全体</th>
+<th>深：内部联系</th>
+<th>写作混入核心</th>
+<th>加总分</th>
+<th>致命缺陷机制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>否</td>
+<td>是</td>
+<td>有（断言层面）</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>否</td>
+<td>否</td>
+<td>无</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>是</td>
+<td>是</td>
+<td>无</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>是（约 8%）</td>
+<td>是</td>
+<td>无</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>是</td>
+<td>否（按胜负累积）</td>
+<td>有（限于单轮）</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>评</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>是</td>
+<td>是</td>
+<td>部分</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>是（按条数约 14%）</td>
+<td>是</td>
+<td>部分</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>评</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>否（单列）</td>
+<td>否（综合分未定义）</td>
+<td>无</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不涉及</td>
+<td>否</td>
+<td>无</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>评</td>
+<td>部分</td>
+<td>评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不涉及</td>
+<td>不涉及</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>是（权重小）</td>
+<td>是</td>
+<td>无</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分（少量混入）</td>
+<td>是</td>
+<td>无</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>评</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>是</td>
+<td>是</td>
+<td>有</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>否</td>
+<td>否</td>
+<td>无</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>不评</td>
+<td>不评</td>
+<td>不评</td>
+<td>是</td>
+<td>否（分档规则）</td>
+<td>有（限于 P0 子任务）</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>不确定</td>
+<td>不评</td>
+<td>不评</td>
+<td>不确定</td>
+<td>不确定</td>
+<td>不确定</td>
+<td>是</td>
+<td>是</td>
+<td>无</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>不评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>否（权重为 0）</td>
+<td>是</td>
+<td>无</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>部分</td>
+<td>评</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>部分</td>
+<td>是（限于题面要求的格式）</td>
+<td>是</td>
+<td>无</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="23">2.3 每列的统计</h3>
+<p>"评了"指"评"与"部分"之和。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>列</th>
+<th>评</th>
+<th>部分</th>
+<th>不评</th>
+<th>其他</th>
+<th>评了</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 切题与真实需要</td>
+<td>0</td>
+<td>13</td>
+<td>5</td>
+<td>—</td>
+<td>13</td>
+</tr>
+<tr>
+<td>② 时效</td>
+<td>1</td>
+<td>7</td>
+<td>10</td>
+<td>—</td>
+<td>8</td>
+</tr>
+<tr>
+<td>③ 查找</td>
+<td>0</td>
+<td>15</td>
+<td>3</td>
+<td>—</td>
+<td>15</td>
+</tr>
+<tr>
+<td>④ 甄别</td>
+<td>2</td>
+<td>5</td>
+<td>11</td>
+<td>—</td>
+<td>7</td>
+</tr>
+<tr>
+<td>⑤ 分析</td>
+<td>0</td>
+<td>11</td>
+<td>6</td>
+<td>不确定 1</td>
+<td>11</td>
+</tr>
+<tr>
+<td>⑥ 有据</td>
+<td>4</td>
+<td>7</td>
+<td>7</td>
+<td>—</td>
+<td>11</td>
+</tr>
+<tr>
+<td>⑦ 结论</td>
+<td>0</td>
+<td>16</td>
+<td>2</td>
+<td>—</td>
+<td>16</td>
+</tr>
+<tr>
+<td>深：本质</td>
+<td>0</td>
+<td>7</td>
+<td>10</td>
+<td>不确定 1</td>
+<td>7</td>
+</tr>
+<tr>
+<td>深：全体</td>
+<td>0</td>
+<td>6</td>
+<td>11</td>
+<td>不确定 1</td>
+<td>6</td>
+</tr>
+<tr>
+<td>深：内部联系</td>
+<td>0</td>
+<td>8</td>
+<td>9</td>
+<td>不确定 1</td>
+<td>8</td>
+</tr>
+</tbody>
+</table></div>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>列</th>
+<th>是／有</th>
+<th>部分</th>
+<th>否／无</th>
+<th>不涉及</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>写作混入核心</td>
+<td>10</td>
+<td>1</td>
+<td>5</td>
+<td>2</td>
+</tr>
+<tr>
+<td>加总分</td>
+<td>11</td>
+<td>—</td>
+<td>6</td>
+<td>1</td>
+</tr>
+<tr>
+<td>致命缺陷机制</td>
+<td>4</td>
+<td>2</td>
+<td>11</td>
+<td>1</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="24">2.4 从表中看到的情况</h3>
+<ol>
+<li><strong>七个核心环节共 126 格，完整评的只有 7 格</strong>：
+   - ② 时效：LifeSearch；
+   - ④ 甄别：DeepFact（句子层面）、MiroEval（过程层）；
+   - ⑥ 有据：MMDeepResearch-Bench、DREAM、DeepFact（句子层面）、Expert Consulting。</li>
+</ol>
+<p>其余评到的都是"部分"。
+2. <strong>评得最多与最少的环节。</strong> 评得最多的是 ⑦（16 个）、③（15 个）、①（13 个），但多数只到"准确""覆盖预定要点""切题"这一层。评得最少的是 ④ 甄别（7 个）和 ② 时效（8 个）。
+3. <strong>子项层面</strong>（依据各记录第 6 节的"怎么评"一栏）：
+   - "查找过程交代清楚"：没有一个工具把报告本身对查找过程的交代当作统一的评分项。MiroEval 是读过程记录来评的；LifeSearch 只在题面明确要求时评（例如文献题要求给出检索式）；BrowseComp-Plus 的过程证据召回率单独报告，不计入准确率。
+   - "区分事实和判断"：没有一个工具把它当作评分项。DeepFact 用它划定核查范围；DailyReport 由评委在抽取断言时完成。
+   - "如实说明把握"：BrowseComp-Plus 有校准误差，但落在单个短答案上；LifeSearch 只在题面要求时评；MiroEval 只出现在个别按题生成的维度中（权重 0.04）；DRACO 中 Claude 的提示词要求输出置信度，但不计分。
+   - "考虑其他解释"：只有 DREAM 的推理质量一项扣"ignored counter-evidence"，其余记录都写"未见"或"没有对应"。</p>
+<p>这与第一阶段第 3.5 节的初步观察一致：现有评测基准很少评"查找过程交代""来源甄别""区分事实和判断""说明把握"和"考虑其他解释"。
+4. <strong>"深"的三项。</strong> 9 个工具三项都不评，FinResearchBench II 三项都"不确定"。评到的 8 个都是"部分"，记录对它们的描述如下：
+   - DeepResearch Bench II："以原文为准"；
+   - MMDeepResearch-Bench："笼统地评"；
+   - DRACO："与广度合并打分"；
+   - DREAM："放在写作质量里"；
+   - DR³-Eval："一个整数分，没有分解"；
+   - Expert Consulting："只有分析严谨性 3 分描述中的'cause-effect''hidden variables'"；
+   - From Simple QA："只认出题模型想到的那一种解释"；
+   - LifeSearch："以拆散的形式"。
+5. <strong>加总分与致命缺陷机制。</strong> 11 个工具把各项加成总分。有致命缺陷机制的 6 个（"有"4 个、"部分"2 个），记录都指出机制的范围有限或过宽：
+   - LiveDRBench 的严格版没有在实验中报告；
+   - DR-Arena 只作用于单轮；
+   - DailyReport 只在 P0 子任务全部失败时触发；
+   - DRACO 的一次致命错误，在 100 道题平均之后，最多影响总分 1 个百分点；
+   - MMDeepResearch-Bench 的 Vef. 不通过只让该题这一项记 0，不封顶总分；
+   - Expert Consulting 的规则是任何一项 0 分都清零，格式项也包括在内。</p>
+<hr />
+<h2 id="_4">三、跨工具的共同问题</h2>
+<h3 id="30">3.0 归类与排序的方法</h3>
+<p><strong>归类。</strong> 18 份记录的问题清单共 273 条。按问题的本质归为 17 类，另有 8 条只在一个工具中出现、但对我们的场景重要，单列在 3.18 节。每条只归入一类，即它的主要问题；跨类的关联在正文中说明。归类是汇总者做的。</p>
+<p><strong>每类列出的数字</strong>，都按各记录问题清单中的标注统计：</p>
+<ul>
+<li>证据等级：一条问题可能兼有几级（例如"自述加推断"），所以各等级的条数之和可能大于这一类的条数。</li>
+<li>影响的层：一条问题可能标了几层。</li>
+<li>设计缺陷还是缺证据：按记录原文的标注。</li>
+</ul>
+<p><strong>排序依据</strong>，依次看三点：</p>
+<ol>
+<li>问题是否直接让名次失真或不稳，即落在"测对了东西"和"测得稳"两层；</li>
+<li>出现在几个工具中；</li>
+<li>是设计缺陷（补证据也解决不了），还是缺证据。</li>
+</ol>
+<p>第十六、十七类主要影响论文自身"经得起复核"，不直接改变某个名次，所以排在后面。但第一阶段第 1.1 节说过，在比赛评审中"经得起复核"的分量最重，它们对我们的启示见第七节。排序是汇总者的判断。</p>
+<p><strong>与标尺的关系。</strong> <code>yardsticks.md</code> 第四节给出了 14 条标尺检查项。18 份记录是同时写的，都没有直接引用这些检查项。下文在相关的类别后注明"对应标尺第 n 条"，只表示问题性质相同，不表示记录做过这项检查。</p>
+<h3 id="31">3.1 第一类：评委判分是否可靠，缺少独立、充分的人工对照</h3>
+<p><strong>问题是什么。</strong> 名次由评委（大语言模型或人工）给出的分数累积而来，判得对不对、稳不稳，是名次成立的前提。18 份记录都在这一环发现了证据缺口，可以分为四种情形：</p>
+<ol>
+<li><strong>完全没有评委与人工的对照</strong>：BrowseComp-Plus P5、IDRBench I14、DRACO 问题 1、DREAM D1、DeepResearch-9K D8、LiveBrowseComp B9。</li>
+<li><strong>有对照但不独立</strong>：人工先看到了机器的判定；或者标准答案的裁决参考了评委的判定；或者挑评委和验证评委用的是同一批样本；或者人工判分者就是作者本人。见 DR-Arena A3，DailyReport R2、R3，DeepFact 问题 10，LifeSearch L3，DeepResearch Bench II D6，LiveDRBench L2。</li>
+<li><strong>对照的规模小，或只在汇总层面</strong>：LiveDRBench L2（只到类别平均）、MiroEval M1（5 题 5 人）、DR³-Eval 问题 1 和 2（规模说法矛盾，并且按总分计算）、LifeSearch L1 和 L2、FinResearchBench II F8、From Simple QA F8。</li>
+<li><strong>人工评分者之间的一致性缺失或只有中等，或判卷流程本身不一致</strong>：Expert Consulting E1 至 E4、E12，DeepFact 问题 9，FinResearchBench II F9，DR-Arena A4、A7，MMDeepResearch-Bench M9、M10，MiroEval M9，DailyReport R4。</li>
+</ol>
+<p><strong>出现在哪些工具中</strong>：全部 18 个，共 33 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L2</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P5</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>I14</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D6</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A3、A4、A7</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M9、M10</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 1</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D1</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D8</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 9、10</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M1、M9</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 1、2</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E1、E2、E3、E4、E12</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>B9</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R2、R3、R4</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F8、F9</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F8</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L1、L2、L3</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DailyReport。</strong> 表 5"评委选择"中，Gemini-3-flash 的三个准确率 96.5、94.2、95.3，与"Metric Validation"一段报告的数字完全相同，看起来同一批数据既用来挑评委，又用来验证评委。指令遵循的标准答案是这样定的："human annotators and the judge model independently evaluate these samples. Final labels are determined through adjudication, where experts review both results"（论文第 5.5 节）。评委的 96.5% 高于人工标注员的 88.4%，可能有一部分是因为裁决本身参考了评委的判定。记录据此判为设计缺陷。出处：DailyReport 记录第 4.1 节第 1、2 条；R2 为复算加推断，R3 为自述。</li>
+<li><strong>DR-Arena。</strong> 人工审核的两名标注员是"current bachelor's students in Computer Science"。他们拿到了"the Examiner's automated logs"，即先看到考官的判定，再回答"Do the annotators agree with the Examiner's Win/Loss/Tie decision?"（论文附录 H）。卡帕系数 0.91 是在这种条件下得到的。出处：DR-Arena 记录第 4.1 节第 2 条；A3 为自述。</li>
+<li><strong>DRACO。</strong> 主评委的选择依据只有一句"Drawing on an internal human–LLM alignment study, we selected Gemini-3-Pro"（论文第 5.1 节），全文没有一个人工与评委的一致性数字。出处：DRACO 记录第 4.1 节；问题 1 为自述。</li>
+<li><strong>LifeSearch（对照做得较完整的一例）。</strong> 在 20 份答卷、402 条评分项上，选定的评委与人工共识的一致率是 84.25%，"大约每六条评分项就有一条与人工共识不同"，误判的方向没有报告；参照答卷每题只有一份，来自一个未说明的模型。出处：LifeSearch 记录第 4.1 节第 3 条；L1 为自述加没找到，L2 为自述加推断。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：33 条中，含复算 10 条，含自述 19 条，含推断 11 条，"没找到"4 条，"自述加核对"2 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测得稳 23 条，测对了东西 9 条，经得起复核 7 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 缺证据 26 条；
+- 设计缺陷 5 条：DR-Arena A7、MMDeepResearch-Bench M10、Expert Consulting E4、DailyReport R2、DailyReport R3；
+- 其他 2 条：DeepFact 问题 10 标为设计局限，LifeSearch L3 标为小问题。</p>
+<p>对应标尺第 6 条（评委会不会被自信、冗长但错误的回答唬住）。没有一份记录报告某个工具检验过这一点。</p>
+<h3 id="32">3.2 第二类：名次差距落在噪声之内，没有不确定性估计</h3>
+<p><strong>问题是什么。</strong> 被测系统大多只运行一次；名次之间的差距没有与随机波动作比较，不给置信区间，也不做检验。记录按论文印出的数字估算，发现相邻名次的差距常常小于噪声。另外，换一个评委，名次也会互换。</p>
+<p><strong>出现在哪些工具中</strong>：17 个，共 21 条。只有 DeepFact 不在其中，记录肯定它做了以报告为单位的配对重抽样。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L8</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P4</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>I5、I6</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D8</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A11</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M7</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 2、9</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D12</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D11</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M2、M8</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 12</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E13、E16</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>B12</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R13</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F15</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F10</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L15</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DeepResearch Bench II。</strong> 前七名相邻名次的差距在 0.02 到 2.62 分之间，其中第五名 Qwen3-Max 39.25 与第六名 Grok 39.23 只差 0.02 分，没有置信区间。出处：DeepResearch Bench II 记录第 4.4 节；D8 为复算。</li>
+<li><strong>MiroEval。</strong> 纯文本组 H1 77.5 分，OpenAI 76.7 分。精读页对两家的逐题分做配对重抽样，平均分差 +0.65，95% 区间为 [−0.69, +1.98]，跨过 0；68 题中 H1 更好的只有 31 题。出处：MiroEval 记录第 4.4 节；M2 为复算（精读页 2026-10-28）。</li>
+<li><strong>IDRBench。</strong> 同一配置在表 8 和表 9 中各有一行，重跑相差 0.98 分和 1.79 分；交互模式前四名首尾只差 1.83 分。出处：IDRBench 记录第 4.1 节第 6 条、第 4.4 节；I5、I6 为复算加推断。</li>
+<li><strong>DRACO。</strong> 换评委后，第五、六名互换；原文"the relative ordering of systems was stable across all three"只对前四名成立。出处：DRACO 记录第 4.1 节第 3 点；问题 2 为复算。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：21 条中，含复算 14 条，含自述 10 条，含推断 2 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测得稳，21 条全部如此。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 缺证据 17 条；
+- 设计缺陷加缺证据 1 条：DR-Arena A11，瑞士制漏掉 4 对；
+- 其他 3 条：DeepResearch-9K D11 标为结论超出证据，Expert Consulting E16 标为设计限制，FinResearchBench II F15 标为作者已承认。</p>
+<p><strong>补充：做了检验的几个工具，结果同样说明名次分不开。</strong> Expert Consulting 用威尔科克森检验加邦费罗尼校正，三个智能体中只有 o3 与 Claude 之间的差异显著（E13）。FinResearchBench II 的作者自己说，排序应当"interpreted as tiered rather than as a claim of statistically meaningful separation between every adjacent pair"。</p>
+<h3 id="33">3.3 第三类：计分只看一侧，说错、编造或回避不受应有的处罚</h3>
+<p><strong>问题是什么。</strong> 这类问题有两个相反的方向：</p>
+<ul>
+<li><strong>按"命中预定要点"计分</strong>：写错的、编造的、写在评分项以外的内容不扣分，写得越多，越可能命中。</li>
+<li><strong>只算精确率，或者判定很宽松</strong>：少写、含糊、说"查不到"都不吃亏。</li>
+</ul>
+<p>两种方向都让分数偏离"说得对、说得全"。按第一阶段第 1.1 节的说法，规则公布后，参赛者会照着规则去优化。</p>
+<p><strong>出现在哪些工具中</strong>：10 个，共 13 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L3</td>
+<td>评委提示词宽松，"CNN"与"ResNet"判为等同</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D2</td>
+<td>说错与没提同等对待</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 4</td>
+<td>事实准确不惩罚评分项以外的错误</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D3、D9</td>
+<td>事实性的分母不含"无法核实"；关键信息覆盖是召回率，没有控制长度</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M11</td>
+<td>没有控制篇幅</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 3、4</td>
+<td>事实准确的判定标准很宽松；只核查带来源的论断</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R10</td>
+<td>事实性只算精确率</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F11</td>
+<td>可能偏向篇幅长的报告</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F5</td>
+<td>只算覆盖，不罚说错</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L4、L12</td>
+<td>评分项以外的错误不扣分；输出量与得分高度相关</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DeepResearch Bench II。</strong> 打分三档中没有"提到了但说错"这一档，聚合代码只把 1 计为通过，0 和 −1 都留在分母里。评分项以外的论断，包括编造的来源和数字，都不检查。出处：DeepResearch Bench II 记录第 4.1 节、第 4.3 节；D2 为复算（读提示词和代码）。</li>
+<li><strong>DR³-Eval。</strong> 正文把"事实准确"定义为"equals 1 if s supports c"，评委提示词却写"adopt a relatively lenient evaluation standard"，"For situations that are ambiguous or uncertain, they should all be determined as true"（论文附录 J.0.2）。并且只核查带来源的论断，"少标来源不会降低这一项的得分"。出处：DR³-Eval 记录第 4.1 节第 4、5 点；问题 3 为自述加推断，问题 4 为推断。</li>
+<li><strong>LifeSearch 与 DailyReport：两个方向各一例。</strong> LifeSearch 按表 4 算，整个运行过程的输出词元数与得分的斯皮尔曼系数为 0.797，论文没有报告，也没有控制长度（LifeSearch 记录第 4.3 节第 4 条；L12 为复算）。DailyReport 方向相反：事实分只算精确率；指令遵循又把"this metric cannot be obtained"算作满足；记录指出"少写、多说'查不到'在这套规则下不吃亏"（DailyReport 记录第 9 节第 2 条；R10 为推断；R9 见 3.18 节）。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：13 条中，含推断 9 条，含自述 4 条，含复算 3 条。多数是记录从计分公式和提示词推出来的；用数据验证过"多写多得分"的，只有 LifeSearch L12 和 MiroEval M11 两条相关系数（都是复算）。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西，13 条全部如此，其中 1 条兼影响测得稳。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 11 条，其中 LiveDRBench L3 为设计缺陷加缺证据；
+- 缺证据 2 条：FinResearchBench II F11、LifeSearch L12。</p>
+<p><strong>记录之间的不一致。</strong> 同类问题，LifeSearch 记录第 4.1 节称"设计选择"，问题清单 L4 却标"设计缺陷"。</p>
+<p>对应标尺第 4、5 条。</p>
+<h3 id="34">3.4 第四类：评分参照物单一或来自被测者</h3>
+<p><strong>问题是什么。</strong> 判分的参照物只有一个来源：一篇专家文章、一份参照报告、一个模型的一次构建，或者当时被测系统的输出。于是，正确、切题、但不在参照里的内容得不到分，参照本身的偏差也被当成了标准。这正是第一阶段第 4.4 节提出的问题："只能奖励'想到了出题人想到的'"。有几个工具更进一步，用被测者的输出来制定或修订尺子。</p>
+<p><strong>出现在哪些工具中</strong>：8 个，共 11 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L1</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>I7、I8</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D1</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 2</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 10</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>B10</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F1、F5</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F2、F3</td>
+</tr>
+</tbody>
+</table></div>
+<p>DREAM D10 中的"盲区对等"，以及 DRACO 记录第 4.3 节第 3 点（这一点没有编号），说的是同一个问题。</p>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DeepResearch Bench II。</strong> 附录 E.1 要求题目生成器"produce content that is as similar as possible to the human article"。数据中，第 5 题的评分项逐条规定是哪几篇"代表性研究"，选了其他同样有代表性的研究不得分。出处：DeepResearch Bench II 记录第 4.3 节；D1 为自述、复算。</li>
+<li><strong>From Simple QA。</strong> 论文称评分表"evaluates exactly what qt requires and nothing beyond that"（第 4 页）。但同一道种子题独立构建 10 次，最终题目之间的平均杰卡德相似度只有 0.17 至 0.27（论文表 8）；分析检查点是出题模型自己推理得出的结论。出处：From Simple QA 记录第 4.2、4.3 节；F2 为自述加推断，F3 为推断。</li>
+<li><strong>FinResearchBench II 与 LiveDRBench：尺子来自被测者。</strong> FinResearchBench II 的评分项是"prompt LLMs to synthesize binary, query-specific rubric items from these reports"，即从 10 个被评产品的报告中生成，再按评委能否一致判定来筛选（FinResearchBench II 记录第 4.3 节；F1 为自述加推断，F5 为推断）。LiveDRBench 的汇总裁决只覆盖"all claims generated by all DR systems under evaluation"，新系统给出的、标准答案里没有的正确断言会被判错（LiveDRBench 记录第 4.1 节；L1 为自述加推断）。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：11 条中，含自述 8 条，含推断 8 条，含复算 1 条。这一类主要靠推断，因为论文都没有检验"参照以外的正确内容"能否得分。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 10 条，测得稳 2 条，经得起复核 2 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 8 条；
+- 其他 3 条：IDRBench I7 标为设计风险，I8 标为设计取舍（论文已声明），DR³-Eval 问题 10 标为设计选择。</p>
+<h3 id="35">3.5 第五类："测对了东西"的检验不独立，或缺少对照</h3>
+<p><strong>问题是什么。</strong> 论文用来证明"分数测到了想测的能力"的证据，记录认为多数不成立，原因有四种：</p>
+<ol>
+<li><strong>对照物本身不是独立的质量标准</strong>：例如人类偏好榜、另一个大语言模型指标，或者与评分项依据相同的人工整体判断。</li>
+<li><strong>验证者事先看到了算法结果</strong>，或者验证者就是作者本人。</li>
+<li><strong>缺少最直接的对照实验</strong>：例如去掉图片、去掉陷阱、空回答、不联网，或者"永远判成立"的基线。</li>
+<li><strong>用少数几个点上的相关系数下大结论。</strong></li>
+</ol>
+<p><strong>出现在哪些工具中</strong>：16 个，共 31 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L4、L5</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P3</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>I2、I3、I4、I11、I12</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D9</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A8</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M1、M19</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D2、D13</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D5</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 6、7、11</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M7</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 8</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E5、E10</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>B1、B2、B5、B13</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R5、R7</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F6</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L5、L7</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DR-Arena。</strong> 论文拿与 LMSYS Search Arena 0.94 的斯皮尔曼相关，证明它是"a reliable alternative for costly human adjudication"。但这个金标准是普通用户的偏好榜，评委又被要求"Simulating Human Preference"，记录认为"一致只能说明口味学到了"。只有 6 个点时，一对相邻名次互换，斯皮尔曼系数就是 0.943；皮尔逊系数 0.737 的双侧 p 值约 0.095，不显著。出处：DR-Arena 记录第 4.3 节；A8 为复算。</li>
+<li><strong>MMDeepResearch-Bench。</strong> DeepSeek-V3.2 不看图、不联网，总分 43.71，在 25 个系统中排第 4，高于全部 3 个能联网的 Claude 4.5 模型，也高于 Perplexity、ChatGPT、通义三个深度研究智能体。论文没有做"同一道题去掉图片"的对照。出处：MMDeepResearch-Bench 记录第 4.3 节第 1 至 3 条；M1 为复算加推断。</li>
+<li><strong>Expert Consulting。</strong> "The 90.5% VRS-SME concordance validates VRS as a faithful summary of human expert judgment"（论文附录 B.1）只有这一句，没有说怎么算、和什么比。而 VRS 本身就是由专家打的分算出来的，记录判为"论证方式不成立"。出处：Expert Consulting 记录第 4.1 节第 6 条；E5 为推断。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：31 条中，含复算 14 条，含自述 12 条，含推断 10 条，"没找到"3 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 27 条，测得稳 3 条，经得起复核 2 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 缺证据 24 条；
+- 设计缺陷 2 条：DeepResearch Bench II D9、DailyReport R5；
+- 设计缺陷加缺证据 1 条：LiveBrowseComp B1；
+- 其他 4 条：IDRBench I4 标为结论超出证据，I12 标为解读须限定，MMDeepResearch-Bench M1 标为"两者都有"，LifeSearch L7 标为设计问题。</p>
+<p><strong>记录认为站得住的效度证据只有少数几项：</strong></p>
+<ul>
+<li>LiveBrowseComp"对当时被测的模型堵住了闭卷捷径"，证据充分；</li>
+<li>BrowseComp-Plus 的全知测试说明"语料里的证据足以答题"，"证据扎实"；</li>
+<li>DR³-Eval 的"不检索"条件说明"凭记忆答不好"。</li>
+</ul>
+<p>对应标尺第 11 条。</p>
+<h3 id="36">3.6 第六类：被测条件和对象不一致，分数混入配置与框架</h3>
+<p><strong>问题是什么。</strong> 各系统作答的条件不同，包括：提交途径、提示词、工具、修复重试的次数、篇幅要求、引用格式、过程记录的完整程度、实际有分的题数。或者，被测的其实是"某个模型装在作者自己的框架里"，不是深度研究产品本身。于是分数中混入了配置和框架的作用，比较的不全是智能体。</p>
+<p><strong>出现在哪些工具中</strong>：14 个，共 19 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L9</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P7、P8</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>I13</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D14</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A10</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M11</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 10</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M5、M10</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 14</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E9</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>B6、B8</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R12</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F15</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L11、L13、L14</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>Expert Consulting。</strong> 论文称三个智能体"only the execution environment differs"（第 3.4 节）。代码仓库说明文件显示的情况是：</li>
+<li>Gemini 适配器遇到代码执行失败，可以修复重试，最多 3 次，另外两个适配器没有这种修复；</li>
+<li>三家处理输入文件的方式各不相同；</li>
+<li>闭卷限制只对 Claude 是硬限制；</li>
+<li>默认设置下，所有智能体在所有题目上都开着网页搜索。</li>
+</ul>
+<p>出处：Expert Consulting 记录第 4.1 节第 10 条；E9 为自述（仓库说明）。
+- <strong>DRACO。</strong> Claude Opus 用的系统提示词要求输出"Exact Answer: <precise answer, or "I don't know" if not found>"和"Confidence: &lt;0-100%&gt;"，这是为短答案题设计的格式；其他系统用什么提示词，论文没有说；Perplexity 用的是生产环境接口。出处：DRACO 记录第 4.4 节第 2 点；问题 10 为自述加推断。
+- <strong>BrowseComp-Plus。</strong> 给 GPT-4.1 加上读全文工具，准确率从 35.42% 升到 43.61%（论文表 5）。排行榜上的方案设置差别很大，例如每题平均 209 次搜索、最多 8 个智能体协作，评委也已更换。记录的结论是"设置一旦不统一，比的就是配置而不是智能体"。出处：BrowseComp-Plus 记录第 4.1 节第 4 条、第 4.4 节第 6 条、第 9 节；P7 为复算，P8 为复算（部分为精读页前次）。</p>
+<p><strong>证据等级的分布</strong>：19 条中，含自述 15 条，含推断 7 条，含复算 5 条，"没找到"2 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 13 条，经得起复核 6 条，测得稳 5 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 8 条：LiveDRBench L9、BrowseComp-Plus P8、DRACO 问题 10、MiroEval M10、Expert Consulting E9、LiveBrowseComp B6、LiveBrowseComp B8、DailyReport R12；
+- 缺证据 4 条；
+- 设计选择加缺证据 1 条：LifeSearch L14；
+- 设计取舍、设计选择、设计范围共 5 条；
+- 声称与检验对象不符 1 条：DR-Arena A10。</p>
+<h3 id="37">3.7 第七类：评分维度与合成方式</h3>
+<p><strong>问题是什么。</strong> 各项怎样合成名次，存在几种问题：</p>
+<ul>
+<li>权重或者由评分项条数隐含决定，或者按图的形状来分，或者由评委按每份报告现场生成，或者论文说有综合分、表里却没有；</li>
+<li>写作、格式、引用条数直接进入胜负或总分；</li>
+<li>维度定义含糊，或把两件事合在一个维度里；</li>
+<li>"致命缺陷"要么没有（编造只在低权重维度里扣分），要么过宽（任何一项 0 分就清零）。</li>
+</ul>
+<p>合成方式本身就能改变第一名。</p>
+<p><strong>出现在哪些工具中</strong>：11 个，共 15 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D13</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A1、A2</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M3、M12</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 15、16</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D7</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M12</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 5、13</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E11</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R11</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F4</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L16</td>
+</tr>
+</tbody>
+</table></div>
+<p>另有 MMDeepResearch-Bench M4（权重由评委现场生成）和 Expert Consulting E15（零分清零）两条，见 3.18 节。</p>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DREAM。</strong> 附录 F 说表 10 附有"a composite score averaging results across all metrics"，表中却没有这一列。把六个汇总值直接平均，LangChain 55.18 分，排第一，与正文"Smolagents 内容最好"的叙述方向相反；按表 12 的三个评委底座分别平均，也都是 LangChain 第一。出处：DREAM 记录第 4.4 节；D7 为复算。</li>
+<li><strong>From Simple QA。</strong> 权重只由步骤图的形状决定。例题中，原始问题的核心答案（"指出是第二十六修正案"）权重只有 0.01，而"Jennings Randolph 于 1 月 25 日提出参议院联合决议第 7 号"占 0.14（论文表 10）。出处：From Simple QA 记录第 4.1 节；F4 为复算。</li>
+<li><strong>DR-Arena 与 MiroEval。</strong> DR-Arena 的评委提示词写"REWARD the use of Bold headers, Bullet points, and Tables"，"A higher citation count is generally preferred"，并设有"Style Winner"一档；论文自己统计，输家中失败类型为"都没有"的（即只因格式等软标准落败）占 18.1%（DR-Arena 记录第 4.1 节第 4 条；A1、A2 为自述）。MiroEval 中，捕捉"编造营养数值"的维度权重只有 0.04（M12，自述）。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：15 条中，含自述 9 条，含复算 8 条，含推断 4 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 14 条，测得稳 1 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 10 条；
+- 缺证据 2 条：DR³-Eval 问题 13、DailyReport R11；
+- 设计局限 2 条：DRACO 问题 15、16；
+- 设计选择 1 条：LifeSearch L16。</p>
+<p>对应标尺第 12 条。</p>
+<h3 id="38">3.8 第八类：引用与来源的核查停在形式上</h3>
+<p><strong>问题是什么。</strong> 第一阶段核心环节中的"每个结论都能追到依据，引用准确"和"甄别来源"，在多数工具中停在形式上：</p>
+<ul>
+<li>评委看不到被引用的网页，只能判断"引了什么样的来源"；</li>
+<li>引用指标数条数，或者只核对是否引了预定的文档；</li>
+<li>维度定义里写着"来源可信度""交叉核验"，评分项里却没有落实；</li>
+<li>为考"甄别"而设计的干扰材料，没有对应的评分项。</li>
+</ul>
+<p><strong>出现在哪些工具中</strong>：9 个，共 10 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P6、P9</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D3</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M16</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 5</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D4</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 9</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R8</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F7</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F13</td>
+</tr>
+</tbody>
+</table></div>
+<p>LifeSearch L4 的前半条（"引用只查'写没写指定来源'"）也属于这一类，L4 归在第三类。</p>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DeepResearch Bench II。</strong> 表 2 称信息召回包括"checking its reliability through source credibility and cross-validation"。按关键词检索全部 9,415 条评分项，没有发现评价智能体甄别来源、处理矛盾的条目，只有第 69 题有一条来源排除规则。出处：DeepResearch Bench II 记录第 4.3 节；D3 为复算（关键词检索，可能有遗漏）。</li>
+<li><strong>DRACO 与 FinResearchBench II。</strong> DRACO 的评委只收到题目、作答全文和一条评分项，提示词中没有任何检索或打开网页的工具，所以"只能判断'引了什么样的来源'，判断不了'来源是否支持所述内容'"（DRACO 记录第 3 节、第 4.1 节第 6 点；问题 5 为推断）。FinResearchBench II 的评委提示词也只有提问、报告和评分项，四个评分方面中没有事实准确和引用（F7，自述）。</li>
+<li><strong>DR³-Eval。</strong> 干扰网页被定义为"outdated, one-sided, or inaccurate"，但六项指标中没有一项检查报告是否采信了它们；"一份报告忠实地转述了一篇过时的干扰网页，这一项照样得分"。出处：DR³-Eval 记录第 4.3 节第 4 点；问题 9 为推断。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：10 条中，含推断 6 条，含复算 3 条，含自述 2 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西，10 条全部如此，其中 1 条兼影响测得稳。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 6 条：DeepResearch Bench II D3、DRACO 问题 5、DREAM D4、DR³-Eval 问题 9、DailyReport R8、FinResearchBench II F7；
+- 缺证据 1 条：MMDeepResearch-Bench M16；
+- 设计局限、设计取舍、设计选择各 1 条：BrowseComp-Plus P6、P9，From Simple QA F13。</p>
+<p><strong>反例：几个工具确实打开了来源来核对。</strong>
+- MMDeepResearch-Bench 把报告拆成"断言–网址"对，逐一打开网页核对；
+- Expert Consulting 的质量复核规程要求打开每个被引来源，核对"the cited URL or document resolves ... the source actually supports the specific claim"（附录 N.3）；
+- DREAM 核实断言时用"中性搜索词"，同时找支持和反驳的证据；
+- DeepFact 对照的是整个文献，而不只是报告引用的来源。</p>
+<p>18 份记录中，没有一份提到被审视的工具区分"编造的来源"和"曾经存在、后来失效的来源"（标尺第 3 条）。</p>
+<p>对应标尺第 1、2、3 条。</p>
+<h3 id="39">3.9 第九类：题目构造替智能体做了理解，或偏离所称的真实需求</h3>
+<p><strong>问题是什么。</strong> 题目的构造方式，替智能体完成了本该由调研者自己做的理解，或者偏离了论文自称的"真实需求"。具体有这几种：</p>
+<ul>
+<li>按答案裁题，题面近于原文提纲；</li>
+<li>题面直接写出答案或中间答案；</li>
+<li>由大语言模型大幅扩写，没有人核对是否保留了用户原意；</li>
+<li>把"冲突处理""不确定性处理"写成题面上的明确要求；</li>
+<li>题面没有说要回答什么；</li>
+<li>"真实用户"的说法与"雇用众包人员编写"不符。</li>
+</ul>
+<p>代表性方面也有问题：抽样框是一家公司的失败案例，或者领域集中。</p>
+<p><strong>出现在哪些工具中</strong>：12 个，共 15 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L11</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D5</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A16</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M14</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 6、7</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D3、D4</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 14</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M6</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 11</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E8</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F12</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L9、L10</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DeepResearch Bench II。</strong> 附录 E.1 示例 2 在题目里直接列出 13 种灵敏放大器的缩写，并规定表格恰好 13 行，与它自己"不要直接列出要查的实体"的规则相矛盾。第 2 条又允许"avoid overly subjective parts of the source article, since a model is unlikely to reproduce the exact same analysis"。记录的结论是："题目因此近于原文提纲，测的是'按提纲把内容找回来'，测不到智能体自己界定问题的能力"。出处：DeepResearch Bench II 记录第 4.3 节；D5 为自述、复算。</li>
+<li><strong>Expert Consulting。</strong> 相关性压缩题的题面要求"Mandatory final line: 'Top Priority: Implement AI-powered call routing and real-time coaching to address AHT and FCR gaps ...'"，而标准答案的建议正是"AI routing + real-time coaching"（论文附录 L.2）。出处：Expert Consulting 记录第 4.1 节第 9 条；E8 为推断。</li>
+<li><strong>DRACO。</strong> 用户的原始请求"tax efficient investing with irregular freelance income base on my situation"，被扩写成一位住在多伦多、42 岁、年收入 95,000 加元、有两个孩子的自由职业设计师提出的完整问题；而"no raw user queries were ever exposed to human analysts"，没有人核对扩写后是否仍是用户原本想问的。出处：DRACO 记录第 4.2 节第 2 点；问题 6 为自述。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：15 条中，含自述 7 条，含复算 6 条，含推断 5 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西，15 条全部如此。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 6 条：DeepResearch Bench II D5、DR-Arena A16、DRACO 问题 6、DeepResearch-9K D3、Expert Consulting E8、From Simple QA F12；
+- 缺证据 2 条：MMDeepResearch-Bench M14、MiroEval M6；
+- 其他 7 条：设计取舍、设计局限、设计范围、设计选择（2 条）、声称未做到、表述问题。</p>
+<h3 id="310">3.10 第十类：标准答案和评分项本身的正确性没有独立核对</h3>
+<p><strong>问题是什么。</strong> 标准答案、评分项或核验标签本身对不对，没有经过出题者之外的人核对。记录在其中找到了实际的错误。</p>
+<p><strong>出现在哪些工具中</strong>：6 个，共 9 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D4、D12</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A5</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D1、D2</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 1</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E6、E7</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F7</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DeepResearch-9K。</strong> 公开出题脚本中唯一的质检函数，只检查题目长度、列表标记和换行；没有任何一步核对答案对不对、是否唯一。测试集的 1,774 道全部来自教师模型做错的题，"连模型一致性检查都没有"。出处：DeepResearch-9K 记录第 4.1 节第 1、4 条；D1 为复算（读公开代码）加推断。</li>
+<li><strong>Expert Consulting。</strong> 结构合规题示例的解题逻辑写"103 × 1,500,000 = INR 154.5 Cr"，应为 15.45 千万卢比，后两个数同样大了 10 倍（论文附录 L.3）。失误敏感题给出的可接受范围，对应油价约 574 至 685 美元/吨，其中 574 至 611 这一段，正确决策应当反过来（论文附录 L.5）。出处：Expert Consulting 记录第 4.1 节第 7、8 条；E6、E7 为复算。</li>
+<li><strong>DR-Arena 与 From Simple QA。</strong> DR-Arena 的人工审核中，清单与来源网页相符的只有 89.1%（论文表 8），即约 11% 的清单条目有误；评委不联网，附录 G.2 有一例：评委凭错误的记忆推翻了正确的清单，判错了一场（DR-Arena 记录第 4.1 节第 3 条；A5 为自述）。From Simple QA 约有 41,730 个检查点，约占全部的八成，没有经过任何人工检查（F7，复算加推断）。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：9 条中，含复算 7 条，含自述 3 条，含推断 3 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 9 条，其中兼影响经得起复核 3 条、测得稳 1 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 6 条；
+- 缺证据 3 条：DeepResearch Bench II D4、DeepFact 问题 1、From Simple QA F7。</p>
+<h3 id="311">3.11 第十一类：时效</h3>
+<p><strong>问题是什么。</strong> 调研的定义要求以"截至某一时间点"的信息为材料。在这一点上，现有工具有几种问题：</p>
+<ul>
+<li>多数工具没有规定材料的截止时间；</li>
+<li>判分依据固定在构建的时候，作答和核验却在几个月后的实时网络上进行；</li>
+<li>被引用的网页不存档，重评结果会漂移；</li>
+<li>有的工具反过来，以评测当天为准，或者让标签随新证据更新；</li>
+<li>名字里带"Live"或声称"定期更新"的，实际没有更新。</li>
+</ul>
+<p><strong>出现在哪些工具中</strong>：11 个，共 12 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L6</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A12</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M15</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 14</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D10</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 12</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M16</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>B11</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R14、R15</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F14</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L17</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>LiveDRBench。</strong> 截至 2026-10-29，数据集只有 2025-08-08 的一版，"可以更新"14 个月没有执行；部分列举题没有截止时间，答案会漂移。出处：LiveDRBench 记录第 5 节；L6 为复算。MiroEval（M16）和 DailyReport（R15）的"定期更新"同样没有实施的证据。</li>
+<li><strong>DRACO。</strong> 数据集说明写明，评分项反映的是"information available during the construction period (late 2025)"；作答大约在 2026 年 2 月；扩写后的题目中又有"Go to sec.gov and pull the latest proxy statement"这类说法。记录推断，较晚作答、引用了更新信息的系统，可能反而被判为不符。出处：DRACO 记录第 5 节；问题 14 为自述加推断。</li>
+<li><strong>LiveBrowseComp。</strong> 题目依赖出题前 90 天内的事实，论文的依据是"The 90-day window comfortably exceeds typical data-collection lags in current training pipelines"。到 2026-10-29，这些事实已过去约 6 到 10 个月，而数据只有一个快照。出处：LiveBrowseComp 记录第 5 节；B11 为复算加推断。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：12 条中，含推断 8 条，含复算 6 条，含自述 4 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 7 条，经得起复核 6 条，测得稳 3 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 7 条，其中 From Simple QA F14 为设计缺陷加缺证据；
+- "声称未做到""声称未兑现""声称与做法不符"3 条：DR-Arena A12、MiroEval M16、DailyReport R15；
+- 设计选择 1 条：DeepFact 问题 12；
+- 设计限制 1 条：LifeSearch L17。</p>
+<p><strong>记录之间的不一致。</strong> 同一种情况（声称会更新，实际没有更新），LiveDRBench 记录标为"设计缺陷"，MiroEval 记录标为"声称未兑现"，DailyReport 记录标为"声称未做到"。</p>
+<p><strong>处理得较好的例子。</strong> LifeSearch 的时效被记录称为"三篇中处理得最好的一项"：题面写明截止日期，评分项中有"should make sure all information is up to July 20, 2026"，系统提示词把题面日期当作硬截止。</p>
+<p>对应标尺第 3、10 条。</p>
+<h3 id="312">3.12 第十二类：污染与泄题</h3>
+<p><strong>问题是什么。</strong> 评测材料可能已被模型见过或可以被搜到，主要有三种情况：</p>
+<ul>
+<li>题目、答案、评分项，或"看对图"的标准答案明文公开，可以被搜到，也可能进入训练语料；</li>
+<li>没有闭卷基线，分不清分数是查出来的，还是本来就记得的；</li>
+<li>题目取自流传多年的老数据集。</li>
+</ul>
+<p>18 个工具中，只有 4 个做了某种闭卷检查（见第四节第 3 项）。</p>
+<p><strong>出现在哪些工具中</strong>：7 个，共 9 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L7</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D10</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M2</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 12</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D12、D13</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F6、F17</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>From Simple QA。</strong> 去掉工具以后，三种问法下闭卷平均仍能拿到开卷分数的约 79%、76%、77%；只看本该靠搜索才能拿到的证据检查点，也约有 75%。论文却据此说题目"must instead recover through deep search"，并且没有用闭卷结果来筛题。出处：From Simple QA 记录第 4.3 节；F6 为复算。</li>
+<li><strong>MMDeepResearch-Bench。</strong> "看对图"一项的文字版标准答案 <code>quiz_vef.jsonl</code>，与题目放在同一个公开数据集中，无需登录即可下载。出处：MMDeepResearch-Bench 记录第 5 节；M2 为复算。</li>
+<li><strong>DeepResearch Bench II。</strong> 屏蔽规则写在提示词里，"等于告诉智能体原文标题"；泄漏检测只在报告引用了被屏蔽文章时才触发；评分项 2025 年 11 月起就在代码仓库公开；没有不联网基线。出处：DeepResearch Bench II 记录第 4.3 节、第 5 节；D10 为自述加推断。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：9 条中，含自述 5 条，含复算 5 条，含推断 5 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 9 条，其中兼影响经得起复核 2 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 7 条，其中 DeepResearch Bench II D10 为设计缺陷加缺证据，From Simple QA F6 为设计缺陷加解读过度；
+- 缺证据 2 条：DeepResearch-9K D13、From Simple QA F17。</p>
+<p><strong>记录之间的不一致。</strong> 同样是"评分项或标签明文公开"，DRACO 记录标为设计缺陷（问题 12）；DeepFact 记录和 MiroEval 记录只在第 5 节写明风险，没有编号。</p>
+<p><strong>张力。</strong> Expert Consulting、FinResearchBench II、LifeSearch、DailyReport 四份记录都指出：题目不公开，眼下避免了污染，代价是无法复核；而一旦按承诺公开，这种保护也就消失了。</p>
+<p><strong>与其他记录的矛盾。</strong> BrowseComp-Plus 记录支持 P1 时，引用了 LiveBrowseComp 的诊断数字："闭卷 pass@4 最高达 44.5%"，"删去证据文档后成绩跌到 2.3% 至 9.4%"。而 LiveBrowseComp 记录（B3、B7）指出，这组闭卷分数在原文图 2、表 1、图 7 中对不上，证据封锁诊断本身也有混杂。两份记录在这一点上的证据基础不一致，见附第 3 条。</p>
+<p>对应标尺第 8、9、10、11 条。</p>
+<h3 id="313">3.13 第十三类：按模型表现挑选题目或评分项</h3>
+<p><strong>问题是什么。</strong> 题目或评分项是按某个（或某几个）模型的表现来挑选或调整的，例如：</p>
+<ul>
+<li>只保留某个模型能找到证据的题；</li>
+<li>只用一个系统做饱和测试；</li>
+<li>题目"太容易就收紧"；</li>
+<li>按某个模型的判断加权抽样；</li>
+<li>只保留评委意见一致、并且有区分度的评分项。</li>
+</ul>
+<p>这样，"难"和"有区分度"都是相对于特定模型来定义的。这些模型在榜上的位置可能因此受到影响，而影响的方向往往无法判断。</p>
+<p><strong>出现在哪些工具中</strong>：6 个，共 7 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P2</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 8</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 8</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F2、F4</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F11</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L8</td>
+</tr>
+</tbody>
+</table></div>
+<p>DeepResearch-9K D1（测试集全部是教师模型做错的题）也有这一性质，D1 归在第十类。</p>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DRACO。</strong> 题目和评分项反复修改，直到 Perplexity 深度研究的得分低于 90%，约 45% 的题目在这一步被退回。"难"是相对于一个系统定义的，它对 Perplexity 排名的影响"可能有两种相反的影响……哪一种占上风，无法从论文判断"。出处：DRACO 记录第 4.3 节第 4 点；问题 8 为自述加推断。</li>
+<li><strong>BrowseComp-Plus。</strong> 830 道题经 o3 筛选：o3 找不到证据或给出无法抓取的网址的 261 道直接排除；而 o3 和同一家的 GPT-5，恰好是榜上成绩最好的。出处：BrowseComp-Plus 记录第 4.2 节第 4 条；P2 为推断。</li>
+<li><strong>From Simple QA。</strong> 按步骤图的节点数取前 500 道，理由是"to ensure sufficient difficulty"；论文自己又报告"None of DAG depth, node count, round count, and tool-call count shows a stable association with scores"。出处：From Simple QA 记录第 4.2 节；F11 为自述（两处原文相互矛盾）。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：7 条中，含推断 5 条，含自述 5 条，"没找到"1 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测对了东西 7 条，其中兼影响测得稳 1 条、经得起复核 1 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 缺证据 4 条：BrowseComp-Plus P2、FinResearchBench II F2、F4、LifeSearch L8；
+- 设计缺陷 2 条：DRACO 问题 8、From Simple QA F11；
+- 设计局限 1 条：DeepFact 问题 8。</p>
+<h3 id="314">3.14 第十四类：评委与被测系统同源</h3>
+<p><strong>问题是什么。</strong> 评委与被测系统同属一家，或者就是同一个模型；有的工具中，同一个模型身兼出题、写语料、当评委、当对手几个角色。记录在两个工具中找到了偏向的迹象。</p>
+<p><strong>出现在哪些工具中</strong>：有编号的 5 个工具，各 1 条，共 5 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M8</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 3</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D9</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 7</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F9</td>
+</tr>
+</tbody>
+</table></div>
+<p>另有 5 份记录提到了同源的情况，但没有编号：DeepResearch Bench II（第 4.4 节）、DR-Arena（第 5 节）、DailyReport（第 4.4 节第 3 条）、DREAM（第 5 节）、IDRBench（第 5 节）。</p>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DRACO。</strong> 以 Gemini-3-Pro 评委为基准，Sonnet-4.5 评委给两个 Claude Opus 的分数分别高出 10.3 分和 12.0 分，给其他系统的变化在 −2.7 到 +5.0 分之间。记录认为这"符合'同家族偏好'的模式，但只有一个评委、两组数，不能确定"。出处：DRACO 记录第 4.1 节第 4 点；问题 3 的差值为复算，原因为推断。</li>
+<li><strong>DR³-Eval。</strong> 论文自己承认"judge models tend to give higher scores to models from their own series"；表 7 中，Gemini 评委确实把 Gemini-2.5-Pro 的名次提前了一位。出处：DR³-Eval 记录第 4.1 节第 9 点；问题 7 为自述，名次变化为复算。</li>
+<li><strong>DeepResearch-9K。</strong> 抽实体、出题（推断）、写训练检索语料、给训练奖励、当评委、当被比较的对手，用的都是"DeepSeek-V3"。出处：DeepResearch-9K 记录第 4.1 节第 10 条；D9 为自述加推断。</li>
+</ul>
+<p><strong>反方向的证据。</strong> 有三个工具做了检验，没有看到自家偏好：
+- FinResearchBench II 依次去掉每个评委，名次只有一处近乎并列的互换；
+- MiroEval 换成 Gemini 评委，名次不变；
+- IDRBench 表 8 中，GPT-5.1 扮演用户时没有给自家研究模型加分。</p>
+<p><strong>证据等级的分布</strong>：5 条中，含推断 4 条，含自述 3 条，含复算 2 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：测得稳 3 条，测对了东西 2 条，经得起复核 1 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 缺证据 3 条：MMDeepResearch-Bench M8、DRACO 问题 3、From Simple QA F9；
+- 设计缺陷 2 条：DeepResearch-9K D9、DR³-Eval 问题 7。</p>
+<p><strong>记录之间的不一致。</strong> 同样是"评委与被测者同家族、未作检验"，DR³-Eval 记录标为设计缺陷（论文已承认），MMDeepResearch-Bench、DRACO、From Simple QA 三份记录标为缺证据，另有 5 份记录没有编号。</p>
+<h3 id="315">3.15 第十五类：发布者的利益关系未回避或未披露</h3>
+<p><strong>问题是什么。</strong> 发布者的系统出现在自己的排行榜上，而且常常排第一；题目来自自家产品的日志；核验框架是自家的。或者，有这种可能，而论文没有说明。</p>
+<p><strong>出现在哪些工具中</strong>：有编号的 4 个工具，各 1 条，共 4 条。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DRACO</td>
+<td>问题 11</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M4</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F14</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L19</td>
+</tr>
+</tbody>
+</table></div>
+<p>性质相同、但归在别的类别中的有：DeepFact 问题 2（第四类）、From Simple QA F9（第十四类）。DeepResearch-9K、DR³-Eval、LiveBrowseComp 的情况，记录没有作为利益关系讨论，见第四节第 4 项。</p>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>MiroEval。</strong> 被测系统中有 3 个是自家的 MiroThinker，H1 排第一；65 道题改写自自家产品内测阶段的用户提问；事实性核验建在自家的 MiroFlow 框架上；发布时间与 MiroThinker 的技术报告在同一个月。出处：MiroEval 记录第 5 节；M4 为自述（事实）。</li>
+<li><strong>DRACO。</strong> 10 位作者中 9 位来自 Perplexity，题目来自 Perplexity 的日志，饱和测试用的是 Perplexity 的系统，结果 Perplexity 在所有领域、所有方面都排第一；论文没有讨论这层关系，也没有请独立方复核。出处：DRACO 记录第 4.4 节第 4 点；问题 11 为自述。</li>
+<li><strong>FinResearchBench II。</strong> 第十个系统是"one held-out Internal System"，没有写名字，它的报告参与了生成和筛选评分项；论文同时声明"The authors have no competing interests to declare that are relevant to the content of this article"。出处：FinResearchBench II 记录第 5 节；F14 为自述加推断。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：4 条中，含自述 3 条，含推断 2 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：经得起复核 3 条，测对了东西 1 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 设计缺陷 2 条：DRACO 问题 11、MiroEval M4；
+- 利益关系披露不足 2 条：FinResearchBench II F14、LifeSearch L19。</p>
+<h3 id="316">3.16 第十六类：可复现</h3>
+<p><strong>问题是什么。</strong> 论文的数字无法复算，原因有几种：</p>
+<ul>
+<li>数据、代码、各系统的报告、评委的逐条输出、人工标注没有公开；</li>
+<li>5 个工具声称已公开或可复现，实际没有做到；</li>
+<li>评委退役或更换以后，新旧分数不可比；</li>
+<li>规则和权重要靠代码提交记录才能知道。</li>
+</ul>
+<p><strong>出现在哪些工具中</strong>：16 个，共 20 条。BrowseComp-Plus 和 LiveBrowseComp 不在其中；后者的记录把可复现评为"低"，但没有编号。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L10</td>
+</tr>
+<tr>
+<td>IDRBench</td>
+<td>I9、I10</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D7</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A15</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M17</td>
+</tr>
+<tr>
+<td>DRACO</td>
+<td>问题 13</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D11</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D10</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 13</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M14、M17</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 16</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E17</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R1</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F10、F13、F16</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F1</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L18</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>DailyReport。</strong> 摘要写"our dataset and code are made publicly available at https://github.com/AGI-Eval-Official/DailyReport"。2026-10-29 查看，仓库只有 <code>LICENSE</code> 和 <code>README.md</code> 两个文件，README 写"The benchmark and evaluation scripts are coming soon..."，三次提交都在 2026-06-10，此后没有推送。出处：DailyReport 记录第 1 节；R1 为复算。From Simple QA（F1）、LifeSearch（L18）、IDRBench（I9）、Expert Consulting（E17）也有声称与实际不符的情况。</li>
+<li><strong>DeepResearch Bench II。</strong> 论文所用的评委 Gemini-2.5-Pro 将在谷歌云平台退役，仓库自 2026 年 8 月起改用 GPT-5.5，现存两个排行榜，二者是否可比没有证据。出处：DeepResearch Bench II 记录第 3 节、第 5 节；D7 为自述。BrowseComp-Plus（P8）、DR-Arena（第 5 节）也换过评委。</li>
+<li><strong>LiveDRBench。</strong> 数据、评测代码和评委提示词都公开，但三个深度研究产品的原始输出没有公开，"论文的数字无法复现，人工判分也无法复核"。出处：LiveDRBench 记录第 5 节；L10 为复算。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：20 条中，含复算 11 条，"没找到"6 条，含自述 3 条，含推断 1 条；另有"自述加核对""自述加核查"各 1 条。</p>
+<p><strong>影响"可信"的哪一层</strong>：经得起复核，20 条全部如此，其中 1 条兼影响测得稳。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 缺证据 18 条；
+- 声称未做到 2 条：IDRBench I9、DailyReport R1。</p>
+<h3 id="317">3.17 第十七类：论文内部数字矛盾，文字与表格或代码不符</h3>
+<p><strong>问题是什么。</strong> 这一类包括：论文内部的数字前后矛盾；文字结论与自己的表格相反；表格中出现不可能取到的值；论文描述的计分流程，与代码或实际做法不符。</p>
+<p><strong>出现在哪些工具中</strong>：16 个，共 31 条。IDRBench 和 DRACO 的表格经核对，内部自洽。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>L12</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>P10、P11</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>D11</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>A9、A13、A14</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>M5、M6、M13、M18</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>D5、D6、D8、D14</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>D6、D7</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>问题 4、5</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>M3、M13、M15</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>问题 6、15</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>E14</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>B3、B4</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>R6</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>F12</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>F16</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>L6</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>最有力的证据：</strong></p>
+<ul>
+<li><strong>Expert Consulting。</strong> 第 3.3 节、附录 F.1 正文和表 16 标题都写"Claude &gt; Gemini &gt; o3"，与表 4、表 10 的"o3 &gt; Gemini &gt; Claude"正好相反。附录 H.1.4 的 ACCEPT 率 9.5% 和 21.4%，恰好等于 4/42 和 9/42，记录推断是 42 道题旧版本的残留。出处：Expert Consulting 记录第 4.4 节第 3 条；E14 为复算。</li>
+<li><strong>LiveBrowseComp。</strong> 按图 2，Seed 2.0 在 BrowseComp 上带工具的 pass@4 为 72.5；表 3 中它带工具的 avg@4 却是 77.3。"同一批题、同一设置下，pass@4 不可能低于 avg@4"。出处：LiveBrowseComp 记录第 4.4 节第 5 条；B3 为复算。</li>
+<li><strong>DeepResearch-9K 与 MMDeepResearch-Bench：描述的流程与实际不符。</strong> DeepResearch-9K 的论文说，训练奖励由 DeepSeek-V3 给出；公开代码对本数据集用的却是精确匹配（<code>qa_em.compute_score_em</code>）（DeepResearch-9K 记录第 4.1 节第 9 条；D7 为复算，读公开代码）。MMDeepResearch-Bench 的作者事后说明，发表的排行榜是分批算完、"fused offline"的，按原因折扣的"无法评分"处理没有使用（M6，自述、复算）。</li>
+</ul>
+<p><strong>证据等级的分布</strong>：31 条中，含复算 28 条，含自述 5 条，含推断 3 条。这是证据最硬的一类。</p>
+<p><strong>影响"可信"的哪一层</strong>：经得起复核 29 条，测得稳 3 条，测对了东西 1 条。</p>
+<p><strong>设计缺陷还是缺证据</strong>：
+- 报告错误一类 22 条：报告错误、报告不清、文字与数据或做法不一致、整理疏漏、声称与实现不符、实施与报告问题、缺说明、报告质量问题；
+- 缺证据 9 条：口径或计算方法未交代一类。</p>
+<h3 id="318">3.18 个别但重要</h3>
+<p>以下 8 条只出现在一个工具中，但对比赛评审有直接的含义。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具与编号</th>
+<th>问题</th>
+<th>证据（引文与位置）</th>
+<th>证据等级</th>
+<th>影响的层</th>
+<th>记录的定性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IDRBench I1</td>
+<td>模拟用户被指示把报告引向配对报告，相当于把评分目标交给了对话的另一方</td>
+<td>论文图 8 的提示词："guide them toward producing a final report as similar as possible to the expected report"；"ALWAYS steer toward the major focus of the expected report"。正文第 3.1 节的描述没有提到这条目标（IDRBench 记录第 4.3.3 节）</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>DeepFact 问题 3</td>
+<td>只有在微型金标准上胜过现任标准的核查器，才能触发审核；其他核查器没有机会挑战标签，现任最好的核查器在定义标准答案时占先</td>
+<td>"we trigger audits only when a challenger verifier outperforms the current benchmark on the micro-gold set"；"As no baseline outperforms DeepFact-Eval on micro-gold, we do not run benchmark evolution"（论文第 6.5、7.2 节；DeepFact 记录第 4.4 节第 2 点）</td>
+<td>自述</td>
+<td>经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>FinResearchBench II F3</td>
+<td>"更有区分度"只是分数拉得更开，不是排得更准</td>
+<td>用不用区分度过滤，名次完全相同（斯皮尔曼系数 1.0），只是首尾差距在 25.63 与 36.35 个百分点之间变化（论文第 5.3 节）；被删的"所有产品都不通过"的项只有 31 条，内容没有公开（FinResearchBench II 记录第 4.3 节第 3 层）</td>
+<td>推断（依据自述数字）</td>
+<td>测对了东西</td>
+<td>论证不成立</td>
+</tr>
+<tr>
+<td>LiveBrowseComp B7</td>
+<td>证据封锁诊断把"搜不到证据时不下结论"算作"搜索有害"</td>
+<td>带工具时的默认系统提示词要求"avoid unsupported speculation"（论文附录 C.1）；没有报告同一索引、不删证据的正常条件（LiveBrowseComp 记录第 4.3 节 A 第 5 条、第 9 节第 3 条）</td>
+<td>自述加推断</td>
+<td>测对了东西</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>DailyReport R9</td>
+<td>回避判断可以得分</td>
+<td>指令遵循提示词："If the scoring criteria require explicitly providing a certain metric, and the delivery document explicitly states 'this metric cannot be obtained', consider the scoring criteria as satisfied."（DailyReport 记录第 4.1 节第 6 条）</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计取舍，与"敢于下判断"相冲突</td>
+</tr>
+<tr>
+<td>Expert Consulting E15</td>
+<td>致命缺陷规则过宽：任何一项 0 分都清零，包括格式项</td>
+<td>严格版与宽松版相比，Claude 少 11.65 分，o3 只少 0.06 分（论文表 10）；而"任一项为 0"这一条在 ACCEPT 上"caught zero unique cases"（附录 H.1.2）（Expert Consulting 记录第 4.4 节第 4 条、第 6 节）</td>
+<td>自述</td>
+<td>测对了东西</td>
+<td>设计问题（零分规则对任何一项都生效）</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench M4</td>
+<td>计分权重由评委按每份报告现场生成，"不同报告之间用的是不同的计分公式"；公式系数也没有印出</td>
+<td>写作三项的权重、两条通道的混合系数、引用三项的权重，都由评委生成（论文表 4；MMDeepResearch-Bench 记录第 4.1 节第 1 条）</td>
+<td>自述、复算</td>
+<td>测得稳；经得起复核</td>
+<td>设计缺陷</td>
+</tr>
+<tr>
+<td>DR-Arena A6</td>
+<td>两两比较时不交换甲乙位置</td>
+<td>论文没有提到交换位置；精读页依据公开记录查得，每一对选手在全部对局中位置固定（DR-Arena 记录第 4.1 节第 5 条）</td>
+<td>复算（精读页 2026-10-28）</td>
+<td>测得稳</td>
+<td>设计缺陷</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="bean">四、像 Bean 等人那样的统计</h2>
+<p><strong>口径。</strong> 框架第 1.1 节引用的 Bean 等人 2025 年的统计是：445 个评测基准中，只有 16.0% 用了不确定性估计或统计检验。本节的统计对象是 18 个工具，样本远小于 445；而且 Bean 等人只覆盖会议论文，本节多数是预印本，所以两者不能直接比较。各项统计都依据记录中写明的事实，口径在每项中说明。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>统计项</th>
+<th>数目（共 18）</th>
+<th>工具与说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 报告了评委与人工判断的一致性数字</td>
+<td>11</td>
+<td>见下文第 1 项</td>
+</tr>
+<tr>
+<td>2. 报告了置信区间或统计检验</td>
+<td>针对主要分数或名次差的 4 个；另有 2 个的检验与名次无关；合计 6 个</td>
+<td>见下文第 2 项</td>
+</tr>
+<tr>
+<td>3. 做了闭卷检查</td>
+<td>4</td>
+<td>见下文第 3 项</td>
+</tr>
+<tr>
+<td>4. 发布者或作者的系统出现在自己的榜上</td>
+<td>确定 5 个；可能 2 个（推断，未核实）；另有 2 个的被测系统都装在作者自己的框架里</td>
+<td>见下文第 4 项</td>
+</tr>
+<tr>
+<td>5. 数据和代码都公开</td>
+<td>8</td>
+<td>见下文第 5 项</td>
+</tr>
+<tr>
+<td>6. 论文内部数字自相矛盾</td>
+<td>16</td>
+<td>见下文第 6 项</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>1. 评委与人工判断的一致性（11 个）</strong></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>数字与样本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>作者本人人工判分，与 GPT-4o 对照；3 个系统、8 个类别，只有类别平均的 F1 分数</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>10 份报告；Gemini-2.5-Pro 准确率 91.75、F1 89.57；仓库另报 GPT-5.5 在 738 条判断上的科恩卡帕系数为 0.7993</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>2 名标注员审核 30 场、64 轮，卡帕系数 0.91，不盲；另有 50 场交叉考官对照，卡帕系数 0.901 和 0.839</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>12 位专家，每对报告 3 人；评分系统的配对一致率 73.5，人与人 69.8；一共比较了多少对，没有写</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>测试集 621 句，DeepFact-Eval 准确率 83.4%；每句标签由一人定</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>人类排名研究，5 道题、5 人、10 个系统；论文报告 τ = 0.91，记录复算为 0.867</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>皮尔逊相关系数 0.78；正文说 50 份报告、4 位专家，附录说 30 份、2 位专家，互相矛盾</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>指令遵循：评委准确率 96.5%，人工 88.4%，记录中没有见到样本量；用户偏好：300 个样本，卡帕系数 0.859</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>3 位分析师、4,052 个样本，多数票的卡帕系数 0.8076</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>在 100 道审核过的题上，皮尔逊相关系数 0.884 至 0.916；人工评分的来源和规模没有说明</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>20 道题、402 条评分项，评委准确率 84.25%；人工排序研究 30 道题、7 个系统、210 份报告，斯皮尔曼系数 0.89</td>
+</tr>
+</tbody>
+</table></div>
+<p>没有报告的 7 个：
+- BrowseComp-Plus：只有标注员交叉抽查"over 80%"一句；
+- IDRBench：真人对照针对的是模拟用户，2 人、10 道题；
+- DRACO：只有"internal human–LLM alignment study"一句，没有数字；
+- DREAM：人工只评了评分方案的条目；τ = 0.6 是与另一个大语言模型指标对照；
+- DeepResearch-9K；
+- Expert Consulting：专家本身就是评分者，没有评分者间一致性；"90.5% concordance"没有定义；
+- LiveBrowseComp。</p>
+<p>在报告了的 11 个中，记录指出对照不独立或条件不明的有 8 个：
+- DR-Arena：标注员先看了考官的判定；
+- DailyReport：标签裁决参考了评委，用户先看了子任务结果；
+- DeepResearch Bench II：选型和验证用同一组样本；
+- LiveDRBench：人工判分者是作者本人；
+- LifeSearch：用同一批标签选评委、报准确率；
+- MiroEval：评分人看了过程记录；
+- DeepFact：前后一致率是在看到智能体理由的条件下测的；
+- DR³-Eval：人工评分时是否看到了自动评分，没有说明。</p>
+<p><strong>2. 置信区间或统计检验（6 个）</strong></p>
+<p>针对主要分数或名次差的 4 个：
+- DeepFact：以报告为单位的配对重抽样，给出 95% 置信区间；
+- DR³-Eval：10,000 次自助法、威尔科克森检验 p = 0.0046，重抽样单位没有说明；
+- Expert Consulting：威尔科克森检验加邦费罗尼校正、McNemar 检验，部分指标有自助法区间；
+- IDRBench：只对七个模型合并后的交互提升给了自助法区间，没有每个模型的区间。</p>
+<p>检验与名次无关的 2 个：
+- DeepResearch Bench II：语言、话题的单因素方差分析；
+- DR-Arena：轮数与实力差的相关，p = 0.045。</p>
+<p>只报告重复运行或重复判卷标准差的有 DRACO、MiroEval、DR³-Eval、DailyReport、LifeSearch。</p>
+<p>按 4 个算是 22%，按 6 个算是 33%，都高于 Bean 等人的 16.0%。但记录指出，DR³-Eval 的检验单位不明，IDRBench 的区间不覆盖重复运行的波动；而且样本小，不宜据此说这一领域做得更好。</p>
+<p><strong>3. 闭卷检查（4 个）</strong></p>
+<ul>
+<li>LiveBrowseComp：核心设计，9 个模型在新题上的闭卷 avg@4 为 0 至 2.0；</li>
+<li>From Simple QA：无工具模式，事后报告，没有用来筛题；</li>
+<li>MiroEval：只对 35 道自动生成的题做"不联网答不好"的过滤，65 道内测改写的题没有这一步；</li>
+<li>DR³-Eval："不检索"条件，20 道题、2 个模型。</li>
+</ul>
+<p>不计入的两种情况：
+- MMDeepResearch-Bench 表 1 中有纯文本、不联网的模型，但记录说"没有把它当作对照来扣除'凭已有知识作答'的部分"；
+- BrowseComp-Plus 的全知测试方向相反，检验的是"给齐证据能不能答对"。</p>
+<p><strong>4. 发布者或作者的系统出现在自己的榜上</strong></p>
+<p>确定的 5 个：
+- DRACO：Perplexity，排第一；
+- MiroEval：MiroThinker-H1，排第一；
+- DeepFact：DeepFact-Eval，排第一；它评的是核查器；
+- From Simple QA：作者含阿里巴巴 Token Hub，10 个被测模型中 4 个是 Qwen 系列，评委 Qwen3.7-Max 本身也被测；
+- DeepResearch-9K：作者用自己的框架训练的模型，在图 4 中被称为"state-of-the-art"；记录第 5 节没有把这一点列为利益关系。</p>
+<p>可能的 2 个（推断，未核实）：
+- LifeSearch：Hy4 Preview 第三、Hy3 第十，很可能是腾讯混元系列；
+- FinResearchBench II：未具名的内部系统。</p>
+<p>被测系统都装在作者自己的框架里的 2 个：
+- DR³-Eval：DR³-Agent，与 DeerFlow 的对比对自己有利；
+- LiveBrowseComp：REDSearcher。</p>
+<p>另有两点：BrowseComp-Plus 的排行榜由作者所在组织维护，87 条成绩中 52 条由作者团队自己跑，但作者没有自家模型参评；LiveDRBench 排第一的 OpenAI Deep Research 与 Microsoft Copilot 有集成关系。</p>
+<p><strong>5. 数据和代码都公开（8 个）</strong></p>
+<p>LiveDRBench、BrowseComp-Plus、DeepResearch Bench II、MMDeepResearch-Bench、DRACO、DeepResearch-9K、MiroEval、DR³-Eval。</p>
+<ul>
+<li>其中公开了被测系统输出或逐题结果的：BrowseComp-Plus（逐题运行记录）、DeepResearch Bench II（7 个系统的报告，缺通义）、MiroEval（逐题评分，没有报告原文）、DeepResearch-9K（教师轨迹）。</li>
+<li>LiveDRBench、MMDeepResearch-Bench、DRACO、DR³-Eval 没有公开被测系统的报告。</li>
+</ul>
+<p>只公开了一部分的 5 个：
+- DR-Arena：代码和对局记录公开，但缺信息树数据和爬树代码，也没有许可证；
+- DeepFact：数据公开，代码只有精简版，没有许可文件；
+- LiveBrowseComp：数据加密公开，评测代码没有找到；
+- From Simple QA：只有代码；
+- Expert Consulting：只有运行代码，评分器在仓库之外，数据没有公开。</p>
+<p>都没有公开的 5 个：IDRBench、DREAM、DailyReport、FinResearchBench II、LifeSearch。</p>
+<p>声称公开或可复现、而与实际不符的 5 个：DailyReport、From Simple QA、LifeSearch、IDRBench、Expert Consulting。</p>
+<p><strong>6. 论文内部数字自相矛盾（16 个）</strong></p>
+<p>每个工具举一例：</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LiveDRBench</td>
+<td>"31 queries"应为 36；正文 0.158，表 2 为 0.150</td>
+</tr>
+<tr>
+<td>BrowseComp-Plus</td>
+<td>"约 10 倍"实为约 97.5 倍</td>
+</tr>
+<tr>
+<td>DeepResearch Bench II</td>
+<td>评分项 9,430 条与 9,415 条</td>
+</tr>
+<tr>
+<td>DR-Arena</td>
+<td>一致率不可能以 50 为分母；表 4 中有无并列时取不到的相关系数</td>
+</tr>
+<tr>
+<td>MMDeepResearch-Bench</td>
+<td>表 3 的分项合不出总分</td>
+</tr>
+<tr>
+<td>DREAM</td>
+<td>来源权威性的汇总值按任何平均方式都算不出</td>
+</tr>
+<tr>
+<td>DeepResearch-9K</td>
+<td>图 4 的 9 个数中，7 个不能写成"答对题数除以 1,774"</td>
+</tr>
+<tr>
+<td>DeepFact</td>
+<td>表 2 中 SmolAgents 一行的准确率与其精确率、召回率不自洽</td>
+</tr>
+<tr>
+<td>MiroEval</td>
+<td>τ 报 0.91，复算为 0.867</td>
+</tr>
+<tr>
+<td>DR³-Eval</td>
+<td>人工对照的规模，正文与附录矛盾；表 7 有多处错误</td>
+</tr>
+<tr>
+<td>Expert Consulting</td>
+<td>排序方向的文字与表格相反，另有大量矛盾</td>
+</tr>
+<tr>
+<td>LiveBrowseComp</td>
+<td>pass@4 低于 avg@4</td>
+</tr>
+<tr>
+<td>DailyReport</td>
+<td>不加权的卡帕系数被称为"加权"</td>
+</tr>
+<tr>
+<td>FinResearchBench II</td>
+<td>图 2 的百分比不可能对应 104 道题</td>
+</tr>
+<tr>
+<td>From Simple QA</td>
+<td>正文说"large drops for all ten models"，而最小降幅只有 0.05；"每轮 20 道"与"10 道的平均"两种说法</td>
+</tr>
+<tr>
+<td>LifeSearch</td>
+<td>表 5 的名次与表 4 的总分顺序有两处不同</td>
+</tr>
+</tbody>
+</table></div>
+<p>IDRBench 和 DRACO 的表格经核对内部自洽。但 IDRBench 正文对模拟用户的描述与提示词原文不符；DRACO 原文"排名稳定"的结论说得过宽。</p>
+<hr />
+<h2 id="23_1">五、复核第三稿第 2.3 节的五点初步观察</h2>
+<p>先说明范围：第二阶段审视了 18 个评测工具和 3 篇测量研究。第三稿所说的"23 篇"中，另有 2 篇综述没有在第二阶段读。所以以下复核只覆盖 21 篇。</p>
+<h3 id="1">观察 1：修正</h3>
+<p><strong>原文。</strong>"23 篇中，只有 LiveDRBench 给出了可以检验的深度研究定义。没有一篇定义过'研究'或'评测基准'本身。"</p>
+<p><strong>依据：</strong></p>
+<ul>
+<li><strong>LiveDRBench 的定义可以检验，但没有被检验。</strong> 它的定义 1 是 18 个工具中唯一带明确门槛的形式定义。但两条门槛（专家用工具 10 分钟以上、20 个信息单元）都是"we posit"，论文没有请人计时，也没有统计每道题需要多少信息单元。记录判为"按论文自己的定义，这 100 道题是否都属于深度研究，缺证据"。出处：LiveDRBench 记录第 4.3 节 A；L4。</li>
+<li><strong>另有几个工具给出了可操作的定义。</strong> 几份记录按 Bean 检查项"给出精确、可操作的定义"判为"部分做了"：</li>
+<li>DeepResearch Bench II 把深度研究定义为信息召回、分析、呈现三部分，"可操作，但没有说明为什么是这三部分"；</li>
+<li>MMDeepResearch-Bench 第 3 节给出了"多模态深度研究"的定义；</li>
+<li>From Simple QA 有一段刻画，并操作化为"证据节点加分析节点"的步骤图。</li>
+</ul>
+<p>出处：各记录第 4.3 节。DR-Arena 沿用 Lan 等人"depth refers to the search steps required"的定义（DR-Arena 记录第 4.3 节）。这些定义是否"可以检验"，记录没有判断。
+- <strong>后半句没有被推翻，但也没有专门核查。</strong> 18 份记录中，没有发现哪个工具定义了"研究"或"评测基准"本身；但第二阶段并没有逐篇专门检查这一点。DeepResearch-9K 记录讨论过"这里的 benchmark 是不是只是数据集"，结论是论文有明确的评测声称，应当按评测基准来审视（第 2 节）。这是记录的判断，不是论文给出的定义。</p>
+<p><strong>复核结论：修正。</strong> 应改为："18 个工具中，LiveDRBench 给出了唯一带门槛的形式定义，但门槛是假定，没有检验；另有至少 3 个工具给出了可操作的定义，记录评为'部分做到'。没有发现哪个工具定义了'研究'或'评测基准'，但这一点没有逐篇专门核查。"</p>
+<h3 id="2">观察 2：修正（补充）</h3>
+<p><strong>原文。</strong>"'深'至少有六种用法：搜得多、推理跳数多、推理难度大、过程长、产出长、需要专业知识。有的评测要求交付长报告，有的只要一个短答案。"</p>
+<p><strong>依据：</strong></p>
+<ul>
+<li><strong>交付形式的说法确认。</strong> 交付短答案或结论清单的有 LiveDRBench（JSON 格式的断言清单）、BrowseComp-Plus、DeepResearch-9K、LiveBrowseComp、DR-Arena（有字数上限的短回答）；其余多数交付报告；DeepFact 评的是报告中的单句（各记录第 3 节）。</li>
+<li><strong>六种用法在记录中都能找到对应：</strong></li>
+<li>推理跳数多：DR-Arena 的"depth refers to the search steps required"；</li>
+<li>搜得多：LiveDRBench 的"high fan-out over concepts"，再加上推理强度；DeepResearch-9K 的 L3 要求"a minimum of 15 search iterations"；</li>
+<li>需要专业知识：From Simple QA 自称"professionally deep"；Expert Consulting 测的是"decision-grade research a management consultant gets paid to do"。</li>
+<li>
+<p><strong>记录中还出现了六种之外的两种用法：</strong>
+  1. <strong>把"深"当作报告分析质量的一个评分维度。</strong> 例如 DRACO 的"Breadth and Depth of Analysis"、MMDeepResearch-Bench 洞察力一项的"depth beyond surface summary"、DR³-Eval 的"深度质量"、Expert Consulting 分析严谨性中的"sufficiently deep"、MiroEval 过程层的"Analytical Depth"。这种用法最接近第一阶段的定义。但记录指出，它们都是一个笼统的整体打分，或者与广度合在一起打分（DRACO 问题 16；MMDeepResearch-Bench 记录第 4.3 节第 10 条；DR³-Eval 记录第 4.1 节第 7 点）。
+  2. <strong>把"难"（从而把"深"）定义为"当前某个模型做不出"。</strong> 例如：</p>
+<ul>
+<li>DeepResearch-9K 的 Hard 子集是教师模型做错的题，记录称"选出来的是'这一个教师模型不会的题'，不是'难题'"；</li>
+<li>DRACO 的饱和测试以 Perplexity 得分低于 90% 为准；</li>
+<li>LifeSearch 规定"overly easy tasks are tightened"；</li>
+<li>LiveBrowseComp 和 From Simple QA 用"模型记不住、必须去搜"来界定题目。</li>
+</ul>
+<p>见第三节第十三类。</p>
+</li>
+</ul>
+<p><strong>复核结论：修正。</strong> 后半句确认。"六种用法"不完整，至少还应加上"报告分析层面的深"和"相对于某个模型的难"两种。</p>
+<h3 id="3">观察 3：修正</h3>
+<p><strong>原文。</strong>"各评测基准大多检验分数是否稳定，很少检验分数是否测到了想测的能力。"</p>
+<p><strong>依据：</strong></p>
+<ul>
+<li><strong>前半句需要限定。</strong> 多数工具确实做了某种稳定性检查，但记录指出，这些检查大多只针对评委一侧（同一个评委重判、换评委），而且范围常常很小：</li>
+<li>DRACO 5 次判卷的标准差，"只反映同一个评委在温度 0.2 下的随机波动"（DRACO 记录第 4.1 节第 2 点）；</li>
+<li>MiroEval 的重跑只做了 4 个系统，只在多模态组（M8）；</li>
+<li>MMDeepResearch-Bench 换评委只换了一个系统的报告（M8）；</li>
+<li>DailyReport 的重复运行只覆盖 3 个系统，也不知道是否重新生成了报告（R13）。</li>
+</ul>
+<p>被测智能体重复运行和题目抽样带来的波动，多数工具没有估计，名次几乎都不给区间（第三节第二类，17 个工具）。
+- <strong>后半句说"很少检验"不准确。</strong> 至少 13 个工具做过某种效度检验：
+  - BrowseComp-Plus：全知测试；
+  - IDRBench：真人对照；
+  - DR-Arena：与人类偏好榜的相关；
+  - MMDeepResearch-Bench：与专家的配对比较；
+  - DREAM：扰动实验，以及与 RACE 的对照；
+  - DeepFact：迁移到外部数据集；
+  - MiroEval：人类排名研究，以及过程与结果的相关；
+  - DR³-Eval：资料库与实时网络的对照，以及不检索的对照；
+  - Expert Consulting："90.5% 一致"；
+  - LiveBrowseComp：闭卷基线，以及人类解出率；
+  - DailyReport：与用户评分的对照；
+  - From Simple QA：闭卷对照；
+  - LifeSearch：人工排序研究。</p>
+<p>问题不在于做得少，而在于记录认为其中多数不成立：对照物不独立、验证者看过算法结果、规模太小，或者对照的是另一个大语言模型指标（第三节第一、五类）。记录明确认为站得住的，只有闭卷和全知这类少数检查（第三节第五类末尾）。
+- <strong>记录还指出，稳健性检查本身证明不了效度。</strong> MiroEval 记录写："稳健性检查证明的是'名次在几种评委设置下不变'，不是'分数判得对'"（第 4.1 节）。DREAM 记录写："敏感不等于判得准"（第 4.1 节）。</p>
+<p><strong>复核结论：修正。</strong> 应改为："多数工具检验的是评委一侧的稳定，智能体重复运行和题目抽样的波动很少估计；效度检验并不少见，但多数检验的对照物不独立或规模太小，站得住的只有闭卷和全知这类少数检查。"</p>
+<h3 id="4">观察 4：前半确认，后半修正</h3>
+<p><strong>原文。</strong>"能直接拿来给一批报告打分的现成工具很少，而且各自只覆盖一个侧面。"</p>
+<p><strong>依据：</strong></p>
+<ul>
+<li><strong>前半句确认。</strong> 没有一份记录认为某个工具可以原样用于我们第一轮的报告排名。各记录第 9 节给出的都是"可以借鉴的做法"和"不能照搬的地方"，例如：</li>
+<li>短答案类的 LiveDRBench、BrowseComp-Plus、LiveBrowseComp，"不能作为主评分"；DeepResearch-9K"不能作为我们的评测工具"；</li>
+<li>IDRBench："它的指标不能用来给我们的报告排名"；</li>
+<li>FinResearchBench II："不能把这套流程直接用于比赛"；</li>
+<li>From Simple QA："题目不能直接拿来用……可以借鉴的是方法"；</li>
+<li>MMDeepResearch-Bench："即使直接拿它的总分来排，也有一半名义权重落在用不上的部分上"。</li>
+</ul>
+<p>另外，有 5 个工具既没有公开数据，也没有公开代码（第四节第 5 项）。
+- <strong>后半句需要修正。</strong> 按第二节的覆盖表，多数工具并不是只覆盖一个侧面，而是覆盖了七个核心环节中的多个，只是每个环节只评一部分：126 格中只有 7 格是"评"；DRACO、DREAM、MiroEval、DailyReport、LifeSearch 在 6 到 7 个环节上都有"部分"。各工具共同缺的，正是第一阶段第 3.5 节预计的那几项：查找过程交代、来源甄别、区分事实和判断、说明把握、考虑其他解释（第二节 2.4）。
+- <strong>对第一阶段概念说明的修正意见。</strong> 第一阶段第 3.2 节的初步表，把 DREAM、MMDeepResearch-Bench、DeepResearch Bench II 列为"评估来源的质量和可信度"的例子。记录核对后的结果是：
+  - DeepResearch Bench II 是"声称了，没做到"（D3），记录明说"初步表应当据此修正"；
+  - MMDeepResearch-Bench 称评"source quality"，但三项引用指标中没有这一项（M16）；
+  - DREAM 的来源权威性只看域名（附录 C.4）。</p>
+<p>这三条是对第一阶段概念说明的修正意见，不属于本文第六节汇总的精读页勘误。</p>
+<p><strong>复核结论：前半确认，后半修正。</strong> 后半应改为："多数工具覆盖了多个核心环节，但每个环节只评一部分，而且缺口集中在同几项。"</p>
+<h3 id="5">观察 5：确认，并扩大范围</h3>
+<p><strong>原文。</strong>"有几篇的数字我们复算时对不上（例如 MiroEval 报告的排名相关系数、DREAM 表格中的数字）。这说明论文的自述不能直接采信。"</p>
+<p><strong>依据：</strong></p>
+<ul>
+<li><strong>两个例子都被本轮记录再次确认。</strong></li>
+<li>MiroEval：按表 14 的名次重算，τ = (42 − 3) ÷ 45 = 0.867，论文写 0.91；"过程预测结果"的 0.88，按表 3 算得 0.859。出处：MiroEval 记录第 4.1、4.3 节；M1、M7 为本次复算，与精读页一致。</li>
+<li>DREAM：表 10 中来源权威性的汇总值，按任何平均方式都算不出；引用完整性按附录的公式和图 9 的坐标，算不出表中的数值。出处：DREAM 记录第 4.1、4.4 节；D5、D6 为本次复算。</li>
+<li><strong>范围比原来说的大。</strong> 18 个工具中，16 个被发现论文内部数字或文字与表格自相矛盾（第四节第 6 项）。</li>
+<li><strong>不能直接采信的不只是数字。</strong> 有 5 个工具声称已公开数据或代码、或者可以复现，实际没有做到（第三节第十六类）。</li>
+<li><strong>需要补一条限定。</strong> 记录也复算出了大量与论文一致的数字，例如：</li>
+<li>IDRBench 表 1、2、3、8、9 的平均分和合计；</li>
+<li>DRACO 按领域占比加权后与总分一致；</li>
+<li>FinResearchBench II 的过滤保留率和 98.67%；</li>
+<li>LifeSearch 的相关系数；</li>
+<li>Expert Consulting 的 McNemar p 值；</li>
+<li>MiroEval 的表 3，精读页用公开的逐题分重算，全部一致。</li>
+</ul>
+<p>所以准确的说法是"需要逐项核对"，而不是"一律不可信"。另外，记录中的"复算"多数只是对论文印出的数字做算术，并没有用原始数据重算。</p>
+<p><strong>复核结论：确认。</strong> 并把范围扩大到 16 个工具，同时补上"复算多停在算术层面"这一限定。</p>
+<hr />
+<h2 id="_5">六、精读页勘误汇总</h2>
+<p><strong>范围。</strong> 只汇总，没有修改任何精读页。12 份有精读页的记录在末尾写了"精读页勘误"一节；DRACO、DeepFact、DR³-Eval、Expert Consulting、FinResearchBench II、LifeSearch 六个工具是新读的，没有精读页。精读页都在 <code>notes/</code> 目录下。</p>
+<p><strong>"应改为"一栏开头的类型标注：</strong>
+- 〔更正〕：精读页的说法错误或不准确；
+- 〔补充〕：精读页有遗漏，或信息需要更新；
+- 〔存疑〕：本轮无法确定，或未能核实；
+- 〔确认〕：本轮核对后确认精读页的说法。</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>精读页文件</th>
+<th>原说法</th>
+<th>应改为</th>
+<th>依据所在的记录</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>notes/2508.04183_LiveDRBench.html</code></td>
+<td>第 7 节"弱在哪"把"① 判分"评为"强"，理由是"GPT-4o 判的和作者人工判的几乎一致"</td>
+<td>〔更正〕改为"中"，并注明一致性证据只到总体平均：表 11 与表 2 有三类完全相同、一类名次翻转，人工判分者是作者本人</td>
+<td><code>stage2-records/2508.04183_LiveDRBench.md</code> 第 4.1 节、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 4 节"权重：公式允许给重要的断言加权，论文的实验里没有用"</td>
+<td>〔更正〕"论文没有说明是否使用"</td>
+<td>同上，精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>抬头"ICLR 2026"</td>
+<td>〔更正〕标为"未核实"：PDF、arXiv 元数据和 GitHub 说明文件中都没有找到录用信息</td>
+<td>同上，第 1 节、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 9 节对照表时效一栏"声称会更新，实际没有"</td>
+<td>〔更正〕"提供了更新办法，没有执行"：原文是"enables easy addition"和"provide a mechanism to refresh"，没有承诺定期更新</td>
+<td>同上，第 5 节、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td><code>notes/2508.06600_BrowseComp-Plus.html</code></td>
+<td>第 3 节筛选表"人工核验"一行"175 道没通过……另有 42 道要用谷歌地图查距离；13 道答案不唯一或有歧义"</td>
+<td>〔更正〕把"另有"改为"其中包括"。1,005 减 830 等于 175，附录 C 的这几类应包含在 175 道之内（推断）</td>
+<td><code>stage2-records/2508.06600_BrowseComp-Plus.md</code> 第 3 节、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 5 节"发现 2""大多数模型每道题少搜 1–3 次"</td>
+<td>〔更正〕"少搜约 1 至 2 次"：按表 1，7 个商业模型减少 0.79 至 1.96 次，其中 3 个不到 1 次</td>
+<td>同上，第 4.4 节第 3 条、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>抬头"ACL 2026"</td>
+<td>〔更正〕标为"未核实"</td>
+<td>同上，第 1 节、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>抬头"GitHub（MIT 许可）"</td>
+<td>〔补充〕补注：许可文件 2026-05-28 才加入仓库，此前没有许可文件</td>
+<td>同上，第 1 节、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td><code>notes/2601.06676_IDRBench.html</code></td>
+<td>第 7.2 节第三组重跑对照：表 4 的"All"对表 9，Gemini-2.5-Pro 78.39 对 79.29</td>
+<td>〔更正〕这一组不一定成立，表 4 的"All"绕过了评估者，不一定是默认配置；确定是同一配置的只有 GPT-5.1（差 0.98）和 Grok-4.1-Fast（差 1.79）两组</td>
+<td><code>stage2-records/2601.06676_IDRBench.md</code> 第 4.1 节第 6 条、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 0、7.2 节"前三名落在重跑波动范围内"</td>
+<td>〔更正〕"与重跑波动同一量级，证据不足以排序"：重跑差值来自 30 题子集，100 题时约为 0.55 倍；第四名 DeepSeek-V3.2 与第三名只差 0.33 分，应一并看作同档</td>
+<td>同上，第 4.4 节、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 0、4 节"五项指标全是和目标报告比相似度"</td>
+<td>〔更正〕五项中四项量与配对报告的文本相似，一项（LLM-ACS）量对原题要点的相对覆盖</td>
+<td>同上，第 4.1 节第 4 条、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 3 节对字面泄露检查的描述</td>
+<td>〔补充〕写明只统计了英文题</td>
+<td>同上，第 4.3.3 节、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 3 节对模拟用户提示词的转述："只给贴着问题、高层次的回答，不提报告本身，也不添加原本没有的要求"</td>
+<td>〔补充〕补入图 8 原文"guide them toward producing a final report as similar as possible to the expected report"和"ALWAYS steer toward the major focus of the expected report"</td>
+<td>同上，第 4.3.3 节、精读页勘误第 5 条</td>
+</tr>
+<tr>
+<td><code>notes/2601.08536_DeepResearch-Bench-II.html</code></td>
+<td>"22 个领域里 15 个只有 2–6 题"</td>
+<td>〔更正〕17 个领域只有 2 至 6 道题</td>
+<td><code>stage2-records/2601.08536_DeepResearch-Bench-II.md</code> 第 4.2 节、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 6.6 节"每个领域只有 2–6 题（科技 23 题除外）"</td>
+<td>〔更正〕有 5 个领域在 10 道以上（科学与技术 23、金融与商业 15、软件开发 13、健康 12、教育与就业 10）；"检验效力很低"的理由改为"17 个小领域各只有 2 至 6 道"</td>
+<td>同上，精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 6.6 节"排名相邻的系统差距在 0.02–2.6 分之间"</td>
+<td>〔更正〕"前七名相邻差距 0.02 至 2.62 分"；第七名与第八名之间是 8.69 分</td>
+<td>同上，第 4.4 节、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 8 节"数据、评分脚本和提示词全部公开。本文的每个数字都能复核"</td>
+<td>〔更正〕说过头了：评委逐条输出、人工标注、通义的报告都没有公开，表 4、表 5、表 10 和方差分析不能复核</td>
+<td>同上，第 1 节、第 5 节、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"引用了原文的句子记 −1，不计入得分"；"泄漏率 0.24% 到 13.2%，平均 3.64%"</td>
+<td>〔更正〕−1 留在分母中，等于按未通过计；泄漏率是按评分项计的比例，不是按报告计；3.64% 是 7 个系统的平均，不含 Gemini-3</td>
+<td>同上，第 3 节、第 4.4 节、精读页勘误第 5 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"评委是 Gemini-2.5-Pro"</td>
+<td>〔补充〕对论文而言正确，但已过时：仓库自 2026 年 8 月起官方评委换成 GPT-5.5，2026 年 10 月起第 112、114 题从排行榜计分中剔除</td>
+<td>同上，第 3 节、精读页勘误第 6 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7 节"2026-02-24：加了 license 字段；2026-05-14：重写了文件，没有实质改动"</td>
+<td>〔存疑〕哪一次提交加了 license 字段不确定，可能写反了；不影响"题目和评分项自 2025 年 11 月以来没有改动"的结论</td>
+<td>同上，精读页勘误第 7 条</td>
+</tr>
+<tr>
+<td><code>notes/2601.10504_DR-Arena.html</code></td>
+<td>"复核说明"写"查询时 arXiv 接口没有返回结果，未能核对版本列表"</td>
+<td>〔补充〕本次 arXiv 接口返回第 3 版（2026-07-12），备注"Accepted to ACL 2026 as an oral presentation and selected as an SAC Highlight"，与精读页一致。记录称"没有发现错误，以下只是更新"；另说明精读页依据公开对局记录得出的数字本次没有重做</td>
+<td><code>stage2-records/2601.10504_DR-Arena.md</code> 第 1 节、精读页勘误第 1、2 条</td>
+</tr>
+<tr>
+<td><code>notes/2601.12346_MMDeepResearch-Bench.html</code></td>
+<td>"论文表格展示的 Vef. 那一列用的是原始分"</td>
+<td>〔更正〕说得过宽：25 个值中 22 个与"140 道题的通过率"完全吻合，应改为"显示列中有少数几行用了原始分"</td>
+<td><code>stage2-records/2601.12346_MMDeepResearch-Bench.md</code> 第 4.1 节第 3 条、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"排行榜上有 4 行不是"</td>
+<td>〔更正〕应为 5 行，Gemini 3.1 Pro 的 35.01 也不吻合；另有 DeepSeek-V3.2 的 19.28 差末位</td>
+<td>同上，第 4.4 节第 4 条、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"9.8 万多条真实问题，再由博士水平的领域专家挑选、改写成 140 道题"</td>
+<td>〔更正〕不是原文的说法：第 3 节只说用这个问题池"construct MMDR-Bench as 140 tasks"，附录 A.1 说"Domain experts propose candidate tasks"，两处的关系没有交代</td>
+<td>同上，第 3.1 节、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>把系统级相关系数写成"96.4%""93.0%"</td>
+<td>〔更正〕表 2 的 OPC 是皮尔逊相关系数，按百分制印作 96.4，不是百分比</td>
+<td>同上，精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>说"Gemini Deep Research 和它的底座模型相比……多了 4.3 倍"</td>
+<td>〔补充〕与图 6 一致，但原文发现 2 的文字写的是与"Gemini 2.5 Pro"相比，与图不一致；图 6 还把纯文本模型标为"Qwen-Max (Text)"，正文写的是"Qwen 3 235B (A22B)"</td>
+<td>同上，第 4.3 节第 8 条、精读页勘误第 5 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"看图版本读错细节多了 20%"</td>
+<td>〔补充〕同一图中，看图版的失败总数约 79，纯文本版约 116，总失败数下降了约三分之一（目测）</td>
+<td>同上，精读页勘误第 6 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>把"Vef. 评委实际上看没看图"列为未知</td>
+<td>〔补充〕已可部分回答：现行代码中 Gemini 通道把题目图片传给评委，Azure 通道只传文字</td>
+<td>同上，第 4.1 节第 5 条、精读页勘误第 7 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>没有提到第 5.2 节正文与表 1 的矛盾</td>
+<td>〔补充〕正文说 GPT-4.1 视觉数据解读准确度最好、文本忠实度强，表 1 中前者最高的是 GPT-5 mini，GPT-4.1 的文本忠实度只有 5.61；正文还把不联网的 GPT-4.1、GPT-5.1、GPT-5.2 称为能联网的模型</td>
+<td>同上，第 4.1 节第 8 条、精读页勘误第 8 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>没有提到不联网模型在引用指标上居前</td>
+<td>〔补充〕文本忠实度最高的是不联网的 o3-mini（48.35），覆盖度第二的是不联网的 Qwen 3 235B（45.73）</td>
+<td>同上，第 4.3 节第 4 条、精读页勘误第 9 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"图片共 393 张"</td>
+<td>〔存疑〕仓库 <code>image/</code> 目录下有 403 个文件，可能有未被题目引用的图片；本轮没有下载数据，无法判断</td>
+<td>同上，精读页勘误第 10 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>基于数据集的统计（17 种领域标签、四档难度的分布、语言分布）和 18 道题的抽查</td>
+<td>〔存疑〕本轮按规则没有下载数据集，未复核</td>
+<td>同上，精读页勘误第 11 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>Claude 的官方标识为"claude-sonnet-4-5-20250929"</td>
+<td>〔存疑〕本轮只核实到官方写法用连字符（"claude-sonnet-4-5"），带日期的完整标识没有在官方文档页上找到</td>
+<td>同上，精读页勘误第 12 条</td>
+</tr>
+<tr>
+<td><code>notes/2602.18940_DREAM.html</code></td>
+<td>第 4 节"验证 2"把对照指标写成"DeepResearch Bench 洞察分"</td>
+<td>〔更正〕"RACE 分（论文未说明是哪一项）"：原文第 4.3 节和图 5 只写"DRB–RACE"或"RACE"</td>
+<td><code>stage2-records/2602.18940_DREAM.md</code> 第 4.1 节、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7.7 节"图和表对不上"所举的例子（依据附录 F 的文字描述），以及"可能是图上的范围估读不准"的保留说法</td>
+<td>〔更正〕例子选错了：Smolagents 在 DeepResearch Bench 和 ResearchRubrics 上的数值在读数误差之内；真正对不上的是 LangChain 的三个数据集、Smolagents 和通义在 LiveResearchBench 上的数值；偏差是系统性的，保留说法应删去</td>
+<td>同上，第 4.1 节、D6、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7.3 节"2024 年 1 月一档 RACE 全面性降了 5 分、洞察降了 9 分"</td>
+<td>〔补充〕数字没错，但第 5 题三项都是 0.00，去掉这一题，降幅约为 3 分和 7 分；记录注明"补充说明，不算错误"</td>
+<td>同上，D14、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td><code>notes/2603.01152_DeepResearch-9K.html</code></td>
+<td>基本信息"GitHub（训练框架 Apache-2.0）"</td>
+<td>〔更正〕仓库顶层没有许可证；Apache-2.0 只在 <code>DeepResearch-R1/</code> 子目录下，继承自 verl 框架</td>
+<td><code>stage2-records/2603.01152_DeepResearch-9K.md</code> 第 1 节、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 4 节"训练时的奖励：也是 DeepSeek-V3 给的"；第 7.5 节把"训练时给奖励"列为 DeepSeek-V3 的六个角色之一</td>
+<td>〔更正〕注明"论文如此说，代码不同"：公开代码对本数据集用的是精确匹配奖励</td>
+<td>同上，第 4.1 节第 9 条、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 2 节"论文怎么说 / 脚本里实际是什么"对照表</td>
+<td>〔补充〕漏了两级兜底路径：重试失败后改用简化提示，最后一级题目直接写成"Search for specific details about …"，答案取原数据集的答案，两级都不经过质检和去重</td>
+<td>同上，第 4.1 节第 2 条、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7.4 节只提到 BrowseComp-Plus 表 4 中的 24.94% 和 22.50%</td>
+<td>〔补充〕同表下一行的准确率是 23.73%，恰为本文 L3 的教师正确率，但可由 712/3,000 算出，可能纯属巧合；另可补充：图 4 中 7 个数字不能写成"答对题数除以 1,774"</td>
+<td>同上，第 4.3 节第 1、2 条、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 0 节"由 DeepSeek-V3 改写成 L1/L2/L3"</td>
+<td>〔更正〕这是推断，不是原文：论文只明确说抽实体用 DeepSeek-V3；另外论文对"DeepSeek-V3"引用了两篇不同的文献（[35] 和 [36]）</td>
+<td>同上，第 3 节、精读页勘误第 5 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 3 节"标题叫'Benchmark Dataset'，但实际上主要是训练数据"</td>
+<td>〔更正〕就设计重心而言成立，但论文第 1、3、4.2、4.3、6 节有明确的评测声称，应当按评测基准审视</td>
+<td>同上，第 2 节、精读页勘误第 6 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"SIGIR 2026 短文（6 页）"</td>
+<td>〔更正〕"6 页"与 arXiv 备注一致，但 PDF 含参考文献共 8 页；"短文"在论文中没有找到依据；不影响结论</td>
+<td>同上，第 1 节、精读页勘误第 7 条</td>
+</tr>
+<tr>
+<td><code>notes/2603.28407_MiroEval.html</code></td>
+<td>第 4 节沿用论文正文"具体性是共同短板"，例如"OpenAI DR 覆盖面 78.2，具体性只有 69.1"</td>
+<td>〔存疑〕建议改为存疑：表 4 题注称这一列为"Query Specification"，与正文"Specificity"不一致，而且各系统的 Avg 都比五个子维度的简单平均低 1.7 到 4.2 分；如果这一列其实是按题生成的专门维度，结论就不成立</td>
+<td><code>stage2-records/2603.28407_MiroEval.md</code> 第 4.3 节、M13、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>"人是在 5 道题上排序，拿来对比的却是 MiroEval 在全部 100 道题上的总排名"</td>
+<td>〔确认〕表 14 的"MiroEval 名次"与表 3 最右"Overall"列的名次完全相同，精读页的判断成立。记录称"没有发现确定的错误"</td>
+<td>同上，第 4.1 节第 4 条、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td><code>notes/2605.28721_LiveBrowseComp.html</code></td>
+<td>第 8 节"用 32 个模型候选答案反查唯一性"</td>
+<td>〔更正〕是 4 个开源模型各带搜索作答 8 遍，共 32 次作答的候选答案；第 3 节的写法是对的</td>
+<td><code>stage2-records/2605.28721_LiveBrowseComp.md</code> 第 3 节、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7.4 节说表 5 中 GLM 5.0 一行"就算把权重往最不利的方向调，也不会低于约 31.8"</td>
+<td>〔更正〕31.8 无法复现：只让"社会与文化"这 20% 的权重取最不利的情形，下界约为 33.7；各类权重完全不受约束时，下界是 22.2；"这一行与总分对不上"的结论不变</td>
+<td>同上，第 4.2 节第 4 条、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 4 节"系统提示词用各模型官方推荐的版本"</td>
+<td>〔补充〕这只照录了正文第 4.1 节；附录 C.1 说默认的统一模板用于 DeepSeek、GLM、MiniMax、Seed，与正文矛盾，应补注</td>
+<td>同上，第 4.4 节第 6 条、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>抬头"哈工大 SCIR"</td>
+<td>〔更正〕论文只写"Harbin Institute of Technology"，实验室名称无法从论文核实</td>
+<td>同上，第 1 节、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>精读页没有发现 Seed 2.0 的 pass@4 低于 avg@4；没有指出旧题之间的相关系数能由表 3 完全复现</td>
+<td>〔补充〕补充这两点；后一点加强了精读页"图 8 与表 3 用的新题分数不同"的推测（记录注明"不是错误"）</td>
+<td>同上，第 4.4 节第 3、5 条、精读页勘误第 5 条</td>
+</tr>
+<tr>
+<td><code>notes/2606.12871_DailyReport.html</code></td>
+<td>第 6.8 节"重复运行的均值和主表对不上"（以 Gemini 3.1 Pro 加搜索的事实性为例）</td>
+<td>〔更正〕说得过重：0.730 距表 4 均值 1.15 个标准差，其余数字也都在约 1.15 个标准差以内；应改为"论文没有说主表是三次中的哪一次还是均值"</td>
+<td><code>stage2-records/2606.12871_DailyReport.md</code> 第 4.1 节第 7 条、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7 节"'引用本身对不对'是 0.55–0.77，'断言是否忠于引用'是 0.74–0.86"</td>
+<td>〔更正〕引用准确度为 0.550 至 0.814，引用与断言一致性为 0.739 至 0.906；原生智能体只有 o3 和 o4-mini 两家有数</td>
+<td>同上，第 8 节、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 6.6 节"评委怎么知道 QS 前 100 里漏了两所大学？只能评测时现查。论文没说清楚"</td>
+<td>〔更正〕原文其实有答案：指令遵循提示词写明"judge based on what the Document claims ... You do not need to verify its accuracy"，事实性只核验抽出的断言；按论文的流程，漏列很可能根本不会被查出，而不是"现查"</td>
+<td>同上，第 4.3 节第 6 条、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 6.7 节的组间混杂论点</td>
+<td>〔补充〕补一句：断言与引用的匹配提示词能识别"[15†L10]""[citation:N]"等多种引用格式，格式不一致的影响比精读页说的小一些</td>
+<td>同上，第 4.4 节第 2 条、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>基本信息</td>
+<td>〔补充〕补记仓库的 MIT 许可证，以及 arXiv 页面确认只有第 1 版；不影响结论</td>
+<td>同上，第 1 节、精读页勘误第 5 条</td>
+</tr>
+<tr>
+<td><code>notes/2608.02163_From-Simple-QA-to-Deep-Research.html</code></td>
+<td>第 9 节对照表"标准答案谁定"一栏写作"GPT-5.5 一次探路的结果"</td>
+<td>〔更正〕是 GPT-5.5 在一次构建中多轮探路的累积结果（平均 14.19 轮），再由整理者（也是 GPT-5.5）合并删改；"只来自一个模型"的批评仍然成立</td>
+<td><code>stage2-records/2608.02163_From-Simple-QA-to-Deep-Research.md</code> 第 3 节、精读页勘误第 1 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7.6 节说论文"在结语里说'有潜力把这套流程推广到专业领域'"</td>
+<td>〔更正〕这句话在"Baseline Performance"一节讨论闭卷结果的段落中（第 7 页），不在结语里；"承认现在的题还不在专业领域里"是推断</td>
+<td>同上，第 4.3 节、精读页勘误第 2 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7.8 节说"图 5 的说明先说'每轮随机抽 20 道题'，紧接着又说……10 道题"</td>
+<td>〔更正〕两句都在正文"Construction Analysis"一节，不在图注里；另外，图 5 只画了 8 个模型（没有 Claude Sonnet 5 和 Gemini 3.5 Flash），精读页没有提到</td>
+<td>同上，第 4.2 节、F16、精读页勘误第 3 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 7.2 节"排第一的 GPT-5.6 Terra"，没有限定</td>
+<td>〔更正〕它只在带提示问法（有工具和无工具）以及无工具的无提示问法中排第一；有工具的无提示问法是 GLM-5.2 和 DeepSeek-V4-Pro 并列第一，有工具的只给标题问法是 DeepSeek-V4-Pro 第一</td>
+<td>同上，第 4.4 节、精读页勘误第 4 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>第 11 节把仓库的训练用途列为推断</td>
+<td>〔补充〕仓库简介写着"the Agentic RL Training Stack to Train on It"，属于仓库的自述；会不会造成训练和测试重叠，仍是推断</td>
+<td>同上，第 5 节、精读页勘误第 5 条</td>
+</tr>
+<tr>
+<td>同上</td>
+<td>仓库状态</td>
+<td>〔补充〕最后一次提交确是 2026-08-03；2026-10-25 有一次删除分支的操作，没有新增文件，不影响"只有代码、没有数据"的结论</td>
+<td>同上，第 1 节、精读页勘误第 6 条</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>合计 61 条</strong>：更正 36 条，补充 19 条，存疑或未能核实 5 条，确认 1 条。</p>
+<p>另有几条记录写了"其余核对一致"一类的说明，没有列为勘误：IDRBench 第 6 条、DeepResearch-9K 第 8 条、DailyReport 第 6 条，以及 DR-Arena 第 2 条。</p>
+<hr />
+<h2 id="_6">七、对我们场景的启示</h2>
+<p><strong>场景。</strong> 5 个智能体，比赛评审，第一轮只对报告排名。</p>
+<p><strong>写法。</strong> 以下每条只写从审视结果中直接推出的启示，并注明来自第三节的哪一类；不提出解决方案，解决方案是第四阶段的事。</p>
+<ol>
+<li>
+<p><strong>（第一类）第一轮最需要的"评分环节的稳定性"证据，现有工具给不了。</strong> 18 个工具都没有提供可以直接继承的、独立而充分的评委与人工对照。对照做得最完整的 LifeSearch，证据也只在"系统层面、多道题平均"这一层成立；记录据此估算，在每题约 20 条评分项、评委准确率约 84% 的条件下，每份报告约有 3 条判错，"足以改变分数接近的两份报告的先后"（LifeSearch 记录第 9 节第 3 条）。第一阶段第 1.2 节要求的"换一个评委、重新评一次，名次是否基本不变"，只能由我们自己拿出证据。</p>
+</li>
+<li>
+<p><strong>（第二类）5 份报告之间的差距，很可能落在评分噪声之内。</strong> 现有工具在几十到几百道题上平均之后，头部差距仍常在 0.02 到 2 分，而且都不给区间；我们第一轮只有一两道题。所以"名次能分到多细"，是第一轮必须先面对的问题，而不是最后才考虑的细节。</p>
+</li>
+<li>
+<p><strong>（第三类，以及 3.18 节的 DailyReport R9、LiveBrowseComp B7）计分规则会被参赛者照着优化，现有工具在两个方向上都有漏洞。</strong> 只计命中、不罚错误，会奖励堆砌；这与第一阶段要防的"假深"和"广不能替代深"（第 4.3a 节）相冲突。只计精确率、判定宽松，或者把"搜不到就不下结论"算作失败，又会扭曲"敢于下判断，同时如实说明有多大把握"这一环。第一阶段第 1.1 节已经指出，比赛规则就是一套激励机制。</p>
+</li>
+<li>
+<p><strong>（第四类）以单一参照判分，系统地奖励不到第一阶段所说的"深"。</strong> 第一阶段把"深"定义为认识向本质、全体和内部联系推进，而这种推进往往表现为出题人没有预设、但又切题的内容。凡以事先写定的单一参照判分的工具，都奖励不到这一点。另外，在只有 5 份报告的规模下，如果从参赛报告中反推评分项，尺子就来自被测者本身（FinResearchBench II 记录第 9 节第 1 条）。</p>
+</li>
+<li>
+<p><strong>（第五类）现有工具"测对了东西"的证据，大多不能继承。</strong> 这些证据多是与偏好榜、另一个大语言模型指标或同源评分项的相关，记录认为不成立。所以不能以"某工具已被验证"为由借用它的评分维度。效度检验的对照物需要独立于评分依据，这是第四阶段设计检验时要满足的条件。</p>
+</li>
+<li>
+<p><strong>（第六类）参赛智能体的运行条件不一致，会混入名次。</strong> 5 个智能体很可能是不同的商业产品，提交途径、篇幅、引用格式、能否导出过程记录都可能不同。DailyReport R12、DRACO 问题 10、MMDeepResearch-Bench M11 说明，这些差异在现有工具中已经直接影响了分数。</p>
+</li>
+<li>
+<p><strong>（第七类，以及 3.18 节的 MMDeepResearch-Bench M4、Expert Consulting E15）合成方式本身就能改变第一名。</strong> DREAM 直接平均六项，第一名与正文叙述相反（D7）。Expert Consulting 的作者自己写道："Reporting any one of these views in isolation would mislead"。所以对名次而言，合成规则的影响不小于各项评分本身。写作和格式在现有工具中通过多种途径进入总分，而第一阶段已经把写作定为二级可选。现有的致命缺陷机制要么范围很窄，要么过宽，见第二节 2.4。</p>
+</li>
+<li>
+<p><strong>（第八类）第一阶段核心环节中的"有据"和"甄别"，在现有工具中多停在形式上。</strong> 覆盖表显示，"甄别"只有 7 个工具评了，而且大多只评一部分。我们无法从现有工具中直接拿到这两环的可靠评法。少数打开来源核对的做法（MMDeepResearch-Bench、Expert Consulting、DREAM、DeepFact）都还没有区分"编造的来源"和"后来失效的来源"。</p>
+</li>
+<li>
+<p><strong>（第九类）题面写得越细，越替智能体完成了"弄清需要、审视前提"这一环。</strong> 第一阶段第 4.4 节的候选做法"写明提问者是谁、要拿结果做什么"，与"题面不能写出答案或中间答案"、"写成明确要求就只能测到遵循指令"之间，有一条需要权衡的界线（LifeSearch L10、From Simple QA F12、Expert Consulting E8）。</p>
+</li>
+<li>
+<p><strong>（第十类）标准答案和题面本身的错误会直接改变名次，也最容易被参赛者抓住。</strong> Expert Consulting 记录第 9 节第 4 条指出，单位换算错误、依赖运行日期的答案、题面泄露答案这三种问题，"在比赛中都会直接改变名次，也最容易被参赛者抓住"。现有工具中，这类错误出现在 6 个工具里。</p>
+</li>
+<li>
+<p><strong>（第十一类）比赛以"截至某一时间点"为准，但现有工具普遍没有锚住时间。</strong> 多数工具没有规定截止时间，也不存档被引用的网页。即使像 LifeSearch 那样写明了截止日期，截止日期之后的信息仍然可以在实时网络上检索到（L17）。</p>
+</li>
+<li>
+<p><strong>（第十二类与第十六类）污染与可复现之间有张力，在我们的场景中更尖锐。</strong> 不公开题目可以暂时避免污染，代价是名次无法复核；公开了，又会失去新鲜度（Expert Consulting、FinResearchBench II、LifeSearch、DailyReport 记录第 5 节）。比赛名次要公开，会被参赛者质疑。</p>
+</li>
+<li>
+<p><strong>（第十三类）用某个模型筛题或调难度，题目的难度就相对于这个模型而定。</strong> 如果参赛智能体与筛题所用的模型同源，名次会受到影响，而影响的方向事先无法判断（DRACO 问题 8、BrowseComp-Plus P2）。</p>
+</li>
+<li>
+<p><strong>（第十四类）评委与参赛智能体同源的偏向，在现有工具中已有迹象。</strong> DRACO 问题 3、DR³-Eval 问题 7 都显示了这种迹象。5 个参赛智能体背后的底座模型，很可能覆盖了几家主要厂商，所以评委同源的情况在我们的场景中更难避开（推断）。</p>
+</li>
+<li>
+<p><strong>（第十五类）发布者自己的系统上自己的榜，在现有工具中相当常见。</strong> 确定的有 5 个，可能的有 2 个（第四节第 4 项）。DRACO 记录第 9 节第 8 条写道："比赛的评测方不应同时是参赛方"。</p>
+</li>
+<li>
+<p><strong>（第十六、十七类，以及 3.18 节的 DeepFact 问题 3）现有工具的自述，包括"已公开""可复现""排名稳定"，都不能直接采信。</strong> 对我们自己而言，"经得起复核"至少要求规则文本、计分代码和公布的分数三者一致；而现有工具中已有三者不一致的先例：DeepResearch-9K D7、MMDeepResearch-Bench M6、Expert Consulting E14。如果复核或申诉的渠道只向排名靠前者开放，标准会向它靠拢（DeepFact 问题 3）。</p>
+</li>
+<li>
+<p><strong>推广环节的问题，第一轮可以不提供证据，但借用时会一并继承。</strong> 题目代表性、领域样本小这类问题（第九类，以及第二类中的推广部分），第一轮不需要我们自己提供证据（第一阶段第 1.2 节）；但凡是借用这些工具的题目或结论，这些问题就会一并带进来。</p>
+</li>
+</ol>
+<hr />
+<h2 id="_7">附：汇总中发现的记录间不一致与证据薄弱之处</h2>
+<ol>
+<li>
+<p><strong>同一份记录内部，第 4 节的判断与问题清单的标注不一致，至少 6 处。</strong> 包括 DRACO 问题 6、15、16，DREAM D6，DeepFact 问题 2，MiroEval M5，LifeSearch L4，FinResearchBench II F7。多数情况是，判断写"设计选择"或"缺证据"，清单却标"设计缺陷"。本文第一节按判断定档，第三节按清单统计，两处的数字因此不完全对应。</p>
+</li>
+<li>
+<p><strong>不同记录对同一种情况的定性不一致：</strong>
+   - "声称会更新而没有更新"：LiveDRBench 标为设计缺陷，MiroEval 标为声称未兑现，DailyReport 标为声称未做到；
+   - "评分材料明文公开"：DRACO 标为设计缺陷，DeepFact 和 MiroEval 没有编号；
+   - "评委与被测者同家族"：DR³-Eval 标为设计缺陷，MMDeepResearch-Bench、DRACO、From Simple QA 标为缺证据，另有 5 份记录没有编号；
+   - "发布者利益关系"：DRACO 和 MiroEval 标为设计缺陷，FinResearchBench II 和 LifeSearch 标为"披露不足"，DeepResearch-9K 没有讨论。</p>
+</li>
+</ol>
+<p>本文照录，没有统一。</p>
+<ol start="3">
+<li>
+<p><strong>记录之间的证据引用有冲突。</strong> BrowseComp-Plus 记录用 LiveBrowseComp 的数字（闭卷 pass@4 最高达 44.5%；删去证据后跌到 2.3% 至 9.4%）来支持 P1"准确率混有记忆成分"。而 LiveBrowseComp 记录指出，这组闭卷分数在原文图 2、表 1、图 7 中对不上，"使'哪个模型记得多'的具体数字不能直接引用"（第 4.3 节 A 第 6 条、B3）；证据封锁诊断本身也有混杂（B7）。P1 的结论不一定因此改变，但它所引的具体数字，另一份记录认为不能直接引用。</p>
+</li>
+<li>
+<p><strong>证据最薄弱的几处：</strong>
+   - 第三类（计分只看一侧）和第四类（参照物单一）的问题，多数是记录从计分公式和提示词推出来的。第三类 13 条中 9 条含推断，第四类 11 条中 8 条含推断；用数据验证过的只有少数几条。
+   - 不少复算依赖精读页前次的结果，本轮没有重做。例如 DR-Arena 的 297 场对局、位置固定和重抽样区间，MiroEval 的配对重抽样，DeepResearch-9K 的无问号统计，LiveDRBench 的 10% 明文答案。
+   - 多数"复算"只是对论文印出的数字做算术，没有原始数据。
+   - 新读的 6 个工具没有精读页可以对照，只经过了一次阅读。
+   - 第四节第 4 项中，LifeSearch 和 FinResearchBench II 的利益关系都是推断，未核实。
+   - DeepResearch Bench II 的 D3 依据关键词检索，记录自己注明"可能有遗漏"。
+   - MMDeepResearch-Bench 的 M3 只依据一个不在论文表 1 中的参考运行。
+   - Expert Consulting 的 E9 依据的是代码仓库说明文件，属于自述。</p>
+</li>
+<li>
+<p><strong>本文自身的处理也有局限。</strong> 第一节的分档规则（取最重的一档；"设计局限"等词不算"有缺陷"），以及第三节的归类和排序，都是汇总者的处理。换一种规则，部分格子的档次和各类的条数会变。为此，第一节的表注保留了被取舍掉的肯定判断和不一致之处。</p>
+</li>
+</ol>
+<footer>源文件：<code>research-plan/stage2-summary.md</code></footer>
+</div>
+</body>
+</html>

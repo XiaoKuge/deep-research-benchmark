@@ -1,0 +1,288 @@
+{
+  "label": "P2",
+  "ratings": {
+    "①": {
+      "score": 1,
+      "evidence": "从公开评测和用户口碑来看，目前没有一个“绝对第一”的 Deep Research，但趋势比较清晰：",
+      "reason": "报告回答了所问的问题，并按“英文技术／搜索综述／中文”几种场景交代了自己的理解：没有绝对第一。但它没有审视“Deep Research”包括哪些东西，把 DeepSeek R1、Claude 3.5 sonnet 这类基础模型和深度研究产品放在一起比，也没有说明“最好”按什么标准评，所以不到 2 分。"
+    },
+    "③": {
+      "score": 1,
+      "evidence": "从多篇 2025–2026 年的评测来看，ChatGPT 的 Deep Research 在“严肃技术/学术研究”场景里普遍被认为略胜一筹，尤其是在推理严谨性和整体可靠性上更受信任。",
+      "reason": "报告只说了来源的类型（公开评测、用户口碑、媒体横评）和大致时间范围，没有交代查找方法，没说查了哪些、没查到什么，也没说局限。"
+    },
+    "④": {
+      "score": 1,
+      "evidence": "官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；在 Humanity’s Last Exam 上达到 41.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。",
+      "reason": "报告区分了“官方数据”和“第三方评测／媒体横评”，但没有说明来源可靠程度，单个作者的博客被写成“多方”“普遍”。矛盾也没处理：表格写 Perplexity“虽然快”，正文又说要“两到三个小时”。"
+    },
+    "⑤": {
+      "score": 1,
+      "evidence": "第三方测评认为 ChatGPT 的 Deep Research 是目前最好的深度研究产品之一，在技术研究上比 Grok、Perplexity、Gemini 表现更好。",
+      "reason": "报告大体把判断归到了具体来源，事实和判断算是分开了。但它把单一来源推广成“普遍认为”，把基础模型（Kimi k1.5、Claude 3.5 sonnet）的测试结果直接套到深度研究产品上，也没有考虑其他解释或反例。"
+    },
+    "⑦": {
+      "score": 1,
+      "evidence": "如果你主要做的是英文技术、学术或严肃商业研究，而且可以接受订阅费用，可以优先把 ChatGPT Deep Research 作为主力，配合 Perplexity 做“广度搜索 + 引用补充”。",
+      "reason": "各场景下用哪家，报告都给了明确结论，但没有一处说明结论有多大把握、依据强弱如何。"
+    },
+    "写作": {
+      "score": 1,
+      "evidence": "英文技术与综合研究：ChatGPT 的 Deep Research 综合实力最强，尤其在技术/严肃研究场景里整体评价略高于 Perplexity、Gemini 等竞品。",
+      "reason": "主要结论放在前面，结构清楚。但表格和后文大段重复：Kimi 长文本、R1 数据分析、Claude 不能联网都各出现了两三次；文中还残留大量“clickittech+1”一类标注。能读懂，但不够简洁。"
+    }
+  },
+  "points": [
+    {
+      "id": "P2-1",
+      "content": "没有绝对第一的深度研究产品，但按使用场景能看出比较清晰的格局。",
+      "level": "现象",
+      "quote": "从公开评测和用户口碑来看，目前没有一个“绝对第一”的 Deep Research，但趋势比较清晰："
+    },
+    {
+      "id": "P2-2",
+      "content": "在英文技术研究和严肃研究上，ChatGPT 深度研究综合最强，评价略高于 Perplexity、Gemini。",
+      "level": "现象",
+      "quote": "英文技术与综合研究：ChatGPT 的 Deep Research 综合实力最强，尤其在技术/严肃研究场景里整体评价略高于 Perplexity、Gemini 等竞品。"
+    },
+    {
+      "id": "P2-3",
+      "content": "ChatGPT 深度研究的次数有限（Plus 每月约 10 次，免费用户约 2 次），重度使用门槛高。",
+      "level": "现象",
+      "quote": "深度研究配额有限（Plus 用户每月约 10 次，免费用户约 2 次），大规模重度使用的门槛较高。"
+    },
+    {
+      "id": "P2-4",
+      "content": "Perplexity 属于“搜索型”深度研究，长处是查新资料、铺开资料版图、自带引用；OpenAI 属于“推理型”，在不容出错的严肃论证上更可靠。两者定位不同。",
+      "level": "本质",
+      "quote": "多个独立评测认为，如果你的核心诉求是“查最新资料 + 快速看清文献和网页的版图 + 一键带引用”，Perplexity 的体验非常强；但在需要特别严肃、不容出错的技术论证时，OpenAI 的 Deep Research 目前被普遍视为更可靠。"
+    },
+    {
+      "id": "P2-5",
+      "content": "Perplexity 深度研究在 Humanity’s Last Exam 上得 41.1%，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1。",
+      "level": "现象",
+      "quote": "官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；在 Humanity’s Last Exam 上达到 41.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。"
+    },
+    {
+      "id": "P2-6",
+      "content": "Perplexity 深度研究在 SimpleQA 上得 73.9%，每条结论都有清晰引用，被视为研究与事实核查的首选之一。",
+      "level": "现象",
+      "quote": "在 SimpleQA factuality 基准上达到 73.9%，并对每条结论给出清晰引用，被多方视为“研究与事实核查”的首选工具之一。"
+    },
+    {
+      "id": "P2-7",
+      "content": "Perplexity 深度研究仍有幻觉，深度有时不如 OpenAI；作为通用研究助手也不如 ChatGPT 全面。",
+      "level": "现象",
+      "quote": "第三方评测指出 Deep Research 虽然快，但仍存在一定幻觉，深度有时不如 OpenAI Deep Research；PCMag 也认为其 Deep Research 工具尚不如 ChatGPT 作为“通用深度聊天/研究助手”那样全面。"
+    },
+    {
+      "id": "P2-8",
+      "content": "Perplexity 深度研究一次任务通常要两到三个小时。",
+      "level": "现象",
+      "quote": "另一方面，Perplexity 的 Deep Research 更像“超级版学术/情报搜索引擎”：它会自动执行大量搜索、阅读上百个来源，然后生成结构化报告，在 Humanity’s Last Exam 和 SimpleQA 等基准上都给出了非常亮眼的准确率成绩，但通常需要两到三个小时才能完成一次任务。"
+    },
+    {
+      "id": "P2-9",
+      "content": "在长文本任务里，Kimi k1.5 比处理短文本时更出色，提取准确、数据维度全面；在特征分类和多维度关联挖掘上表现最好。",
+      "level": "现象",
+      "quote": "行业评测指出，Kimi k1.5 在长文本处理任务中，相比短文本更出色，既能保证提取准确，又能给出更全面的数据维度；在特征分类与多维度关联挖掘任务中表现最佳。"
+    },
+    {
+      "id": "P2-10",
+      "content": "Kimi 的深度研究功能能高质量地搜索、研究，并用精美的前端页面展示结果。",
+      "level": "现象",
+      "quote": "另一篇技术解读也强调 Kimi 的「深度研究功能」已经可以高质量搜索、研究并通过精美前端页面展示结果。"
+    },
+    {
+      "id": "P2-11",
+      "content": "Kimi 的推理链条和数学严谨性弱于最新一代 OpenAI 和 DeepSeek R1。",
+      "level": "现象",
+      "quote": "推理链条和数学严谨性整体弱于最新一代 OpenAI / DeepSeek R1，在纯推理解题和高难数学方面仍有差距。"
+    },
+    {
+      "id": "P2-12",
+      "content": "DeepSeek R1 做总结时会主动补充数据和案例，在国产模型横评里整体超过豆包、Kimi。",
+      "level": "现象",
+      "quote": "多份技术与媒体评测指出，DeepSeek R1 在内容总结、文字生成时会主动补充数据和案例来佐证观点，使文章“更落地”，在多款国产模型横评中整体表现超出豆包、Kimi 等主流模型。"
+    },
+    {
+      "id": "P2-13",
+      "content": "在清华等机构的对比实验里，R1 的数据分析与 o3-mini 相当且领先其他模型，分析逻辑更清晰严谨。",
+      "level": "现象",
+      "quote": "清华等机构的对比实验认为，R1 在数据分析任务上与 OpenAI o3-mini 相当且领先其他模型，分析逻辑更清晰严谨，适合做异常检测、数据相关性挖掘等深度分析场景。"
+    },
+    {
+      "id": "P2-14",
+      "content": "R1 本身受上下文长度限制，联网和多语种输出不稳定，要靠外部工具或智能体封装才构成完整的“深度研究”。也就是说，模型和深度研究产品不是一回事。",
+      "level": "内部联系",
+      "quote": "对极长文本任务容易超出上下文限制；早期版本联网搜索和多语种输出上存在不稳定问题，需要结合其他工具或代理封装来获得更完整的“深度研究”体验。"
+    },
+    {
+      "id": "P2-15",
+      "content": "R1 和 Kimi 可以分工互补：R1 做深度分析和异常检测，Kimi 做长文本整理和多维度挖掘，在中文场景下效果好于单用一个模型。",
+      "level": "内部联系",
+      "quote": "一个值得注意的趋势是：部分研究机构和实践者已经开始推荐 “DeepSeek R1 + Kimi 深度研究” 的组合使用——R1 负责深度分析和异常检测，Kimi 负责长文本整理和多维度挖掘，从而在中文场景下取得比单一模型更好的效果。"
+    },
+    {
+      "id": "P2-16",
+      "content": "Claude 擅长长篇写作、合约和报告撰写、代码审阅，适合做稳妥的写作和企业助手。",
+      "level": "现象",
+      "quote": "多方评价中，Claude 在长篇写作、合约/报告撰写、代码审阅等方面表现突出，适合作为“安全、稳重”的写作和企业助手。"
+    },
+    {
+      "id": "P2-17",
+      "content": "Claude 3.5 sonnet 没有内置联网搜索，要另接工具，所以它的深度研究体验依赖开发者集成，不能开箱即用。",
+      "level": "内部联系",
+      "quote": "但从“Deep Research”这一垂直能力看，至少在 2025 年的对比报告里，Claude 3.5 sonnet 本身并不直接支持像 Perplexity/ChatGPT 那样的内置联网搜索，需要额外接工具，这意味着其深度研究体验更依赖开发者集成，而非开箱即用。"
+    },
+    {
+      "id": "P2-18",
+      "content": "Gemini 的长处在多模态和 Google 生态（Gmail、Docs、Drive）集成，适合办公自动化和创意场景。",
+      "level": "现象",
+      "quote": "Gemini 则在多模态和 Google 生态集成方面有明显优势，例如与 Gmail、Docs、Drive 的联动，以及对图像/视频的理解和生成能力，被认为更适合办公自动化与创意场景。"
+    },
+    {
+      "id": "P2-19",
+      "content": "Gemini 的深度研究主要靠 Google 搜索加文档生态，没有专门的深度调研模式，在长篇综述和引用管理上口碑稍逊。",
+      "level": "现象",
+      "quote": "Deep Research 能力更多依赖 Google 搜索 + 文档生态的组合，而不是像 Perplexity/ChatGPT 那样提供高度专门化的“深度调研模式”，在纯“长篇综述+引用管理”上口碑略逊。"
+    },
+    {
+      "id": "P2-20",
+      "content": "按场景组合着用：英文严肃研究以 ChatGPT 为主、Perplexity 补充广度和引用；市场和政策调研用 Perplexity；中文先用 Kimi 搜读整理，再交给 R1 或 OpenAI 做推理。",
+      "level": "内部联系",
+      "quote": "如果你主要做的是英文技术、学术或严肃商业研究，而且可以接受订阅费用，可以优先把 ChatGPT Deep Research 作为主力，配合 Perplexity 做“广度搜索 + 引用补充”。"
+    }
+  ],
+  "claims": [
+    {
+      "id": "P2-c1",
+      "claim": "在英文技术研究和严肃研究上，ChatGPT 深度研究综合实力最强，评价高于 Perplexity、Gemini 等竞品，可靠性显著高于 Perplexity。",
+      "quote": "英文技术与综合研究：ChatGPT 的 Deep Research 综合实力最强，尤其在技术/严肃研究场景里整体评价略高于 Perplexity、Gemini 等竞品。",
+      "cited": "clickittech+1；对应表格中的 https://creatoreconomy.so/p/an-opinionated-guide-on-which-ai-model-2025 和 https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/",
+      "core": true,
+      "source_label": "部分支持",
+      "source_note": "两个链接都能打开。creatoreconomy（2025-04-04 更新）是作者的个人看法，原话是“Deep Research is ChatGPT’s best product. It outperforms similar offerings from Grok, Perplexity, and Gemini”。clickittech 说 OpenAI“vastly more reliable”，适合高风险研究，但它只比较了 Perplexity，没有比较 Gemini。两篇都是单个作者的看法，报告据此写成“综合实力最强”“普遍认为”，说得比来源强。",
+      "second_check": "",
+      "correct": "无法判断",
+      "correct_basis": "截至 2026-03-03，没有公认的排名。独立基准 DeepResearch Bench（arXiv 2506.11763，2025-06）在 RACE 综合得分上排的是 Gemini-2.5-Pro Deep Research 48.88，高于 OpenAI Deep Research 46.98，论文原文是“Gemini-2.5-Pro Deep Research demonstrates leading overall performance”。只有部分博客评测认为 ChatGPT 最好。证据互相冲突，不能确认 ChatGPT 综合最强。"
+    },
+    {
+      "id": "P2-c2",
+      "claim": "Perplexity 深度研究在检索范围、引用透明度和报告结构化上非常突出，是最强的搜索型深度研究之一。",
+      "quote": "面向“搜索+资料综述”：Perplexity 的 Deep Research 在检索范围、引用透明度和报告结构化上非常突出，是最强的 AI 搜索型 Deep Research 之一。",
+      "cited": "enago+2（没有网址）",
+      "core": true,
+      "source_label": "没有出处",
+      "source_note": "这条只标了“enago+2”，没有链接，全文也没有 enago 的网址，可能是导出时丢了。别处引用的 clickittech 写过 Perplexity 的“Source Transparency: Strong”，但这条结论并没有引用它。",
+      "second_check": "",
+      "correct": "无法判断",
+      "correct_basis": "引用透明度这部分有依据：DeepResearch Bench 中 Perplexity Deep Research 的引用准确率 90.24%，在四个深度研究代理里最高。但“检索范围”不成立：它的有效引用数是 31.26，远低于 Gemini 的 111.21 和 OpenAI 的 40.79。“最强之一”说法模糊，整体对错无法判定。"
+    },
+    {
+      "id": "P2-c3",
+      "claim": "在中文长文档、本土网站和复杂数据分析上，Kimi 深度研究加 DeepSeek R1 推理的组合，整体体验优于大部分国内模型。",
+      "quote": "中文与本土内容：Kimi 的「深度研究」+ DeepSeek R1 的推理组合，在处理中文长文档、本土网站和复杂数据分析任务上，目前整体体验优于大部分国内模型。",
+      "cited": "lib.szu+2；对应 https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf",
+      "core": true,
+      "source_label": "部分支持",
+      "source_note": "PDF 能打开，是北航高研院何静（清华沈阳团队）的讲座稿，创建于 2025-02-14。它测的是 DeepSeek R1、o3-mini、Claude 3.5 sonnet、Kimi k1.5 四个基础模型在数据处理上的表现。它支持“Kimi k1.5 长文本数据处理能力突出”和“R1 数据分析领先”，也提出了“DeepSeek+Kimi”协同的新思路。但它没有测“Kimi 深度研究”这个产品，没有测本土网站检索，也没有和豆包、通义等其他国内模型比较。",
+      "second_check": "",
+      "correct": "无法判断",
+      "correct_basis": "截至 2026-03-03，没有检索到对国产深度研究产品（Kimi、通义、豆包、秘塔等）的权威横向评测，只有零星的个人实测博客。DeepSeek R1 本身也不是深度研究产品。这条结论无法证实，也无法证伪。"
+    },
+    {
+      "id": "P2-c4",
+      "claim": "ChatGPT 深度研究次数有限：Plus 用户每月约 10 次，免费用户约 2 次。",
+      "quote": "深度研究配额有限（Plus 用户每月约 10 次，免费用户约 2 次），大规模重度使用的门槛较高。",
+      "cited": "https://www.clickittech.com/ai/perplexity-deep-research-vs-openai-deep-research/",
+      "core": false,
+      "source_label": "支持",
+      "source_note": "clickittech 原文是“now ChatGPT Plus users get 10 Deep Research queries per month (and free users get 2)”，并引用了 Sam Altman 2025-02 的推文“10 uses per month for chatgpt plus and 2 per month in the free tier”。",
+      "second_check": "",
+      "correct": "有误",
+      "correct_basis": "10 次和 2 次是 2025-02 时的计划。2025-04 下旬 OpenAI 推出轻量版并提高额度：Plus 和 Team 每月 25 次（含轻量版），Pro 250 次，免费用户 5 次轻量版（见 TechRadar、Thurrott 等报道）。到 2026-03-03，报告给的数字已经过时。"
+    },
+    {
+      "id": "P2-c5",
+      "claim": "按 Perplexity 官方数据，其深度研究在 Humanity’s Last Exam 上准确率 41.1%，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1。",
+      "quote": "官方数据称 Deep Research 会执行数十次搜索、阅读上百个来源，并自动生成结构化研究报告；在 Humanity’s Last Exam 上达到 41.1% 准确率，超过 Gemini Thinking、o3-mini、o1、DeepSeek-R1 等模型。",
+      "cited": "https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research",
+      "core": false,
+      "source_label": "部分支持",
+      "source_note": "官方博客能打开。它支持“performs dozens of searches, reads hundreds of sources”和“significantly higher than Gemini Thinking, o3-mini, o1, DeepSeek-R1”，但写的分数是“attains a 21.1% accuracy score on Humanity's Last Exam”，不是 41.1%。关键数字与来源相反。",
+      "second_check": "",
+      "correct": "有误",
+      "correct_basis": "Perplexity 官方博客和 clickittech 都写的是 HLE 21.1%。同期 OpenAI Deep Research 为 26.6%，所以 41.1% 是错的。"
+    },
+    {
+      "id": "P2-c6",
+      "claim": "Perplexity 深度研究在 SimpleQA 上准确率 73.9%。",
+      "quote": "在 SimpleQA factuality 基准上达到 73.9%，并对每条结论给出清晰引用，被多方视为“研究与事实核查”的首选工具之一。",
+      "cited": "enago+2（没有网址）",
+      "core": false,
+      "source_label": "没有出处",
+      "source_note": "这句只标了“enago+2”，没有链接。同一格里引用的 Perplexity 官方博客写的是 93.9%，与本句不符。",
+      "second_check": "",
+      "correct": "有误",
+      "correct_basis": "Perplexity 官方博客原文是“Scoring 93.9% accuracy on the SimpleQA benchmark”，clickittech 也写的是约 93.9%。"
+    },
+    {
+      "id": "P2-c7",
+      "claim": "Perplexity 深度研究一次任务通常要两到三个小时。",
+      "quote": "另一方面，Perplexity 的 Deep Research 更像“超级版学术/情报搜索引擎”：它会自动执行大量搜索、阅读上百个来源，然后生成结构化报告，在 Humanity’s Last Exam 和 SimpleQA 等基准上都给出了非常亮眼的准确率成绩，但通常需要两到三个小时才能完成一次任务。",
+      "cited": "段末标“perplexity+4”，对应表格中的 https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research",
+      "core": false,
+      "source_label": "不支持",
+      "source_note": "官方博客写的是“completing most research tasks in under 3 minutes”，引言里说 2 到 4 分钟。clickittech 也写“wraps up research in about three minutes”。报告把“分钟”写成了“小时”，和表格里“虽然快”的说法也自相矛盾。",
+      "second_check": "",
+      "correct": "有误",
+      "correct_basis": "官方说明和第三方实测都是大约 3 分钟内完成，不是两到三个小时。"
+    },
+    {
+      "id": "P2-c8",
+      "claim": "部分研究机构和实践者推荐 DeepSeek R1 加 Kimi 深度研究的组合：R1 做深度分析和异常检测，Kimi 做长文本整理，效果好于单用一个模型。",
+      "quote": "一个值得注意的趋势是：部分研究机构和实践者已经开始推荐 “DeepSeek R1 + Kimi 深度研究” 的组合使用——R1 负责深度分析和异常检测，Kimi 负责长文本整理和多维度挖掘，从而在中文场景下取得比单一模型更好的效果。",
+      "cited": "https://www.lib.szu.edu.cn/sites/szulib/files/2025-03/清华大学第四弹：DeepSeek+DeepResearch：让科研像聊天一样简单-.pdf",
+      "core": false,
+      "source_label": "部分支持",
+      "source_note": "PDF 的“新思路：优势互补，协同应用”一节写的是：“DeepSeek+Kimi 数据分析的‘慧眼破局’：DeepSeek R1 负责深入分析和异常检测，Kimi k1.5 提供深度挖掘的思路”。它支持“组合使用”和 R1 的分工，但组合里是 Kimi k1.5 模型，不是“Kimi 深度研究”；没有说 Kimi 负责长文本整理；也没有实验证明组合比单一模型更好。",
+      "second_check": "",
+      "correct": "无法判断",
+      "correct_basis": "PDF 创建于 2025-02-14，推荐的是 R1 加 Kimi k1.5 模型。没有检索到其他机构推荐“R1 + Kimi 深度研究”组合并证明效果更好的材料。"
+    },
+    {
+      "id": "P2-c9",
+      "claim": "Claude（3.5 sonnet）不能在模型内直接联网，要靠外部工具，所以天然弱于 Perplexity、ChatGPT 这种一体化的深度研究。",
+      "quote": "至少在 2025 年中期的测试中，Claude 3.5 sonnet 尚不支持直接在模型内部进行联网网页查询，需要通过外部工具集成，天然弱于 Perplexity/ChatGPT 这种一体化 Deep Research 体验。",
+      "cited": "lib.szu+1；对应上面的 PDF 和 https://www.laksn.com/top-generative-ai-models-comparison-chatgpt-deepseek-claude-and-more",
+      "core": true,
+      "source_label": "部分支持",
+      "source_note": "PDF（2025-02）的结论是“目前DeepSeek R1 、Open AI o3mini 、Kimi k1.5支持联网查询网址 ，Claude 3.5 sonnet暂不支持”。laksn 的对比表也把 Claude 的联网能力标为“No”。但 PDF 测于 2025-02，不是报告说的“2025 年中期”。两个来源都没有说 Claude“天然弱于一体化深度研究”。",
+      "second_check": "",
+      "correct": "有误",
+      "correct_basis": "Anthropic 2025-03-20 为 Claude 推出网页搜索，2025-04-15 推出 Research（智能体式多轮检索、生成报告），2025-05 又扩展了 Research（见 the-decoder、AnalyticsIndiaMag 等报道）。2025 年中和截止日 2026-03-03 时，Claude 都已经内置联网搜索和深度研究功能。"
+    },
+    {
+      "id": "P2-c10",
+      "claim": "Gemini 的深度研究主要靠 Google 搜索加文档生态，没有专门的深度调研模式，在长篇综述和引用管理上口碑不如 Perplexity 和 ChatGPT。",
+      "quote": "Deep Research 能力更多依赖 Google 搜索 + 文档生态的组合，而不是像 Perplexity/ChatGPT 那样提供高度专门化的“深度调研模式”，在纯“长篇综述+引用管理”上口碑略逊。",
+      "cited": "enago+2（没有网址）",
+      "core": true,
+      "source_label": "没有出处",
+      "source_note": "这条只标了“enago+2”，没有链接。报告中能打开的来源里，laksn 也没有提到 Gemini 的深度研究功能，支持不了这条结论。",
+      "second_check": "",
+      "correct": "有误",
+      "correct_basis": "Gemini Deep Research 是 2024-12 推出的专门模式，Google 称自己开创了这一产品类别，后来先后升级到 Gemini 2.0 Flash Thinking、2.5 Pro、3 Pro，2025-12 还开放了 Deep Research Agent API。独立基准 DeepResearch Bench（2025-06）中，Gemini-2.5-Pro Deep Research 的 RACE 综合得分排第一（48.88，高于 OpenAI 46.98、Perplexity 42.25），有效引用数也最多（111.21）。"
+    }
+  ],
+  "timeliness": {
+    "score": 0,
+    "reason": "报告生成于 2026-03-03，主要依据却是 2025 年 2 月到 7 月的材料：Kimi k1.5、Claude 3.5 sonnet、o3-mini、DeepSeek R1 的模型测试，以及 2025-02 的次数限额。截止日前已有的重要更新被忽略了：Claude 已内置网页搜索（2025-03）和 Research（2025-04）；ChatGPT 次数在 2025-04 提高；Gemini 深度研究多次升级，并在 2025-06 的 DeepResearch Bench 中排第一。关于 Claude、Gemini 和次数限额的核心结论，都建立在过时信息上。"
+  },
+  "traceable_sources": true,
+  "off_topic": {
+    "value": false,
+    "reason": "报告直接回答了“哪家深度研究做得最好”：按场景给出比较和选用建议。虽然把一些不是深度研究产品的基础模型（DeepSeek R1、Claude 3.5 sonnet）也纳入了比较，但回答的仍是所问的问题。"
+  }
+}
