@@ -1,0 +1,36 @@
+你在一项"深度研究报告评测方法"的小规模检验中担任核验员，负责"断言核验"。
+
+工作目录：/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/research-plan
+
+先读两份文件：
+1. `stage4-rubric.md`：评审细则。重点是第五节（断言核验，包括来源标签、对错标签、来源只列在文末的情况、"疑似编造"的第二次核查、时效三档）和第七节（硬伤）。
+2. `stage5-pilot/question-card.md`：题目卡。截止时间是 2026-03-03。
+
+你负责 `stage5-pilot/reports/` 下的四份报告：A.md、B.md、C.md、F.md。每份都完整读完。
+
+对每份报告：
+1. 按细则第五节，抽出至多 10 条主要结论，优先抽对提问者影响最大的。每条记下：
+   - id：如 "A-c1"；
+   - claim：一句话；
+   - quote：原文，逐字摘录；
+   - cited：所引来源。可能是网址、引注标记，也可能是"无"。报告中形如【12†L886-L895】的引注标记没有网址，记为"没有出处"，并在 source_note 中注明"引注标记没有网址"；
+   - core：是否核心，布尔值。
+2. 来源标签：只能是"支持""部分支持""不支持""失效但有存档""找不到（疑似编造）""没有出处"之一。
+   - 有网址的，打开核对。可以用 WebFetch 或 mcp__fetch__fetch；如果工具尚未加载，先用 ToolSearch 加载。
+   - 链接打不开时，查网页存档：https://archive.org/wayback/available?url=<网址>&timestamp=20260303 。
+   - 标为"找不到（疑似编造）"的，要换一种方式再查一次，例如按标题检索，结果写进 second_check。
+3. 对错标签：只能是"正确""有误""无法判断"之一。不管有没有来源，都用 WebSearch 独立核对，以截至 2026-03-03 已经存在的信息为准。现在已是 2026 年 10 月，要注意区分哪些信息是 3 月 3 日之后才出现的。correct_basis 中写依据，包括网址或理由。
+4. 时效（细则第五节）：timeliness 给 0、1 或 2 分，并写理由。
+5. traceable_sources：全篇是否至少有一个可以追溯的来源，布尔值。
+
+规则：
+- 不要猜测报告出自哪个产品。
+- 除了上面两份文件和这四份报告，不要读 research-plan 下的其他文件。
+- 除了你的输出文件，不要创建或修改任何文件。
+- 网络请求只做读取和检索，不提交任何表单。
+
+输出写到 `stage5-pilot/out/verify-opus-ABCF.json`，必须是合法的 JSON。写完后用 python3 检查能否读入。格式如下：
+
+{"verifier":"opus","reports":{"A":{"claims":[{"id":"A-c1","claim":"…","quote":"…","cited":"…","core":true,"source_label":"…","source_note":"…","second_check":"","correct":"…","correct_basis":"…"}],"timeliness":{"score":1,"reason":"…"},"traceable_sources":false,"notes":"…"},"B":{…},"C":{…},"F":{…}}}
+
+最后只回复一句话：输出文件路径，以及每份报告的结论条数。

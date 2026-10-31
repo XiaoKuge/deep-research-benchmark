@@ -1,0 +1,669 @@
+import json, sys
+
+T = '/private/tmp/claude-501/-Users-zonghuanwu-projects-GOSIM-elite-game/efdc4f00-f3cf-4541-917e-bb46cf1f48bb/scratchpad/pilot/pooltmp/'
+OUT = '/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/research-plan/stage5-pilot/out/pool.json'
+
+Y, N = '符合', '相反'
+EP = ['E', 'P1', 'P2', 'P3', 'P4']
+
+
+def ef(v=Y, **over):
+    d = {k: v for k in EP}
+    d.update(over)
+    return d
+
+
+def r(*reps, **kw):
+    d = {k: Y for k in reps}
+    d.update(kw)
+    return d
+
+
+def merge(*ds):
+    out = {}
+    for d in ds:
+        out.update(d)
+    return out
+
+
+P = []
+
+
+def add(content, sources, correct, basis, relevant, level, importance, reach):
+    P.append(dict(content=content, sources=sources, correct=correct, basis=basis,
+                  relevant=relevant, level=level, importance=importance, reach=reach))
+
+DRB = 'DeepResearch Bench（arXiv 2506.11763）'
+
+# ---------------- 问题的性质、定义与评测 ----------------
+add('“哪家最好”没有脱离用途的答案：没有一家能在速度、准确与可核查、推理深度、生态集成和成本上同时最优，各家取舍不同，所以要先确定用途和约束，再比较',
+    ['M1', 'opus-1:D-1', 'opus-2:D-16', 'sonnet-1:D-2', 'D-c1'],
+    '正确', '截至 2026-03-03 各评测的领先者不一：DRACO（arXiv 2602.11685）Perplexity 第一，MMDR-Bench（arXiv 2601.12346）Gemini 第一，LiveDRBench（https://iclr.cc/virtual/2026/poster/10011486）OpenAI 最好，' + DRB + ' 引用准确率 Perplexity 最高而综合分 Gemini 最高，没有一家各维度都领先。',
+    True, '本质', '核心', r('D', 'F'))
+
+add('没有绝对第一的深度研究产品，应按自己的需求或场景（语言、任务类型、对速度和引用的要求）选用',
+    ['opus-2:B-1', 'sonnet-1:B-1', 'B-c1', 'P1-1', 'P2-1', 'P3-1', 'P4-1', 'opus-1:F-1'],
+    '正确', '同上：截至截止日各评测的第一名互不相同（DRACO、MMDR-Bench、LiveDRBench、DeepResearch Bench），不存在公认的总冠军。',
+    True, '现象', '一般', merge(r('A', 'B', 'C', 'D', 'F'), ef()))
+
+add('公开评测的结论相互矛盾：DeepResearch Bench 榜首是百度千帆、DRACO 是 Perplexity、LiveDRBench 是 OpenAI、MMDR-Bench 是 Gemini，凭单一评测不能断定哪家最好',
+    ['opus-1:F-1', 'opus-2:F-8', 'sonnet-1:F-1', 'F-c1'],
+    '正确', '量子位 2026-02（https://www.qbitai.com/2026/02/376417.html）、arXiv 2602.11685、ICLR 2026 海报页、arXiv 2601.12346 分别给出不同的第一名。',
+    True, '全体', '核心', r('F'))
+
+add('“深度研究”不是一个标准化的能力，而是各家对产品形态的命名，各家的定义并不相同，比较之前要先说清比的是什么',
+    ['M2'],
+    '正确', '各家名称与形态不同：OpenAI、Google、Perplexity 叫 Deep Research，Anthropic 叫 Research，Kimi 有探索版和 Kimi-Researcher，DeepSeek 只有联网搜索加深度思考，没有统一定义。',
+    True, '本质', '核心', {})
+
+add('公开的评测数字多数由厂商自己发布，常常是发布者自己排第一（如 Perplexity 2026 年 2 月发布的 DRACO），用这类数字排名要考虑利益关系',
+    ['M3', 'opus-2:F-4', 'sonnet-1:F-3'],
+    '正确', 'DRACO 由 Perplexity 编写并把自家排第一（https://arxiv.org/abs/2602.11685）；DeepSearchQA 由 Google 发布、Gemini 深度研究领先（https://blog.google/technology/developers/deep-research-agent-gemini-api/）。',
+    True, '内部联系', '核心', r('F'))
+
+add('这类产品的发展过程：Gemini 2024 年 12 月最早推出 Deep Research，OpenAI 和 Perplexity 2025 年 2 月跟进，Anthropic 2025 年 4 月推出 Research，此后各家频繁更新，所以评价很快过时',
+    ['M4'],
+    '正确', 'Google 2024-12-11（https://blog.google/products/gemini/google-gemini-deep-research/）、OpenAI 2025-02-02（https://openai.com/index/introducing-deep-research/）、Perplexity 2025-02-14、Anthropic 2025-04-15（https://www.anthropic.com/news/research）。',
+    True, '全体', '一般', {})
+
+add('产品更新很快，静态的评测和排名是快照、很快过时，结论应注明时间，并定期用自己的代表性任务复测',
+    ['M5', 'opus-1:C-12', 'opus-2:C-20', 'sonnet-1:C-15'],
+    '正确', '截止前三个月内 ChatGPT 深度研究改用 GPT-5.2（2026-02-10）、Gemini 深度研究升级到 Gemini 3 Pro（2025-12-11），此前的评测已不对应现行产品。',
+    True, '内部联系', '一般', r('C'))
+
+add('速度与深度之间有取舍：运行时间越长、检索越多，报告通常越完整，但等待和费用也越高（如 ChatGPT 深度反思而慢、不如专用搜索智能体敏捷，Perplexity 轻量迭代而快但浅）',
+    ['M6', 'opus-2:C-13', 'sonnet-1:C-4', 'opus-1:D-6', 'opus-2:D-4', 'sonnet-1:D-6'],
+    '正确', 'Anthropic 称 token 用量单独就能解释 BrowseComp 上约 80% 的表现差异，多智能体系统用约 15 倍 token 换取更好表现（https://www.anthropic.com/engineering/multi-agent-research-system）；DRACO 实测 Perplexity 用时短于 Gemini、OpenAI。',
+    True, '内部联系', '一般', r('C', 'D'))
+
+add('引用多不等于引用准：深度研究报告也会出现引用与内容不符、来源不可靠（内容农场、过时信息、AI 生成内容被循环引用）的问题，准确性受检索来源质量制约，即使最好的系统也有相当比例不可信，关键结论要能核对出处',
+    ['M7', 'opus-1:A-2', 'opus-1:C-11', 'opus-2:C-19', 'sonnet-1:C-11'],
+    '正确', DRB + ' 测得引用准确率 OpenAI 77.96%、Gemini 81.44%、Perplexity 90.24%，即有一到二成引用不支持所述内容。',
+    True, '全体', '一般', r('A', 'C', 'D'))
+
+add('中文资料和英文资料的覆盖不同，同一产品在中英文题目上的表现可能不同，中文本土内容可能更适合用国内产品',
+    ['M8', 'sonnet-1:E-3'],
+    '正确', '大量中文内容在微信公众号、知乎等平台或国内站点，海外搜索引擎索引有限；国内产品（Kimi、百度千帆）依托中文检索，覆盖不同。',
+    True, '全体', '一般', merge(r('A', 'C', 'F'), ef()))
+
+add('深度研究的核心机制是多步工作流：把模糊的问题变成研究计划，自主迭代搜索、阅读、反思，最后合成带引用的长报告；自主多步推理是它与普通聊天机器人的根本区别',
+    ['opus-1:D-4', 'opus-2:D-2', 'sonnet-1:D-1', 'opus-1:C-1', 'sonnet-1:C-1'],
+    '正确', '与 OpenAI（https://openai.com/index/introducing-deep-research/）和 Google（2024-12-11 博客）对深度研究流程的官方描述一致。',
+    True, '本质', '一般', r('C', 'D'))
+
+add('深度研究能力不等于底层模型能力：它是推理、检索、工具使用和报告生成的组合；模型强（如 DeepSeek-R1、Kimi 的模型）不等于深度研究产品强',
+    ['opus-2:C-1', 'opus-2:B-9', 'P2-14', 'opus-1:A-3', 'opus-2:A-18'],
+    '正确', 'DeepSeek 模型很强，但截至截止日只有联网搜索加深度思考、没有深度研究智能体（https://www.deepseek.com/en/news/deepseek-app/）；Anthropic 的多智能体编排比单智能体 Opus 4 高 90.2%，说明编排方式本身决定研究表现。',
+    True, '本质', '一般', merge(r('A', 'B', 'C'), ef()))
+
+add('各家深度研究的技术路线分化：端到端强化学习训练的单智能体推理（OpenAI 等）、多智能体协作（Claude 指挥家-演奏家）、并行智能体集群（Kimi K2.5）、生态加超长上下文（Gemini）、答案引擎加事实核查（Perplexity）、开源推理模型外接检索（DeepSeek），分别对应不同的取舍和适用场景',
+    ['opus-1:C-2', 'opus-2:C-2', 'opus-1:C-6', 'opus-1:D-3', 'opus-2:D-3', 'sonnet-1:D-3'],
+    '正确', 'OpenAI 深度研究用强化学习训练的 o3（https://openai.com/index/introducing-deep-research/）；Anthropic Research 为编排者加子智能体（https://www.anthropic.com/engineering/multi-agent-research-system）；Kimi K2.5 Agent Swarm 最多 100 个子智能体（https://www.kimi.com/blog/kimi-k2-5.html）。',
+    True, '内部联系', '一般', r('C', 'D'))
+
+add('到 2026 年，竞争重心已从对话式问答和基础 RAG 转向智能体驱动的深度研究，大模型从被动应答工具变成自主研究智能体',
+    ['opus-2:D-1', 'sonnet-1:D-1'],
+    '正确', '2025 年起 OpenAI、Google、Anthropic、Perplexity、Kimi 相继推出并持续升级深度研究智能体（如 Gemini 深度研究 API 2025-12、ChatGPT 深度研究 2026-02 升级）。',
+    True, '全体', '一般', r('C', 'D'))
+
+add('评测在演变：SimpleQA 这类孤立事实记忆基准已经饱和、GAIA 也基本被解决，评测转向 BrowseComp、DeepResearch Bench 等反映真实复杂工作流的智能体基准',
+    ['opus-1:D-12', 'opus-2:D-11', 'sonnet-1:D-8'],
+    '正确', '带检索的系统在 SimpleQA 上已超过 90%（Perplexity 自报 93.9%）；2025–2026 年新的深度研究基准（DeepResearch Bench、BrowseComp-Plus、DRACO、LiveDRBench）相继发布。',
+    True, '全体', '一般', r('D'))
+
+add('关于各工具的实际响应延迟和不同订阅层级的性价比，目前缺乏统一的横向对比',
+    ['opus-1:D-13'],
+    '无法判断', 'DRACO（arXiv 2602.11685 表 10）已给出 Perplexity、Gemini、OpenAI 深度研究的用时对比，但它是厂商自建；订阅性价比确实少有统一比较，证据不足以判定。',
+    True, '全体', '一般', r('D'))
+
+add('各家都是给大模型接上外部搜索与检索：回答的新鲜度来自实时检索而非预训练语料；差别在数据新鲜度、工具、上下文长度、可解释性和企业功能',
+    ['opus-2:A-1', 'opus-1:A-1'],
+    '正确', '各家深度研究/搜索功能均以实时网页检索为信息来源（OpenAI、Google、Anthropic 官方说明），这是通行做法。',
+    True, '现象', '一般', r('A'))
+
+# ---------------- ChatGPT ----------------
+add('ChatGPT 有专门的深度研究功能（2025-02 推出）：自主规划多步浏览和分析，产出带来源的报告，不只是聊天式的搜索问答',
+    ['opus-2:A-3', 'A-c2'],
+    '正确', 'OpenAI 2025-02-02 推出 deep research，自主多步浏览 5–30 分钟后产出带来源报告（https://openai.com/index/introducing-deep-research/）；2026-02 改用 GPT-5.2。',
+    True, '现象', '核心', merge(r('B', 'C', 'D', 'F'), ef(), {'A': N}))
+
+add('ChatGPT 深度研究一次任务自主浏览分析约 5–30 分钟（完整版近半小时），官方称善于发现关联、识别跨来源的不一致',
+    ['opus-1:B-1', 'opus-2:B-3', 'sonnet-1:B-2', 'B-c2'],
+    '正确', 'OpenAI 称每项任务约 5–30 分钟（https://openai.com/index/introducing-deep-research/ ；https://en.wikipedia.org/wiki/ChatGPT_Deep_Research）。',
+    True, '现象', '一般', r('B', 'C', 'D'))
+
+add('截至截止日，ChatGPT 深度研究向免费用户（每月约 5 次轻量版）、Plus/Team（每月约 25 次）、Pro（约 250 次）等各档开放，额度随档位而定，不是只限 Pro，也不是 Plus 10 次、免费 2 次',
+    ['opus-1:E-4', 'opus-2:E-3', 'sonnet-1:E-4', 'E-c5', 'P1-4', 'P1-c4', 'P2-3', 'P2-c4', 'P3-6', 'P3-c5', 'P4-5', 'P4-c6', 'opus-2:C-8', 'C-c2', 'opus-1:C-6'],
+    '正确', '2025-04-24 OpenAI 推出轻量版并调整额度（https://en.wikipedia.org/wiki/ChatGPT_Deep_Research ；https://the-decoder.com/deep-research-feature-now-available-to-free-chatgpt-users/）。',
+    True, '现象', '一般', merge(ef(N), {'C': N}))
+
+add('2026 年 2 月 ChatGPT 深度研究升级：改由 GPT-5.2 驱动，执行前可编辑研究计划（先提澄清问题），并可限定只搜索指定网站',
+    ['opus-1:D-14', 'sonnet-1:D-12', 'D-c8', 'opus-1:F-10', 'opus-2:F-11', 'F-c7'],
+    '正确', 'OpenAI 2026-02-10 更新（https://the-decoder.com/openais-deep-research-now-runs-on-gpt-5-2-and-lets-users-search-specific-websites/）。',
+    True, '现象', '一般', r('D', 'F'))
+
+add('OpenAI 深度研究首发（2025-02）在 HLE 上得 26.6%，当时最高；到截止日已被 Gemini 深度研究（2025-12，46.4%）等超过，不再领先',
+    ['opus-2:C-7', 'C-c3'],
+    '正确', 'https://en.wikipedia.org/wiki/ChatGPT_Deep_Research ；Google 2025-12-11 博客 HLE 46.4%（https://blog.google/technology/developers/deep-research-agent-gemini-api/）。',
+    True, '现象', '一般', {'C': N})
+
+add('ChatGPT 深度研究综合实力最强：英文技术和严肃研究场景中评价略高于 Perplexity、Gemini，有第三方测评称它是最好的深度研究产品之一、技术研究胜过 Grok、Perplexity、Gemini',
+    ['opus-1:E-1', 'opus-2:E-1', 'sonnet-1:E-1', 'E-c1', 'P1-2', 'P1-c1', 'P1-c2', 'P2-2', 'P2-c1', 'P3-2', 'P3-c1', 'P4-2', 'P4-c1'],
+    '无法判断', DRB + ' 综合分 Gemini-2.5-Pro 深度研究 48.88 高于 OpenAI 46.98，DRACO 中 Perplexity 第一、OpenAI 第三，MMDR-Bench 中 Gemini 第一；只有部分个人测评选 ChatGPT，证据不一。',
+    True, '现象', '核心', ef())
+
+add('ChatGPT 深度研究被评为比 Perplexity 显著更可靠，适合不容出错的严肃技术论证',
+    ['opus-1:E-5', 'opus-2:E-2', 'sonnet-1:E-7', 'E-c6', 'P1-3', 'P1-c3', 'P2-c1', 'P3-5', 'P3-c4', 'P4-c5'],
+    '无法判断', '只有单篇博客的主观评价；' + DRB + ' 中 Perplexity 引用准确率 90.24% 高于 OpenAI 77.96%，HLE 则 OpenAI 较高，方向不一。',
+    True, '现象', '一般', ef())
+
+add('ChatGPT 深度研究用 Python 代码执行做数值计算和数据分析，从而降低数值类幻觉',
+    ['opus-2:C-5'],
+    '正确', 'OpenAI 发布说明中深度研究可用 Python 工具分析数据、作图（https://openai.com/index/introducing-deep-research/）；用代码计算替代模型心算可减少数值错误，推理成立。',
+    True, '内部联系', '一般', r('C'))
+
+add('ChatGPT 深度研究只列出采用的来源，检索过但未采信的资料不列出，研究过程不能完全复现',
+    ['opus-1:C-9', 'opus-2:C-4', 'sonnet-1:C-5'],
+    '无法判断', 'ChatGPT 深度研究的侧栏会显示活动步骤和访问过的来源，报告只引用其中一部分；“未采信的不列出”找不到可靠依据核实。',
+    True, '全体', '一般', r('C'))
+
+add('ChatGPT Search（2024-10，GPT-4o）借助第三方搜索服务商和合作媒体内容，给出带来源链接的实时回答',
+    ['opus-1:A-10', 'opus-2:A-3'],
+    '正确', 'https://openai.com/index/introducing-chatgpt-search/ ；但它是普通搜索功能，不是深度研究。',
+    False, '现象', '一般', r('A'))
+
+add('在“脂肪因子与痴呆症”横评中，ChatGPT 深度研究用 7 分钟调研 35 篇文献、输出 2 万多字，被评为质量最高；Gemini 的表格误解了主题，Perplexity 只列相关性、未讨论机制',
+    ['opus-1:C-13', 'opus-2:C-6', 'sonnet-1:C-8', 'opus-1:C-14', 'sonnet-1:C-9'],
+    '无法判断', '报告没有给出可追溯的出处，中文检索也没有找到这次横评原文，无法核实。',
+    True, '现象', '一般', r('C'))
+
+add('GPT-5 尚未正式进入 ChatGPT 应用，免费层仍是 GPT-3.5，主力是 GPT-4o/GPT-4 Turbo（约 128K 上下文）',
+    ['A-c9'],
+    '有误', 'GPT-5 于 2025-08-07 在 ChatGPT 上线并成为默认模型（https://bgr.com/1934397/gpt5-free-all-accounts-usage-limits/），截止日已是 GPT-5.2 系列。',
+    True, '现象', '一般', r('A'))
+
+# ---------------- Gemini ----------------
+add('Gemini 有专门的深度研究智能体模式（2024-12 推出，同类中最早）：先生成多步研究计划供用户确认修改，再依托 Google 搜索自主迭代检索、阅读，产出带引用的多页报告',
+    ['opus-1:B-3', 'opus-2:B-5', 'sonnet-1:B-3', 'B-c4', 'opus-1:C-15', 'opus-1:A-9', 'opus-2:A-2', 'sonnet-1:A-1', 'A-c1',
+     'opus-1:E-19', 'opus-2:E-17', 'sonnet-1:E-10', 'E-c10', 'P1-18', 'P1-c10', 'P2-19', 'P2-c10', 'P3-19', 'P3-c10', 'P4-17', 'P4-c10'],
+    '正确', 'https://blog.google/products/gemini/google-gemini-deep-research/（2024-12-11）；2025-12 升级为 Gemini 3 Pro 版并开放 API；独立评测 ' + DRB + ' 综合分与 MMDR-Bench 总分 Gemini 都居首，与“口碑略逊、不是专门模式”的说法相反。',
+    True, '现象', '核心', merge(r('A', 'B', 'C', 'D', 'F'), ef(N)))
+
+add('Gemini 深度研究是异步任务，一次通常需数分钟到十几分钟，不适合即时查询，并不是 1–2 分钟出结果的速度型产品',
+    ['opus-1:A-5', 'sonnet-1:A-7', 'C-c4', 'opus-1:C-4', 'opus-2:C-11', 'sonnet-1:C-3'],
+    '正确', 'DRACO 测得 Gemini 深度研究平均用时 592 秒（https://arxiv.org/html/2602.11685v1 表 10）；Google 帮助文档称通常 5–10 分钟。',
+    True, '现象', '一般', merge(r('A', 'D'), {'C': N}))
+
+add('Gemini 深度研究可在一次任务中同时检索公网和用户的 Gmail、Drive、Chat（2025-11 起），这是它在依赖内部资料的研究中的主要优势',
+    ['A-c1', 'opus-1:A-9', 'opus-2:A-2', 'sonnet-1:A-1', 'D-c3'],
+    '正确', 'https://workspaceupdates.googleblog.com/2025/11/gemini-deep-research-integrates-workspace-content.html',
+    True, '现象', '一般', r('A', 'D'))
+
+add('依托 Google 生态或企业内部资料（Gmail、Docs、Drive）的研究和办公场景，宜选 Gemini；它的长处在多模态和生态集成',
+    ['opus-1:A-20', 'opus-1:B-10', 'opus-2:B-10', 'opus-1:D-19', 'opus-2:D-18', 'opus-1:E-18', 'opus-2:E-16', 'P1-17', 'P2-18', 'P3-18', 'P4-16'],
+    '正确', 'Gemini 深度研究 2025-11 起可接入 Workspace 内容，Gemini 原生多模态；建议有据。',
+    True, '现象', '一般', merge(r('A', 'B', 'C', 'D'), ef()))
+
+add('需要覆盖面广、跨多领域的综合研究时，Gemini 深度研究是均衡稳健的选择',
+    ['opus-1:F-9', 'opus-2:F-12'],
+    '正确', 'MMDR-Bench 中 Gemini 深度研究总分第一（arXiv 2601.12346）；' + DRB + ' 中 Gemini 有效引用 111 条、综合分最高。',
+    True, '现象', '一般', r('B', 'F'))
+
+add('Gemini 深度研究自 2025 年 3 月起向免费用户开放（有限额），付费约 20 美元/月额度更高',
+    ['opus-2:C-9', 'sonnet-1:C-10', 'C-c5'],
+    '正确', 'https://www.androidauthority.com/gemini-deep-research-free-3534708/（2025-03-13）。',
+    True, '现象', '一般', r('A', 'C'))
+
+add('Gemini 深度研究 2025 年底的新版在 HLE 上 46.4%、DeepSearchQA 66.1%、BrowseComp 59.2%（Google 自报）',
+    ['opus-1:C-16', 'opus-2:C-10', 'C-c6'],
+    '正确', 'https://blog.google/technology/developers/deep-research-agent-gemini-api/（2025-12-11）。',
+    True, '现象', '一般', r('C'))
+
+add('Gemini 深度研究智能体（API）仍是预览版，Google 提醒用户核对所给引用',
+    ['opus-1:A-6', 'opus-2:A-12'],
+    '正确', 'Gemini Deep Research 智能体 2025-12 以预览版经 Interactions API 提供（https://ai.google.dev/gemini-api/docs/deep-research）。',
+    True, '全体', '一般', r('A'))
+
+add('Gemini 深度研究提供“思考”面板，展示已经获知的内容和下一步计划',
+    ['opus-2:A-9'],
+    '正确', 'Gemini 应用中的深度研究会实时显示研究进度和思考过程（Google 2025 年产品说明）。',
+    True, '现象', '一般', r('A'))
+
+add('Gemini 深度研究智能体通过 Interactions API 调用，按 token 计费，一次典型任务花费几美元',
+    ['opus-1:A-18', 'opus-2:A-13', 'sonnet-1:A-13'],
+    '正确', 'Google 文档说明该智能体只能经 Interactions API 使用并按 token 计费，官方估算单次任务为数美元量级（https://ai.google.dev/gemini-api/docs/deep-research）。',
+    True, '现象', '一般', r('A'))
+
+add('Gemini 深度研究智能体目前不能接入用户自定义的工具',
+    ['sonnet-1:A-12'],
+    '无法判断', '检索到的文档说明可接 MCP 服务器和上传文件，是否支持自定义函数工具没有找到明确说法。',
+    False, '现象', '一般', r('A'))
+
+add('Gemini 的百万 token 上下文让它少依赖 RAG 分块截断，从而保住跨文档的逻辑关联，支撑多轮推理',
+    ['opus-1:D-5', 'opus-2:D-5', 'sonnet-1:D-5'],
+    '正确', 'Google 介绍 Gemini 深度研究时说明利用百万 token 上下文窗口并结合 RAG 在会话中保留跨来源信息（https://gemini.google/overview/deep-research/）。',
+    True, '内部联系', '一般', r('C', 'D'))
+
+add('Gemini 深度研究的异步任务管理器在规划模型和执行模型之间维护共享状态，子查询失败时可局部恢复，不必重启整个任务',
+    ['opus-1:D-11'],
+    '正确', 'Google 深度研究概览页对异步任务管理器的描述（https://gemini.google/overview/deep-research/）。',
+    True, '内部联系', '一般', r('D'))
+
+add('Gemini 到 3.1 Pro（2026-02）才以 beta 形式支持百万 token 上下文，此前 Gemini 3.0 Ultra 为 256K；2024 年 12 月的 Deep Research 基于 Gemini 3',
+    ['A-c8'],
+    '有误', 'Gemini 1.5 Pro（2024）和 Gemini 3 Pro（2025-11）已支持百万 token；没有发布过 Gemini 3.0 Ultra；2024-12 的深度研究基于 Gemini 1.5 Pro（https://blog.google/products/gemini/google-gemini-deep-research/）。',
+    True, '现象', '一般', r('A'))
+
+add('一次测试中 Gemini 深度研究生成 48 页、100 个来源的报告，内容全面但结论冗长',
+    ['opus-1:B-4', 'opus-2:B-6', 'sonnet-1:B-4'],
+    '无法判断', '报告没有给出出处，检索不到这次测试。',
+    True, '现象', '一般', r('B'))
+
+add('MMDR-Bench 上 Gemini 深度研究在综合性任务中表现最好，GPT-5.2 在计算机科学等高度专业化领域胜出',
+    ['opus-1:F-6', 'opus-2:F-7', 'sonnet-1:F-8', 'F-c5'],
+    '正确', 'https://arxiv.org/html/2601.12346v1（2026-01-18）。',
+    True, '现象', '一般', r('F'))
+
+# ---------------- Claude ----------------
+add('Claude 有内置的 Research（深度研究，2025-04 推出）：在网页和用户的 Gmail、日历、文档中多轮迭代检索，并给出便于核对的引用，开箱即用，不需要开发者另接工具',
+    ['opus-1:A-11', 'opus-2:A-4', 'sonnet-1:A-2', 'A-c3', 'opus-1:E-17', 'opus-2:E-15', 'sonnet-1:E-9', 'E-c9',
+     'P1-16', 'P1-c9', 'P2-17', 'P2-c9', 'P3-17', 'P3-c9', 'P4-15', 'P4-c9'],
+    '正确', 'https://www.anthropic.com/news/research（2025-04-15）；网页搜索 2025-03-20 上线。',
+    True, '现象', '核心', merge(r('A', 'B', 'C', 'D'), ef(N)))
+
+add('Claude 深度研究采用“指挥家-演奏家”多智能体架构，内部评测比单智能体高 90.2%，代价是 token 消耗约为普通聊天的 15 倍，所以适合高价值复杂任务，对简单查询是过度设计',
+    ['opus-1:C-5', 'opus-2:C-3', 'sonnet-1:C-2', 'C-c7'],
+    '正确', 'https://www.anthropic.com/engineering/multi-agent-research-system（2025-06-13）。',
+    True, '内部联系', '一般', r('C'))
+
+add('Claude 的 Research 对 Pro（20 美元/月）、Max、Team、Enterprise 各档开放，价格公开，并非只限 Max、定价未公开',
+    ['C-c8'],
+    '正确', 'https://claude.com/blog/integrations ；https://claude.com/pricing/max 。',
+    True, '现象', '一般', {'A': Y, 'C': N})
+
+add('Claude 最新模型（Opus 4.6）在 BrowseComp 等深度搜索基准上领先',
+    ['opus-2:A-10'],
+    '正确', 'Anthropic 公布 Opus 4.6 在 BrowseComp 上居首，多智能体设置 86.8%（https://www.anthropic.com/news/claude-opus-4-6），属厂商自报。',
+    True, '现象', '一般', r('A', 'D'))
+
+add('BrowseComp-Plus 准确率：Claude Opus 4.6 86.8%、Kimi K2.5 78.4%、GPT-5.2 59.2%~71.3%、Gemini 3 Pro 59.2%~63.2%、DeepSeek V3.2 32.5%~50%',
+    ['opus-1:D-15', 'opus-2:D-10', 'D-c5'],
+    '有误', '86.8% 与 78.4% 是原版 BrowseComp 在不同框架下的成绩，不是 BrowseComp-Plus（https://www.anthropic.com/news/claude-opus-4-6 ；https://huggingface.co/moonshotai/Kimi-K2.5），各行设置不同、不可横比。',
+    True, '现象', '一般', r('D'))
+
+add('Claude Opus 4.6 可连续自主执行任务 14.5 小时而不丢失逻辑连贯性，是截至 2026 年初最长的记录',
+    ['opus-1:D-17', 'opus-2:D-6', 'sonnet-1:D-13', 'D-c4'],
+    '有误', '14.5 小时是 METR 估计的 50% 时间跨度（人类专家约需 14.5 小时的任务，模型成功率 50%），不是连续运行时长。',
+    True, '现象', '一般', r('D'))
+
+add('评测者认为 Claude 深度研究的输出综合出色、可读性和结构感最好（一次生成 7 页、427 个来源），但具体建议有时偏通用',
+    ['opus-1:B-7', 'opus-1:B-8', 'opus-2:B-8', 'sonnet-1:B-6', 'B-c7'],
+    '无法判断', '检索不到“7 页、427 个来源”的出处；用户报告 Claude Research 单次数百个来源，量级相符，但“可读性最好”无法核实。',
+    True, '现象', '一般', r('B'))
+
+add('Claude 长于长篇写作、合约与报告撰写和代码审阅，风格稳妥，适合作安全合规的企业写作助手',
+    ['opus-1:E-16', 'opus-2:E-14', 'P1-14', 'P2-16', 'P3-16', 'P4-14'],
+    '无法判断', '依据是一篇泛泛的模型对比文章，属口碑性评价，且不是针对深度研究功能，难以核实。',
+    True, '现象', '一般', ef())
+
+add('Claude 3.5 Sonnet 的表格结构化输出和格式工整度优于 o3-mini（及 o3）和部分国产模型',
+    ['opus-1:E-16', 'P1-15', 'P3-16', 'P3-c8'],
+    '有误', '唯一证据（所引清华 PDF）把 o3-mini 和 Claude 3.5 Sonnet 并列为表格最工整，与“优于 o3-mini”相反。',
+    True, '现象', '一般', ef())
+
+add('法律、合规、尽职调查和工程级（大型代码库、成批合同审阅）等复杂专业研究，宜选 Claude',
+    ['opus-1:A-20', 'opus-1:C-19', 'opus-1:D-19', 'opus-2:D-19'],
+    '无法判断', '依据多为 Anthropic 自报基准（Opus 4.6 的 BrowseComp、SWE-bench、GDPval-AA）或早期用户反馈；独立的 DRACO 中 Claude Opus 4.6 高于 Gemini 但低于 Perplexity，没有法律类深度研究的横评。',
+    True, '现象', '一般', r('A', 'C', 'D'))
+
+add('Claude 的网页搜索工具用动态过滤（写代码过滤结果）剔除无关内容，以提高准确性',
+    ['opus-2:A-11'],
+    '正确', 'Anthropic 2026-02-17 推出 web search 动态过滤，平均准确率提升 11%（https://claude.com/blog/improved-web-search-with-dynamic-filtering）；这是 API 功能。',
+    False, '内部联系', '一般', r('A'))
+
+# ---------------- Perplexity ----------------
+add('Perplexity 有深度研究功能（2025-02 推出）：执行数十次搜索、阅读上百个来源，自动生成结构化研究报告，不只是给简短答案的搜索引擎',
+    ['A-c4', 'opus-2:E-5', 'P1-5', 'P3-7', 'P4-3'],
+    '正确', 'https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research（2025-02-14）。',
+    True, '现象', '核心', merge(r('B', 'C', 'D', 'F'), ef(), {'A': N}))
+
+add('Perplexity 深度研究多数任务 3 分钟内完成（官方称 2–4 分钟），在几家中最快',
+    ['opus-1:B-5', 'opus-2:B-7', 'sonnet-1:B-5', 'B-c5', 'C-c9', 'P2-8', 'P2-c7'],
+    '正确', '官方 most research tasks in under 3 minutes；DRACO 测得平均 245–460 秒，短于 Gemini 的 592 秒（https://arxiv.org/html/2602.11685v1 表 10）。“不到 1 分钟”“两到三个小时”都与此相反。',
+    True, '现象', '一般', merge(r('B'), ef(Y, P2=N), {'C': N}))
+
+add('Perplexity 官方称其深度研究在 Humanity’s Last Exam 上达到 21.1%，高于 Gemini Thinking、o3-mini、o1、DeepSeek-R1',
+    ['opus-1:E-6', 'opus-2:E-5', 'sonnet-1:E-5', 'E-c2', 'P1-5', 'P1-c6', 'P2-5', 'P2-c5', 'P3-7', 'P3-c6', 'P4-3', 'P4-c4'],
+    '正确', 'https://www.perplexity.ai/hub/blog/introducing-perplexity-deep-research ；属厂商自报，同期 OpenAI 深度研究为 26.6%。41.1% 与官方数字相反。',
+    True, '现象', '一般', merge(ef(Y, P2=N), {'C': Y}))
+
+add('Perplexity 官方称其深度研究在 SimpleQA 事实性基准上达到 93.9%',
+    ['opus-1:E-7', 'opus-2:E-6', 'E-c3', 'P2-6', 'P2-c6', 'P3-7', 'P3-c6'],
+    '正确', '官方博客原文 Scoring 93.9% accuracy on the SimpleQA benchmark；73.9% 与之相反。',
+    True, '现象', '一般', ef(Y, P2=N))
+
+add('Perplexity 的强项是来源透明：自建实时网页索引，回答对每条结论附可点回原文的来源',
+    ['opus-1:A-12', 'opus-2:A-5', 'opus-1:E-7', 'opus-2:E-6', 'opus-1:E-2', 'opus-2:E-4', 'sonnet-1:E-2'],
+    '正确', DRB + ' 中 Perplexity 深度研究的引用准确率 90.24%，为商用产品最高。',
+    True, '现象', '一般', merge(r('A', 'B', 'C', 'D'), ef()))
+
+add('Perplexity 深度研究在检索范围、引用透明度和报告结构化上都非常突出，是最强的 AI 搜索型深度研究之一',
+    ['opus-1:E-2', 'opus-2:E-4', 'sonnet-1:E-2', 'P1-c5', 'P2-c2', 'P3-3', 'P3-c2', 'P4-c2'],
+    '无法判断', DRB + ' 中它的引用准确率最高，但每题有效引用 31.26 条，远少于 Gemini 的 111.21 和 OpenAI 的 40.79，“检索范围突出”不成立，整体对错难判。',
+    True, '现象', '一般', ef())
+
+add('Perplexity 深度研究的性质是搜索/信息综合型：长于快速、广泛检索和带引用的汇总，不擅长因果推断和严谨论证，深度有时不如 OpenAI 深度研究，且仍有幻觉；两者定位不同',
+    ['opus-1:C-3', 'opus-2:C-12', 'sonnet-1:C-4', 'opus-1:E-9', 'P1-7', 'P2-4', 'P3-9',
+     'opus-1:E-8', 'opus-2:E-7', 'sonnet-1:E-6', 'P1-6', 'P2-7', 'P3-8', 'P4-4'],
+    '正确', DRB + ' 综合分（RACE）Perplexity 42.25 低于 OpenAI 46.98 和 Gemini 48.88，而引用准确率最高；与“快、广、引用好、深度较浅”的判断一致。',
+    True, '本质', '一般', merge(r('B', 'C'), ef()))
+
+add('Perplexity 的网页抓取做法受到法律审查',
+    ['opus-1:A-8', 'opus-2:A-6', 'sonnet-1:A-9'],
+    '正确', '道琼斯、纽约邮报 2024-10 起诉 Perplexity，2025 年又有 Reddit 起诉和 Cloudflare 指其隐匿爬取。',
+    False, '全体', '一般', r('A'))
+
+add('Perplexity 于 2026 年 2 月推出 Perplexity Computer：编排 19 个模型的多智能体助手，先向 Max 订阅用户开放',
+    ['opus-1:A-19', 'opus-2:A-20', 'sonnet-1:A-10', 'A-c10'],
+    '正确', 'https://techcrunch.com/2026/02/27/perplexitys-new-computer-is-another-bet-that-users-need-many-ai-models',
+    True, '现象', '一般', r('A'))
+
+add('订阅价格：基础档约 20 美元/月且深度研究限次，高级档有 ChatGPT Pro 200、Google AI Ultra 249.99、Perplexity Max 200 美元/月，Perplexity 企业席位每人每月 40–325 美元，Claude Team 每人约 30 美元起',
+    ['opus-2:A-19', 'opus-2:D-14'],
+    '正确', '各家官方定价页；Perplexity Max 200 美元（https://techcrunch.com/2025/07/02/perplexity-launches-a-200-monthly-subscription-plan/），Google AI Ultra 249.99 美元。',
+    True, '现象', '一般', r('A', 'C', 'D'))
+
+add('Perplexity Max 是 2026 年 2 月新推出的套餐（月费 200 美元）',
+    ['A-c7'],
+    '有误', 'Perplexity Max 于 2025-07-02 推出（https://techcrunch.com/2025/07/02/perplexity-launches-a-200-monthly-subscription-plan/）。',
+    True, '现象', '一般', r('A'))
+
+add('Perplexity 于 2026 年在 Max 订阅层推出 Comet 浏览器智能体，作为 Max 的专属功能',
+    ['D-c7'],
+    '有误', 'Comet 2025-07 先向 Max 用户开放，2025-10 起对所有人免费（https://www.engadget.com/ai/perplexitys-comet-ai-browser-is-now-free-for-everyone-170017509.html）。',
+    True, '现象', '一般', r('D'))
+
+add('Perplexity 的 Spaces 可把研究限定在用户圈定的文件和链接内，排除外部无关数据',
+    ['opus-2:D-7', 'sonnet-1:D-14'],
+    '正确', 'Perplexity 企业版说明：Spaces 可关闭 Web、只用“我的文件”作答（https://enterprise-prod.perplexity.ai/enterprise/videos/how-to-set-custom-files-and-links）。',
+    True, '现象', '一般', r('D'))
+
+add('把引用可核查和事实准确放在首位的用户，首选 Perplexity（报告称是无可争议的最佳选择、事实核查首选）',
+    ['opus-1:B-6', 'opus-2:B-7', 'B-c6', 'opus-2:D-17', 'D-c2', 'opus-1:D-19'],
+    '无法判断', '有利证据：' + DRB + ' 引用准确率最高；不利证据：同一基准综合分低于 Gemini、OpenAI，独立的 MMDR-Bench 引用证据质量最好的是 Gemini，DRACO 是 Perplexity 自建。证据相互矛盾。',
+    True, '现象', '一般', merge(r('A', 'B', 'D', 'F'), ef()))
+
+add('需要快速获得带来源的概览，或做市场竞品、行业趋势、政策解读一类时效性调研时，用 Perplexity 最省时间',
+    ['opus-2:E-19', 'P1-20', 'P4-19', 'opus-1:C-19', 'opus-1:A-20'],
+    '正确', 'Perplexity 深度研究多数任务 3 分钟内完成、在 DRACO 实测中用时最短（arXiv 2602.11685 表 10），且来源可点回。',
+    True, '现象', '一般', merge(r('A', 'B', 'C'), ef()))
+
+# ---------------- 选择建议（跨产品） ----------------
+add('最务实的做法是按任务或研究阶段组合、切换使用多家产品（如 Perplexity 快速检索核查、ChatGPT 深度分析；或 Kimi 广域扫描、Perplexity 核查、Gemini 结合私有数据、Claude 或 ChatGPT 成文）',
+    ['opus-1:B-12', 'opus-2:B-12', 'sonnet-1:C-13', 'opus-1:D-20', 'opus-2:D-20', 'sonnet-1:D-15',
+     'opus-1:E-20', 'opus-2:E-18', 'sonnet-1:E-12', 'P1-19', 'P2-20', 'P3-20', 'P4-18'],
+    '正确', '各家长处不同（速度、引用、私有数据、深度各有领先者，见上述评测），分阶段组合是有据的建议。',
+    True, '现象', '一般', merge(r('B', 'C', 'D'), ef()))
+
+add('需要最深的分析推理、文献综述或英文严肃研究时，首选 ChatGPT 深度研究',
+    ['opus-1:B-10', 'opus-2:B-10', 'opus-1:C-19', 'opus-1:E-20', 'opus-2:E-18', 'P1-19', 'P2-20', 'P3-20', 'P4-18'],
+    '无法判断', DRB + ' 综合分 Gemini 高于 OpenAI，DRACO 中 OpenAI 第三，MMDR-Bench 中 GPT-5.2 只在计算机等技术领域最好；也有测评选 ChatGPT，证据不一。',
+    True, '现象', '一般', merge(r('B', 'C'), ef()))
+
+add('中文长文档、本土网站和中文史料研究，宜选 Kimi 深度研究，它在这类场景的产品化程度属于最高的一批',
+    ['opus-1:A-20', 'opus-1:C-19', 'P4-8'],
+    '无法判断', '截至截止日没有找到国产深度研究产品的独立横评，只有个人实测和厂商材料。',
+    True, '现象', '一般', merge(r('A', 'C'), ef()))
+
+add('中文场景下，Kimi 深度研究（长文本整理、多维挖掘）加 DeepSeek R1（深度分析、异常检测）分工组合，整体体验优于大部分国内模型、好于单用一个，已有机构推荐',
+    ['opus-1:E-3', 'opus-2:E-8', 'sonnet-1:E-3', 'E-c4', 'P1-8', 'P1-c7', 'P2-c3', 'P3-4', 'P3-c3', 'P4-c3',
+     'opus-1:E-15', 'opus-2:E-13', 'sonnet-1:E-8', 'P1-13', 'P2-15', 'P2-c8', 'P3-15', 'P4-13', 'opus-1:E-20'],
+    '无法判断', '依据是 2025-02 清华 PDF 对 R1 与 Kimi k1.5 模型的小样本测试；没有国产深度研究产品的横评，R1 到截止日也已被 V3.1/V3.2 取代。',
+    True, '内部联系', '一般', ef())
+
+add('DeepSeek 以 MIT 协议开放权重、API 价格极低，适合开发者本地部署或自建定制研究管道，而不是给普通用户开箱即用',
+    ['opus-2:D-9', 'opus-1:A-20', 'opus-1:C-19', 'opus-1:B-10', 'opus-2:B-10'],
+    '正确', 'DeepSeek-R1/V3 以 MIT 协议开源（https://huggingface.co/deepseek-ai），V3.2 API 输入约 0.28、输出约 0.42 美元/百万 token。',
+    True, '内部联系', '一般', r('A', 'B', 'C', 'D'))
+
+add('大规模、低成本的并发调研（如一次扫掠上千个细分市场数据），宜用 Kimi K2.5 的 Agent Swarm',
+    ['opus-1:D-19'],
+    '正确', 'Kimi K2.5 Agent Swarm 最多 100 个子智能体、1500 次工具调用（https://www.kimi.com/blog/kimi-k2-5.html），API 价格远低于北美厂商。',
+    True, '现象', '一般', r('D'))
+
+add('横向发散、跨界综合和撰写前瞻性报告，宜选 ChatGPT Pro',
+    ['opus-1:D-19'],
+    '无法判断', '报告没有给出具体评测依据，找不到针对这类任务的横评。',
+    True, '现象', '一般', r('D'))
+
+add('通用问答和日常研究宜用 ChatGPT',
+    ['opus-1:A-20'],
+    '无法判断', '报告依据的是 ChatGPT Search 而非深度研究，没有比较性证据。',
+    True, '现象', '一般', r('A'))
+
+add('高度专业、尤其计算机科学领域的研究，OpenAI 的 GPT 系列（GPT-5.2）更合适',
+    ['opus-1:F-10', 'opus-2:F-11'],
+    '正确', 'MMDR-Bench：GPT-5.2 peaks on structured technical areas like Computer and Data Science（https://arxiv.org/html/2601.12346v1）；ChatGPT 深度研究 2026-02 起由 GPT-5.2 驱动。',
+    True, '现象', '一般', r('F'))
+
+add('已经因为其他功能为某个平台付费的用户，直接用该平台自带的深度研究即可',
+    ['opus-1:B-11', 'opus-2:B-11', 'B-c9'],
+    '正确', 'ChatGPT Plus 等订阅含深度研究额度（https://en.wikipedia.org/wiki/ChatGPT_Deep_Research），Claude Pro 含 Research（https://claude.com/blog/integrations），建议有据。',
+    True, '内部联系', '一般', r('B'))
+
+add('第一梯队是 ChatGPT 和 Gemini',
+    ['opus-2:B-2', 'B-c1'],
+    '无法判断', 'DRACO 中 Perplexity 第一、Gemini 第二、OpenAI 第三，MMDR-Bench 中 Gemini 第一，LiveDRBench 中 OpenAI 最好，结论不一。',
+    True, '现象', '核心', r('B'))
+
+add('一次测评中 ChatGPT 深度研究生成 36 页、25 个来源的报告，建议具体可操作',
+    ['opus-1:B-2', 'opus-2:B-4', 'B-c3'],
+    '无法判断', '检索不到出处，其他实测的页数和来源数差异很大。',
+    True, '现象', '一般', r('B'))
+
+add('Kimi（以及 DeepSeek）以底层模型能力著称，但作为深度研究产品，成熟度和整体质量与 ChatGPT、Gemini 等仍有明显差距（尽管 Kimi 用户口碑很高）',
+    ['opus-1:B-9', 'sonnet-1:B-7', 'B-c8', 'opus-2:C-16', 'sonnet-1:C-14', 'opus-1:C-17'],
+    '无法判断', 'Kimi 2025-06 已推出 Kimi-Researcher，但缺少与其他产品同台的独立评测，“有明显差距”无法判定。',
+    True, '现象', '一般', r('B', 'C'))
+
+add('十维综合评分：Claude 42、Gemini 41 为第一梯队，ChatGPT 与 Kimi 39 次之，Perplexity 与 DeepSeek 36 第三',
+    ['opus-1:C-18', 'opus-2:C-17', 'C-c1'],
+    '有误', '按报告自己的十项评分逐项相加，ChatGPT 45、Gemini 43、Claude 42、Perplexity/DeepSeek/Kimi 40，表中总分除 Claude 外全部算错，排名与自身数据相反。',
+    True, '现象', '核心', r('C'))
+
+# ---------------- DeepSeek ----------------
+add('DeepSeek 截至截止日没有专门的深度研究智能体产品，要做多轮检索的深度研究，需要开发者自行搭建或外接工具',
+    ['opus-1:A-3', 'opus-2:A-18', 'opus-1:A-15', 'sonnet-1:A-6', 'opus-1:C-7', 'opus-2:C-14', 'sonnet-1:C-6',
+     'opus-1:E-14', 'opus-2:E-12', 'P1-12', 'P2-14', 'P3-14', 'P4-12', 'opus-1:B-9', 'opus-2:B-9', 'sonnet-1:B-7', 'B-c8'],
+    '正确', 'DeepSeek 官方 App 只有“联网搜索”和“深度思考”（https://www.deepseek.com/en/news/deepseek-app/），没有深度研究智能体。',
+    True, '现象', '一般', merge(r('A', 'B', 'C'), ef()))
+
+add('DeepSeek 官方 App 和网页自 2025-01 起提供联网搜索（可与深度思考同用），普通用户不必自行集成检索，并非“没有界面、没有内置搜索、知识止于训练截止”',
+    ['A-c6', 'C-c10', 'sonnet-1:E-11', 'opus-1:C-7', 'opus-2:C-14', 'sonnet-1:C-6', 'sonnet-1:A-6'],
+    '正确', 'https://www.deepseek.com/en/news/deepseek-app/（2025-01-15，Web search & Deep-Think mode）。',
+    True, '现象', '一般', merge(r('B', 'D'), ef(), {'A': N, 'C': N}))
+
+add('DeepSeek R1 处理极长文本容易超出上下文限制，早期版本的联网搜索和多语种输出不稳定',
+    ['sonnet-1:E-11', 'opus-1:E-14', 'opus-2:E-12', 'P1-12', 'P2-14', 'P3-14', 'P4-12'],
+    '正确', 'R1 上下文为 64K–128K；2025 年初 DeepSeek 因负载过高频繁暂停联网搜索，属当时实情。',
+    True, '现象', '一般', ef())
+
+add('DeepSeek R1 做内容总结时会主动补充数据和案例，在多款国产模型横评中整体超过豆包、Kimi',
+    ['opus-1:E-12', 'P2-12', 'P3-13', 'P4-10'],
+    '无法判断', '依据是 2025 年初零散的媒体和博客横评，无法核实，且对象是旧模型。',
+    True, '现象', '一般', ef())
+
+add('清华等机构的对比实验显示，DeepSeek R1 在数据分析任务上与 o3-mini 相当并领先其他模型，分析逻辑更清晰严谨',
+    ['opus-1:E-13', 'opus-2:E-11', 'E-c8', 'P1-11', 'P1-c8', 'P2-13', 'P3-12', 'P3-c7', 'P4-11', 'P4-c8'],
+    '正确', '与所引清华 PDF（2025-02）的测试结果一致；但只是小样本单次测试，到截止日已过时。',
+    True, '现象', '一般', ef())
+
+add('DeepSeek R1-0528 的幻觉比早期版本降低约 45%–50%',
+    ['opus-2:A-17'],
+    '正确', 'DeepSeek 2025-05-28 发布说明：改写、总结等场景幻觉率降低 45–50%（https://api-docs.deepseek.com/news/news250528）。',
+    True, '现象', '一般', r('A'))
+
+add('松耦合的推理引擎加外部检索方案，如果检索配置不当，推理引擎会把过时或缺失的信息“精致包装”，输出更具误导性',
+    ['opus-1:C-8', 'opus-2:C-15', 'sonnet-1:C-7'],
+    '正确', '推理流畅而检索失败时会产生看似可信的错误结论，推理成立，与检索增强生成的已知失效模式一致。',
+    True, '内部联系', '一般', r('C'))
+
+add('DeepSeek 推理强，但自带网页抓取工具的鲁棒性偏弱，更适合给定干净语料后推演',
+    ['sonnet-1:D-11'],
+    '无法判断', '报告所附 BrowseComp-Plus 数字本身标注有误，找不到可靠比较。',
+    True, '内部联系', '一般', r('D'))
+
+add('Kimi、DeepSeek 靠稀疏注意力、混合专家等架构优化，使 API 成本远低于北美厂商',
+    ['opus-2:D-15', 'sonnet-1:D-10'],
+    '正确', 'DeepSeek V3.2-Exp 引入 DSA 稀疏注意力并降价一半以上（https://the-decoder.com/deepseek-slashes-api-prices-by-up-to-75-percent-with-its-latest-v3-2-model/）；Kimi K2 系列为 MoE。',
+    True, '内部联系', '一般', r('D'))
+
+add('API 价格差距悬殊：Claude Opus 4.6 输入/输出每百万 token 5/25 美元，Kimi K2.5 约 0.6 美元输入，DeepSeek V3.2 约 0.28/0.42 美元',
+    ['opus-1:D-18'],
+    '正确', 'Anthropic 定价页 Opus 4.6 为 5/25 美元；DeepSeek V3.2-Exp 为 0.28/0.42 美元（the-decoder 2025-09）。C 报告仍以 R1 的 0.55/2.19 美元作为现价，已过时。',
+    True, '现象', '一般', {'A': Y, 'C': N, 'D': Y})
+
+# ---------------- Kimi ----------------
+add('Kimi 探索版（2024-10）让 AI 自主搜索，一次查询读数百页（约 500 页），可减少遗漏，但仍可能归纳出错',
+    ['opus-1:A-4', 'opus-1:A-13', 'sonnet-1:A-3', 'opus-2:A-7', 'A-c5'],
+    '正确', 'Kimi 探索版 2024-10-11 上线，一次精读 500 页以上（https://www.pingwest.com/w/299004）。',
+    True, '现象', '一般', r('A'))
+
+add('Kimi-Researcher（2025-06）是自主深度研究智能体，平均约 23 步推理、访问 200 多个网址',
+    ['opus-1:A-14', 'sonnet-1:A-4', 'opus-2:A-7', 'A-c5'],
+    '正确', 'Kimi 官方帮助页：平均 23 步推理、找到 206 个网址（https://www.kimi.com/en/help/deep-research/deep-research-overview）。',
+    True, '现象', '一般', r('A'))
+
+add('Kimi 深度研究的报告在正文中嵌入引用（官方称平均约 26 个可追溯来源），并非不附正式来源',
+    ['opus-1:A-16', 'opus-2:A-14', 'sonnet-1:A-5'],
+    '正确', 'https://www.kimi.com/en/help/deep-research/deep-research-overview',
+    True, '现象', '一般', {'A': N, 'C': Y})
+
+add('Kimi 声称“基本消除幻觉”属未经核实的宣传，缺少独立的事实性研究',
+    ['opus-1:A-7', 'opus-2:A-15', 'sonnet-1:A-8'],
+    '正确', 'Vectara HHEM 排行榜中 Kimi K2 摘要幻觉率 17.9%、K2.5 约 14.2%，远非“消除”。',
+    True, '全体', '一般', r('A'))
+
+add('受中国法律环境影响，Kimi 的用户数据可能受中国法规约束，企业数据控制情况不明',
+    ['opus-2:A-16'],
+    '正确', '月之暗面是中国公司，适用中国数据安全与个人信息法规；未见公开的企业级数据控制政策，推理成立。',
+    True, '内部联系', '一般', r('A'))
+
+add('Kimi K2.5 的 Agent Swarm 动态生成多达 100 个子智能体并行执行（最多约 1500 次工具调用），避免串行崩溃，端到端时间缩短约 80%、速度提升 4.5 倍',
+    ['opus-1:D-8', 'opus-2:D-8', 'sonnet-1:D-4', 'D-c6'],
+    '正确', 'https://www.kimi.com/blog/kimi-k2-5.html（2026-01）。',
+    True, '内部联系', '一般', r('D'))
+
+add('Kimi 深度研究月费约 25 元，生成约需 15 分钟，目前不能导出 PDF',
+    ['opus-1:C-17'],
+    '无法判断', '报告没有给出可追溯出处，Kimi 会员价格和导出功能找不到截止日的可靠记录。',
+    True, '现象', '一般', r('C'))
+
+add('据用户反馈，Kimi 深度研究在编程相关任务上表现出色，甚至优于一些付费方案',
+    ['opus-1:F-12', 'opus-2:F-13', 'sonnet-1:F-9', 'F-c9'],
+    '无法判断', '检索不到可靠出处；能找到的是 Kimi K2 编程模型的厂商基准，与深度研究功能不是一回事。',
+    True, '现象', '一般', r('F'))
+
+add('Kimi 的推理链条和数学严谨性弱于最新一代 OpenAI 模型和 DeepSeek R1',
+    ['opus-1:E-11', 'opus-2:E-10', 'P1-10', 'P2-11', 'P3-11', 'P4-9'],
+    '有误', 'Kimi K2 Thinking（2025-11）在 HLE（带工具 44.9%）、AIME 2025 等推理和数学基准上已超过 DeepSeek-R1，截至截止日“弱于 R1”不成立。',
+    True, '现象', '一般', ef())
+
+add('评测显示 Kimi k1.5 在长文本任务中比短文本表现更好，提取准确、数据维度更全，在特征分类与多维关联挖掘任务中最好',
+    ['opus-1:E-10', 'opus-2:E-9', 'E-c7', 'P1-9', 'P2-9', 'P3-10', 'P4-6', 'P4-c7'],
+    '正确', '与所引清华 PDF（2025-02）一致；属旧模型的小样本测试。',
+    True, '现象', '一般', ef())
+
+add('Kimi 的深度研究能高质量地搜索、研究，并用精美的前端页面展示结果',
+    ['P2-10', 'P4-7'],
+    '无法判断', '依据是一篇媒体技术解读，“高质量”是评价，找不到独立评测。',
+    True, '现象', '一般', ef())
+
+# ---------------- 上下文、幻觉与其他 ----------------
+add('上下文窗口：Gemini 3.1 Pro 和 Claude Opus 4.6 支持 100 万 token（Claude 为测试版），Kimi 256K，ChatGPT 与 DeepSeek 约 128K',
+    ['opus-1:A-17', 'opus-2:A-8', 'sonnet-1:A-11'],
+    '正确', 'Gemini 3.1 Pro 文档输入上限 1,048,576 token；Opus 4.6（2026-02）1M 上下文 beta；Kimi K2 系列 256K；DeepSeek V3.2 128K。',
+    True, '现象', '一般', r('A'))
+
+add('独立评测的幻觉率：Perplexity 7.7%、ChatGPT 9.7%（各评测口径不同，直接比较需谨慎）',
+    ['opus-1:C-20', 'opus-2:C-19'],
+    '无法判断', '报告没有给出是哪项评测，找不到这两个数字的出处。',
+    True, '现象', '一般', r('C'))
+
+add('Vectara HHEM 摘要幻觉率：Gemini 2.5 Flash-Lite 3.3%、DeepSeek V3.2 Exp 5.3%、Kimi K2 17.9%，Claude Opus 与 GPT-5 系列约 20%–27%',
+    ['opus-1:D-16', 'opus-2:D-13', 'D-c10'],
+    '有误', 'Vectara 排行榜 2026-02-25 版中 Claude Opus 4.5/4.6 为 10.9%/12.2%，GPT-5.x 为 8.4%–15.1%，Kimi K2.5 为 14.2%（https://github.com/vectara/hallucination-leaderboard）。',
+    True, '现象', '一般', r('D'))
+
+add('顶尖模型在复杂开放的长文档任务中为维持推理连贯，反而更容易出现事实细节偏差',
+    ['opus-1:D-9', 'sonnet-1:D-9', 'opus-2:D-13'],
+    '无法判断', '按修正后的 Vectara 数据，前沿推理模型的摘要幻觉率确实高于部分小模型，但“为维持推理连贯”这一原因没有证据支持。',
+    True, '内部联系', '一般', r('D'))
+
+add('幻觉源于训练和评测的激励：二元对错评分让模型在不知道时倾向猜测，而不是承认不知道',
+    ['opus-1:D-2', 'opus-2:D-12', 'sonnet-1:D-7'],
+    '正确', 'OpenAI《Why Language Models Hallucinate》（2025-09）提出这一解释（报告把发布时间写成 2026 年初）；这是大模型的通用背景，不区分各家深度研究。',
+    False, '本质', '一般', r('D'))
+
+add('智能体生成的关键词查询与神经排序器的训练分布不匹配，改写成自然语言问题（Q2Q）可提高检索召回和准确性',
+    ['opus-1:D-10'],
+    '无法判断', '报告未给出可核实的出处；属检索工程细节，与选哪家无关。',
+    False, '内部联系', '一般', r('D'))
+
+add('为应对推理成本，OpenAI 2026 年在免费和入门档测试广告，说明算力成本在塑造产品形态',
+    ['opus-1:D-7'],
+    '正确', 'OpenAI 2026-01 宣布在美国的免费和 Go 档测试广告；与深度研究功能的优劣无关。',
+    False, '内部联系', '一般', r('D'))
+
+add('Google AI Ultra（249.99 美元/月）附 2TB 存储，ChatGPT Pro 提供无限制的完整版深度研究',
+    ['D-c9'],
+    '有误', 'Google AI Ultra 含 30TB 存储（2TB 属 AI Pro）；ChatGPT Pro 的深度研究有月度上限（2025-04 起约每月 250 次）。',
+    True, '现象', '一般', r('D'))
+
+add('百度千帆深度研究 Agent 在 DeepResearch Bench（100 个博士级任务、22 个学科）上排名第一，超过 OpenAI、Gemini',
+    ['opus-1:F-2', 'opus-2:F-1', 'opus-2:F-2', 'sonnet-1:F-4', 'F-c2'],
+    '正确', '量子位 2026-02-04 报道 Qianfan-DeepResearch Pro 登上 DeepResearch Bench 榜首（https://www.qbitai.com/2026/02/376417.html）。',
+    True, '现象', '一般', r('F'))
+
+add('Perplexity 发布的 DRACO 基准上，Perplexity 深度研究得 67.15%，领先 Gemini（58.97%）和 OpenAI（52.06%），在医学、通用知识和技术领域领先明显',
+    ['opus-1:F-3', 'opus-2:F-3', 'sonnet-1:F-2', 'F-c3', 'opus-1:F-11', 'F-c8'],
+    '正确', 'https://arxiv.org/html/2602.11685v1 表 8、表 11（四舍五入一致；同表 Claude Opus 4.6 为 59.8，报告未列）。',
+    True, '现象', '一般', r('F'))
+
+add('LiveDRBench（ICLR 2026）上 OpenAI 的模型表现最佳，综合 F1 为 0.55',
+    ['opus-1:F-4', 'opus-2:F-5', 'F-c4'],
+    '正确', 'https://iclr.cc/virtual/2026/poster/10011486',
+    True, '现象', '一般', r('F'))
+
+add('LiveDRBench 发现各系统平均只覆盖约一半的必要搜索查询，所有产品的研究深度都还不足',
+    ['opus-1:F-5', 'opus-2:F-6', 'sonnet-1:F-6', 'F-c4'],
+    '正确', 'ICLR 2026 海报页摘要：systems cover only about half of the necessary search queries（https://arxiv.org/abs/2508.04183）。',
+    True, '全体', '一般', r('F'))
+
+add('评测结果相互矛盾，说明深度研究功能正在快速演进、走向专业化分工',
+    ['opus-1:F-7', 'opus-2:F-9', 'sonnet-1:F-7'],
+    '无法判断', '评测矛盾也可以由任务集和指标不同、部分基准由厂商自建来解释，报告没有排除这些解释，证据不足。',
+    True, '内部联系', '一般', r('F'))
+
+add('追求中文深度研究可关注百度千帆：它深度整合百度搜索，对中文互联网的“信息孤岛”有独家接入能力，这可能是它领先的关键',
+    ['opus-1:F-8', 'opus-2:F-10', 'sonnet-1:F-5', 'F-c6'],
+    '无法判断', '量子位报道只说依托百度搜索与 RAG，没有“独家接入信息孤岛”的依据；报告自己也用了“可能”。',
+    True, '内部联系', '一般', r('F'))
+
+add('趋势是速度优先者补深度、深度优先者提速度，预计 2026 年头部产品在速度与深度上趋同，差异转向垂直领域、生态集成和定价',
+    ['opus-1:C-10', 'opus-2:C-18', 'sonnet-1:C-12'],
+    '正确', 'OpenAI 2025-04 推出更快的轻量版深度研究，Gemini 深度研究 2025-12 升级到 Gemini 3 Pro 强化深度，趋势与证据一致。',
+    True, '全体', '一般', r('C'))
+
+add('背景：检索增强生成先检索再生成，能减少模型凭记忆编造，并让回答可以引用来源',
+    ['P4-20'],
+    '正确', 'Lewis 等 2020 年提出检索增强生成（arXiv 2005.11401）；属通用背景，没有比较各家产品。',
+    False, '内部联系', '一般', r('P4'))
+
+# ---------------- 输出 ----------------
+for i, p in enumerate(P, 1):
+    p['pid'] = f'Q{i}'
+ordered = [{k: p[k] for k in ['pid', 'content', 'sources', 'correct', 'basis', 'relevant', 'level', 'importance', 'reach']} for p in P]
+with open(OUT, 'w', encoding='utf-8') as f:
+    json.dump({'points': ordered}, f, ensure_ascii=False, indent=1)
+print(len(ordered))
