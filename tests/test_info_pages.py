@@ -1,8 +1,7 @@
 """资料站的四个说明页面：赛事说明、上手、公告、常见问题。
 
 检查四页都存在、沿用资料站的视觉规则、顶部能回到资料站、彼此能跳转、
-必备章节齐全、本地链接都能打开。参赛队伍的技术文档 teams.html 由 06 号任务提供，
-在它完成之前允许暂时不存在。运行：python3 -I -m unittest discover -s tests -v
+必备章节齐全、本地链接都能打开。运行：python3 -I -m unittest discover -s tests -v
 """
 import os
 import re
@@ -13,7 +12,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = os.path.join(ROOT, "site")
 PAGES = ["brief.html", "start.html", "news.html", "faq.html"]
 # 还没有建好、允许暂时打不开的页面（相对 site/）
-PENDING = {"teams.html"}
+PENDING = set()
 
 # 资料站的视觉规则，见 site/index.html 的样式和共用说明
 SPACING = {0, 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96}
