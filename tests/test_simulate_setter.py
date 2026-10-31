@@ -383,6 +383,7 @@ class ClosedBookTest(SetterCase):
 
 
 KIMI_401 = "退出状态 1；标准输出最后几行：Error code: 401 - The API Key appears to be invalid or may have expired"
+AGY_LOGIN = "退出状态 1；标准错误最后几行：agy 还没有登录"
 
 
 def failed(task, vendor, error=KIMI_401):
@@ -392,8 +393,10 @@ def failed(task, vendor, error=KIMI_401):
 
 class UnavailableVendorTest(SetterCase):
     def test_an_unavailable_map_writer_is_replaced_and_the_replacement_is_recorded(self):
+        # 本机现在的情况：kimi 登录过期，google（agy）还没登录
         lines = material(overrides={"出题-深度地图-乙-第1轮": ("claude", depth_map("乙", 4))},
-                         extra=[failed("出题-深度地图-乙-第1轮", "kimi")])
+                         extra=[failed("出题-深度地图-乙-第1轮", "kimi"),
+                                failed("出题-深度地图-乙-第1轮", "google", AGY_LOGIN)])
         code, printed = self.run_setter(lines=lines)
         self.assertEqual(code, 0, printed)
         meta = self.metadata()
@@ -404,16 +407,18 @@ class UnavailableVendorTest(SetterCase):
         self.assertEqual(len(b["替代"]), 1)
         self.assertEqual(b["替代"][0]["改用"], "claude")
         self.assertIn("401", b["替代"][0]["原因"])
-        self.assertEqual([item["厂商"] for item in meta["厂商不可用"]], ["kimi"])
+        self.assertIn("agy 还没有登录", b["替代"][0]["原因"])
+        self.assertEqual([item["厂商"] for item in meta["厂商不可用"]], ["kimi", "google"])
         self.assertTrue(any("两位出题人用了同一家" in note for note in meta["说明"]))
         self.assertEqual(meta["角色"]["闭卷对照"]["用到的厂商"], ["codex"])
-        self.assertFalse([r for r in self.calls() if r["vendor"] == "kimi"])
+        self.assertFalse([r for r in self.calls() if r["vendor"] in ("kimi", "google")])
         self.assertIn("乙：claude（Anthropic）（配置的是 kimi", self.read("深度地图.txt"))
         self.assertIn("改用 claude", printed)
 
     def test_closed_book_is_recorded_as_not_done_when_only_map_writers_are_left(self):
         lines = material(overrides={"出题-深度地图-乙-第1轮": ("codex", depth_map("乙", 4))},
-                         extra=[failed("出题-闭卷对照-作答", "kimi")])
+                         extra=[failed("出题-闭卷对照-作答", "kimi"),
+                                failed("出题-闭卷对照-作答", "google", AGY_LOGIN)])
         code, printed = self.run_setter("--map-b", "codex", "--closed-book", "kimi", lines=lines)
         self.assertEqual(code, 0, printed)
         self.assertFalse([r for r in self.calls() if r["task"].startswith("出题-闭卷对照")])
@@ -424,6 +429,7 @@ class UnavailableVendorTest(SetterCase):
         closed = self.read("闭卷对照记录.md")
         self.assertIn("结论：未做", closed)
         self.assertIn("401", closed)
+        self.assertIn("agy 还没有登录", closed)
         self.assertIn("写过本题的深度地图", closed)
         self.assertIn("结论：未做", self.read("深度地图.txt"))
 

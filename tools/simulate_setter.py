@@ -1088,7 +1088,7 @@ def build_parser():
     given.add_argument("--kind", choices=KINDS, required=True, help="练习题或正式题")
     given.add_argument("--id", help="题目标识，用作目录名；不给就用运行编号")
     given.add_argument("--out", default=DEFAULT_OUT, help="题目目录的上一级目录，默认 simulation/questions")
-    who = parser.add_argument_group("各角色用哪家（claude、codex、kimi）")
+    who = parser.add_argument_group("各角色用哪家（%s）" % "、".join(models.VENDORS))
     who.add_argument("--setter", choices=models.VENDORS, default=DEFAULT_VENDORS[SETTER],
                      help="出题人：评委版、提问版和裸题版、两人对照、闭卷比对，默认 claude")
     who.add_argument("--map-a", choices=models.VENDORS, default=DEFAULT_VENDORS[MAP_A],
