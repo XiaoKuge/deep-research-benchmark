@@ -9,7 +9,6 @@
 模型调用一律经过 models.py，评委提示词的模板在 review_prompts/。
 """
 import argparse
-import hashlib
 import json
 import os
 import random
@@ -32,6 +31,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
 import archive_sources  # noqa: E402
+import common  # noqa: E402
 import models  # noqa: E402
 import substitutes  # noqa: E402
 
@@ -107,14 +107,11 @@ def read_json(path):
 
 
 def write_json(path, data):
-    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-        f.write("\n")
+    """本程序写的 JSON 文件一律缩进 1、末尾换行，先写临时文件再整份替换。"""
+    common.write_json_atomic(path, data, indent=1)
 
 
-def sha256_text(text):
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+sha256_text = common.sha256_text
 
 
 def shown(path):
@@ -125,7 +122,7 @@ def shown(path):
 
 
 def now():
-    return datetime.now().astimezone().isoformat(timespec="seconds")
+    return common.now_iso("seconds")
 
 
 def load_config(path):
@@ -1221,8 +1218,7 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
     }
     os.makedirs(os.path.join(out, "reports"), exist_ok=True)
     for r in reports:  # 匿名化：副本只用编号命名，原名只在 mapping.json 里
-        with open(os.path.join(out, "reports", r["label"] + r["ext"]), "w", encoding="utf-8") as f:
-            f.write(r["text"])
+        common.write_text_atomic(os.path.join(out, "reports", r["label"] + r["ext"]), r["text"])
     write_json(os.path.join(out, "mapping.json"), {
         "reports": {r["label"]: r["name"] for r in reports},
         "files": {r["label"]: shown(r["path"]) for r in reports}})

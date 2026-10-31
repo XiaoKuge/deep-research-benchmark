@@ -4,7 +4,6 @@
 只用 Python 自带的标准库和同目录的 models.py（模型调用层）。
 """
 import argparse
-import hashlib
 import html
 import json
 import os
@@ -16,6 +15,7 @@ from fractions import Fraction
 from html.parser import HTMLParser
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import common  # noqa: E402
 import models  # noqa: E402
 import substitutes  # noqa: E402
 
@@ -194,10 +194,6 @@ def agent_delivery_block():
 
 
 # ---- 小工具 --------------------------------------------------------------------
-
-def _sha256(text):
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
 
 def _text(value):
     if value is None:
@@ -1015,12 +1011,11 @@ def map_json(result, meta, checksum):
 
 
 def _write(folder, name, text):
-    with open(os.path.join(folder, name), "w", encoding="utf-8") as f:
-        f.write(text)
+    common.write_text_atomic(os.path.join(folder, name), text)
 
 
 def _write_json(folder, name, data):
-    _write(folder, name, json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+    common.write_json_atomic(os.path.join(folder, name), data, indent=2)
 
 
 def notes(roles):
@@ -1044,7 +1039,7 @@ def write_folder(folder, result, meta, run):
     _write(folder, BARE_FILE, result["版本"]["裸题版全文"])
     map_text = render_map(result, meta)
     _write(folder, MAP_FILE, map_text)
-    checksum = _sha256(map_text)
+    checksum = common.sha256_text(map_text)
     _write(folder, MAP_SUM, "%s  %s\n" % (checksum, MAP_FILE))
     _write_json(folder, MAP_JSON, map_json(result, meta, checksum))
     _write(folder, PAIR_FILE, render_pairs(result, meta))
