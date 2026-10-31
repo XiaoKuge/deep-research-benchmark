@@ -1,0 +1,41 @@
+你在一项"深度研究报告评测方法"的小规模检验中，负责"要点池的合并与判定"。这是计分的核心一步，请认真做。
+
+工作目录：/Users/zonghuanwu/github/mofa-research/docs/deep-research-benchmarks-2026/research-plan
+
+先读：
+1. `stage4-rubric.md`：评审细则。重点是第三节（要点和层级的定义）和第四节（要点池的判定）。
+2. `stage5-pilot/question-card.md`：题目卡。截止时间是 2026-03-03。
+3. `stage5-pilot/depth-map.md`：出题人的深度地图，要点 M1 至 M8。
+
+要合并的材料都在 `stage5-pilot/out/` 下：
+- `rating-opus-1.json`、`rating-opus-2.json`、`rating-sonnet-1.json`：三次独立运行，各自从报告 A 至 F 中抽取的要点，字段为 points；
+- `single-P1.json` 至 `single-P4.json`：另外四份报告 P1 至 P4 的要点（points）和主要结论（claims）；
+- `verify-opus-ABCF.json`、`verify-opus-DE.json`：报告 A 至 F 的主要结论（claims），每条已经有对错核验（correct、correct_basis）。
+
+报告原文在 `stage5-pilot/reports/A.md` 至 `F.md`，以及 `stage5-pilot/perturb/P1.md` 至 `P4.md`。需要时可以打开核对，也可以用 grep 检索。
+
+要做的事：
+
+1. **合并。** 把所有要点、所有主要结论和 M1 至 M8 合在一起，意思相同的合成一条池中要点。
+   - 不同报告说法相互矛盾时，池中要点写成正确的那个版本（能判断时）。写错版本的报告，reach 记为"相反"。
+   - 每条池中要点记下 sources，即它由哪些原始条目合并而来，例如 ["A-3","opus-2:A-5","D-c4","M1"]。同一个 id 在不同运行中可能重复，请在 id 前加运行名，例如 "opus-1:A-3"、"sonnet-1:C-2"；claims 和 P 报告的 id 不必加。
+2. **判定。** 对每条池中要点，按细则第四节判定：
+   - correct：只能是"正确""有误""无法判断"之一，截至 2026-03-03。事实类的，对照来源或检索。现在已是 2026 年 10 月，注意排除 3 月 3 日之后才出现的信息。解释、判断、建议类的，"正确"指有理有据、与截止前的可靠证据一致；"有误"指与证据相反，或推理明显错误；"无法判断"指证据不足。已经有核验结果的主要结论，可以沿用核验的判断，也可以在有更好依据时改判，改判要写明理由。
+   - basis：依据，即网址或理由，一句话。
+   - relevant：是否切题，即是否有助于回答"哪家深度研究功能最好、该怎么选"。与问题无关的背景知识记为 false。
+   - level：现象、全体、内部联系、本质，四选一。按细则第三节的定义重新判定，不受原始条目所标层级的约束。抽象的套话（如"各有所长""技术在进步"）不能定为本质或内部联系。
+   - importance：只能是"核心"或"一般"。
+3. **reach。** 对每条池中要点，记下哪些报告写到了它：键为 A 至 F、P1 至 P4，值为"符合"或"相反"；没写到的不记。
+   - 由某份报告的条目合并来的，那份报告自然写到了。
+   - M1 至 M8 和其他要点，如果怀疑某份报告也写到了、只是没被抽取出来，请打开或检索原文核对。
+
+规则：
+- 不要猜测报告出自哪个产品。P1 至 P4 与某份 A 至 F 的报告内容相近，照常处理即可：哪份写了什么，就记什么。
+- 只能写一个输出文件 `stage5-pilot/out/pool.json`，不要修改其他任何文件。工作中需要的临时文件，放在 /private/tmp/claude-501/-Users-zonghuanwu-projects-GOSIM-elite-game/efdc4f00-f3cf-4541-917e-bb46cf1f48bb/scratchpad/pilot/pooltmp/ 下。
+- 网络请求只做读取和检索。
+
+输出必须是合法的 JSON，写完后用 python3 检查能否读入。格式如下：
+
+{"points":[{"pid":"Q1","content":"…","sources":["…"],"correct":"正确","basis":"…","relevant":true,"level":"本质","importance":"核心","reach":{"D":"符合","F":"符合","A":"相反"}}]}
+
+最后只回复两句话：输出文件路径；池中要点的条数，以及各层级的条数。

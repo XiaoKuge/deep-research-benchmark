@@ -1,0 +1,108 @@
+{
+ "verifier": "示意",
+ "reports": {
+  "一号": {
+   "claims": [
+    {
+     "id": "一号-c1",
+     "claim": "中国最大的淡水湖是鄱阳湖",
+     "core": true,
+     "source_label": "支持",
+     "correct": "正确"
+    },
+    {
+     "id": "一号-c2",
+     "claim": "鄱阳湖常年面积约 3,960 平方公里",
+     "core": false,
+     "source_label": "部分支持",
+     "correct": "有误"
+    }
+   ],
+   "timeliness": {
+    "score": 1
+   },
+   "traceable_sources": true
+  },
+  "二号": {
+   "claims": [
+    {
+     "id": "二号-c1",
+     "claim": "中国最大的淡水湖是鄱阳湖",
+     "core": true,
+     "source_label": "支持",
+     "correct": "正确"
+    },
+    {
+     "id": "二号-c2",
+     "claim": "2022 年 9 月星子站水位降到 7.10 米，有记录以来最低",
+     "core": false,
+     "source_label": "不支持",
+     "correct": "正确"
+    }
+   ],
+   "timeliness": {
+    "score": 1
+   },
+   "traceable_sources": true
+  },
+  "三号": {
+   "claims": [
+    {
+     "id": "三号-c1",
+     "claim": "中国最大的淡水湖是鄱阳湖",
+     "core": true,
+     "source_label": "支持",
+     "correct": "正确"
+    },
+    {
+     "id": "三号-c2",
+     "claim": "2022 年枯水时，通江水体只有 244 平方公里",
+     "core": false,
+     "source_label": "失效但有存档",
+     "correct": "正确"
+    }
+   ],
+   "timeliness": {
+    "score": 1
+   },
+   "traceable_sources": true
+  },
+  "四号": {
+   "claims": [
+    {
+     "id": "四号-c1",
+     "claim": "中国最大的淡水湖是鄱阳湖",
+     "core": true,
+     "source_label": "支持",
+     "correct": "正确"
+    }
+   ],
+   "timeliness": {
+    "score": 1
+   },
+   "traceable_sources": true
+  },
+  "五号": {
+   "claims": [
+    {
+     "id": "五号-c1",
+     "claim": "中国最大的淡水湖是鄱阳湖",
+     "core": true,
+     "source_label": "支持",
+     "correct": "正确"
+    },
+    {
+     "id": "五号-c2",
+     "claim": "据《中国湖泊年鉴 2025》第 87 页，鄱阳湖面积 3,210 平方公里",
+     "core": false,
+     "source_label": "找不到（疑似编造）",
+     "correct": "无法判断"
+    }
+   ],
+   "timeliness": {
+    "score": 1
+   },
+   "traceable_sources": true
+  }
+ }
+}
