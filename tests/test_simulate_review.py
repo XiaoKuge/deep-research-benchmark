@@ -493,6 +493,28 @@ class MergeHidesSourcesTest(unittest.TestCase):
         self.assertTrue(has_results)
 
 
+class ScorerTimeLimitTest(unittest.TestCase):
+    """计分程序有时长上限：到时停掉它，评审记为中止，写明原因，不会一直等下去。"""
+
+    def test_a_scorer_that_hangs_is_stopped_and_the_review_is_stopped(self):
+        import time
+        with tempfile.TemporaryDirectory() as tmp:
+            inputs = build_inputs(tmp)
+            replay = write_replay(os.path.join(tmp, "replay.jsonl"), standard_replay())
+            scorer = os.path.join(tmp, "slow_score.py")
+            write(scorer, "import time\ntime.sleep(60)\n")
+            out = os.path.join(tmp, "review")
+            began = time.monotonic()
+            result = run_tool(inputs, out, "--replay", replay, "--scorer", scorer, "--scorer-timeout", "1")
+            self.assertLess(time.monotonic() - began, 30)
+            meta = read_json(os.path.join(out, "run.json"))
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertEqual(meta["status"], "中止")
+        self.assertIn("计分程序", meta["error"])
+        self.assertIn("1 秒", meta["error"])
+        self.assertTrue(meta["scorer"]["timed_out"])
+
+
 class WebTierTest(unittest.TestCase):
     """google 不能用于只读网页一档：断言核验里所引网址没有存档的那一组（Charlie），计划给 google 的评委位置
     直接按替代顺序换一家（先挑这一步没配的 kimi），记一条替代，不发调用，google 也不算不可用。

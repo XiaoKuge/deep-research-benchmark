@@ -41,6 +41,7 @@ SCORER = os.path.join(ROOT, "research-plan", "stage5-pilot", "score.py")
 REVIEWS = os.path.join(ROOT, "simulation", "reviews")
 SCORER_VERSION = "1.2"
 RESULTS_NAME = "results-v%s.json" % SCORER_VERSION
+SCORER_TIMEOUT = 600  # 计分程序的时长上限，秒；试评的六份报告几秒就算完
 
 LEVELS = ["现象", "全体", "内部联系", "本质"]          # 由浅到深
 IMPORTANCE = ["一般", "核心"]
@@ -1143,13 +1144,21 @@ def write_data(ctx, verified, pool, ratings, pairwise, direct):
     return data
 
 
-def run_scorer(scorer, mapping, data, results):
+def run_scorer(scorer, mapping, data, results, timeout=SCORER_TIMEOUT):
+    """调用计分程序；超过 timeout 秒没有结束就停掉它，记为超时（timed_out 为是，退出状态为空）。"""
     command = [sys.executable, "-I", scorer, mapping, SCORER_VERSION, "--data", data, "--output", results]
-    done = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
-    return {"program": os.path.relpath(scorer, ROOT), "version": SCORER_VERSION,
+    meta = {"program": os.path.relpath(scorer, ROOT), "version": SCORER_VERSION,
             "command": [os.path.basename(sys.executable), "-I"] + [
                 os.path.relpath(a, ROOT) if os.path.isabs(a) else a for a in command[2:]],
-            "exit_code": done.returncode, "stderr": done.stderr[-4000:]}
+            "timeout_seconds": timeout, "timed_out": False}
+    try:
+        done = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", timeout=timeout)
+    except subprocess.TimeoutExpired as expired:
+        stderr = expired.stderr or ""
+        if isinstance(stderr, bytes):
+            stderr = stderr.decode("utf-8", errors="replace")
+        return dict(meta, exit_code=None, timed_out=True, stderr=stderr[-4000:])
+    return dict(meta, exit_code=done.returncode, stderr=done.stderr[-4000:])
 
 
 # ---- 一次运行 ----------------------------------------------------------------
@@ -1231,7 +1240,10 @@ def execute(args, config, question, reports, archive, manifests, mode, out, rubr
         if mode != models.ESTIMATE:
             data = write_data(ctx, verified, pool, ratings, pairwise, direct)
             results = os.path.join(out, RESULTS_NAME)
-            meta["scorer"] = run_scorer(args.scorer, os.path.join(out, "mapping.json"), data, results)
+            meta["scorer"] = run_scorer(args.scorer, os.path.join(out, "mapping.json"), data, results,
+                                        args.scorer_timeout)
+            if meta["scorer"]["timed_out"]:
+                raise ReviewError("计分程序超过 %g 秒没有结束，已停止" % args.scorer_timeout)
             if meta["scorer"]["exit_code"] != 0:
                 raise ReviewError("计分程序出错（退出状态 %d）" % meta["scorer"]["exit_code"])
         meta["status"] = "完成"
@@ -1281,6 +1293,7 @@ def parse_args(argv):
     ap.add_argument("--seed", type=int, help="随机种子（报告编号、两两比较的先后、要点判定的排列），默认按配置（0）")
     ap.add_argument("--rubric", default=RUBRIC, help=argparse.SUPPRESS)
     ap.add_argument("--scorer", default=SCORER, help=argparse.SUPPRESS)
+    ap.add_argument("--scorer-timeout", type=float, default=SCORER_TIMEOUT, help=argparse.SUPPRESS)
     return ap.parse_args(argv)
 
 
