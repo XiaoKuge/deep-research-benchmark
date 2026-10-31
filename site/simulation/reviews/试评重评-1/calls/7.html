@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟评审 试评重评 1 第 7 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟评审 试评重评 1第 7 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这次评审</a>
+    <p class="eyebrow caption-1">模拟评审 试评重评 1 · 第 7 次调用</p>
+    <h1 class="heading-3">评审 · 断言核验：报告 A，只给材料，评委 3</h1>
+    <p class="body-3 lede">OpenAI（codex），命令行默认模型，只给材料，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟评审 试评重评 1的第 7 次调用，共 54 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>评审-断言核验：报告 A，只给材料，评委 3</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">OpenAI（codex）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只给材料</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 20:15:53.151（UTC−07:00）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 20:17:43.934（UTC−07:00）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">110.784 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>ba41be4fec71612f291e30e5dc2ad8ecce47f3aaeb3325cb3a10fe4060cf2964</code>（<code>SHA-256</code>）</dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>48e2c645befddc566fc4e9faddfe405694093c532ad319e0d1857ff2a9299427</code>（<code>SHA-256</code>）</dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/codex exec --json --output-last-message /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmp0ijagq6t/last-message.txt --cd /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmp0ijagq6t/work --ephemeral --skip-git-repo-check --ignore-user-config --ignore-rules --sandbox read-only -c approval_policy=&quot;never&quot; --disable shell_tool --disable unified_exec -c web_search=&quot;disabled&quot; -</code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/reviews/%E8%AF%95%E8%AF%84%E9%87%8D%E8%AF%84-1/calls.jsonl">调用记录文件</a>的第 7 行，记录里的序号是 7</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="6.html">上一次调用</a></li><li><a class="caption-1" href="8.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 29319 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 29319 字，点开看全文</summary><pre class="raw" id="prompt">
+你在一项深度研究报告评测的模拟评审中担任核验员，负责&quot;断言核验&quot;。
+
+下面先给出材料：评审细则、题目卡，以及从一份报告中列出的几条主要结论。结论清单由另一位清单员按细则第五节的规则列出，所有核验员共用。本任务只用这些材料：不能上网，不能运行命令，不能读写文件。所引网页的内容，用主办方的网页存档（运行后取回、按校验值保存的副本）。截止时间是 2026-03-03，判断对错和时效，以截至这一天已经存在的信息为准。
+
+===== 评审细则（开始） =====
+# 评审细则（第 1.2 版）
+
+2026-10-29。这是第四阶段方案（`stage4-design.md`）的操作版本，写给评委看，评委按它判定。第五阶段的小规模检验用的是第一版；检验之后改了两处，即第五节的结论清单和第七节第 2 条，改动的原因见 `stage5-report.md` 第三节。
+
+2026-10-30 第 1.2 版：第四节加了深度地图标注的用法和判定时隐去出处；有争议标注的计分规则见第四节末尾。起因是出题手册审阅时提出的问题：深度地图的定位不清，出题人不知道写到什么程度为止。第 1.2 版的改动还没有检验。
+
+---
+
+## 一、评委需要知道的定义
+
+**调研。** 为了回答提问者的一个具体问题，以截至某一时间点已经存在的信息为材料，系统地查找、甄别、分析和整合，得出有理有据的结论。结论可以是描述、解释、预测或建议，但都要讲得出道理、拿得出依据。
+
+**深。** 指调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。全体，是事情的历史和全部现状；本质，是事情的性质，以及这件事与其他事情之间的内在联系。材料的丰富是深的基础，但材料多本身不等于深。
+
+**不看的东西。** 篇幅、格式、标题层级、表格多少、引用条数、文笔，都不进入名次。写作只在第六节单独评。
+
+---
+
+## 二、环节评级（每个环节三档：0、1、2）
+
+每个评级都必须引用报告原文一到两句作为依据。原文中找不到依据时，按较低的一档评。
+
+**① 切题与真实需要**
+
+- 0：答的是另一个问题；或者只按字面回答，没有交代自己怎样理解问题和提问者的需要。
+- 1：回答了所问的问题，并写明了自己的理解或假设。
+- 2：在 1 的基础上，审视了问题的前提或其中概念的边界，例如&quot;最好&quot;按什么标准、某个概念包括哪些范围，并据此组织回答。
+
+**③ 查找过程的交代**
+
+- 0：没有交代查了什么、怎么查的。
+- 1：交代了来源的大致范围或类型。
+- 2：交代了查找的范围、方法和局限：查了哪些，没查到什么，为什么。
+
+**④ 甄别来源与处理矛盾**
+
+- 0：不加区分地使用来源；遇到相互矛盾的信息，不处理或没有发现。
+- 1：对来源有所区分，例如区分官方材料和二手评论，但对矛盾的处理不足。
+- 2：说明来源的可靠程度，主动指出相互矛盾的信息，并给出取舍的理由。
+
+**⑤ 分析**（区分事实和判断、考虑其他解释、不迎合）
+
+- 0：事实和判断混在一起；只有一种解释；结论迎合提问者或某一方。
+- 1：大体分开了事实和判断，推理基本清楚。
+- 2：明确区分事实和判断；考虑过其他解释或反例，并说明取舍；没有为了迎合而扭曲结论。
+
+**⑦ 结论与把握**
+
+- 0：结论含糊或回避判断，例如只说&quot;各有所长&quot;而不给出可用的判断；或者下了判断，但完全不说明把握。
+- 1：给出了明确的结论，但没有说明把握程度，或者把握说明流于形式。
+- 2：结论具体、明确，并如实说明各个结论有多大把握、依据是什么。
+
+**关于&quot;查不到&quot;。** 报告说&quot;查不到&quot;&quot;无法确定&quot;时，交代了查了什么、缺什么，并且仍然给出带把握说明的判断，算诚实；只说&quot;无法确定&quot;而不给可用的判断，算回避，在 ⑦ 中按 0 评。
+
+---
+
+## 三、要点抽取
+
+**要点**是报告中一条独立的、有实质内容的认识，例如一个事实、一个解释、一个判断、一条建议。
+
+- 同一个意思写了几遍，只算一条。
+- 只是罗列名字、没有说出任何认识的，不算要点。
+
+每条要点记下：
+
+- **内容**：一句话概括；
+- **层级**：现象、全体、内部联系、本质，四选一，定义见下；
+- **原文**：报告中的一句原话。
+
+**层级的定义：**
+
+- **现象**：事情本身的事实和表面特征。例如&quot;某产品于某日发布&quot;&quot;某产品支持上传文件&quot;。
+- **全体**：事情的历史，即怎样演变而来；或者全部现状，特别是容易被忽略的方面、例外和反例。例如&quot;这类功能从 2024 年底的首个产品发展到 2025 年各家跟进，期间定义发生了什么变化&quot;&quot;某产品在中文资料上的表现与英文不同&quot;。
+- **内部联系**：这件事与其他事情之间的因果、制约、依赖关系。例如&quot;某产品报告质量高，是因为它把检索和写作交给不同的子智能体，代价是用时更长&quot;。
+- **本质**：事情的性质，即为什么是这样、根本的特征是什么，包括概念的名与实。例如&quot;&#x27;哪家最好&#x27;没有脱离用途的答案，因为各产品优化的目标不同：有的优化引用透明度，有的优化报告的完整性&quot;。
+
+**判定层级时的提醒。** 抽象的套话不算&quot;本质&quot;，例如&quot;技术在不断进步&quot;&quot;各有所长&quot;。一条要点只有说出了具体的性质或联系，并且能在报告中找到支撑，才能定为内部联系或本质。
+
+---
+
+## 四、要点池的判定
+
+把所有报告和出题人深度地图中的要点合并，意思相同的合成一条，再对每条池中要点判定四件事：
+
+1. **对不对。** 截至题目卡规定的截止时间，这条认识是否正确。标为正确、有误或无法判断，并附依据：来源网址或理由。
+2. **切不切题。** 它是否有助于回答提问者的问题。标为切题或不切题。不切题的要点不计分。
+3. **层级。** 现象、全体、内部联系、本质，四选一。以池中判定为准，不受抽取时所标层级的约束。
+4. **重要性。** 核心或一般。核心，指回答这个问题不能缺少的认识。
+
+然后记下每份报告写到了哪些池中要点，写对了还是写错了。
+
+**深度地图的标注（第 1.2 版）。** 深度地图是出题人在看到任何报告之前预先登记的浅答案、转折点和核心要点。它不是标准答案：地图上没有、但正确又切题的要点同样计分；要点的对错一律按来源判定。
+
+1. 地图上已有的要点，以地图登记的层级和重要性为默认值。评委组改动，必须依据来源或第三节的定义写明理由。
+2. 地图上没有的要点，判定时不告诉评委它出自哪份报告、出自几份报告。判为核心的，列入人工审计。
+3. **有争议的标注**，指评委组判定时没有一种意见达到三分之二的层级或重要性判定，以及评委组改动过的地图标注。计分时，比较一对报告，每条有争议的要点都按对领先一方最不利的那种标注计分，再做分开检验。有争议的判定只能让一对报告并列，不能把它们拉开。
+4. 估计名次把握的重抽样，只在至少一份报告写到的要点中进行。这样，地图上写了而没有一份报告写到的要点，对名次的影响为零。
+
+在第五阶段的试评数据上核对过两件事（2026-10-30）：去掉地图上 2 条没有一份报告写到的要点，6 份报告的净分和名次完全不变；把地图上 8 条要点的重要性全部反过来，名次不变。把全部 122 条要点的重要性抹平，原来分开的 12 对中有 1 对变成分不开。
+
+---
+
+## 五、断言核验
+
+**主要结论**，指报告摘要或结论部分中的判断，以及正文中支撑这些判断的关键事实。
+
+**结论清单（第 1.1 版）。** 凡是带来源的结论全部列入，另加至多 10 条不带来源的主要结论，优先抽对提问者影响最大的。清单由一人按这条规则抽出，所有核验员使用同一份清单。另外，在清单中标出至多 3 条&quot;对题目的直接回答&quot;，即报告对所问问题的总体判断。
+
+（第一版是每份报告由核验员自己抽出至多 10 条。不同核验员抽的不同，会带来噪声。）
+
+每条主要结论记两类标签。
+
+**来源标签：**
+
+- **支持**：打开所引来源（或它的存档），来源确实支持这条结论；
+- **部分支持**：来源支持其中一部分，或者结论说得比来源更强；
+- **不支持**：来源存在，但不支持这条结论；
+- **失效但有存档**：链接打不开，但网页存档中能找到，并据存档判断支持与否（另外记下支持与否）；
+- **找不到（疑似编造）**：链接打不开，存档中也没有，按标题检索也找不到；
+- **没有出处**：这条结论没有给出来源，或者导出时来源丢失。
+
+**对错标签：** 不管有没有来源，都独立检索核对，截至截止时间这条结论是否正确：
+
+- **正确**
+- **有误**：附依据
+- **无法判断**
+
+**来源只列在文末的情况。** 报告只在文末列出来源，没有对应到具体结论时，核验者在所列来源中查找支持：找到的，记为相应的来源标签，并注明&quot;文末来源&quot;；找不到的，记为没有出处。
+
+**&quot;疑似编造&quot;要经第二次核查才算确认。** 第二次核查可以换一种检索方式，或者查同一网站的其他页面。
+
+**时效（②）**，三档：
+
+- 0：主要结论依赖已经过时的信息，截止时间之前已有更新的信息被忽略；
+- 1：大体是新的，但有个别重要信息过时；
+- 2：材料截至规定的时间点，并且足够新。
+
+---
+
+## 六、写作（二级，单独报告，不进入名次）
+
+- 0：难以读懂，或结构混乱；
+- 1：能读懂，结构基本清楚；
+- 2：清楚、简洁，主要结论在前。
+
+---
+
+## 七、硬伤
+
+下列四种，有任何一种，报告就排在所有没有硬伤的报告之后：
+
+1. **编造来源**：经第二次核查确认，至少一个来源是编造的；
+2. **直接回答与证据相反**：报告对题目的直接回答（结论清单中标出的至多 3 条），至少一条被截止时间之前可靠的证据明确否定。支撑性事实的错误不算硬伤，在深度净分中扣分（第一版是&quot;至少一条核心的主要结论&quot;，结果长报告几乎都被判了硬伤）；
+3. **答非所问**：报告回答的是另一个问题；
+4. **全篇没有可追溯的出处**：经过补救，仍然没有一个可以追溯的来源。
+
+格式、篇幅、文笔，永远不算硬伤。
+===== 评审细则（结束） =====
+
+===== 题目卡（开始） =====
+一、评委版（只给评委）
+【提问者】原题没有写明。按&quot;一位想选用深度研究产品的普通用户&quot;理解。
+【用途】原题没有写明。按&quot;帮助决定用哪一家&quot;理解。
+【问题】各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+【截止时间】只使用截至 2026-03-03 已经公开的信息。这一天是试评报告的生成日期，判断对错和时效以截至这一天已经存在的信息为准。
+
+二、提问版（交给智能体）
+（原题没有提问版。试评的六份报告当时收到的只有问题本身，见裸题版。）
+
+三、裸题版（交给智能体）
+各家大语言模型的 Deep Research（深度研究）功能，哪家做得最好？请做一份综合分析。
+
+四、附在提问版和裸题版之后，一字不改
+
+（原题没有附交付要求和说明：试评的六份报告生成在交付要求定稿之前。）
+
+说明：这道题取自第五阶段小规模检验，原件是 research-plan/stage5-pilot/question-card.md。原始题目文本没有保存，上面的问题是根据六份报告的标题和开头还原的，所以不是按基础级规则写的题目卡：提问者和用途是评委的理解，裸题版也是还原的文字，不一定与当时交给各个产品的逐字相同。这里按出题手册第八节模板的四个部分重写，内容与原件相同，供模拟评审程序读取。
+===== 题目卡（结束） =====
+
+===== 主要结论（只给材料）（开始） =====
+[c1] 结论：这些系统都用外部搜索和检索增强大模型，但在数据时效、工具、上下文长度、可解释性和企业功能上各有差异。
+原文：“All of these systems augment large language models (LLMs) with external search and retrieval, but they differ in data freshness, tools, context size, explainability, and enterprise features.”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c2] 结论：Gemini 的强项是与 Google 搜索和用户数据打通的企业/Workspace 研究。
+原文：“**Gemini** shines in enterprise/Workspace-integrated research with Google search and user data (long context, multimodal, chain-of-thought via a “thinking” panel)【14†L69-L76】【8†L183-L189】.”
+报告标的来源：【14†L69-L76】【8†L183-L189】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c3] 结论：ChatGPT 凭带来源链接的网页搜索和庞大的插件生态，最适合一般查询和多轮研究。
+原文：“**ChatGPT (OpenAI)** offers broad web search with source links and a huge plugin ecosystem, making it ideal for general queries and multi-turn research【25†L51-L59】【25†L99-L107】.”
+报告标的来源：【25†L51-L59】【25†L99-L107】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c4] 结论：Claude 侧重安全、迭代式的探索，适合企业环境中的复杂研究任务。
+原文：“**Claude** focuses on safe, iterative exploration (including “extended thinking” and web tools), suited for complex research tasks in enterprise settings【27†L41-L48】【29†L216-L224】.”
+报告标的来源：【27†L41-L48】【29†L216-L224】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c5] 结论：Perplexity 专为研究而建，使用持续更新的网页索引，提供简洁的带引用回答和连接器。
+原文：“**Perplexity** is built specifically for research: it uses continuously-updated web indexes and provides concise, cited answers and connectors (e.g. Google Drive)【34†L203-L210】【36†L49-L58】.”
+报告标的来源：【34†L203-L210】【36†L49-L58】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c6] 结论：Kimi 面向超长上下文场景和中文市场的研究，Explore 模式抓取数百个网页，模型为万亿参数 MoE、256K 上下文。
+原文：“**Kimi** targets extreme-long-context scenarios and research in the Chinese market: its “Explore” mode aggressively crawls hundreds of pages, and its models boast trillion-parameter MoEs with 256K context【19†L104-L112】【16†L204-L207】.”
+报告标的来源：【19†L104-L112】【16†L204-L207】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c7] 结论：DeepSeek 提供大上下文的开放模型和专门的推理模式，面向构建智能体工作流的开发者。
+原文：“**DeepSeek** offers open LLMs with large context and dedicated reasoning modes (R1 with chain-of-thought), aimed at developers building agentic workflows【40†L315-L324】【22†L45-L53】.”
+报告标的来源：【40†L315-L324】【22†L45-L53】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c8] 结论：Gemini Deep Research 自主规划并执行多步搜索，覆盖网页和 Gmail、Drive、Chat 等私有数据，生成多页带引用的报告。
+原文：“Google’s Gemini Deep Research agent autonomously plans and executes multi-step searches over the web and private data (Gmail, Drive, Chat), producing multi-page, cited reports【8†L183-L189】【14†L49-L57】.”
+报告标的来源：【8†L183-L189】【14†L49-L57】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c9] 结论：ChatGPT 推出了集成的 Search 模式（GPT-4o），获取最新网页答案并附实时来源链接。
+原文：“ChatGPT has introduced an integrated **Search** mode (GPT-4o) that fetches up-to-date web answers with live source links【25†L51-L59】.”
+报告标的来源：【25†L51-L59】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c10] 结论：Claude 的 Research 模式进行迭代搜索，并返回便于核对的引用。
+原文：“Anthropic’s Claude offers a “Research” mode that performs iterative searches and returns answers with “easy-to-check citations”【27†L41-L48】.”
+报告标的来源：【27†L41-L48】【27†L46-L48】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c11] 结论：Perplexity 是实时 AI 搜索引擎，把网页内容综合成带脚注来源的直接回答。
+原文：“Perplexity functions as a real-time AI search engine, synthesizing web content into direct answers with footnoted sources【34†L203-L210】.”
+报告标的来源：【34†L203-L210】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c12] 结论：Kimi 上下文最高 256K tokens，并于 2024 年 10 月推出每次查询深读数百个网页的 Explore 模式。
+原文：“Moonshot’s Kimi provides extremely long-context reasoning (up to 256K tokens) and launched an AI-powered **Explore** mode (Oct 2024) that “deeply reads” hundreds of web pages per query【19†L104-L112】.”
+报告标的来源：【19†L104-L112】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c13] 结论：DeepSeek 发布具有 128K 窗口和强推理模式的开放 MoE 模型，研究用途主要通过 API 实现。
+原文：“DeepSeek (China) releases open MoE models (V3, R1, V3.1, etc.) with 128K token windows and strong reasoning modes【40†L315-L324】, though its research use is primarily via API.”
+报告标的来源：【40†L315-L324】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c14] 结论：Gemini Deep Research 自主搜索并深入浏览网页以获取最新信息。
+原文：“It “autonomously searches and deeply browses the web … to find relevant, up-to-date information”【14†L62-L70】.”
+报告标的来源：【14†L62-L70】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c15] 结论：ChatGPT Search 使用第三方搜索提供商和合作伙伴直接提供的内容。
+原文：“explicitly “leverages third-party search providers, as well as content provided directly by our partners, to provide the information users are looking for”【25†L139-L144】.”
+报告标的来源：【25†L139-L144】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c16] 结论：开启 Research 后，Claude 会同时在内部资料（Gmail、Calendar、Docs）和网页上进行研究。
+原文：“With Research on, “Claude will kick off the research process across your internal context (Gmail, Calendar, Docs) and the web,” conducting iterative searches【27†L59-L64】.”
+报告标的来源：【27†L59-L64】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c17] 结论：Anthropic API 提供 Web Search 工具，可访问实时网页内容，回答知识截止日期之后的问题。
+原文：“Anthropic’s API also offers a **Web Search tool** giving “direct access to real-time web content, allowing it to answer questions with up-to-date information beyond its knowledge cutoff”【29†L216-L224】.”
+报告标的来源：【29†L216-L224】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c18] 结论：Claude 的 API 网页搜索工具会在回答中自动引用搜索结果的来源。
+原文：“In its API web-search tool, Claude “automatically cites sources from search results as part of its answer”【29†L216-L224】.”
+报告标的来源：【29†L216-L224】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c19] 结论：Perplexity 的抓取行为已引起法律方面的审查。
+原文：“(Note: Perplexity’s scraping practices have drawn legal scrutiny【34†L213-L220】.)”
+报告标的来源：【34†L213-L220】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c20] 结论：Perplexity 明确运行自己的网页爬虫，但存在争议。
+原文：“Perplexity explicitly runs web crawlers (albeit controversially【34†L213-L220】).”
+报告标的来源：【34†L213-L220】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c21] 结论：Perplexity 可通过连接器（如 Google Drive）搜索用户文件，使查询同时覆盖网页和私有数据。
+原文：“Perplexity can also connect to personal data via “App Connectors” (e.g. Google Drive) to search user files【36†L47-L56】.”
+报告标的来源：【36†L47-L56】【36†L49-L58】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c22] 结论：Kimi Explore 一次查询发起大量并行搜索（号称普通搜索的 10 倍），最多阅读约 500 个网页。
+原文：“In effect, one query dispatches thousands of parallel searches (Kimi claims 10× the queries of normal search) and reads up to ~500 pages per query【19†L104-L112】【19†L124-L130】.”
+报告标的来源：【19†L104-L112】【19†L124-L130】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c23] 结论：Kimi-Researcher 是自主智能体模型，通过内部并行搜索工具进行约 23 步、200 多个 URL 的多轮搜索。
+原文：“Kimi also now has **Kimi-Researcher** (mid-2025), an autonomous agentic model that performs multi-turn search (around 23 steps, 200+ URLs) via an internal parallel search tool【22†L10-L18】【22†L45-L53】.”
+报告标的来源：【22†L10-L18】【22†L45-L53】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c24] 结论：DeepSeek R1 专长于复杂数学、编程和推理，并带有思维链。
+原文：“The BentoML guide notes DeepSeek’s R1 model is specialized for “complex math, coding, and reasoning” with chain-of-thought【40†L315-L324】.”
+报告标的来源：【40†L315-L324】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c25] 结论：Gemini Deep Research 按规划、搜索、阅读、迭代的流程工作。
+原文：“Gemini’s Deep Research agent “plans -&gt; search -&gt; read -&gt; iterate”【12†L849-L857】.”
+报告标的来源：【12†L849-L857】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c26] 结论：DeepSeek 模型开放并提供公开权重，且通过强化学习更新。
+原文：“DeepSeek’s models are open (e.g. DeepSeek-V3-0324) with public checkpoints and have been updated via reinforcement learning【40†L278-L287】.”
+报告标的来源：【40†L278-L287】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c27] 结论：ChatGPT 在回答顶部显示可点击的来源链接，并可打开 Sources 侧栏查看完整引用。
+原文：“After answering a query, ChatGPT shows clickable source links (news articles, websites) at the top of the response【25†L100-L107】. Users can open a “Sources” sidebar for full references【25†L100-L107】.”
+报告标的来源：【25†L100-L107】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c28] 结论：Kimi-Researcher 的论文没有详细说明引用形式，重点在强化学习。
+原文：“(The Kimi-Researcher paper does not detail citation style, focusing on learning via reinforcement learning【22†L10-L18】.)”
+报告标的来源：【22†L10-L18】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c29] 结论：BentoML 指南区分了 DeepSeek-V3 的直接回答和 R1 的逐步推理，但没有提到引用来源。
+原文：“(The BentoML guide distinguishes DeepSeek-V3’s “Direct answers” vs R1’s step-by-step reasoning【40†L315-L324】, but no mention of citing.)”
+报告标的来源：【40†L315-L324】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c30] 结论：Gemini 3.1 Pro 支持 100 万 tokens 上下文（测试版）。
+原文：“As of Gemini 3.1 Pro, **1 million tokens** are supported in beta【7†L214-L222】.”
+报告标的来源：【7†L214-L222】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c31] 结论：Claude Opus 4.6（2026 年 2 月发布）支持最高 100 万 tokens 上下文（测试版），通常为 20 万。
+原文：“Claude Opus 4.6 (Feb 2026) supports up to **1M tokens** (beta)【31†L22-L26】, with 200K normally.”
+报告标的来源：【31†L22-L26】【31†L22-L31】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c32] 结论：Claude 提供 compaction 功能来压缩较早的上下文。
+原文：“Claude also offers “compaction” to summarize older context【31†L63-L70】.”
+报告标的来源：【31†L63-L70】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c33] 结论：ChatGPT（GPT-4 Turbo/4o）截至 2025 年底支持约 128K tokens 上下文。
+原文：“**OpenAI ChatGPT** (GPT-4 Turbo/4o) supports up to about **128K tokens** (as of late 2025)【49†L7-L11】.”
+报告标的来源：【49†L7-L11】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c34] 结论：Kimi 最早支持 128K tokens（2023 年 11 月），2025 年 9 月提升到 256K。
+原文：“**Kimi** was the first with **128K tokens** (Nov 2023) and has since moved to **256K tokens** (Sep 2025)【16†L204-L207】.”
+报告标的来源：【16†L204-L207】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c35] 结论：Kimi 的 OK Computer 模式可同时处理数百万个数据点。
+原文：“Kimi’s “OK Computer” mode can also ingest millions of data points concurrently【16†L209-L217】.”
+报告标的来源：【16†L209-L217】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c36] 结论：Perplexity 没有公布上下文窗口，但底层使用 GPT-5.2 等前沿模型。
+原文：“No official context window is published, but it uses frontier LLMs under the hood (e.g. GPT-5.2 for long contexts as cited by Perplexity Computer)【37†L153-L160】.”
+报告标的来源：【37†L153-L160】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c37] 结论：DeepSeek 被称为 Moonshot 的模型，V3、R1、V3.1 支持最高 128K tokens。
+原文：“**DeepSeek** (Moonshot’s models) supports up to **128K tokens** (DeepSeek-V3, R1, V3.1)【40†L315-L324】.”
+报告标的来源：【40†L315-L324】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c38] 结论：Gemini 模型可处理文本、图像、音频和视频。
+原文：“Gemini models can process text, images, audio, and video【7†L242-L245】.”
+报告标的来源：【7†L242-L245】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c39] 结论：ChatGPT 的对话可以包含上传图片和音频（Advanced Voice）。
+原文：“Its conversation can include image uploads and audio (Advanced Voice)【25†L146-L154】.”
+报告标的来源：【25†L146-L154】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c40] 结论：ChatGPT Search 对天气、股票等查询提供带可视化面板的专门回答。
+原文：“ChatGPT Search also has specialized answers for weather, stocks, etc., with visual panels【25†L87-L96】.”
+报告标的来源：【25†L87-L96】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c41] 结论：Kimi K2 模型支持图像加文本的多模态。
+原文：“Kimi K2 models are **multimodal** (image + text)【3†L220-L223】.”
+报告标的来源：【3†L220-L223】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c42] 结论：Moonshot 正在测试 AI 视频生成。
+原文：“The company is testing AI video generation【15†L181-L188】”
+报告标的来源：【15†L181-L188】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c43] 结论：Google 引入 thinking 面板，让用户看到 Gemini 已了解的内容和下一步动作。
+原文：“Google introduced a “thinking” panel so users see what Gemini learned so far and its next moves【14†L153-L156】.”
+报告标的来源：【14†L153-L156】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c44] 结论：Gemini Deep Research 的流程包含迭代式自我批判和多轮处理。
+原文：“The Deep Research pipeline itself involves iterative self-critique and multiple passes【14†L158-L162】, though the final report is a polished synthesis.”
+报告标的来源：【14†L158-L162】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c45] 结论：Kimi-Researcher 在每一步输出 (think_t, action_t)，具有一定的过程透明度。
+原文：“The Kimi-Researcher model, for example, defines a (think_t, action_t) output at each step【22†L45-L53】”
+报告标的来源：【22†L45-L53】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c46] 结论：DeepSeek R1 为思维链设计，可通过提示展示推理步骤。
+原文：“Its R1 model is designed for chain-of-thought and can be prompted to show its reasoning steps (using `&lt;think&gt;` tokens or system instructions)【40†L315-L324】.”
+报告标的来源：【40†L315-L324】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c47] 结论：DeepSeek-V3.1（2025 年 8 月发布）具有可切换思考与非思考行为的混合模式。
+原文：“DeepSeek-V3.1 even has a hybrid mode where you can switch between “thinking” and “non-thinking” behavior【40†L284-L293】.”
+报告标的来源：【40†L284-L293】【40†L276-L285】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c48] 结论：Gemini Deep Research 智能体通过 Interactions API 访问，目前不能接入用户自定义工具。
+原文：“The Deep Research agent itself is accessed via the **Interactions API**【12†L860-L868】 and currently cannot take custom tools from users.”
+报告标的来源：【12†L860-L868】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c49] 结论：开发者可通过 Claude API 使用 Web Search 和 Code 工具。
+原文：“Developers can use **Web Search** and **Code** tools via API (as documented【29†L216-L224】【29†L253-L261】).”
+报告标的来源：【29†L216-L224】【29†L253-L261】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c50] 结论：Perplexity 于 2026 年 2 月推出面向 Max 订阅者的 Computer，这是使用 19 个模型的多智能体研究助手。
+原文：“Launched **Perplexity Computer** (multi-agent research assistant using 19 models)【37†L109-L118】【37†L151-L160】, available to Max subscribers.”
+报告标的来源：【37†L109-L118】【37†L151-L160】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c51] 结论：Kimi-VL 和 K2 以类 MIT 许可证开源。
+原文：“Kimi-VL and K2 are open-sourced under MIT-like licenses【15†L149-L158】【16†L200-L208】, so teams can run DeepSeek-compatible inference.”
+报告标的来源：【15†L149-L158】【16†L200-L208】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c52] 结论：DeepSeek 提供 API，并在 Hugging Face 上开源 V3、R1、V3.1。
+原文：“DeepSeek provides an API for its models (via deepseek.com) and open-source releases (DeepSeek-V3, R1, V3.1 on Hugging Face【40†L307-L315】).”
+报告标的来源：【40†L307-L315】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c53] 结论：DeepSeek 的核心模型权重基本免费或开放，采用 MIT 许可证。
+原文：“DeepSeek’s APIs and models appear to be mostly free or open (MIT license) for the core LLM weights【40†L307-L315】.”
+报告标的来源：【40†L307-L315】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c54] 结论：BentoML 指南展示了如何用代码把 DeepSeek 模型集成到智能体工作流。
+原文：“BentoML’s guide shows how to integrate DeepSeek models with code for “agentic workflows”【39†L75-L83】.”
+报告标的来源：【39†L75-L83】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c55] 结论：ChatGPT Search 先向 Plus 和 Enterprise 用户开放，免费用户之后才能使用。
+原文：“Plus and Enterprise users get immediate access to Search; free users get it later【25†L39-L47】.”
+报告标的来源：【25†L39-L47】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c56] 结论：用户输入主题后，Gemini 会自主拆解研究任务。
+原文：“They enter a topic (e.g. “market analysis of X”), and Gemini autonomously breaks it down【14†L57-L66】.”
+报告标的来源：【14†L57-L66】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c57] 结论：用户在 claude.ai 或桌面应用中通过 Research 按钮开启研究模式。
+原文：“On claude.ai or desktop apps, a user toggles the “Research” button (bottom left)【27†L51-L59】.”
+报告标的来源：【27†L51-L59】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c58] 结论：ChatGPT Search 提供来源链接便于核对，从而减少幻觉。
+原文：“It generally **provides source links** so answers can be checked, reducing hallucination【25†L51-L59】【25†L100-L107】.”
+报告标的来源：【25†L51-L59】【25†L100-L107】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c59] 结论：Claude 4.6 的发布公告称其整体安全性不低于任何其他前沿模型。
+原文：“The Claude 4.6 announcement highlights “overall safety profile as good as, or better than, any other frontier model”【31†L43-L47】.”
+报告标的来源：【31†L43-L47】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c60] 结论：Claude 的网页搜索工具通过动态过滤和代码执行剔除无关内容，提高准确性。
+原文：“The web search tool includes dynamic filtering and code execution to improve accuracy by weeding out irrelevant content【29†L270-L279】.”
+报告标的来源：【29†L270-L279】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c61] 结论：Perplexity Pro 的 10 倍引用密度功能显示其格外重视来源。
+原文：“Perplexity Pro’s feature of “10× citation density”【48†L270-L273】 suggests extra emphasis on sourcing.”
+报告标的来源：【48†L270-L273】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c62] 结论：Gemini Deep Research 处于预览阶段，Google 提醒用户核查所给引用。
+原文：“The Deep Research agent is in preview, and Google cautions that it should be fact-checked (“review the citations provided”【12†L895-L903】).”
+报告标的来源：【12†L895-L903】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c63] 结论：Moonshot 团队声称其模型在数学和编程上与 GPT-4 相当。
+原文：“The Moonshot team claims strong performance (e.g. matching GPT-4 in math/coding【15†L183-L188】).”
+报告标的来源：【15†L183-L188】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c64] 结论：中文新闻称 Kimi 已基本消除幻觉，但这属于未经证实的宣传。
+原文：“Chinese news reports also claim they have “basically eliminated” hallucination【16†L247-L254】 (though that’s unverified PR).”
+报告标的来源：【16†L247-L254】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c65] 结论：DeepSeek R1-0528 的幻觉比早期模型减少约 45–50%。
+原文：“The BentoML article notes DeepSeek-R1’s high reasoning but also explicitly says hallucination was reduced by ~45–50% in R1-0528 compared to earlier models【40†L257-L264】.”
+报告标的来源：【40†L257-L264】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c66] 结论：ChatGPT Search 可能依据出版商协议向合作方记录查询，但用户数据按 OpenAI 政策隔离。
+原文：“The Search mode likely logs queries to partners (Vox Media, etc.) as per OpenAI’s publisher agreements【25†L129-L138】, but user data is isolated under OpenAI’s policies.”
+报告标的来源：【25†L129-L138】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c67] 结论：Gemini 文档提醒安全风险：不要上传不可信文档，并防范恶意网页。
+原文：“The docs warn about security: don’t upload untrusted docs, vet malicious pages【12†L886-L895】.”
+报告标的来源：【12†L886-L895】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c68] 结论：Claude 的网页搜索工具符合零数据留存条件，数据在响应后不保存。
+原文：“The web search tool is “ZDR-eligible” – data passed through it is not stored after the response【29†L228-L230】.”
+报告标的来源：【29†L228-L230】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c69] 结论：Perplexity 面向企业提供 SOC2 Type II、加密，并承诺不用客户数据训练。
+原文：“It markets itself to enterprises with SOC2 Type II, encryption, and an explicit guarantee that “no training is done on customer data”【48†L291-L294】.”
+报告标的来源：【48†L291-L294】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c70] 结论：Perplexity 的 Google Drive 连接器遵守 Google 权限设置。
+原文：“The Google Drive Connector respects Google permissions【36†L49-L58】 and syncs files privately.”
+报告标的来源：【36†L49-L58】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c71] 结论：Perplexity 企业版包含审计日志和数据保留控制。
+原文：“Enterprise plans include audit logging and data retention controls【36†L49-L58】【48†L285-L293】.”
+报告标的来源：【36†L49-L58】【48†L285-L293】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c72] 结论：Gemini 的 API 按使用量付费。
+原文：“In the Google AI API (GenAI) model, pricing is pay-as-you-go on top of Gemini’s cost【12†L860-L869】.”
+报告标的来源：【12†L860-L869】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c73] 结论：一次典型的 Gemini Deep Research 任务（多次搜索、约 6 万输出 tokens）花费几美元。
+原文：“Example estimates: a typical Deep Research task (multiple searches and ~60K output tokens) costs a few dollars【12†L874-L881】.”
+报告标的来源：【12†L874-L881】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c74] 结论：Claude API 定价为每百万输入 tokens 5 美元、每百万输出 tokens 25 美元。
+原文：“Claude’s API is priced at $5 per million input tokens and $25 per million output tokens (consistent with [31†L78-L81]).”
+报告标的来源：[31†L78-L81]
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c75] 结论：Perplexity Pro 每月 20 美元（每年 200 美元），提供不限量 Pro 查询和多步搜索。
+原文：“**Perplexity Pro** is $20/month ($200/yr) and grants “unlimited Pro queries” with multi-step search【48†L253-L262】.”
+报告标的来源：【48†L253-L262】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c76] 结论：Perplexity 企业席位为每用户每月 40 至 325 美元。
+原文：“Enterprise seats run $40–$325 per user/month (for Pro/Max tiers)【48†L274-L283】【48†L299-L308】, with heavy usage quotas.”
+报告标的来源：【48†L274-L283】【48†L299-L308】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c77] 结论：Kimi 应用免费但有限额，例如每天 5 次免费搜索。
+原文：“The Kimi apps are free with basic rate limits (e.g. 5 free searches per day【19†L114-L122】).”
+报告标的来源：【19†L114-L122】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c78] 结论：Kimi 付费订阅提供更高用量、更快服务，并可使用 K2 Turbo、Kimi-Researcher 等高级模型。
+原文：“Premium subscriptions (“Moderato”, “Allegretto”, “Vivace”) offer higher usage, faster service, and access to Kimi’s advanced models (K2 Turbo, Kimi-Researcher, etc.)【16†L229-L237】.”
+报告标的来源：【16†L229-L237】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c79] 结论：ChatGPT Search 于 2024 年 10 月推出，集成带引用的网页浏览。
+原文：“*Oct 2024:* Launched **ChatGPT Search** (GPT-4o) that integrates web browsing with citations【25†L51-L59】.”
+报告标的来源：【25†L51-L59】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c80] 结论：2024 年 12 月 ChatGPT Search 广泛开放，并与 Le Monde 等出版商合作。
+原文：“*Dec 2024:* Made Search broadly available; partnered with publishers (Le Monde, etc.)【25†L100-L107】.”
+报告标的来源：【25†L100-L107】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c81] 结论：Google 于 2024 年 12 月基于 Gemini 3 模型推出 Gemini Deep Research 这一产品类别。
+原文：“*Dec 2024:* Introduced **Gemini Deep Research** as a product category (Gemini 3 model)【14†L158-L162】.”
+报告标的来源：【14†L158-L162】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c82] 结论：Google 于 2025 年初发布 Gemini 3.0 Ultra（256K 上下文、多模态），并有 3.1（2026 年 3 月预览）。
+原文：“*Early 2025:* Released Gemini 3.0 “Ultra” (256K context, multimodal) and 3.1 (March 2026 preview)【8†L183-L189】【7†L214-L222】.”
+报告标的来源：【8†L183-L189】【7†L214-L222】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c83] 结论：Kimi-Researcher 于 2025 年 6 月发布，同时开源 Kimi K2（1T 参数）。
+原文：“*June 2025:* Released **Kimi-Researcher** agent (June 2025)【16†L194-L200】, and open-sourced Kimi K2 (1T param)【16†L199-L207】.”
+报告标的来源：【16†L194-L200】【16†L199-L207】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c84] 结论：Kimi K2.5 于 2026 年 1 月发布，具有 1T 参数、视觉能力和智能体思考模式。
+原文：“*Jan 2026:* Released **Kimi K2.5** with 1T params, vision and agentic “thinking” modes【3†L220-L223】.”
+报告标的来源：【3†L220-L223】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c85] 结论：DeepSeek-V3-0324 于 2025 年 3 月更新，改进了推理能力。
+原文：“*Mar 2025:* Updated **DeepSeek-V3-0324** (improved reasoning)【40†L237-L242】.”
+报告标的来源：【40†L237-L242】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c86] 结论：DeepSeek-R1-0528 于 2025 年 5 月发布，是一次重大的推理升级。
+原文：“*May 2025:* Released **DeepSeek-R1-0528** (major reasoning upgrade, hallucination reduced)【40†L247-L255】【40†L257-L264】.”
+报告标的来源：【40†L247-L255】【40†L257-L264】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c87] 结论：Gemini Deep Research 是耗时数分钟的异步流程，不适合即时查询。
+原文：“Async workflow (minutes-long tasks)【12†L849-L857】 not suited to instant queries”
+报告标的来源：【12†L849-L857】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c88] 结论：Gemini Deep Research 受 Google 搜索授权限制，部分内容受限。
+原文：“Limited to Google’s search licensing (some content restrictions)【12†L891-L900】”
+报告标的来源：【12†L891-L900】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c89] 结论：Gemini Deep Research 适合市场分析、文献综述、尽职调查等需要梳理网页和内部文档的深度任务。
+原文：“In-depth tasks like market analysis, literature reviews, due diligence – anywhere one needs an “analyst-in-the-box” to comb web and internal docs【12†L849-L857】.”
+报告标的来源：【12†L849-L857】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c90] 结论：Claude 擅长复杂推理，最新模型在 DeepSearch 基准上领先。
+原文：“Strong on complex reasoning (latest models lead on DeepSearch benchmarks【31†L53-L61】).”
+报告标的来源：【31†L53-L61】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c91] 结论：Kimi 支持中文和技术领域，免费使用吸引了约 3600 万月活用户。
+原文：“Supports Chinese language and technical domains; free usage attracts big user base (36M MAU)【3†L178-L181】.”
+报告标的来源：【3†L178-L181】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c92] 结论：DeepSeek 通过 VL 模型支持多模态，并可在其上构建智能体工作流。
+原文：“Supports multimodal (VL models) and agentic workflows if built on【22†L45-L53】.”
+报告标的来源：【22†L45-L53】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c93] 结论：示例称 ChatGPT 回答天气问题时给出 Positano（靠近巴黎）的预报，并在顶部列出 AccuWeather 来源。
+原文：“responds conversationally, e.g. “The forecast for Positano (near Paris) on Nov 3 shows mild weather with rain,” and lists a specific AccuWeather source at the top【25†L51-L59】【42†】.”
+报告标的来源：【25†L51-L59】【42†】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c94] 结论：示例称锂电池组价格从 2010 年约每千瓦时 1000 美元降至 2025 年约 120 美元。
+原文：““Lithium-ion battery pack prices have fallen from about $1,000 per kWh in 2010 to roughly $120 per kWh in 2025【34†L203-L210】.””
+报告标的来源：【34†L203-L210】
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c95] 结论：ChatGPT 仍是聊天式产品，可能无法自行规划多步任务。
+原文：“Still chat-style (may not plan multi-step tasks on its own).”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c96] 结论：ChatGPT 的高级模型需要 Plus 或 Enterprise，免费版仅限 GPT-3.5。
+原文：“Requires Plus/Enterprise for advanced models; free tier is limited to GPT-3.5.”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c97] 结论：GPT-5（o1）系列只是传闻，尚未正式进入应用。
+原文：“GPT-5 (o1) series rumored but not officially in apps yet.”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c98] 结论：ChatGPT 不向用户展示内部思维链。
+原文：“**ChatGPT** does not show its internal chain-of-thought to users.”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c99] 结论：DeepSeek 没有面向消费者的界面，用户主要是通过 API 或 Python 客户端使用的开发者。
+原文：“Has no consumer UI. Users (typically developers) submit prompts via API or a Python client.”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c100] 结论：Kimi 的回答像普通聊天机器人一样直接给出，似乎没有正式的来源链接。
+原文：“It seems Kimi’s answers are delivered directly (like standard chatbots) without formal source links.”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c101] 结论：Perplexity 的聊天能力有限，只适合简短问答。
+原文：“Limited chat capabilities (just short Q&amp;A).”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c102] 结论：Claude 缺少完善的面向终端用户的研究界面。
+原文：“Lacks a polished end-user research UI (Research mode is via toggle/button).”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+
+[c103] 结论：Perplexity 适合从普通用户到研究者等需要快速获得带来源答案的人群。
+原文：“Everyone from casual users to researchers who need quick, sourced answers.”
+报告标的来源：无
+没有网址：来源标签已经定为&quot;没有出处&quot;，只判定对错。
+===== 主要结论（只给材料）（结束） =====
+
+要做的事：按细则第五节，对上面每一条结论判定两类标签。
+
+1. 来源标签 source_label：只能是&quot;支持&quot;&quot;部分支持&quot;&quot;不支持&quot;&quot;失效但有存档&quot;&quot;找不到（疑似编造）&quot;&quot;没有出处&quot;之一。
+   - 给了存档内容的，按存档判断所引来源是否支持这条结论。存档只附了前面一部分的，在没附的部分里找不到，不能据此判为不支持，要在 source_note 中写明。
+   - 写明&quot;没有网址&quot;的结论，来源标签已经定为&quot;没有出处&quot;，你只判定对错，source_label 不用写。
+   - 判为&quot;找不到（疑似编造）&quot;的，必须换一种方式再查一次，例如按标题检索、查同一网站的其他页面，结果写进 second_check。second_check 为空的&quot;找不到&quot;不算数。
+2. 对错标签 correct：只能是&quot;正确&quot;&quot;有误&quot;&quot;无法判断&quot;之一。不管有没有来源，都独立核对：截至截止时间，这条结论是否正确。要注意排除截止时间之后才出现的信息。依据写进 correct_basis，包括网址或理由。没有把握的，标&quot;无法判断&quot;，不要猜。
+
+规则：
+- 不要猜测报告出自哪个产品。
+- 网络请求只做读取和检索，不提交任何表单。
+
+只回答一个 JSON 对象，不要写任何别的文字，也不要用代码块。每条结论一项，id 用上面方括号里的编号。格式如下：
+
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;source_label&quot;:&quot;…&quot;,&quot;source_note&quot;:&quot;…&quot;,&quot;second_check&quot;:&quot;&quot;,&quot;correct&quot;:&quot;…&quot;,&quot;correct_basis&quot;:&quot;…&quot;}]}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 11056 字，一字不改。</p>
+  <details><summary class="caption-2">回答共 11056 字，点开看全文</summary><pre class="raw" id="answer">
+{&quot;claims&quot;:[{&quot;id&quot;:&quot;c1&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;所列研究、搜索产品普遍结合外部检索与大模型生成；数据更新、工具、上下文和企业集成确有差异。此判断不表示各家的基础模型本身都内置搜索。&quot;},{&quot;id&quot;:&quot;c2&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;Google 搜索和 Workspace 集成是可识别的产品特点，但材料未提供比较证据，无法核实其企业研究优势；thinking 面板也不能直接等同于完整思维链。&quot;},{&quot;id&quot;:&quot;c3&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 插件测试版已于2024年退出，不能在截止日以“庞大的插件生态”作为现行优势。一般查询和多轮研究的最优判断也缺少比较依据。&quot;},{&quot;id&quot;:&quot;c4&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;Claude 具有扩展思考和研究工具，但“侧重安全”及适合复杂企业研究的整体判断，需要产品比较和具体任务证据。&quot;},{&quot;id&quot;:&quot;c5&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 提供网页检索、带引用回答及包括 Google Drive 在内的数据连接能力；作为产品定位描述基本成立。&quot;},{&quot;id&quot;:&quot;c6&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;结论混合产品定位、Explore 检索量及不同模型规格，所给材料不足以核对各项规格和适用版本。&quot;},{&quot;id&quot;:&quot;c7&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 发布开放权重模型，R1 提供推理能力，并可通过 API 或自行部署构建智能体流程；作为开发用途描述成立，但不是其唯一用户定位。&quot;},{&quot;id&quot;:&quot;c8&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;自主研究及带引用报告的描述成立，但材料不足以确认截至截止日 Gmail、Drive、Chat 均属于 Deep Research 实际可检索的数据范围。&quot;},{&quot;id&quot;:&quot;c9&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT Search 于2024年推出，最初采用经过调整的 GPT-4o，提供网页检索及来源链接。这是历史发布事实，不代表截止日仍仅使用该模型。&quot;},{&quot;id&quot;:&quot;c10&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Anthropic 于2025年推出 Research，采用迭代搜索并提供可核查引用。&quot;},{&quot;id&quot;:&quot;c11&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 的主要产品行为包括实时网页检索、内容综合和带来源标注的回答。&quot;},{&quot;id&quot;:&quot;c12&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;Kimi 于2024年10月推出探索版的时间可识别，但材料不足以独立核定“数百网页”与256K上下文分别对应的产品、版本和限制。&quot;},{&quot;id&quot;:&quot;c13&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;V3、R1、V3.1 的开放权重及128K规格基本成立，但“研究用途主要通过 API”属于使用分布判断，材料没有证据；不能据模型规格推断实际主要使用方式。&quot;},{&quot;id&quot;:&quot;c14&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;自主搜索、阅读网页并综合近期信息是 Gemini Deep Research 的核心功能；这不意味着其信息必然无遗漏或无错误。&quot;},{&quot;id&quot;:&quot;c15&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT Search 的发布说明明确描述了第三方搜索提供商及合作伙伴直接提供内容的使用。&quot;},{&quot;id&quot;:&quot;c16&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Claude Research 与 Google Workspace 集成后，可结合获授权的 Gmail、Calendar、Docs 和网页进行研究；该功能以用户连接和授权为前提。&quot;},{&quot;id&quot;:&quot;c17&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Anthropic 于2025年提供 API 网页搜索工具，可获取模型训练知识截止日期之后的网页信息。&quot;},{&quot;id&quot;:&quot;c18&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Claude API 网页搜索工具支持在回答中自动标注搜索结果来源。&quot;},{&quot;id&quot;:&quot;c19&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;截止日前，Perplexity 已因抓取和使用出版商内容受到侵权诉讼及法律质疑；“受到法律审查”成立，不等于已有侵权终审结论。&quot;},{&quot;id&quot;:&quot;c20&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 运行网页抓取相关机器人，其抓取方式和对网站限制的遵守情况曾引发公开争议。&quot;},{&quot;id&quot;:&quot;c21&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 提供包括 Google Drive 在内的连接器，使获授权文件可作为搜索和回答的信息来源。&quot;},{&quot;id&quot;:&quot;c22&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;“普通搜索10倍”不能推出“数千次并行搜索”；材料没有提供可独立核验的搜索次数和约500网页上限。&quot;},{&quot;id&quot;:&quot;c23&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;2025年公布的 Kimi-Researcher 技术介绍报告了自主多轮工具使用，以及平均约23个推理步骤、访问200多个URL的研究行为；这些是报告统计，不是每次任务的固定配额。&quot;},{&quot;id&quot;:&quot;c24&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek R1 是推理模型，其公开定位和评测涉及数学、编程及复杂推理，并生成推理内容。&quot;},{&quot;id&quot;:&quot;c25&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;规划、搜索、阅读并根据中间结果迭代，符合 Gemini Deep Research 的工作方式。&quot;},{&quot;id&quot;:&quot;c26&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 多个模型具有公开权重，其训练和后续改进使用强化学习；V3-0324 为公开发布的权重版本。&quot;},{&quot;id&quot;:&quot;c27&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;ChatGPT Search 支持行内引用及 Sources 面板，但不能概括为回答后统一在顶部显示新闻、网站来源链接；原文将不同展示形式混为固定界面行为。&quot;},{&quot;id&quot;:&quot;c28&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;这是对特定论文未涉及何种内容的判断。没有论文全文或存档，无法确认其是否没有详细说明引用形式。&quot;},{&quot;id&quot;:&quot;c29&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有所指 BentoML 指南的正文，无法核实表格措辞及其是否完全未提及来源引用。&quot;},{&quot;id&quot;:&quot;c30&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料没有提供 Gemini 3.1 Pro 截止日前的规格与发布状态存档，无法核实100万上下文及“测试版”限定。&quot;},{&quot;id&quot;:&quot;c31&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料没有提供 Claude Opus 4.6 截止日前的公告和上下文政策，无法独立确认发布日期、默认窗口及测试版资格。&quot;},{&quot;id&quot;:&quot;c32&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;缺少对应版本、接口及生效日期资料，无法确认截止日前具体 compaction 功能的可用范围。&quot;},{&quot;id&quot;:&quot;c33&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;128K是 GPT-4 Turbo、GPT-4o 的模型/API规格，不能直接作为 ChatGPT 产品统一上下文规格；截至2025年底也不能仅以这两个旧模型概括 ChatGPT。&quot;},{&quot;id&quot;:&quot;c34&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;“最早支持128K”若指行业首个并不成立，GPT-4 Turbo 已于2023年11月公布128K窗口；Kimi 早期宣传的20万汉字也不能直接等同128K tokens。&quot;},{&quot;id&quot;:&quot;c35&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;“数百万个数据点”没有定义、任务条件或验证资料，无法据此确认实际处理能力。&quot;},{&quot;id&quot;:&quot;c36&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 Perplexity Computer 的截止日前模型清单；“没有公布上下文窗口”又是需要限定产品和查阅范围的否定判断。&quot;},{&quot;id&quot;:&quot;c37&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 并非 Moonshot 的模型。Moonshot 是 Kimi 的开发公司，DeepSeek 是另一家独立机构；128K规格不能消除这一归属错误。&quot;},{&quot;id&quot;:&quot;c38&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini 的多模态模型支持文本、图像、音频和视频输入；具体模态限制依型号和接口而定。&quot;},{&quot;id&quot;:&quot;c39&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 在截止日前已提供图片输入及高级语音等音频交互能力，具体可用性取决于客户端和套餐。&quot;},{&quot;id&quot;:&quot;c40&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT Search 发布时已展示天气、股票等查询的专门可视化回答。&quot;},{&quot;id&quot;:&quot;c41&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;原始 Kimi K2 是文本模型，不能将其整体称为图文多模态模型；后续 K2.5 的视觉能力不应追溯为原始 K2 的能力。&quot;},{&quot;id&quot;:&quot;c42&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有 Moonshot 视频生成测试的公告或新闻存档，无法独立核实。&quot;},{&quot;id&quot;:&quot;c43&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini Deep Research 的过程界面展示研究进展、当前发现及后续步骤；这属于过程摘要，不等于公开完整内部思维链。&quot;},{&quot;id&quot;:&quot;c44&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;迭代研究可确认，但“自我批判”和具体多轮内部管线需要对应技术资料，不能仅由界面进度推断。&quot;},{&quot;id&quot;:&quot;c45&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;缺少 Kimi-Researcher 原文，无法核定该形式化定义；即使技术文档包含思考和动作，也不足以单独证明终端用户可见的过程透明度。&quot;},{&quot;id&quot;:&quot;c46&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;R1 可输出推理内容，但不能将提示中的 &lt;think&gt; 或系统指令概括为通用启用方法。其公开使用建议反而倾向避免系统提示，并把指令放在用户提示中。&quot;},{&quot;id&quot;:&quot;c47&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek-V3.1 于2025年8月发布，采用支持思考与非思考两种模式的混合推理设计。&quot;},{&quot;id&quot;:&quot;c48&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有 Interactions API 和 Deep Research 智能体截止日前的文档，无法核实接口及自定义工具限制。&quot;},{&quot;id&quot;:&quot;c49&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Anthropic API 在截止日前已提供网页搜索和代码执行工具，具体使用条件取决于模型、工具版本及账户配置。&quot;},{&quot;id&quot;:&quot;c50&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;这是临近截止日的具体发布及套餐、模型数量断言；未提供公告存档，无法独立核对。&quot;},{&quot;id&quot;:&quot;c51&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;Kimi-VL 与 K2 有开放权重发布，但其许可证须逐个版本核对；开放许可也不能直接推出“DeepSeek兼容推理”，材料没有说明兼容含义和技术条件。&quot;},{&quot;id&quot;:&quot;c52&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 提供模型 API，并在 Hugging Face 等渠道发布 V3、R1 和 V3.1 的开放权重。&quot;},{&quot;id&quot;:&quot;c53&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;DeepSeek API 是计费服务，不能与免费获取权重混为一谈；此外早期 V3 权重使用专门模型许可，并非所有列举版本的核心权重都统一采用 MIT。&quot;},{&quot;id&quot;:&quot;c54&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供所指 BentoML 指南，无法确认它实际包含何种智能体集成代码。&quot;},{&quot;id&quot;:&quot;c55&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;作为发布初期安排基本成立，但截至截止日已过时：ChatGPT Search 于2024年12月向免费登录用户开放，2025年2月进一步开放免登录使用。原文使用现在时描述访问限制。&quot;},{&quot;id&quot;:&quot;c56&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini Deep Research 能根据用户研究主题生成和拆解研究计划，然后执行检索。&quot;},{&quot;id&quot;:&quot;c57&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Claude 的 Research 是终端用户可在聊天界面启用的功能，通过输入区域附近的研究控件操作；界面位置可能随版本调整。&quot;},{&quot;id&quot;:&quot;c58&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;来源链接便于核查是事实，但不能由提供链接直接推出幻觉发生率下降；材料没有比较试验或准确性数据。&quot;},{&quot;id&quot;:&quot;c59&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;这是对 Claude 4.6 公告措辞的转述，缺少公告存档，无法确认是否有该表述及其适用范围。&quot;},{&quot;id&quot;:&quot;c60&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;缺少截止日前的工具版本文档，无法确认动态过滤与代码执行的具体发布时间、模型范围和准确性依据。&quot;},{&quot;id&quot;:&quot;c61&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有“10倍引用密度”的产品说明及比较基准；引用数量也不能直接证明来源可靠性或核验质量。&quot;},{&quot;id&quot;:&quot;c62&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;“预览”可能特指 API 智能体，不能自动用于整个 Gemini Deep Research 产品；未提供版本和文档存档，无法核定。&quot;},{&quot;id&quot;:&quot;c63&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有所引团队声明，且未说明模型、评测和 GPT-4 版本，无法核实其是否作过该项声称。&quot;},{&quot;id&quot;:&quot;c64&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;“未经证实”的保留措辞合理，但材料没有提供相关新闻，不能确认媒体确实作过“基本消除幻觉”的表述。&quot;},{&quot;id&quot;:&quot;c65&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有对应文章、评测集和早期模型基线，无法核定45–50%的降幅；不能把特定评测改善推广为整体幻觉率。&quot;},{&quot;id&quot;:&quot;c66&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;搜索服务可能向第三方传递改写查询，但出版商内容合作协议不能据此证明向 Vox Media 等出版商记录用户查询；“用户数据隔离”也缺少具体政策定义。&quot;},{&quot;id&quot;:&quot;c67&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;文档和网页可能带来提示注入风险，但没有所引文档，无法核实其实际警告是否是“不要上传不可信文档”及所列具体要求。&quot;},{&quot;id&quot;:&quot;c68&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;“符合零数据留存资格”不等于所有调用默认零留存；须满足相应协议和配置，且不能据此推断外部搜索服务全部不保存数据。&quot;},{&quot;id&quot;:&quot;c69&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Perplexity 企业服务公开主张 SOC 2 Type II 合规、数据加密及不使用企业客户数据训练；这是其企业承诺，不宜推广到所有个人套餐。&quot;},{&quot;id&quot;:&quot;c70&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Google Drive 企业连接器按授权和文件访问权限提供检索，不能让用户借连接器获得原本无权访问的文件。&quot;},{&quot;id&quot;:&quot;c71&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;材料未提供企业套餐功能表，无法核定截止日前审计日志和数据保留控制的可用范围。&quot;},{&quot;id&quot;:&quot;c72&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Gemini API 提供按使用量计费的付费服务；具体费用取决于模型、tokens及所用工具，不代表没有免费额度。&quot;},{&quot;id&quot;:&quot;c73&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;缺少定价表、输入与推理token量、搜索次数及任务样本，无法确认“典型任务”约6万输出tokens、费用几美元的估计。&quot;},{&quot;id&quot;:&quot;c74&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Claude API 按模型分别定价，不能统一称为每百万输入5美元、输出25美元；即使某个 Opus 型号采用该价格，也不适用于全部 Claude 模型。&quot;},{&quot;id&quot;:&quot;c75&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;每月20美元或每年200美元是可识别的 Pro 标价，但“无限 Pro 查询”需核实截止日的套餐条款与合理使用限制，材料没有提供。&quot;},{&quot;id&quot;:&quot;c76&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供截止日前企业 Pro、Max 套餐价格表，无法确认40至325美元的计费周期、合同条件及席位限制。&quot;},{&quot;id&quot;:&quot;c77&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;每天5次对应早期探索模式的特定额度，不能概括为整个 Kimi 应用每天仅5次免费搜索；原文混淆普通搜索与探索模式。&quot;},{&quot;id&quot;:&quot;c78&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有截止日前的订阅权益表，无法核实套餐名称、额度以及 K2 Turbo、Kimi-Researcher 的具体访问资格。&quot;},{&quot;id&quot;:&quot;c79&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT Search 于2024年10月31日推出，提供网页搜索及来源引用。&quot;},{&quot;id&quot;:&quot;c80&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Search 于2024年12月扩大到免费登录用户，OpenAI 也确与 Le Monde 等出版商合作；Le Monde 合作在2024年3月已公布，不能把合作首次建立时间理解为12月。&quot;},{&quot;id&quot;:&quot;c81&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Gemini Deep Research 于2024年12月推出时使用 Gemini 1.5 Pro，并非 Gemini 3。&quot;},{&quot;id&quot;:&quot;c82&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Google 在2025年初发布的是 Gemini 2.0 系列，随后于3月推出2.5 Pro；所称年初发布“Gemini 3.0 Ultra”的产品、时间和规格不成立。&quot;},{&quot;id&quot;:&quot;c83&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Kimi-Researcher 于2025年6月公布，但 Kimi K2 的开放发布在2025年7月，并非同年6月同时发布。&quot;},{&quot;id&quot;:&quot;c84&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;未提供 Kimi K2.5 截止日前的公告和模型卡，无法在限定材料内独立确认发布日期、参数和模式细节。&quot;},{&quot;id&quot;:&quot;c85&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek-V3-0324 于2025年3月发布，公开说明包括推理等能力提升。&quot;},{&quot;id&quot;:&quot;c86&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek-R1-0528 于2025年5月发布，公开说明强调推理能力升级及幻觉减少；这里未将改善限定为未经核实的具体百分比。&quot;},{&quot;id&quot;:&quot;c87&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;Deep Research 通常执行多步检索与综合，需要数分钟，因而不适合作为要求即时响应的查询方式；任务耗时并非固定。&quot;},{&quot;id&quot;:&quot;c88&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;抓取、付费墙及内容授权确会限制检索，但“受 Google 搜索授权限制”这一具体机制需要文档，材料不足以确认。&quot;},{&quot;id&quot;:&quot;c89&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;市场分析、文献梳理和尽职调查均适合多步检索与资料综合的工作方式；内部文件访问需要相应连接、上传和授权，输出仍须核验。&quot;},{&quot;id&quot;:&quot;c90&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;没有明确的 DeepSearch 基准名称、版本、分数和比较对象，无法确认“最新模型领先”。复杂推理能力不能代替基准领先证据。&quot;},{&quot;id&quot;:&quot;c91&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;Kimi 支持中文与技术问答，但约3600万月活缺少统计日期、范围和来源；“免费吸引用户”也是未证实的因果解释。&quot;},{&quot;id&quot;:&quot;c92&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 发布过 DeepSeek-VL、VL2 等视觉语言模型，开发者可围绕模型构建智能体工作流；这不表示所有 DeepSeek 模型或官方聊天界面都具备该能力。&quot;},{&quot;id&quot;:&quot;c93&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Positano 位于意大利坎帕尼亚的阿马尔菲海岸，并非靠近巴黎。材料也不足以确认所述天气示例实际出现过。&quot;},{&quot;id&quot;:&quot;c94&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;长期降价趋势成立，但精确年度价格取决于电池组口径、地区和调查；未提供价格原始数据，无法核定2010年及2025年两个数值。&quot;},{&quot;id&quot;:&quot;c95&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 在2025年2月已推出 Deep Research，可自主规划、检索并完成多步研究；把其概括为可能无法自行规划多步任务，遗漏了直接相关的现成功能。&quot;},{&quot;id&quot;:&quot;c96&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;免费版早在2024年已可使用受限额度的 GPT-4o 等能力，并非仅限 GPT-3.5；高级模型也不能只按 Plus、Enterprise 两种套餐概括。&quot;},{&quot;id&quot;:&quot;c97&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;o1 于2024年已正式进入 ChatGPT，且 o1 与 GPT-5 不是同一系列名称；仅这一已知事实就足以否定该断言。&quot;},{&quot;id&quot;:&quot;c98&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;ChatGPT 不向用户公开完整原始内部思维链；可见的思考摘要、研究进展或工具记录不等于完整内部思维链。&quot;},{&quot;id&quot;:&quot;c99&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;DeepSeek 在截止日前已有面向消费者的网页聊天界面和手机应用，不是只能通过 API 或 Python 客户端使用。&quot;},{&quot;id&quot;:&quot;c100&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Kimi 的联网搜索和研究功能能够提供可核查来源；不能将普通聊天回复的形式推广为 Kimi 没有正式来源链接。&quot;},{&quot;id&quot;:&quot;c101&quot;,&quot;correct&quot;:&quot;有误&quot;,&quot;correct_basis&quot;:&quot;Perplexity 支持连续追问和多轮对话，并于2025年提供多步 Deep Research；“只适合简短问答”与其已有功能不符。&quot;},{&quot;id&quot;:&quot;c102&quot;,&quot;correct&quot;:&quot;无法判断&quot;,&quot;correct_basis&quot;:&quot;“完善”是缺少标准的主观判断；通过按钮启用 Research 并不能证明终端研究界面不完善，材料也没有可复核的使用测试。&quot;},{&quot;id&quot;:&quot;c103&quot;,&quot;correct&quot;:&quot;正确&quot;,&quot;correct_basis&quot;:&quot;对于需要快速获得附来源初步答案的普通用户及研究者，Perplexity 的搜索、引用和追问功能具有直接用途；这不等于其答案可免于核查。&quot;}]}</pre></details>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 12640 字</summary><pre class="raw" id="raw-output">
+{&quot;type&quot;:&quot;thread.started&quot;,&quot;thread_id&quot;:&quot;01a18ff4-e4af-71b0-9868-df3628f08431&quot;}
+{&quot;type&quot;:&quot;turn.started&quot;}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_0&quot;,&quot;type&quot;:&quot;agent_message&quot;,&quot;text&quot;:&quot;{\&quot;claims\&quot;:[{\&quot;id\&quot;:\&quot;c1\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;所列研究、搜索产品普遍结合外部检索与大模型生成；数据更新、工具、上下文和企业集成确有差异。此判断不表示各家的基础模型本身都内置搜索。\&quot;},{\&quot;id\&quot;:\&quot;c2\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;Google 搜索和 Workspace 集成是可识别的产品特点，但材料未提供比较证据，无法核实其企业研究优势；thinking 面板也不能直接等同于完整思维链。\&quot;},{\&quot;id\&quot;:\&quot;c3\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT 插件测试版已于2024年退出，不能在截止日以“庞大的插件生态”作为现行优势。一般查询和多轮研究的最优判断也缺少比较依据。\&quot;},{\&quot;id\&quot;:\&quot;c4\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;Claude 具有扩展思考和研究工具，但“侧重安全”及适合复杂企业研究的整体判断，需要产品比较和具体任务证据。\&quot;},{\&quot;id\&quot;:\&quot;c5\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Perplexity 提供网页检索、带引用回答及包括 Google Drive 在内的数据连接能力；作为产品定位描述基本成立。\&quot;},{\&quot;id\&quot;:\&quot;c6\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;结论混合产品定位、Explore 检索量及不同模型规格，所给材料不足以核对各项规格和适用版本。\&quot;},{\&quot;id\&quot;:\&quot;c7\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek 发布开放权重模型，R1 提供推理能力，并可通过 API 或自行部署构建智能体流程；作为开发用途描述成立，但不是其唯一用户定位。\&quot;},{\&quot;id\&quot;:\&quot;c8\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;自主研究及带引用报告的描述成立，但材料不足以确认截至截止日 Gmail、Drive、Chat 均属于 Deep Research 实际可检索的数据范围。\&quot;},{\&quot;id\&quot;:\&quot;c9\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT Search 于2024年推出，最初采用经过调整的 GPT-4o，提供网页检索及来源链接。这是历史发布事实，不代表截止日仍仅使用该模型。\&quot;},{\&quot;id\&quot;:\&quot;c10\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Anthropic 于2025年推出 Research，采用迭代搜索并提供可核查引用。\&quot;},{\&quot;id\&quot;:\&quot;c11\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Perplexity 的主要产品行为包括实时网页检索、内容综合和带来源标注的回答。\&quot;},{\&quot;id\&quot;:\&quot;c12\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;Kimi 于2024年10月推出探索版的时间可识别，但材料不足以独立核定“数百网页”与256K上下文分别对应的产品、版本和限制。\&quot;},{\&quot;id\&quot;:\&quot;c13\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;V3、R1、V3.1 的开放权重及128K规格基本成立，但“研究用途主要通过 API”属于使用分布判断，材料没有证据；不能据模型规格推断实际主要使用方式。\&quot;},{\&quot;id\&quot;:\&quot;c14\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;自主搜索、阅读网页并综合近期信息是 Gemini Deep Research 的核心功能；这不意味着其信息必然无遗漏或无错误。\&quot;},{\&quot;id\&quot;:\&quot;c15\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT Search 的发布说明明确描述了第三方搜索提供商及合作伙伴直接提供内容的使用。\&quot;},{\&quot;id\&quot;:\&quot;c16\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Claude Research 与 Google Workspace 集成后，可结合获授权的 Gmail、Calendar、Docs 和网页进行研究；该功能以用户连接和授权为前提。\&quot;},{\&quot;id\&quot;:\&quot;c17\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Anthropic 于2025年提供 API 网页搜索工具，可获取模型训练知识截止日期之后的网页信息。\&quot;},{\&quot;id\&quot;:\&quot;c18\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Claude API 网页搜索工具支持在回答中自动标注搜索结果来源。\&quot;},{\&quot;id\&quot;:\&quot;c19\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;截止日前，Perplexity 已因抓取和使用出版商内容受到侵权诉讼及法律质疑；“受到法律审查”成立，不等于已有侵权终审结论。\&quot;},{\&quot;id\&quot;:\&quot;c20\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Perplexity 运行网页抓取相关机器人，其抓取方式和对网站限制的遵守情况曾引发公开争议。\&quot;},{\&quot;id\&quot;:\&quot;c21\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Perplexity 提供包括 Google Drive 在内的连接器，使获授权文件可作为搜索和回答的信息来源。\&quot;},{\&quot;id\&quot;:\&quot;c22\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;“普通搜索10倍”不能推出“数千次并行搜索”；材料没有提供可独立核验的搜索次数和约500网页上限。\&quot;},{\&quot;id\&quot;:\&quot;c23\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;2025年公布的 Kimi-Researcher 技术介绍报告了自主多轮工具使用，以及平均约23个推理步骤、访问200多个URL的研究行为；这些是报告统计，不是每次任务的固定配额。\&quot;},{\&quot;id\&quot;:\&quot;c24\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek R1 是推理模型，其公开定位和评测涉及数学、编程及复杂推理，并生成推理内容。\&quot;},{\&quot;id\&quot;:\&quot;c25\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;规划、搜索、阅读并根据中间结果迭代，符合 Gemini Deep Research 的工作方式。\&quot;},{\&quot;id\&quot;:\&quot;c26\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek 多个模型具有公开权重，其训练和后续改进使用强化学习；V3-0324 为公开发布的权重版本。\&quot;},{\&quot;id\&quot;:\&quot;c27\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT Search 支持行内引用及 Sources 面板，但不能概括为回答后统一在顶部显示新闻、网站来源链接；原文将不同展示形式混为固定界面行为。\&quot;},{\&quot;id\&quot;:\&quot;c28\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;这是对特定论文未涉及何种内容的判断。没有论文全文或存档，无法确认其是否没有详细说明引用形式。\&quot;},{\&quot;id\&quot;:\&quot;c29\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有所指 BentoML 指南的正文，无法核实表格措辞及其是否完全未提及来源引用。\&quot;},{\&quot;id\&quot;:\&quot;c30\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;材料没有提供 Gemini 3.1 Pro 截止日前的规格与发布状态存档，无法核实100万上下文及“测试版”限定。\&quot;},{\&quot;id\&quot;:\&quot;c31\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;材料没有提供 Claude Opus 4.6 截止日前的公告和上下文政策，无法独立确认发布日期、默认窗口及测试版资格。\&quot;},{\&quot;id\&quot;:\&quot;c32\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;缺少对应版本、接口及生效日期资料，无法确认截止日前具体 compaction 功能的可用范围。\&quot;},{\&quot;id\&quot;:\&quot;c33\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;128K是 GPT-4 Turbo、GPT-4o 的模型/API规格，不能直接作为 ChatGPT 产品统一上下文规格；截至2025年底也不能仅以这两个旧模型概括 ChatGPT。\&quot;},{\&quot;id\&quot;:\&quot;c34\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;“最早支持128K”若指行业首个并不成立，GPT-4 Turbo 已于2023年11月公布128K窗口；Kimi 早期宣传的20万汉字也不能直接等同128K tokens。\&quot;},{\&quot;id\&quot;:\&quot;c35\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;“数百万个数据点”没有定义、任务条件或验证资料，无法据此确认实际处理能力。\&quot;},{\&quot;id\&quot;:\&quot;c36\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供 Perplexity Computer 的截止日前模型清单；“没有公布上下文窗口”又是需要限定产品和查阅范围的否定判断。\&quot;},{\&quot;id\&quot;:\&quot;c37\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek 并非 Moonshot 的模型。Moonshot 是 Kimi 的开发公司，DeepSeek 是另一家独立机构；128K规格不能消除这一归属错误。\&quot;},{\&quot;id\&quot;:\&quot;c38\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Gemini 的多模态模型支持文本、图像、音频和视频输入；具体模态限制依型号和接口而定。\&quot;},{\&quot;id\&quot;:\&quot;c39\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT 在截止日前已提供图片输入及高级语音等音频交互能力，具体可用性取决于客户端和套餐。\&quot;},{\&quot;id\&quot;:\&quot;c40\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT Search 发布时已展示天气、股票等查询的专门可视化回答。\&quot;},{\&quot;id\&quot;:\&quot;c41\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;原始 Kimi K2 是文本模型，不能将其整体称为图文多模态模型；后续 K2.5 的视觉能力不应追溯为原始 K2 的能力。\&quot;},{\&quot;id\&quot;:\&quot;c42\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有 Moonshot 视频生成测试的公告或新闻存档，无法独立核实。\&quot;},{\&quot;id\&quot;:\&quot;c43\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Gemini Deep Research 的过程界面展示研究进展、当前发现及后续步骤；这属于过程摘要，不等于公开完整内部思维链。\&quot;},{\&quot;id\&quot;:\&quot;c44\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;迭代研究可确认，但“自我批判”和具体多轮内部管线需要对应技术资料，不能仅由界面进度推断。\&quot;},{\&quot;id\&quot;:\&quot;c45\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;缺少 Kimi-Researcher 原文，无法核定该形式化定义；即使技术文档包含思考和动作，也不足以单独证明终端用户可见的过程透明度。\&quot;},{\&quot;id\&quot;:\&quot;c46\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;R1 可输出推理内容，但不能将提示中的 &lt;think&gt; 或系统指令概括为通用启用方法。其公开使用建议反而倾向避免系统提示，并把指令放在用户提示中。\&quot;},{\&quot;id\&quot;:\&quot;c47\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek-V3.1 于2025年8月发布，采用支持思考与非思考两种模式的混合推理设计。\&quot;},{\&quot;id\&quot;:\&quot;c48\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有 Interactions API 和 Deep Research 智能体截止日前的文档，无法核实接口及自定义工具限制。\&quot;},{\&quot;id\&quot;:\&quot;c49\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Anthropic API 在截止日前已提供网页搜索和代码执行工具，具体使用条件取决于模型、工具版本及账户配置。\&quot;},{\&quot;id\&quot;:\&quot;c50\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;这是临近截止日的具体发布及套餐、模型数量断言；未提供公告存档，无法独立核对。\&quot;},{\&quot;id\&quot;:\&quot;c51\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;Kimi-VL 与 K2 有开放权重发布，但其许可证须逐个版本核对；开放许可也不能直接推出“DeepSeek兼容推理”，材料没有说明兼容含义和技术条件。\&quot;},{\&quot;id\&quot;:\&quot;c52\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek 提供模型 API，并在 Hugging Face 等渠道发布 V3、R1 和 V3.1 的开放权重。\&quot;},{\&quot;id\&quot;:\&quot;c53\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek API 是计费服务，不能与免费获取权重混为一谈；此外早期 V3 权重使用专门模型许可，并非所有列举版本的核心权重都统一采用 MIT。\&quot;},{\&quot;id\&quot;:\&quot;c54\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供所指 BentoML 指南，无法确认它实际包含何种智能体集成代码。\&quot;},{\&quot;id\&quot;:\&quot;c55\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;作为发布初期安排基本成立，但截至截止日已过时：ChatGPT Search 于2024年12月向免费登录用户开放，2025年2月进一步开放免登录使用。原文使用现在时描述访问限制。\&quot;},{\&quot;id\&quot;:\&quot;c56\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Gemini Deep Research 能根据用户研究主题生成和拆解研究计划，然后执行检索。\&quot;},{\&quot;id\&quot;:\&quot;c57\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Claude 的 Research 是终端用户可在聊天界面启用的功能，通过输入区域附近的研究控件操作；界面位置可能随版本调整。\&quot;},{\&quot;id\&quot;:\&quot;c58\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;来源链接便于核查是事实，但不能由提供链接直接推出幻觉发生率下降；材料没有比较试验或准确性数据。\&quot;},{\&quot;id\&quot;:\&quot;c59\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;这是对 Claude 4.6 公告措辞的转述，缺少公告存档，无法确认是否有该表述及其适用范围。\&quot;},{\&quot;id\&quot;:\&quot;c60\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;缺少截止日前的工具版本文档，无法确认动态过滤与代码执行的具体发布时间、模型范围和准确性依据。\&quot;},{\&quot;id\&quot;:\&quot;c61\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有“10倍引用密度”的产品说明及比较基准；引用数量也不能直接证明来源可靠性或核验质量。\&quot;},{\&quot;id\&quot;:\&quot;c62\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;“预览”可能特指 API 智能体，不能自动用于整个 Gemini Deep Research 产品；未提供版本和文档存档，无法核定。\&quot;},{\&quot;id\&quot;:\&quot;c63\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有所引团队声明，且未说明模型、评测和 GPT-4 版本，无法核实其是否作过该项声称。\&quot;},{\&quot;id\&quot;:\&quot;c64\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;“未经证实”的保留措辞合理，但材料没有提供相关新闻，不能确认媒体确实作过“基本消除幻觉”的表述。\&quot;},{\&quot;id\&quot;:\&quot;c65\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有对应文章、评测集和早期模型基线，无法核定45–50%的降幅；不能把特定评测改善推广为整体幻觉率。\&quot;},{\&quot;id\&quot;:\&quot;c66\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;搜索服务可能向第三方传递改写查询，但出版商内容合作协议不能据此证明向 Vox Media 等出版商记录用户查询；“用户数据隔离”也缺少具体政策定义。\&quot;},{\&quot;id\&quot;:\&quot;c67\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;文档和网页可能带来提示注入风险，但没有所引文档，无法核实其实际警告是否是“不要上传不可信文档”及所列具体要求。\&quot;},{\&quot;id\&quot;:\&quot;c68\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;“符合零数据留存资格”不等于所有调用默认零留存；须满足相应协议和配置，且不能据此推断外部搜索服务全部不保存数据。\&quot;},{\&quot;id\&quot;:\&quot;c69\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Perplexity 企业服务公开主张 SOC 2 Type II 合规、数据加密及不使用企业客户数据训练；这是其企业承诺，不宜推广到所有个人套餐。\&quot;},{\&quot;id\&quot;:\&quot;c70\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Google Drive 企业连接器按授权和文件访问权限提供检索，不能让用户借连接器获得原本无权访问的文件。\&quot;},{\&quot;id\&quot;:\&quot;c71\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;材料未提供企业套餐功能表，无法核定截止日前审计日志和数据保留控制的可用范围。\&quot;},{\&quot;id\&quot;:\&quot;c72\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Gemini API 提供按使用量计费的付费服务；具体费用取决于模型、tokens及所用工具，不代表没有免费额度。\&quot;},{\&quot;id\&quot;:\&quot;c73\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;缺少定价表、输入与推理token量、搜索次数及任务样本，无法确认“典型任务”约6万输出tokens、费用几美元的估计。\&quot;},{\&quot;id\&quot;:\&quot;c74\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;Claude API 按模型分别定价，不能统一称为每百万输入5美元、输出25美元；即使某个 Opus 型号采用该价格，也不适用于全部 Claude 模型。\&quot;},{\&quot;id\&quot;:\&quot;c75\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;每月20美元或每年200美元是可识别的 Pro 标价，但“无限 Pro 查询”需核实截止日的套餐条款与合理使用限制，材料没有提供。\&quot;},{\&quot;id\&quot;:\&quot;c76\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供截止日前企业 Pro、Max 套餐价格表，无法确认40至325美元的计费周期、合同条件及席位限制。\&quot;},{\&quot;id\&quot;:\&quot;c77\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;每天5次对应早期探索模式的特定额度，不能概括为整个 Kimi 应用每天仅5次免费搜索；原文混淆普通搜索与探索模式。\&quot;},{\&quot;id\&quot;:\&quot;c78\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有截止日前的订阅权益表，无法核实套餐名称、额度以及 K2 Turbo、Kimi-Researcher 的具体访问资格。\&quot;},{\&quot;id\&quot;:\&quot;c79\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT Search 于2024年10月31日推出，提供网页搜索及来源引用。\&quot;},{\&quot;id\&quot;:\&quot;c80\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Search 于2024年12月扩大到免费登录用户，OpenAI 也确与 Le Monde 等出版商合作；Le Monde 合作在2024年3月已公布，不能把合作首次建立时间理解为12月。\&quot;},{\&quot;id\&quot;:\&quot;c81\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;Gemini Deep Research 于2024年12月推出时使用 Gemini 1.5 Pro，并非 Gemini 3。\&quot;},{\&quot;id\&quot;:\&quot;c82\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;Google 在2025年初发布的是 Gemini 2.0 系列，随后于3月推出2.5 Pro；所称年初发布“Gemini 3.0 Ultra”的产品、时间和规格不成立。\&quot;},{\&quot;id\&quot;:\&quot;c83\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;Kimi-Researcher 于2025年6月公布，但 Kimi K2 的开放发布在2025年7月，并非同年6月同时发布。\&quot;},{\&quot;id\&quot;:\&quot;c84\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;未提供 Kimi K2.5 截止日前的公告和模型卡，无法在限定材料内独立确认发布日期、参数和模式细节。\&quot;},{\&quot;id\&quot;:\&quot;c85\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek-V3-0324 于2025年3月发布，公开说明包括推理等能力提升。\&quot;},{\&quot;id\&quot;:\&quot;c86\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek-R1-0528 于2025年5月发布，公开说明强调推理能力升级及幻觉减少；这里未将改善限定为未经核实的具体百分比。\&quot;},{\&quot;id\&quot;:\&quot;c87\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;Deep Research 通常执行多步检索与综合，需要数分钟，因而不适合作为要求即时响应的查询方式；任务耗时并非固定。\&quot;},{\&quot;id\&quot;:\&quot;c88\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;抓取、付费墙及内容授权确会限制检索，但“受 Google 搜索授权限制”这一具体机制需要文档，材料不足以确认。\&quot;},{\&quot;id\&quot;:\&quot;c89\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;市场分析、文献梳理和尽职调查均适合多步检索与资料综合的工作方式；内部文件访问需要相应连接、上传和授权，输出仍须核验。\&quot;},{\&quot;id\&quot;:\&quot;c90\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;没有明确的 DeepSearch 基准名称、版本、分数和比较对象，无法确认“最新模型领先”。复杂推理能力不能代替基准领先证据。\&quot;},{\&quot;id\&quot;:\&quot;c91\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;Kimi 支持中文与技术问答，但约3600万月活缺少统计日期、范围和来源；“免费吸引用户”也是未证实的因果解释。\&quot;},{\&quot;id\&quot;:\&quot;c92\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek 发布过 DeepSeek-VL、VL2 等视觉语言模型，开发者可围绕模型构建智能体工作流；这不表示所有 DeepSeek 模型或官方聊天界面都具备该能力。\&quot;},{\&quot;id\&quot;:\&quot;c93\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;Positano 位于意大利坎帕尼亚的阿马尔菲海岸，并非靠近巴黎。材料也不足以确认所述天气示例实际出现过。\&quot;},{\&quot;id\&quot;:\&quot;c94\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;长期降价趋势成立，但精确年度价格取决于电池组口径、地区和调查；未提供价格原始数据，无法核定2010年及2025年两个数值。\&quot;},{\&quot;id\&quot;:\&quot;c95\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT 在2025年2月已推出 Deep Research，可自主规划、检索并完成多步研究；把其概括为可能无法自行规划多步任务，遗漏了直接相关的现成功能。\&quot;},{\&quot;id\&quot;:\&quot;c96\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;免费版早在2024年已可使用受限额度的 GPT-4o 等能力，并非仅限 GPT-3.5；高级模型也不能只按 Plus、Enterprise 两种套餐概括。\&quot;},{\&quot;id\&quot;:\&quot;c97\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;o1 于2024年已正式进入 ChatGPT，且 o1 与 GPT-5 不是同一系列名称；仅这一已知事实就足以否定该断言。\&quot;},{\&quot;id\&quot;:\&quot;c98\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;ChatGPT 不向用户公开完整原始内部思维链；可见的思考摘要、研究进展或工具记录不等于完整内部思维链。\&quot;},{\&quot;id\&quot;:\&quot;c99\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;DeepSeek 在截止日前已有面向消费者的网页聊天界面和手机应用，不是只能通过 API 或 Python 客户端使用。\&quot;},{\&quot;id\&quot;:\&quot;c100\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;Kimi 的联网搜索和研究功能能够提供可核查来源；不能将普通聊天回复的形式推广为 Kimi 没有正式来源链接。\&quot;},{\&quot;id\&quot;:\&quot;c101\&quot;,\&quot;correct\&quot;:\&quot;有误\&quot;,\&quot;correct_basis\&quot;:\&quot;Perplexity 支持连续追问和多轮对话，并于2025年提供多步 Deep Research；“只适合简短问答”与其已有功能不符。\&quot;},{\&quot;id\&quot;:\&quot;c102\&quot;,\&quot;correct\&quot;:\&quot;无法判断\&quot;,\&quot;correct_basis\&quot;:\&quot;“完善”是缺少标准的主观判断；通过按钮启用 Research 并不能证明终端研究界面不完善，材料也没有可复核的使用测试。\&quot;},{\&quot;id\&quot;:\&quot;c103\&quot;,\&quot;correct\&quot;:\&quot;正确\&quot;,\&quot;correct_basis\&quot;:\&quot;对于需要快速获得附来源初步答案的普通用户及研究者，Perplexity 的搜索、引用和追问功能具有直接用途；这不等于其答案可免于核查。\&quot;}]}&quot;}}
+{&quot;type&quot;:&quot;turn.completed&quot;,&quot;usage&quot;:{&quot;input_tokens&quot;:25620,&quot;cached_input_tokens&quot;:9216,&quot;cache_write_input_tokens&quot;:0,&quot;output_tokens&quot;:5142,&quot;reasoning_output_tokens&quot;:94}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

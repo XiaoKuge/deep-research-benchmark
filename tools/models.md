@@ -20,7 +20,7 @@ print(run.summary())
 
 对外接口：
 
-- `ModelRun(log_path, mode=LIVE, max_calls=None, replay_from=None, programs=None, run_id=None, timeout_seconds=1800)`：一次运行。
+- `ModelRun(log_path, mode=LIVE, max_calls=None, replay_from=None, programs=None, run_id=None, timeout_seconds=1800, exit_grace_seconds=15)`：一次运行。
   - `log_path`：调用记录文件，每行一条 JSON 记录（这种格式叫 JSON Lines），每次调用追加一行；目录不存在会自动建。一次运行用一个文件。
   - `mode`：`LIVE`（真实调用）、`REPLAY`（回放）、`ESTIMATE`（只估算）。
   - `max_calls`：真实调用的次数上限，真实调用时必须给正整数，否则报错；只估算时用来判断是否会超过上限。
@@ -28,6 +28,7 @@ print(run.summary())
   - `programs`：`{厂商: 程序路径}`，测试时指向假的命令行程序；不给就在系统的命令查找路径（`PATH`）里找 `claude`、`codex`、`kimi`、`agy`（厂商名 `google` 对应的程序是 `agy`）。
   - `run_id`：运行编号，不给就用开始时间，例如 `20261030-153000`。
   - `timeout_seconds`：单次调用的时长上限，到了就停止该命令行（连同它启动的子进程），记为超时。
+  - `exit_grace_seconds`：google 写完结果事件以后，等它自己退出的秒数；过了还不退出，就停掉它，已经写出的回答照常核实和取用（见 google 一节"答完不退出"）。
 - `run.call(task, vendor, prompt, tools, model=None, placeholder="")`，返回 `(回答文本, 调用记录)`。
   - `task`：任务名，例如「出题-题目卡」「评审-要点抽取」。回放按任务名、厂商和提示词校验值取回答。
   - `vendor`：`"claude"`、`"codex"`、`"kimi"` 或 `"google"`。
@@ -249,6 +250,8 @@ tools: []
 
 - `--mode`：可选 `accept-edits`、`auto`、`plan`。`plan`（只调研、只做计划）看起来合适，但更新记录写明非交互运行会自动通过计划审阅、接着往下做（1.1.28），挡不住，所以不用，用默认方式。
 - `--print-timeout`：本模块自己有时长上限（`timeout_seconds`），到了就停掉 agy 和它启动的子进程。
+
+**答完不退出。** 2026-10-30 的三家模拟评审里，有一次调用 agy 在 65 秒时就写出了结果事件（`status` 为 `SUCCESS`，回答完整），进程却一直不退出，挂到 1800 秒被当成超时停掉，这一家随即被判为不可用。所以本模块边读 agy 的标准输出边找结果事件：看到以后再等 `exit_grace_seconds` 秒（默认 15 秒），agy 还不退出就停掉它和它启动的子进程，回答照常按下面的规则核实，记录里 `stopped_after_answer` 记为是。这种情况下退出状态是被停掉时的状态（负数），不算失败的理由。没有写出结果事件的调用不受影响，照常等到时长上限。
 - `--json-schema`、`--effort`、`--project`、`--new-project`、`--add-dir`、`--continue`、`--conversation`、`--log-file`、`--remote-control`：与单次调用无关，不用。
 
 登录：由用户本人完成（在终端里运行 `agy`，按屏幕提示用 Google 账号登录）。本模块不登录、不读登录凭据；登录失效时调用会失败，失败原因写进调用记录。agy 也能改用 Gemini 接口的密钥运行（要在设置里写 `modelProvider` 并设环境变量，1.1.13），本模块不用这种办法。
@@ -290,6 +293,7 @@ tools: []
 | `raw_output` | 命令行的标准输出原文（各家的 JSON 事件流），供复核 |
 | `stderr` | 标准错误的最后两万字 |
 | `replayed_from` | 回放时写明回答出自哪里：`{"file": 记录文件, "run_id": 原运行编号, "call_index": 原记录序号}`；其他方式为空 |
+| `stopped_after_answer` | 命令行写完最后一个事件后没有自己退出、被本模块停掉时为是，其余为否；目前只有 google 会这样（见 google 一节"答完不退出"） |
 
 记录里没有任何凭据：模块不读环境变量，也不读各家的登录文件，见"不读取密钥"一节。
 

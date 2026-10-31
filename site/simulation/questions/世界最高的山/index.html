@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>题目 世界最高的山 · 深度研究评测基准</title>
+<meta name="description" content="练习题世界最高的山的题目卡、深度地图、检查记录和调用原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../../questions.html">← 回到题库</a>
+    <p class="eyebrow caption-1">模拟出题 · 练习题</p>
+    <h1 class="heading-3">世界最高的山</h1>
+    <p class="body-3 lede">练习题。公开题目卡的三个版本、深度地图、三项检查记录和每一次模型调用的原文。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../questions.html">题库</a></li><li><a class="caption-1" href="../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="summary" aria-labelledby="summary-h">
+  <h2 class="heading-5" id="summary-h">这道题</h2>
+  <p class="body-3 sum">在题目目录里运行 <code>shasum -a 256 -c 深度地图校验值.txt</code>（Linux 上用 <code>sha256sum -c</code>），可以核对深度地图在写成之后没有改过。</p>
+  <dl class="fields"><div><dt class="caption-1">题目标识</dt><dd class="body-6"><code>世界最高的山</code></dd></div><div><dt class="caption-1">类别</dt><dd class="body-6">练习题</dd></div><div><dt class="caption-1">是否公开</dt><dd class="body-6">公开（练习题）</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6">完成</dd></div><div><dt class="caption-1">话题</dt><dd class="body-6">世界上最高的山是哪一座</dd></div><div><dt class="caption-1">题型</dt><dd class="body-6">看似简单型</dd></div><div><dt class="caption-1">问题</dt><dd class="body-6">世界上最高的山是哪一座？</dd></div><div><dt class="caption-1">写成日期</dt><dd class="body-6">2026 年 10 月 30 日</dd></div><div><dt class="caption-1">生成时间</dt><dd class="body-6">2026 年 10 月 30 日 20:05:07（UTC−07:00）</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">调用次数</dt><dd class="body-6">11 次：claude 6 次、codex 3 次、kimi 1 次、google 1 次</dd></div><div><dt class="caption-1">深度地图校验值</dt><dd class="body-6"><code>82038357cecd5e9a14535b5ec6506dcf61a0adbe1528a26bcf28d8c89f459379</code>（<code>SHA-256</code>）</dd></div><div><dt class="caption-1">题目目录</dt><dd class="body-6"><a href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/元数据.json">元数据.json</a>，目录 <code>simulation/questions/世界最高的山</code></dd></div><div><dt class="caption-1">用这道题的模拟评审</dt><dd class="body-6">还没有</dd></div></dl>
+</section>
+<section class="block" id="checks" aria-labelledby="checks-h">
+  <h2 class="heading-5" id="checks-h">检查结果</h2>
+  <p class="body-3 sum">程序能机械判断的部分：写完标准五条、泄露检查和闭卷对照。要点的对错、核心判得准不准，还要靠领域专家审阅。</p>
+  <ul class="cards grid-2"><li class="card"><div class="card-head"><span class="title-3">浅答案</span><span class="tag caption-3 ok">满足</span></div></li><li class="card"><div class="card-head"><span class="title-3">转折点</span><span class="tag caption-3 ok">满足</span></div></li><li class="card"><div class="card-head"><span class="title-3">四层都查过</span><span class="tag caption-3 ok">满足</span></div></li><li class="card"><div class="card-head"><span class="title-3">核心要点写全</span><span class="tag caption-3 ok">满足</span></div></li><li class="card"><div class="card-head"><span class="title-3">两人对过</span><span class="tag caption-3 ok">满足</span></div></li></ul><dl class="fields"><div><dt class="caption-1">四层里没有要点的层</dt><dd class="body-6">没有</dd></div><div><dt class="caption-1">泄露检查</dt><dd class="body-6">通过</dd></div><div><dt class="caption-1">闭卷对照</dt><dd class="body-6">未做</dd></div><div><dt class="caption-1">全部通过</dt><dd class="body-6">否</dd></div></dl>
+</section>
+<section class="block" id="roles" aria-labelledby="roles-h">
+  <h2 class="heading-5" id="roles-h">角色和厂商</h2>
+  <p class="body-3 sum">每个角色配置的是哪家、实际用了哪家；某一家不可用时换了哪家。</p>
+  <div class="scroll"><table><thead><tr><th scope="col">角色</th><th scope="col">配置的厂商</th><th scope="col">用到的厂商</th><th scope="col">模型</th><th scope="col">工具限定</th><th scope="col">替代</th></tr></thead><tbody><tr><td>出题人</td><td>claude</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料、只读网页</td><td>没有</td></tr><tr><td>甲</td><td>claude</td><td>claude</td><td>Claude Opus 5.5</td><td>只读网页</td><td>没有</td></tr><tr><td>乙</td><td>codex</td><td>codex</td><td>命令行默认模型</td><td>只读网页</td><td>没有</td></tr><tr><td>泄露检查人</td><td>codex</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>没有</td></tr><tr><td>闭卷对照</td><td>kimi</td><td></td><td>命令行默认模型</td><td></td><td>没有</td></tr></tbody></table></div><div class="sub"><h3 class="heading-6">不可用的厂商</h3><ul class="links body-6"><li><code>厂商：kimi；步骤：出题-闭卷对照-作答；原因：退出状态 1；标准错误最后几行：To resume this session: kimi -r 55ec3aba-fc8c-4fc6-a7b9-b14a9467daba；标准输出最后几行：Error code: 401 - {&#x27;error&#x27;: {&#x27;message&#x27;: &#x27;The API Key appears to be invalid or ma
+y have expired. Please verify your credentials and try again.&#x27;, &#x27;type&#x27;: &#x27;invalid
+_authentication_error&#x27;}}；调用序号：10</code></li><li><code>厂商：google；步骤：出题-闭卷对照-作答；原因：退出状态 2；标准错误最后几行：  install         Configure environment paths and shell settings
+  mcp             Manage MCP servers (add, remove, list, enable, disable)
+  mic-serve       Serve this machine&#x27;s microphone to a CLI on another host
+  models          List available models
+  plugin          Manage plugins (install, uninstall, list, enable, disable)
+  plugins         Alias for plugin
+  remote-control  Manage the remote-control background daemon (start, status, stop)
+  update          Update CLI；调用序号：11</code></li></ul></div>
+</section>
+<section class="block" id="files" aria-labelledby="files-h">
+  <h2 class="heading-5" id="files-h">题目卡、深度地图和检查记录</h2>
+  <p class="body-3 sum">下面是题目目录里的文件原文，一字不改。</p>
+  <div class="file" id="file-card"><div class="file-head"><h3 class="heading-6">题目卡的三个版本</h3><a class="caption-2" href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E9%A2%98%E7%9B%AE%E5%8D%A1.txt">原文件</a></div><p class="body-6 muted">评委版、提问版、裸题版，以及附在交给智能体的版本之后的交付要求和说明。</p><pre class="raw" id="card">
+一、评委版（只给评委）
+【提问者】一家出版社的小学科学教材编辑，正在编写一册小学科学教材。
+【用途】决定教材里关于世界上最高的山的那句话怎么写。这句话要印进教材给小学生看，要求准确、经得起推敲。
+【问题】世界上最高的山是哪一座？
+【截止时间】只使用截至〔运行当日〕已经公开的信息。
+
+二、提问版（交给智能体）
+我是一家出版社的小学科学教材编辑，正在编写一册小学科学教材，得决定教材里关于“世界上最高的山”的那句话怎么写，这句话要印进教材给小学生看，要准确、经得起推敲。世界上最高的山是哪一座？只使用截至〔运行当日〕已经公开的信息。
+
+三、裸题版（交给智能体）
+世界上最高的山是哪一座？
+
+四、附在提问版和裸题版之后，一字不改
+
+【交付要求】
+请交付一份书面报告。版式不限，但必须包含以下五个部分：
+1. 主要结论：放在报告开头。
+2. 论证与解释。
+3. 出处：每个关键结论都标明来源，给出可以点开的网址和取用日期，尽量使用原始出处。
+4. 把握程度：主要判断各有多大把握，为什么。
+5. 查找与来源说明：你查了哪些方面，用了哪些来源，其中哪些可靠、哪些不可靠，还有哪些信息缺口。
+
+【说明】
+本题已包含全部信息，请直接开始，不需要向我确认。如果有不清楚的地方，请按你的理解进行，并在报告中写明你的理解和假设。
+</pre></div><div class="file" id="file-asked"><div class="file-head"><h3 class="heading-6">提问版：交给智能体的全文</h3><a class="caption-2" href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E6%8F%90%E9%97%AE%E7%89%88.txt">原文件</a></div><p class="body-6 muted">智能体收到的就是这个文件，一字不差。</p><pre class="raw" id="asked">
+我是一家出版社的小学科学教材编辑，正在编写一册小学科学教材，得决定教材里关于“世界上最高的山”的那句话怎么写，这句话要印进教材给小学生看，要准确、经得起推敲。世界上最高的山是哪一座？只使用截至〔运行当日〕已经公开的信息。
+
+交付要求：请交付一份书面报告。版式不限，但必须包含以下五个部分：
+
+1. 主要结论：放在报告开头。
+2. 论证与解释。
+3. 出处：每个关键结论都标明来源，给出可以点开的网址和取用日期，尽量使用原始出处。
+4. 把握程度：主要判断各有多大把握，为什么。
+5. 查找与来源说明：你查了哪些方面，用了哪些来源，其中哪些可靠、哪些不可靠，还有哪些信息缺口。
+
+说明：本题已包含全部信息，请直接开始，不需要向我确认。如果有不清楚的地方，请按你的理解进行，并在报告中写明你的理解和假设。
+</pre></div><div class="file" id="file-bare"><div class="file-head"><h3 class="heading-6">裸题版：交给智能体的全文</h3><a class="caption-2" href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E8%A3%B8%E9%A2%98%E7%89%88.txt">原文件</a></div><p class="body-6 muted">智能体收到的就是这个文件，一字不差。</p><pre class="raw" id="bare">
+世界上最高的山是哪一座？
+
+交付要求：请交付一份书面报告。版式不限，但必须包含以下五个部分：
+
+1. 主要结论：放在报告开头。
+2. 论证与解释。
+3. 出处：每个关键结论都标明来源，给出可以点开的网址和取用日期，尽量使用原始出处。
+4. 把握程度：主要判断各有多大把握，为什么。
+5. 查找与来源说明：你查了哪些方面，用了哪些来源，其中哪些可靠、哪些不可靠，还有哪些信息缺口。
+
+说明：本题已包含全部信息，请直接开始，不需要向我确认。如果有不清楚的地方，请按你的理解进行，并在报告中写明你的理解和假设。
+</pre></div><div class="file" id="file-map"><div class="file-head"><h3 class="heading-6">深度地图</h3><a class="caption-2" href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E6%B7%B1%E5%BA%A6%E5%9C%B0%E5%9B%BE.txt">原文件</a></div><p class="body-6 muted">浅答案、转折点、要点表，以及两人对照、泄露检查、闭卷对照三项记录的摘要。</p><details><summary class="caption-2">共 11699 字，点开看全文</summary><pre class="raw" id="map">
+题目编号：世界最高的山
+出题人：甲：claude（Anthropic），命令行报告的模型 claude-opus-5-5；乙：codex（OpenAI）。由模拟出题者程序调用模型写成，过程见两人对照记录.md
+写成日期：2026-10-30（在看到任何报告之前）
+
+一、浅答案（只看现象时的答案）
+世界上最高的山是珠穆朗玛峰，高8848.86米（也常见8844.43米、8848米等数字）。
+
+二、挖深之后，结论或建议在哪里改变
+山的名字不变，但这句话的写法和数字的用法变了。其一，“最高”要落实为“海拔最高”：海拔从平均海平面算起，只有按这把尺子珠峰才是第一（要点1、16）；从海底基部量到峰顶，莫纳克亚山比它高（要点17）；比峰顶到地心的距离，第一是钦博拉索山（要点19）。其二，数字不能任取：珠峰的高度数字换过多次，各家至今写法不一（要点3）；最新官方值是2020年中尼共同宣布的8848.86米（要点2）；它是雪面高程，与2005年8844.43米的岩石面高程不是同一个量，起算面也不同，所以不能相减后说珠峰长高了4.43米（要点18）。其三，教材属于教学活动，法规要求使用依法公布的数据，不能任选8850米或网上的数字（要点10）；但未查到2020年数据的公告文本，送审前要向审查部门确认，也不能用2018年的旧声明否定2020年的成果，或断言2005年岩石面标准已被明令废止（要点9）。建议书中写：“世界上海拔最高的山峰是珠穆朗玛峰。2020年，中国和尼泊尔共同宣布，它的峰顶雪面海拔是8848.86米。”这里用“山峰”而不是“山”（要点21），并用小学生能理解的话解释海拔从平均海平面算起。写明“雪面”两字是因为官方信函就称雪面高程，引用时要写明口径；雪面与岩面之分的解释、其他量法放进教师用书或注释，编辑资料保留公布年份、测量对象和来源。
+（转折点用到的要点：1、2、3、9、10、16、17、18、19、21）
+
+三、要点表
+编号 ｜ 要点 ｜ 层级（现象／全体／内部联系／本质） ｜ 重要性（核心／一般） ｜ 依据（出处网址） ｜ 把握（高／中／低）
+1 ｜ 按峰顶海拔比较，世界最高的山峰是珠穆朗玛峰，准确地说是高出平均海平面最多的山峰：中尼元首信函的中方文本称其为“这一世界最高峰”，NOAA称它通常被说成地球上最高的山、是高出海平面最多的点，吉尼斯称其无可争议地是海拔最高的山。 ｜ 现象 ｜ 核心 ｜ https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html; https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm ｜ 高
+2 ｜ 最新官方高程是8848.86米，由中国和尼泊尔元首于2020年12月8日互致信函共同宣布，是基于全球高程基准的峰顶雪面高程；2023年新华网仍写“海拔8848.86米”。教材引用这个数字要写明公布年份和雪面口径。截至2026年10月30日，用中英文检索2024至2026年的复测和公告，未见更新的官方数据（这是未查到，不是查到了确认不变的声明）。 ｜ 现象 ｜ 核心 ｜ https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.news.cn/sikepro/20230523/edb05b63debd42e381c2518aa3897073/c.html; https://www.mod.gov.cn/gfbw/qwfb/4875221.html; https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm ｜ 高
+3 ｜ 珠峰的高度数字换过多次：1856年29002英尺（8840米），1954年29028英尺（约8847.7米），1975年8848.13米（2005年起停用），1999年29035英尺（约8850米），2005年8844.43米，2020年8848.86米；USGS、NOAA的页面至今仍写8848米，吉尼斯写8848.8米，《国家地理》2020年称1954年的数字仍被许多国家和地图出版商承认，所以只给数字、不注来源和年份经不起推敲，引用历史数字必须区分年代和测量口径。裁决：重要性定一般（甲3原列核心，乙9原列一般）。书里要用的数值、年份和口径已由要点2、10、18定下，少了这段换数史，这句话和给编辑的建议都不变，不符合手册“回答这道题不能缺少”的定义。 ｜ 全体 ｜ 一般 ｜ https://blogs.loc.gov/maps/2018/03/extremities-of-the-earth-the-highest-point-from-sea-level/; https://www.nationalgeographic.com/science/article/new-height-of-mount-everest-announced-by-china-and-nepal; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.usgs.gov/faqs/how-big-are-hawaiian-volcanoes; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html; https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm; https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm ｜ 高
+4 ｜ 峰顶的雪面和冰雪层本身会变：2018年测绘部门的声明说冰雪层厚度会因气候变化而变化；尼方2019年测、中方2020年测，公布值是两国两个年份的雪面高按一定原则取的平均值，反映的是这一时期的状态。 ｜ 全体 ｜ 一般 ｜ https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://news.ifeng.com/c/822xZ3PYRUP ｜ 高
+5 ｜ “世界第一”是后来才确认的：19世纪以前许多人认为钦博拉索山最高；1849年的地图集上珠峰还只标作“喜马拉雅第15峰”；1852年拉达纳特·锡克达尔算出它最高，1856年才正式宣布。 ｜ 全体 ｜ 一般 ｜ https://blogs.loc.gov/maps/2020/11/extremities-of-the-earth-farthest-point-from-the-center-of-the-earth/; https://blogs.loc.gov/maps/2018/03/extremities-of-the-earth-the-highest-point-from-sea-level/ ｜ 高
+6 ｜ 这座山有多个名字：1952年5月8日的内务部、出版总署通报规定，教科书和舆图不得再称“额菲尔士峰”，应称珠穆朗玛峰；1961年中尼边界条约写作“珠穆朗玛峰(萨加·玛塔)”。1952年通报是转录文本，未核实其现行效力。 ｜ 全体 ｜ 一般 ｜ https://zh.wikisource.org/zh-hans/%E4%B8%AD%E5%A4%AE%E4%BA%BA%E6%B0%91%E6%94%BF%E5%BA%9C%E5%85%A7%E5%8B%99%E9%83%A8%E3%80%81%E5%87%BA%E7%89%88%E7%B8%BD%E7%BD%B2%E9%97%9C%E6%96%BC%E3%80%8C%E9%A1%8D%E8%8F%B2%E7%88%BE%E5%A3%AB%E5%B3%B0%E3%80%8D%E6%87%89%E6%AD%A3%E5%90%8D%E7%88%B2%E3%80%8C%E7%8F%A0%E7%A9%86%E6%9C%97%E7%91%AA%E5%B3%B0%E3%80%8D%E3%80%81%E3%80%8C%E5%A4%96%E5%96%9C%E9%A6%AC%E6%8B%89%E9%9B%85%E5%B1%B1%E3%80%8D%E6%87%89%E6%AD%A3%E5%90%8D%E7%88%B2%E3%80%8C%E5%B2%A1%E5%BA%95%E6%96%AF%E5%B1%B1%E3%80%8D%E7%9A%84%E9%80%9A%E5%A0%B1; https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676812/1207_676824/200710/t20071015_7990808.shtml ｜ 中
+7 ｜ 珠峰是中尼两国的界峰：1961年边界条约规定边界线经过此峰，2020年两国将其确立为“界峰”，所以教材若写它的位置，不宜只写在某一国境内。 ｜ 全体 ｜ 一般 ｜ https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676812/1207_676824/200710/t20071015_7990808.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm ｜ 高
+8 ｜ 中小学教材里的珠峰数字有跟着官方值更换的先例：河南广播电视台《都市报道》的微博称8848.13米曾写入中小学教材；2006年的一则报道称一册小学科学新课本把8848米改为8844米（页面乱码，年级和教材名无法确认）；上海科协2020年的文章称8844.43米已是公开出版的地图和教材使用的权威数据。未查到现行小学科学教材原文，也未读到2022年版科学课标正文（教育部页面只列了附件），无法确认现行各版本用哪个数、小学生是否已学过“海拔”。 ｜ 全体 ｜ 一般 ｜ https://www.sina.cn/news/detail/4825954046450740.html; http://edu.sina.com.cn/exam/2006-08-29/095452030.html; https://news.ifeng.com/c/7wmZpbUsUa0; http://www.moe.gov.cn/srcsite/A26/s8001/202204/t20220420_619921.html ｜ 中
+9 ｜ 2018年主管部门关于使用8844.43米的声明早于2020年中尼联合公布雪面高程，不能单独用这份旧声明否定2020年的成果，也不能据此断言2005年岩石面标准已被明令废止。 ｜ 全体 ｜ 一般 ｜ https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm; https://www.mod.gov.cn/gfbw/qwfb/4875221.html ｜ 高
+10 ｜ 教材用哪个数受法规约束：《测绘成果管理条例》第二十二条规定重要地理信息数据统一审核公布；第二十五条规定经批准的数据以公告形式公布，并要求“教学等对社会公众有影响的活动”使用依法公布的数据；第二十九条对使用未经依法公布的数据设了责令改正、警告和10万元以下罚款。2018年测绘部门的声明把这一规则用于珠峰高程：新数据公布前，任何单位和个人都应使用8844.43米。所以不能任选8850米或网上的数字。但2020年的数据由元首信函宣布，未查到自然资源部另发的公告，也未查到宣布8844.43米岩石面标准废止的文件。裁决：把握定中（甲9为中，乙8为高）。条文和2018年声明把握高，法规怎样适用于2020年数据，把握只有中。 ｜ 内部联系 ｜ 核心 ｜ https://ghzrzyw.beijing.gov.cn/zhengwuxinxi/zcfg/fg/202607/t20260722_4777520.html; https://zrzy.cngy.gov.cn/New/Detail/20180301225156270.html; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://xzfg.moj.gov.cn/front/law/detail?LawID=168; https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm ｜ 中
+11 ｜ 海拔不是拿尺子直接量出来的，要靠起算面：大地水准面无法直接测量，需综合重力、水准、地形和卫星定位数据计算；中国原用黄海基准，尼泊尔原用孟加拉湾基准（另一篇文章写作印度洋平均海平面），2020年为共同发布，统一采用依国际大地测量协会定义建立的全球高程基准。 ｜ 内部联系 ｜ 一般 ｜ https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm; https://www.chinanews.com/gn/2020/12-16/9363225.shtml ｜ 高
+12 ｜ 珠峰的真实高度也在缓慢变化：印度板块与欧亚板块碰撞造就了喜马拉雅，山脉至今仍在上升；不同来源的速率不同（USGS说山脉每年1厘米多，GPS对珠峰的估计约每年2毫米，《中国测绘》转述学者说每年3至4毫米），2015年尼泊尔地震对珠峰高度的影响也“在全球存在争议”，所以每个高程值都对应某个时期。真实地壳变化与测量对象、基准及技术变化共同影响历次高程成果，实际升降要在可比条件下分析。裁决：把握定中（甲11为中，乙11为高）。隆起本身有出处，但速率各家不一，地震的影响也有争议。 ｜ 内部联系 ｜ 一般 ｜ https://pubs.usgs.gov/gip/dynamic/himalaya.html; https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://m.thepaper.cn/baijiahao_10574912; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://apm.cas.cn/ttxw/202012/t20201209_5814029.html; https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm ｜ 中
+13 ｜ 河流也可能抬高了珠峰：2024年《自然·地球科学》的一篇论文用模型估计，约8.9万年前阿润河袭夺另一条河后，侵蚀卸载使珠峰多抬升了15至50米，抬升速率最高约每年2毫米；这是模型结果，仍有不确定性，只读到了转述，论文原文的页面要求登录，未读到。 ｜ 内部联系 ｜ 一般 ｜ https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://doi.org/10.1038/s41561-024-01535-w ｜ 中
+14 ｜ 地球自转使赤道一带隆起，钦博拉索山靠近赤道，正处在隆起最大的一带，所以它虽然海拔低于珠峰，峰顶却离地心更远。 ｜ 内部联系 ｜ 一般 ｜ https://oceanservice.noaa.gov/facts/highestpoint.html ｜ 高
+15 ｜ 8848.86米的起算面是全球高程基准，而我国国内测量数据用1985国家高程基准：自然资源部国土测绘司副司长陈军说，此前的珠峰高程都基于这一基准，并称会换算后公布使用；《人民日报》也提到算出过基于国家高程基准的雪面海拔高，但截至2026年10月30日未查到公布的数值。所以把8848.86米和国内其他山峰的数字列表比较时，严格说不是同一起算面（这句是出题人的推论）。 ｜ 内部联系 ｜ 一般 ｜ https://m.thepaper.cn/baijiahao_10574912; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm ｜ 中
+16 ｜ “最高”必须先说清按什么量：珠峰高程指海拔，即峰顶到大地水准面（平均海平面及其向陆地内部延伸的水准面）的距离，这与从山体基部到峰顶的高度、峰顶到地心的距离都不同；只有按海拔这把尺子珠峰才是第一，所以严格的说法是“海拔最高”，而不是笼统的“最高”。 ｜ 本质 ｜ 核心 ｜ https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html; https://apm.cas.cn/ttxw/202012/t20201209_5814029.html ｜ 高
+17 ｜ 按从基座到山顶量，夏威夷的莫纳克亚山（又译冒纳凯阿山）比珠峰高：USGS称它海拔4205米，向下还延伸约6000米到深海底，总高近10211米（吉尼斯写约10205米，NOAA写超过10210米）；吉尼斯因此把“tallest”（基座到山顶最高）给了它，把“highest”（海拔最高）给了珠峰。所以海拔最高不等于从基部量起最高。 ｜ 本质 ｜ 核心 ｜ https://www.usgs.gov/faqs/how-big-are-hawaiian-volcanoes; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html; https://oceanservice.noaa.gov/facts/highestpoint.html ｜ 高
+18 ｜ 几个常见数字量的不是同一个面，不能按大小直接比较：8848.86米是基于全球高程基准的峰顶雪面高程（中方信函写“基于全球高程基准的珠穆朗玛峰雪面高程”，尼方信函写“最新雪面高程”）；8844.43米是2005年的岩石面高程，当时测得冰雪层厚3.50米；8848.13米是1975年的冰面高度，已扣除当时测得的0.92米积雪；2005年与2020年的起算面也不同。因此8848.86米减8844.43米得到的4.43米不能解释为珠峰长高的量：党亚民说新“身高”不代表“长高”、数据不具可比性；郭春喜说起算面不同，不能简单相减；同一篇报道另写到两次“方法上没有本质区别、数据可精确比对”，未标说话人。按GPS约每年2毫米算（出自对另一研究的转述），15年只有约3厘米；按USGS给的喜马拉雅整体每年1厘米多算，也只有十几厘米（后两个数是出题人的估算）。2020年选雪面，是因为它精度更高，也是登山者实际到达的高度；自然资源部的陈军说2020年的成果也包括岩面高程和冰雪层深度，当时报道称岩面高程“或将待日后发布”，至今检索未见公布。裁决：层级定本质，重要性定核心（甲16、乙7原列本质、核心；甲8原列内部联系、一般；乙10原列全体、一般）。这条说的是每个数字到底指什么，属于手册说的“名与实”；不分清雪面和岩石面，书里的数字就写不准。甲8的4.43米是这一认识的推论，乙10的历史数字是它的例证，同一条认识只留这一行。 ｜ 本质 ｜ 核心 ｜ https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.peopleapp.com/rmharticle/30018731880; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://m.thepaper.cn/baijiahao_10574912; https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://pubs.usgs.gov/gip/dynamic/himalaya.html; https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm; https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm ｜ 高
+19 ｜ 按离地心的距离量，第一是厄瓜多尔的钦博拉索山，不是珠峰：它海拔只有6268米，但NOAA称其峰顶比珠峰峰顶离地心远2072米以上（美国国会图书馆的文章写2163米，具体数字各家略有出入）。裁决：重要性定一般（乙4原列核心，甲17原列一般）。写成“海拔最高”后，这句话和给编辑的建议都不因它而变；“最高要分尺子”已由要点16、17立住，它只是多一个例子，不符合手册“回答这道题不能缺少”的定义。 ｜ 本质 ｜ 一般 ｜ https://oceanservice.noaa.gov/facts/highestpoint.html; https://blogs.loc.gov/maps/2020/11/extremities-of-the-earth-farthest-point-from-the-center-of-the-earth/ ｜ 高
+20 ｜ “基座”没有统一的起点，因此这种量法不如海拔明确：吉尼斯承认莫纳克亚山的基座从哪里算有争议；USGS的文章还把冠纳罗亚山压陷海底的部分算进去，得出冠纳罗亚山从真正基底算起约17170米。起点一变，数字和高低都可能跟着变。 ｜ 本质 ｜ 一般 ｜ https://www.guinnessworldrecords.com/world-records/tallest-mountain.html; https://www.usgs.gov/center-news/volcano-watch-how-high-mauna-loa ｜ 高
+21 ｜ 题目问“山”，官方说法是“峰”：元首信函称“世界最高峰”，新华网称珠峰是喜马拉雅山脉的主峰。山脉和山峰不是一回事，所以写“山峰”比笼统的“山”更贴官方用语（后半句是出题人的判断）。 ｜ 本质 ｜ 一般 ｜ https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.news.cn/sikepro/20230523/edb05b63debd42e381c2518aa3897073/c.html ｜ 中
+（找不到要点的层，写明查了什么：（空））
+
+四、两人对照记录（对照之前不商量）
+甲：claude（Anthropic）　列出核心要点 7 条
+乙：codex（OpenAI）　列出核心要点 7 条
+两人都列到的：6 条
+估计总数 = 甲的条数 × 乙的条数 ÷ 都列到的条数 = 7 × 7 ÷ 6 = 8.17
+合并后的条数 = 甲 + 乙 − 都列到的 = 7 + 7 − 6 = 8
+结论：写全了
+（上面是第 2 轮。之前：第 1 轮：甲 8 条、乙 5 条、都列到 4 条，继续查。详见两人对照记录.md）
+
+五、泄露检查记录
+检查人：codex（OpenAI）。只看了提问版和裸题版，没有看深度地图
+日期：2026-10-30
+发现了什么：没有发现泄露。题面有没有暗示该往哪里挖？没有：两个版本都未指定研究角度。提问版增加了教材编辑的身份、用途、准确性要求和信息截止时间，但没有提示具体应查什么；裸题版也没有。；题面有没有直接给出中间答案？没有：两个版本都没有给出候选山峰、测量口径或其他需要自行查证的中间结论。；题面有没有点名要查的来源或方法？没有：排除统一的交付要求和说明后，两个版本都未指定来源或研究方法；提问版只限制使用截至运行当日已公开的信息。
+怎么改的：不用改。
+
+六、闭卷对照记录
+所用模型（不参赛，且和参赛者不是同一家公司的同一系列）：没有做闭卷对照
+日期：2026-10-30
+不联网答到了哪些核心要点：没有做
+结论：未做。闭卷对照（步骤「出题-闭卷对照-作答」）找不到可用的厂商：kimi 调用失败：退出状态 1；标准错误最后几行：To resume this session: kimi -r 55ec3aba-fc8c-4fc6-a7b9-b14a9467daba；标准输出最后几行：Error code: 401 - {&#x27;error&#x27;: {&#x27;message&#x27;: &#x27;The API Key appears to be invalid or ma
+y have expired. Please verify your credentials and try again.&#x27;, &#x27;type&#x27;: &#x27;invalid
+_authentication_error&#x27;}}；claude 写过本题的深度地图，闭卷对照不能用它；codex 写过本题的深度地图，闭卷对照不能用它；google 调用失败：退出状态 2；标准错误最后几行：  install         Configure environment paths and shell settings
+  mcp             Manage MCP servers (add, remove, list, enable, disable)
+  mic-serve       Serve this machine&#x27;s microphone to a CLI on another host
+  models          List available models
+  plugin          Manage plugins (install, uninstall, list, enable, disable)
+  plugins         Alias for plugin
+  remote-control  Manage the remote-control background daemon (start, status, stop)
+  update          Update CLI
+</pre></details></div><div class="file" id="file-pair"><div class="file-head"><h3 class="heading-6">两人对照记录</h3><a class="caption-2" href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E4%B8%A4%E4%BA%BA%E5%AF%B9%E7%85%A7%E8%AE%B0%E5%BD%95.md">原文件</a></div><p class="body-6 muted">每一轮两位出题人各自的地图、配对和数鱼的计算。</p><details><summary class="caption-2">共 22197 字，点开看全文</summary><pre class="raw" id="pair">
+# 两人对照记录
+
+题目标识：世界最高的山。写成日期：2026-10-30。
+
+- 甲：claude（Anthropic），命令行报告的模型 claude-opus-5-5
+- 乙：codex（OpenAI）
+- 对照：claude（Anthropic），命令行报告的模型 claude-opus-5-5，只给材料
+
+第 1 轮两人各自独立写深度地图（只读网页），提示词里没有对方写的任何东西，对照之前不商量。没有写全时，按出题手册，两人看到只有一人列到的核心要点，针对这些方向各自再查一轮，然后重新对照。
+
+## 第 1 轮
+
+甲的地图是第 3 次调用，乙的是第 4 次，对照是第 5 次（见调用记录.jsonl）。
+
+```
+甲：claude（Anthropic）　列出核心要点 8 条
+乙：codex（OpenAI）　列出核心要点 5 条
+两人都列到的：4 条
+估计总数 = 甲的条数 × 乙的条数 ÷ 都列到的条数 = 8 × 5 ÷ 4 = 10
+合并后的条数 = 甲 + 乙 − 都列到的 = 8 + 5 − 4 = 9
+结论：继续查（针对只有一人列到的方向）：还差约 1 条
+```
+
+### 都列到的核心要点（4 对）
+
+- 甲1 = 乙1
+- 甲2 = 乙6
+- 甲14 = 乙2
+- 甲15 = 乙3
+
+### 只有甲列到的核心要点（4 条）
+
+- 甲3 珠峰的高度数字换过多次：1856年29002英尺（8840米），1954年29028英尺（约8847.7米），1975年8848.13米（后已停用），1999年29035英尺（约8850米），2005年8844.43米，2020年8848.86米；USGS、NOAA至今仍写8848米，吉尼斯写8848.8米，所以只给数字不注来源和年份经不起推敲。未查到现行小学教材原文，无法确认各版本教材用的是哪个数。
+- 甲8 8848.86米减8844.43米得到的4.43米不是珠峰长高的量：两个数的测量面不同（2005年测得的冰雪层就有3.50米），起算面也不同（2005年用黄海基准，2020年用全球高程基准）。党亚民说新“身高”不代表“长高”、数据不具可比性；郭春喜认为两次方法可比对，但同样指出不能简单相减。按GPS约每年2毫米算（出自对另一研究的转述），15年只有约3厘米；按USGS给的喜马拉雅整体每年1厘米多算，也只有十几厘米（后两个数是出题人的估算）。
+- 甲9 教材用哪个数受法规约束：《测绘成果管理条例》第二十二条规定重要地理信息数据统一审核公布，第二十五条要求教学等活动使用依法公布的数据；测绘部门曾明确把这一规则用于珠峰高程。所以不能任选8850米或网上的数字。条文和该声明把握高；但未查到自然资源部就8848.86米另发的公告，也未查到宣布8844.43米岩石面标准废止的文件，法规怎样适用于2020年数据，把握只有中。
+- 甲16 几个常见数字量的不是同一个面：8848.86米是峰顶雪面高程（尼方信函明确写“雪面”，中方信函只写“最新高程”），8844.43米是2005年的岩石面高程（当时冰雪层厚3.50米），8848.13米是1975年的冰面高度。2020年选雪面，是因为它精度更高，也是登山者实际到达的高度；当时称岩面高程“或将待日后发布”，至今检索未见公布。
+
+### 只有乙列到的核心要点（1 条）
+
+- 乙4 若比较峰顶到地心的距离，世界第一是厄瓜多尔的钦博拉索山，而不是珠穆朗玛峰。
+
+### 甲的深度地图
+
+浅答案：世界上最高的山是珠穆朗玛峰，高8848.86米（也常见8844.43米、8848米等数字）。
+
+转折点：山的名字不变，但这句话的写法和数字的用法变了。其一，“最高”要落实为“海拔最高”：只有按海拔，珠峰才是第一（要点14）；按基座到山顶，莫纳克亚山约10211米，比珠峰高（要点15）。其二，数字应取2020年中尼共同宣布的8848.86米（要点2），不能沿用8844.43米或1975年的8848.13米（要点3）。这个数字是雪面高程，与8844.43米的岩石面高程不是同一个量（要点16）；教学活动还须使用依法公布的数据（要点9）。其三，不能写珠峰“长高了4.43米”（要点8）。建议书中写：“世界上海拔最高的山峰是珠穆朗玛峰，海拔8848.86米（2020年中国和尼泊尔共同宣布）。”给编辑的说明：雪面、岩面之分和其他量法可放进教师用书或注释，不必写进给小学生看的这句话；送审前向审查部门确认数据口径。（用到 甲2、甲3、甲8、甲9、甲14、甲15、甲16）
+
+| 编号 | 要点 | 层级 | 重要性 | 依据 | 把握 |
+| --- | --- | --- | --- | --- | --- |
+| 甲1 | 珠穆朗玛峰公认是世界最高峰，准确地说是高出平均海平面最多的山峰：中尼元首信函的新华社报道称其为“世界最高峰”，NOAA称其为高于全球平均海平面的最高点，吉尼斯称其无可争议地是海拔最高的山。 | 现象 | 核心 | https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲2 | 最新官方高程是8848.86米，由中国和尼泊尔元首于2020年12月8日互致信函共同宣布；截至2026年10月30日的检索，未见更新的官方数据（这是未查到，不是查到了确认不变的声明）。 | 现象 | 核心 | https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676812/xgxw_676818/202012/t20201208_9301005.shtml; https://doaj.org/article/7cafdab571c242169e156e8e68ec6452 | 高 |
+| 甲3 | 珠峰的高度数字换过多次：1856年29002英尺（8840米），1954年29028英尺（约8847.7米），1975年8848.13米（后已停用），1999年29035英尺（约8850米），2005年8844.43米，2020年8848.86米；USGS、NOAA至今仍写8848米，吉尼斯写8848.8米，所以只给数字不注来源和年份经不起推敲。未查到现行小学教材原文，无法确认各版本教材用的是哪个数。 | 全体 | 核心 | https://blogs.loc.gov/maps/2018/03/extremities-of-the-earth-the-highest-point-from-sea-level/; https://www.nationalgeographic.com/science/article/new-height-of-mount-everest-announced-by-china-and-nepal; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.usgs.gov/faqs/how-big-are-hawaiian-volcanoes; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲4 | 峰顶的雪面和冰雪层本身会变：测绘部门说冰雪层厚度随气候变化；尼方2019年测、中方2020年测，公布值是两国两个年份的雪面高按一定原则取的平均值，反映的是这一时期的状态。 | 全体 | 一般 | https://news.ifeng.com/c/822xZ3PYRUP; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml | 高 |
+| 甲5 | “世界第一”是后来才确认的：19世纪以前许多人认为钦博拉索山最高；1849年的地图集上珠峰还只标作“喜马拉雅第15峰”；1852年拉达纳特·锡克达尔算出它最高，1856年才正式宣布。 | 全体 | 一般 | https://blogs.loc.gov/maps/2020/11/extremities-of-the-earth-farthest-point-from-the-center-of-the-earth/; https://blogs.loc.gov/maps/2018/03/extremities-of-the-earth-the-highest-point-from-sea-level/ | 高 |
+| 甲6 | 这座山有多个名字：1952年内务部、出版总署通报规定，教科书和舆图不得再称“额菲尔士峰”，应称珠穆朗玛峰；1961年中尼边界条约写作“珠穆朗玛峰（萨加·玛塔）”。1952年通报是转录文本，未核实其现行效力。 | 全体 | 一般 | https://zh.wikisource.org/zh-hans/%E4%B8%AD%E5%A4%AE%E4%BA%BA%E6%B0%91%E6%94%BF%E5%BA%9C%E5%85%A7%E5%8B%99%E9%83%A8%E3%80%81%E5%87%BA%E7%89%88%E7%B8%BD%E7%BD%B2%E9%97%9C%E6%96%BC%E3%80%8C%E9%A1%8D%E8%8F%B2%E7%88%BE%E5%A3%AB%E5%B3%B0%E3%80%8D%E6%87%89%E6%AD%A3%E5%90%8D%E7%88%B2%E3%80%8C%E7%8F%A0%E7%A9%86%E6%9C%97%E7%91%AA%E5%B3%B0%E3%80%8D%E3%80%81%E3%80%8C%E5%A4%96%E5%96%9C%E9%A6%AC%E6%8B%89%E9%9B%85%E5%B1%B1%E3%80%8D%E6%87%89%E6%AD%A3%E5%90%8D%E7%88%B2%E3%80%8C%E5%B2%A1%E5%BA%95%E6%96%AF%E5%B1%B1%E3%80%8D%E7%9A%84%E9%80%9A%E5%A0%B1; https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676812/1207_676824/200710/t20071015_7990808.shtml | 中 |
+| 甲7 | 珠峰是中尼两国的界峰：1961年边界条约规定边界线经过此峰，2020年两国将其确立为“界峰”，所以教材若写它的位置，不宜只写在某一国境内。 | 全体 | 一般 | https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676812/1207_676824/200710/t20071015_7990808.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm | 高 |
+| 甲8 | 8848.86米减8844.43米得到的4.43米不是珠峰长高的量：两个数的测量面不同（2005年测得的冰雪层就有3.50米），起算面也不同（2005年用黄海基准，2020年用全球高程基准）。党亚民说新“身高”不代表“长高”、数据不具可比性；郭春喜认为两次方法可比对，但同样指出不能简单相减。按GPS约每年2毫米算（出自对另一研究的转述），15年只有约3厘米；按USGS给的喜马拉雅整体每年1厘米多算，也只有十几厘米（后两个数是出题人的估算）。 | 内部联系 | 核心 | https://www.peopleapp.com/rmharticle/30018731880; https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://pubs.usgs.gov/gip/dynamic/himalaya.html | 高 |
+| 甲9 | 教材用哪个数受法规约束：《测绘成果管理条例》第二十二条规定重要地理信息数据统一审核公布，第二十五条要求教学等活动使用依法公布的数据；测绘部门曾明确把这一规则用于珠峰高程。所以不能任选8850米或网上的数字。条文和该声明把握高；但未查到自然资源部就8848.86米另发的公告，也未查到宣布8844.43米岩石面标准废止的文件，法规怎样适用于2020年数据，把握只有中。 | 内部联系 | 核心 | https://www.fadada.com/article/detail-4297; https://ghzrzyw.beijing.gov.cn/zhengwuxinxi/zcfg/fg/202607/t20260722_4777520.html; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml | 中 |
+| 甲10 | 海拔不是拿尺子直接量出来的，要靠起算面：大地水准面无法直接测量，需综合重力、水准、地形和卫星定位数据计算；中国原用黄海基准，尼泊尔原用孟加拉湾基准，2020年为共同发布统一采用国际大地测量协会的全球高程基准（IHRS）。 | 内部联系 | 一般 | https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm; https://news.ifeng.com/c/822xZ3PYRUP; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://doaj.org/article/7cafdab571c242169e156e8e68ec6452 | 高 |
+| 甲11 | 珠峰的真实高度也在缓慢变化：印度板块与欧亚板块碰撞造就了喜马拉雅，山脉至今仍在上升；不同来源的速率不同（USGS说山脉每年1厘米多，GPS对珠峰的估计约每年2毫米），2015年尼泊尔地震对珠峰高度的影响也有争议，所以每个高程值都对应某个时期。 | 内部联系 | 一般 | https://pubs.usgs.gov/gip/dynamic/himalaya.html; https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm | 中 |
+| 甲12 | 河流也可能抬高了珠峰：2024年《自然·地球科学》的一篇论文用模型估计，约8.9万年前阿润河被袭夺后，侵蚀卸载使珠峰多抬升了15至50米，抬升速率最高约每年2毫米；这是模型结果，仍有不确定性，只读到了转述，未读到论文原文。 | 内部联系 | 一般 | https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://doi.org/10.1038/s41561-024-01535-w | 中 |
+| 甲13 | 钦博拉索山顶离地心更远，是因为地球自转使赤道一带隆起，而它位于赤道以南约1度，正处在隆起最大的地方。 | 内部联系 | 一般 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 甲14 | “最高”要先说清按什么量：珠峰高程指海拔，即峰顶到大地水准面的距离；只有按这把尺子珠峰才是第一，所以严格的说法是“海拔最高”，而不是笼统的“最高”。 | 本质 | 核心 | https://news.ifeng.com/c/822xZ3PYRUP; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲15 | 按从基座到山顶量，夏威夷的莫纳克亚山比珠峰高：USGS称它海拔4205米，向下还延伸约6000米到深海底，总高近10211米；吉尼斯因此把“tallest”（基座到山顶最高）给了它，把“highest”（海拔最高）给了珠峰。 | 本质 | 核心 | https://www.usgs.gov/faqs/how-big-are-hawaiian-volcanoes; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲16 | 几个常见数字量的不是同一个面：8848.86米是峰顶雪面高程（尼方信函明确写“雪面”，中方信函只写“最新高程”），8844.43米是2005年的岩石面高程（当时冰雪层厚3.50米），8848.13米是1975年的冰面高度。2020年选雪面，是因为它精度更高，也是登山者实际到达的高度；当时称岩面高程“或将待日后发布”，至今检索未见公布。 | 本质 | 核心 | https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.peopleapp.com/rmharticle/30018731880; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml | 高 |
+| 甲17 | 按离地心的距离量，第一是厄瓜多尔的钦博拉索山，不是珠峰：它海拔只有6268米，但NOAA称其峰顶比珠峰峰顶离地心远2072米以上（美国国会图书馆的文章写2163米，具体数字各家略有出入）。 | 本质 | 一般 | https://oceanservice.noaa.gov/facts/highestpoint.html; https://blogs.loc.gov/maps/2020/11/extremities-of-the-earth-farthest-point-from-the-center-of-the-earth/ | 高 |
+| 甲18 | “基座”没有统一的起点，因此这种量法不如海拔明确：吉尼斯承认莫纳克亚山的基座从哪里算有争议；USGS的文章还把冠纳罗亚山压陷海底的部分算进去，得出冠纳罗亚山从真正基底算起约17170米。起点一变，数字和高低都可能跟着变。 | 本质 | 一般 | https://www.guinnessworldrecords.com/world-records/tallest-mountain.html; https://www.usgs.gov/center-news/volcano-watch-how-high-mauna-loa | 高 |
+
+找不到要点的层：（空）
+
+### 乙的深度地图
+
+浅答案：珠穆朗玛峰是世界上最高的山。
+
+转折点：本地图登记于2026-10-30，仅依据截至该日查到的公开信息。挖深后，教材应把不加限定的“世界上最高的山”改为“世界上海拔最高的山峰是珠穆朗玛峰”。如需数字，可另写“2020年，中国和尼泊尔共同公布其峰顶雪面海拔为8848.86米”。关键变化是明确比较的起算面：海拔、从山脚到山顶的高度、峰顶到地心的距离不是同一个量，换一种量法，第一名会改变。冒纳凯阿山和钦博拉索山可作为编辑核查说明，不必全部塞进教材正文；旧测量数字也不能直接当作珠峰实际升降的证据。（用到 乙1、乙2、乙3、乙4、乙5、乙6、乙7）
+
+| 编号 | 要点 | 层级 | 重要性 | 依据 | 把握 |
+| --- | --- | --- | --- | --- | --- |
+| 乙1 | 按峰顶海拔比较，珠穆朗玛峰是世界最高的山峰。 | 现象 | 核心 | https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml | 高 |
+| 乙2 | “最高”必须明确比较的量和起算面，峰顶海拔、山体从基部到峰顶的高度及峰顶到地心的距离不能混为一谈。 | 本质 | 核心 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙3 | 按从海底基部到峰顶的通常量法，冒纳凯阿山高度超过10210米，超过珠峰的海拔数值，说明山体高度与海拔排名可以不同。 | 本质 | 核心 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙4 | 若比较峰顶到地心的距离，世界第一是厄瓜多尔的钦博拉索山，而不是珠穆朗玛峰。 | 本质 | 核心 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙5 | 地球自转使赤道附近向外隆起，因此靠近赤道的钦博拉索山虽海拔较低，峰顶仍比珠峰峰顶离地心更远。 | 内部联系 | 一般 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙6 | 2020年12月8日中尼共同公布的8848.86米，是基于全球高程基准的珠峰峰顶雪面高程，教材采用这一数字应保留其测量对象和公布年份。 | 现象 | 核心 | https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml | 高 |
+| 乙7 | 2005年公布的8844.43米是峰顶岩石面高程，与2020年公布的雪面高程口径不同，两数之差不能直接解释为珠峰实际长高的幅度。 | 全体 | 一般 | https://ch.whu.edu.cn/fileWHDXXBXXKXB/journal/article/whdxxbxxkxb/newcreate/whugis20220666.pdf%3B; https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml | 高 |
+
+找不到要点的层：（空）
+
+## 第 2 轮
+
+甲的地图是第 6 次调用，乙的是第 7 次，对照是第 8 次（见调用记录.jsonl）。
+
+```
+甲：claude（Anthropic）　列出核心要点 7 条
+乙：codex（OpenAI）　列出核心要点 7 条
+两人都列到的：6 条
+估计总数 = 甲的条数 × 乙的条数 ÷ 都列到的条数 = 7 × 7 ÷ 6 = 8.17
+合并后的条数 = 甲 + 乙 − 都列到的 = 7 + 7 − 6 = 8
+结论：写全了
+```
+
+### 都列到的核心要点（6 对）
+
+- 甲1 = 乙1
+- 甲2 = 乙6
+- 甲9 = 乙8
+- 甲14 = 乙2
+- 甲15 = 乙3
+- 甲16 = 乙7
+
+### 只有甲列到的核心要点（1 条）
+
+- 甲3 珠峰的高度数字换过多次：1856年29002英尺（8840米），1954年29028英尺（约8847.7米），1975年8848.13米（2005年起停用），1999年29035英尺（约8850米），2005年8844.43米，2020年8848.86米；USGS、NOAA的页面至今仍写8848米，吉尼斯写8848.8米，《国家地理》2020年称1954年的数字仍被许多国家和地图出版商承认，所以只给数字、不注来源和年份经不起推敲。
+
+### 只有乙列到的核心要点（1 条）
+
+- 乙4 若比较峰顶到地心的距离，第一名是厄瓜多尔的钦博拉索山，而非珠穆朗玛峰。
+
+### 甲的深度地图
+
+浅答案：世界上最高的山是珠穆朗玛峰，高8848.86米（也常见8844.43米、8848米等数字）。
+
+转折点：山的名字不变，但这句话的写法和数字的用法变了。其一，“最高”要落实为“海拔最高”：珠峰高程指峰顶到大地水准面的距离，只有按这把尺子它才是第一（要点14）；按基座到山顶量，莫纳克亚山约10211米，比它高（要点15）。其二，数字不能任取：历史上换过多次，各家至今写法不一（要点3）；最新官方值是2020年中尼共同宣布的8848.86米（要点2）；它是雪面高程，与8844.43米的岩石面高程不是同一个量（要点16）。其三，教材属于教学活动，法规要求使用依法公布的数据（要点9），所以不能任选8850米或网上的数字；但未查到2020年数据的公告文本，送审前要向审查部门确认。建议书中写：“世界上海拔最高的山峰是珠穆朗玛峰，海拔8848.86米（2020年中国和尼泊尔共同宣布）。”这里用“山峰”而不是“山”（要点21）。给编辑的说明：雪面与岩面之分、钦博拉索山（要点17）等其他量法放进教师用书或注释，不写进给小学生看的这句话；不要写珠峰“长高了4.43米”（要点8）。（用到 甲2、甲3、甲8、甲9、甲14、甲15、甲16、甲17、甲21）
+
+| 编号 | 要点 | 层级 | 重要性 | 依据 | 把握 |
+| --- | --- | --- | --- | --- | --- |
+| 甲1 | 珠穆朗玛峰公认是世界最高峰，准确地说是高出平均海平面最多的山峰：中尼元首信函的中方文本称其为“这一世界最高峰”，NOAA称它通常被说成地球上最高的山、是高出海平面最多的点，吉尼斯称其无可争议地是海拔最高的山。 | 现象 | 核心 | https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲2 | 最新官方高程是8848.86米，由中国和尼泊尔元首于2020年12月8日互致信函共同宣布；2023年新华网仍写“海拔8848.86米”。截至2026年10月30日，用中英文检索2024至2026年的复测和公告，未见更新的官方数据（这是未查到，不是查到了确认不变的声明）。 | 现象 | 核心 | https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.news.cn/sikepro/20230523/edb05b63debd42e381c2518aa3897073/c.html | 高 |
+| 甲3 | 珠峰的高度数字换过多次：1856年29002英尺（8840米），1954年29028英尺（约8847.7米），1975年8848.13米（2005年起停用），1999年29035英尺（约8850米），2005年8844.43米，2020年8848.86米；USGS、NOAA的页面至今仍写8848米，吉尼斯写8848.8米，《国家地理》2020年称1954年的数字仍被许多国家和地图出版商承认，所以只给数字、不注来源和年份经不起推敲。 | 全体 | 核心 | https://blogs.loc.gov/maps/2018/03/extremities-of-the-earth-the-highest-point-from-sea-level/; https://www.nationalgeographic.com/science/article/new-height-of-mount-everest-announced-by-china-and-nepal; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.usgs.gov/faqs/how-big-are-hawaiian-volcanoes; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲4 | 峰顶的雪面和冰雪层本身会变：2018年测绘部门的声明说冰雪层厚度会因气候变化而变化；尼方2019年测、中方2020年测，公布值是两国两个年份的雪面高按一定原则取的平均值，反映的是这一时期的状态。 | 全体 | 一般 | https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://news.ifeng.com/c/822xZ3PYRUP | 高 |
+| 甲5 | “世界第一”是后来才确认的：19世纪以前许多人认为钦博拉索山最高；1849年的地图集上珠峰还只标作“喜马拉雅第15峰”；1852年拉达纳特·锡克达尔算出它最高，1856年才正式宣布。 | 全体 | 一般 | https://blogs.loc.gov/maps/2020/11/extremities-of-the-earth-farthest-point-from-the-center-of-the-earth/; https://blogs.loc.gov/maps/2018/03/extremities-of-the-earth-the-highest-point-from-sea-level/ | 高 |
+| 甲6 | 这座山有多个名字：1952年5月8日的内务部、出版总署通报规定，教科书和舆图不得再称“额菲尔士峰”，应称珠穆朗玛峰；1961年中尼边界条约写作“珠穆朗玛峰(萨加·玛塔)”。1952年通报是转录文本，未核实其现行效力。 | 全体 | 一般 | https://zh.wikisource.org/zh-hans/%E4%B8%AD%E5%A4%AE%E4%BA%BA%E6%B0%91%E6%94%BF%E5%BA%9C%E5%85%A7%E5%8B%99%E9%83%A8%E3%80%81%E5%87%BA%E7%89%88%E7%B8%BD%E7%BD%B2%E9%97%9C%E6%96%BC%E3%80%8C%E9%A1%8D%E8%8F%B2%E7%88%BE%E5%A3%AB%E5%B3%B0%E3%80%8D%E6%87%89%E6%AD%A3%E5%90%8D%E7%88%B2%E3%80%8C%E7%8F%A0%E7%A9%86%E6%9C%97%E7%91%AA%E5%B3%B0%E3%80%8D%E3%80%81%E3%80%8C%E5%A4%96%E5%96%9C%E9%A6%AC%E6%8B%89%E9%9B%85%E5%B1%B1%E3%80%8D%E6%87%89%E6%AD%A3%E5%90%8D%E7%88%B2%E3%80%8C%E5%B2%A1%E5%BA%95%E6%96%AF%E5%B1%B1%E3%80%8D%E7%9A%84%E9%80%9A%E5%A0%B1; https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676812/1207_676824/200710/t20071015_7990808.shtml | 中 |
+| 甲7 | 珠峰是中尼两国的界峰：1961年边界条约规定边界线经过此峰，2020年两国将其确立为“界峰”，所以教材若写它的位置，不宜只写在某一国境内。 | 全体 | 一般 | https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676812/1207_676824/200710/t20071015_7990808.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm | 高 |
+| 甲8 | 8848.86米减8844.43米得到的4.43米不是珠峰长高的量：两个数的测量面和起算面都不同。党亚民说新“身高”不代表“长高”、数据不具可比性；郭春喜说起算面不同，不能简单相减。同一篇报道另写到两次“方法上没有本质区别、数据可精确比对”，未标说话人（上一轮记在郭春喜名下有误，已改）。按GPS约每年2毫米算（出自对另一研究的转述），15年只有约3厘米；按USGS给的喜马拉雅整体每年1厘米多算，也只有十几厘米（后两个数是出题人的估算）。本轮由核心改为一般：出处没有问题，但这句话不谈长高，两数不可比的根据已在要点16，这一条是它的推论。 | 内部联系 | 一般 | https://www.peopleapp.com/rmharticle/30018731880; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://pubs.usgs.gov/gip/dynamic/himalaya.html | 高 |
+| 甲9 | 教材用哪个数受法规约束：《测绘成果管理条例》第二十二条规定重要地理信息数据统一审核公布；第二十五条规定经批准的数据以公告形式公布，并要求“教学等对社会公众有影响的活动”使用依法公布的数据；第二十九条对使用未经依法公布的数据设了责令改正、警告和10万元以下罚款。2018年测绘部门的声明把这一规则用于珠峰高程：新数据公布前，任何单位和个人都应使用8844.43米。所以不能任选8850米或网上的数字。条文和该声明把握高；但2020年的数据由元首信函宣布，未查到自然资源部另发的公告，也未查到宣布8844.43米岩石面标准废止的文件，法规怎样适用于2020年数据，把握只有中。 | 内部联系 | 核心 | https://ghzrzyw.beijing.gov.cn/zhengwuxinxi/zcfg/fg/202607/t20260722_4777520.html; https://zrzy.cngy.gov.cn/New/Detail/20180301225156270.html; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm | 中 |
+| 甲10 | 海拔不是拿尺子直接量出来的，要靠起算面：大地水准面无法直接测量，需综合重力、水准、地形和卫星定位数据计算；中国原用黄海基准，尼泊尔原用孟加拉湾基准（另一篇文章写作印度洋平均海平面），2020年为共同发布，统一采用依国际大地测量协会定义建立的全球高程基准。 | 内部联系 | 一般 | https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm; https://www.chinanews.com/gn/2020/12-16/9363225.shtml | 高 |
+| 甲11 | 珠峰的真实高度也在缓慢变化：印度板块与欧亚板块碰撞造就了喜马拉雅，山脉至今仍在上升；不同来源的速率不同（USGS说山脉每年1厘米多，GPS对珠峰的估计约每年2毫米，《中国测绘》转述学者说每年3至4毫米），2015年尼泊尔地震对珠峰高度的影响也“在全球存在争议”，所以每个高程值都对应某个时期。 | 内部联系 | 一般 | https://pubs.usgs.gov/gip/dynamic/himalaya.html; https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://m.thepaper.cn/baijiahao_10574912; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm | 中 |
+| 甲12 | 河流也可能抬高了珠峰：2024年《自然·地球科学》的一篇论文用模型估计，约8.9万年前阿润河袭夺另一条河后，侵蚀卸载使珠峰多抬升了15至50米，抬升速率最高约每年2毫米；这是模型结果，仍有不确定性，只读到了转述，论文原文的页面要求登录，未读到。 | 内部联系 | 一般 | https://www.sci.news/othersciences/geoscience/mount-everest-river-13304.html; https://doi.org/10.1038/s41561-024-01535-w | 中 |
+| 甲13 | 钦博拉索山顶离地心更远，是因为地球自转使赤道一带隆起，而它靠近赤道，正处在隆起最大的一带。 | 内部联系 | 一般 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 甲14 | “最高”要先说清按什么量：珠峰高程指海拔，即峰顶到大地水准面的距离；只有按这把尺子珠峰才是第一，所以严格的说法是“海拔最高”，而不是笼统的“最高”。 | 本质 | 核心 | https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲15 | 按从基座到山顶量，夏威夷的莫纳克亚山比珠峰高：USGS称它海拔4205米，向下还延伸约6000米到深海底，总高近10211米（吉尼斯写约10205米）；吉尼斯因此把“tallest”（基座到山顶最高）给了它，把“highest”（海拔最高）给了珠峰。 | 本质 | 核心 | https://www.usgs.gov/faqs/how-big-are-hawaiian-volcanoes; https://www.guinnessworldrecords.com/world-records/tallest-mountain.html | 高 |
+| 甲16 | 几个常见数字量的不是同一个面：8848.86米是峰顶雪面高程（中方信函写“基于全球高程基准的珠穆朗玛峰雪面高程”，尼方信函写“最新雪面高程”；上一轮说中方信函只写“最新高程”有误，已改），8844.43米是2005年的岩石面高程（当时冰雪层厚3.50米），8848.13米是1975年的冰面高度；2005年与2020年的起算面也不同。2020年选雪面，是因为它精度更高，也是登山者实际到达的高度；自然资源部的陈军说2020年的成果也包括岩面高程和冰雪层深度，当时报道称岩面高程“或将待日后发布”，至今检索未见公布。 | 本质 | 核心 | https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.peopleapp.com/rmharticle/30018731880; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm; https://www.rmzxw.com.cn/c/2018-02-11/1959348.shtml; https://m.thepaper.cn/baijiahao_10574912 | 高 |
+| 甲17 | 按离地心的距离量，第一是厄瓜多尔的钦博拉索山，不是珠峰：它海拔只有6268米，但NOAA称其峰顶比珠峰峰顶离地心远2072米以上（美国国会图书馆的文章写2163米，具体数字各家略有出入）。本轮查实了出处，仍不列核心：写成“海拔最高”后，这句话和给编辑的建议都不因它而变，“最高要分尺子”已由要点14、15立住，它只是多一个例子。 | 本质 | 一般 | https://oceanservice.noaa.gov/facts/highestpoint.html; https://blogs.loc.gov/maps/2020/11/extremities-of-the-earth-farthest-point-from-the-center-of-the-earth/ | 高 |
+| 甲18 | “基座”没有统一的起点，因此这种量法不如海拔明确：吉尼斯承认莫纳克亚山的基座从哪里算有争议；USGS的文章还把冠纳罗亚山压陷海底的部分算进去，得出冠纳罗亚山从真正基底算起约17170米。起点一变，数字和高低都可能跟着变。 | 本质 | 一般 | https://www.guinnessworldrecords.com/world-records/tallest-mountain.html; https://www.usgs.gov/center-news/volcano-watch-how-high-mauna-loa | 高 |
+| 甲19 | 中小学教材里的珠峰数字有跟着官方值更换的先例：河南广播电视台《都市报道》的微博称8848.13米曾写入中小学教材；2006年的一则报道称一册小学科学新课本把8848米改为8844米（页面乱码，年级和教材名无法确认）；上海科协2020年的文章称8844.43米已是公开出版的地图和教材使用的权威数据。未查到现行小学科学教材原文，也未读到2022年版科学课标正文（教育部页面只列了附件），无法确认现行各版本用哪个数、小学生是否已学过“海拔”。 | 全体 | 一般 | https://www.sina.cn/news/detail/4825954046450740.html; http://edu.sina.com.cn/exam/2006-08-29/095452030.html; https://news.ifeng.com/c/7wmZpbUsUa0; http://www.moe.gov.cn/srcsite/A26/s8001/202204/t20220420_619921.html | 中 |
+| 甲20 | 8848.86米的起算面是全球高程基准，而我国国内测量数据用1985国家高程基准：自然资源部国土测绘司副司长陈军说，此前的珠峰高程都基于这一基准，并称会换算后公布使用；《人民日报》也提到算出过基于国家高程基准的雪面海拔高，但截至2026年10月30日未查到公布的数值。所以把8848.86米和国内其他山峰的数字列表比较时，严格说不是同一起算面（这句是出题人的推论）。 | 内部联系 | 一般 | https://m.thepaper.cn/baijiahao_10574912; https://paper.people.com.cn/rmrbwap/html/2020-12/09/nw.D110000renmrb_20201209_2-15.htm | 中 |
+| 甲21 | 题目问“山”，官方说法是“峰”：元首信函称“世界最高峰”，新华网称珠峰是喜马拉雅山脉的主峰。山脉和山峰不是一回事，所以写“山峰”比笼统的“山”更贴官方用语（后半句是出题人的判断）。 | 本质 | 一般 | https://www.gov.cn/xinwen/2020-12/08/content_5568012.htm; https://www.news.cn/sikepro/20230523/edb05b63debd42e381c2518aa3897073/c.html | 中 |
+
+找不到要点的层：（空）
+
+### 乙的深度地图
+
+浅答案：珠穆朗玛峰是世界上最高的山。
+
+转折点：本地图登记于2026-10-30，依据截至当日检索到的公开资料。挖深后，教材正文建议写为“世界上海拔最高的山峰是珠穆朗玛峰”，并用小学生能理解的话解释海拔从平均海平面算起。山名没有改变，但“最高”的适用条件改变了：从海底基部量到峰顶，或比较峰顶到地心的距离，会得到不同答案。若需要数字，建议另写“2020年，中国和尼泊尔共同公布珠穆朗玛峰峰顶雪面海拔为8848.86米”，编辑资料保留公布年份、测量对象和来源，并遵守教学使用依法公布的重要地理信息数据的要求。不能把2005年的8844.43米与2020年的8848.86米直接相减，宣称珠峰长高4.43米。历史测高数值的完整年表、各网站数字差异和具体隆起速率属于一般材料，不作为回答本题必须逐项具备的核心认识；本轮也不把1975年的8848.13米直接认定为未经扣雪的雪面高度，不推断2005年岩石面数据已被明令废止。（用到 乙1、乙2、乙3、乙4、乙6、乙7、乙8）
+
+| 编号 | 要点 | 层级 | 重要性 | 依据 | 把握 |
+| --- | --- | --- | --- | --- | --- |
+| 乙1 | 按峰顶海拔比较，世界最高的山峰是珠穆朗玛峰。 | 现象 | 核心 | https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm | 高 |
+| 乙2 | “最高”必须明确所比较的量：海拔以平均海平面及其向陆地内部延伸的水准面为起算依据，与从山体基部到峰顶的高度、峰顶到地心的距离不同。 | 本质 | 核心 | https://apm.cas.cn/ttxw/202012/t20201209_5814029.html; https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙3 | 按NOAA采用的海底基部至峰顶量法，冒纳凯阿山高度超过10210米，被列为该口径下最高的山，说明海拔最高不等于山体从基部量起最高。 | 本质 | 核心 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙4 | 若比较峰顶到地心的距离，第一名是厄瓜多尔的钦博拉索山，而非珠穆朗玛峰。 | 本质 | 核心 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙5 | 地球自转形成的赤道隆起，使靠近赤道的钦博拉索山虽海拔低于珠峰，峰顶却离地心更远。 | 内部联系 | 一般 | https://oceanservice.noaa.gov/facts/highestpoint.html | 高 |
+| 乙6 | 2020年12月8日中尼共同宣布的8848.86米是基于全球高程基准的珠峰峰顶雪面高程，教材引用该数字应明确其公布年份和雪面口径。 | 现象 | 核心 | https://www.mod.gov.cn/gfbw/qwfb/4875221.html; https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm | 高 |
+| 乙7 | 2005年公布的8844.43米是岩石面高程，而2020年的8848.86米是雪面高程且采用不同高程基准，因此直接相减所得4.43米不能解释为珠峰实际长高的幅度。 | 本质 | 核心 | https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm; https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm | 高 |
+| 乙8 | 中国教材采用珠峰高程数字还受重要地理信息数据使用规则约束：《测绘成果管理条例》第二十二条确立统一审核公布制度、第二十五条要求教学使用依法公布的数据，测绘主管部门也曾明确将法定公布要求用于珠峰高程。 | 内部联系 | 核心 | https://xzfg.moj.gov.cn/front/law/detail?LawID=168; https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm | 高 |
+| 乙9 | 珠峰高程公布值经历过1975年的8848.13米、2005年的8844.43米和2020年的8848.86米等变化，引用历史数字必须区分其年代和测量口径。 | 全体 | 一般 | https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm; https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm | 高 |
+| 乙10 | 1975年的8848.13米已扣除当时测得的0.92米积雪，2005年则测得峰顶冰雪深度3.50米，因此不能仅按数字大小把这些历史成果都当成同一雪面的高度。 | 全体 | 一般 | https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm; https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm | 高 |
+| 乙11 | 珠峰受印度板块与欧亚板块相互作用而发生隆起和位移，真实地壳变化与测量对象、基准及技术变化共同影响历次高程成果，实际升降需要在可比条件下分析。 | 内部联系 | 一般 | https://apm.cas.cn/ttxw/202012/t20201209_5814029.html; https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm | 高 |
+| 乙12 | 2018年主管部门关于使用8844.43米的声明早于2020年中尼联合公布雪面高程，不能单独用该旧声明否定2020年的成果，也不能据此断言2005年岩石面标准已被明令废止。 | 全体 | 一般 | https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm; https://www.mod.gov.cn/gfbw/qwfb/4875221.html | 高 |
+
+找不到要点的层：（空）
+
+## 结论
+
+共对照 2 轮，核心要点写全了。合并后的深度地图见深度地图.txt。
+</pre></details></div><div class="file" id="file-leak"><div class="file-head"><h3 class="heading-6">泄露检查记录</h3><a class="caption-2" href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E6%B3%84%E9%9C%B2%E6%A3%80%E6%9F%A5%E8%AE%B0%E5%BD%95.md">原文件</a></div><p class="body-6 muted">另一个模型只看交给智能体的两个版本，回答三个问题。</p><pre class="raw" id="leak">
+# 泄露检查记录
+
+- 检查人：codex（OpenAI）
+- 日期：2026-10-30
+- 工具限定：只给材料（不能上网、不能运行命令、不能写文件）
+- 看到的材料：只有交给智能体的提问版和裸题版原文（各附统一的交付要求和说明），没有深度地图；提示词全文见调用记录.jsonl里的第 9 次调用
+
+| 问题 | 回答 | 说明 |
+| --- | --- | --- |
+| 题面有没有暗示该往哪里挖？ | 没有 | 两个版本都未指定研究角度。提问版增加了教材编辑的身份、用途、准确性要求和信息截止时间，但没有提示具体应查什么；裸题版也没有。 |
+| 题面有没有直接给出中间答案？ | 没有 | 两个版本都没有给出候选山峰、测量口径或其他需要自行查证的中间结论。 |
+| 题面有没有点名要查的来源或方法？ | 没有 | 排除统一的交付要求和说明后，两个版本都未指定来源或研究方法；提问版只限制使用截至运行当日已公开的信息。 |
+
+结论：通过，没有发现泄露。
+
+## 检查的原文
+
+提问版：
+
+&gt; 我是一家出版社的小学科学教材编辑，正在编写一册小学科学教材，得决定教材里关于“世界上最高的山”的那句话怎么写，这句话要印进教材给小学生看，要准确、经得起推敲。世界上最高的山是哪一座？只使用截至〔运行当日〕已经公开的信息。
+
+裸题版：
+
+&gt; 世界上最高的山是哪一座？
+</pre></div><div class="file" id="file-closed"><div class="file-head"><h3 class="heading-6">闭卷对照记录</h3><a class="caption-2" href="../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E9%97%AD%E5%8D%B7%E5%AF%B9%E7%85%A7%E8%AE%B0%E5%BD%95.md">原文件</a></div><p class="body-6 muted">换一家模型不联网作答，看它答到了哪几条核心要点。</p><pre class="raw" id="closed">
+# 闭卷对照记录
+
+- 日期：2026-10-30
+- 结论：未做
+
+没有做闭卷对照，原因：闭卷对照（步骤「出题-闭卷对照-作答」）找不到可用的厂商：kimi 调用失败：退出状态 1；标准错误最后几行：To resume this session: kimi -r 55ec3aba-fc8c-4fc6-a7b9-b14a9467daba；标准输出最后几行：Error code: 401 - {&#x27;error&#x27;: {&#x27;message&#x27;: &#x27;The API Key appears to be invalid or ma
+y have expired. Please verify your credentials and try again.&#x27;, &#x27;type&#x27;: &#x27;invalid
+_authentication_error&#x27;}}；claude 写过本题的深度地图，闭卷对照不能用它；codex 写过本题的深度地图，闭卷对照不能用它；google 调用失败：退出状态 2；标准错误最后几行：  install         Configure environment paths and shell settings
+  mcp             Manage MCP servers (add, remove, list, enable, disable)
+  mic-serve       Serve this machine&#x27;s microphone to a CLI on another host
+  models          List available models
+  plugin          Manage plugins (install, uninstall, list, enable, disable)
+  plugins         Alias for plugin
+  remote-control  Manage the remote-control background daemon (start, status, stop)
+  update          Update CLI
+
+按出题手册，闭卷对照要换一家没有写过深度地图的厂商；找不到这样的厂商时如实记为未做，不用别的回答代替。
+</pre></div>
+</section>
+<section class="block" id="calls" aria-labelledby="calls-h">
+  <h2 class="heading-5" id="calls-h">调用记录</h2>
+  <p class="body-3 sum">出这道题时的 11 次模型调用，点序号看提示词和回答的原文。</p>
+  <div class="scroll"><table><thead><tr><th class="n" scope="col">序号</th><th scope="col">任务</th><th scope="col">厂商</th><th scope="col">模型</th><th scope="col">工具限定</th><th scope="col">状态</th><th scope="col">耗时</th></tr></thead><tbody><tr><td class="n"><a href="calls/1.html">1</a></td><td>出题 · 评委版</td><td>claude</td><td>Claude Opus 5.5</td><td>只读网页</td><td>成功</td><td>137.39 秒</td></tr><tr><td class="n"><a href="calls/2.html">2</a></td><td>出题 · 提问版和裸题版</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>5.867 秒</td></tr><tr><td class="n"><a href="calls/3.html">3</a></td><td>出题 · 深度地图 · 甲 · 第1轮</td><td>claude</td><td>Claude Opus 5.5</td><td>只读网页</td><td>成功</td><td>403.015 秒</td></tr><tr><td class="n"><a href="calls/4.html">4</a></td><td>出题 · 深度地图 · 乙 · 第1轮</td><td>codex</td><td>命令行默认模型</td><td>只读网页</td><td>成功</td><td>35.641 秒</td></tr><tr><td class="n"><a href="calls/5.html">5</a></td><td>出题 · 两人对照 · 第1轮</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>173.932 秒</td></tr><tr><td class="n"><a href="calls/6.html">6</a></td><td>出题 · 深度地图 · 甲 · 第2轮</td><td>claude</td><td>Claude Opus 5.5</td><td>只读网页</td><td>成功</td><td>499.381 秒</td></tr><tr><td class="n"><a href="calls/7.html">7</a></td><td>出题 · 深度地图 · 乙 · 第2轮</td><td>codex</td><td>命令行默认模型</td><td>只读网页</td><td>成功</td><td>59.369 秒</td></tr><tr><td class="n"><a href="calls/8.html">8</a></td><td>出题 · 两人对照 · 第2轮</td><td>claude</td><td>Claude Opus 5.5</td><td>只给材料</td><td>成功</td><td>228.482 秒</td></tr><tr><td class="n"><a href="calls/9.html">9</a></td><td>出题 · 泄露检查</td><td>codex</td><td>命令行默认模型</td><td>只给材料</td><td>成功</td><td>7.034 秒</td></tr><tr><td class="n"><a href="calls/10.html">10</a></td><td>出题 · 闭卷对照 · 作答</td><td>kimi</td><td>命令行默认模型</td><td>只给材料</td><td>失败</td><td>21.987 秒</td></tr><tr><td class="n"><a href="calls/11.html">11</a></td><td>出题 · 闭卷对照 · 作答</td><td>google</td><td>命令行默认模型</td><td>只给材料</td><td>失败</td><td>0.052 秒</td></tr></tbody></table></div>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>

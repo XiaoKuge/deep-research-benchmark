@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模拟出题 世界最高的山 第 7 次调用 · 深度研究评测基准</title>
+<meta name="description" content="模拟出题 世界最高的山第 7 次模型调用的提示词和回答原文。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap">
+<style>
+  /* 与资料站首页同一套规则：字号只用 Tailwind 档位，间距只用表内数值，动效用同一条减速曲线，深浅两套颜色 */
+  :root {
+    --bg: #ffffff; --surface: #f7f7f5; --raised: #ffffff; --line: #e6e6e3;
+    --ink: #111111; --ink-2: #555555; --ink-3: #737373;
+    --accent: #2f5bd3; --ok: #1e7f4f; --warn: #a15c00; --bad: #b42318;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font: "Manrope", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #181818; --surface: #1f1f1f; --raised: #272727; --line: #313131;
+      --ink: #f2f2f2; --ink-2: #b3b3b3; --ink-3: #8c8c8c;
+      --accent: #8fb0ff; --ok: #6fd3a0; --warn: #f0b45a; --bad: #ff8a7a;
+      color-scheme: dark;
+    }
+  }
+  .heading-3 { font-size: 36px; line-height: 40px; font-weight: 600; }
+  .heading-5 { font-size: 24px; line-height: 32px; font-weight: 600; }
+  .heading-6 { font-size: 20px; line-height: 28px; font-weight: 600; }
+  .title-3 { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .title-4 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-3 { font-size: 16px; line-height: 24px; font-weight: 400; }
+  .body-5 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .body-6 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-1 { font-size: 14px; line-height: 20px; font-weight: 500; }
+  .caption-2 { font-size: 14px; line-height: 20px; font-weight: 400; }
+  .caption-3 { font-size: 12px; line-height: 16px; font-weight: 600; }
+  .caption-5 { font-size: 12px; line-height: 16px; font-weight: 400; }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 24px;
+    -webkit-font-smoothing: antialiased; overflow-wrap: anywhere; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  p, li, td, blockquote { text-wrap: pretty; }
+  a { color: var(--accent); text-underline-offset: 4px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; }
+  @media (min-width: 768px) { .wrap { padding-inline: 32px; } }
+  .skip { position: absolute; left: 16px; top: -64px; z-index: 50; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; text-decoration: none; transition: top 300ms var(--ease); }
+  .skip:focus { top: 16px; }
+  .muted { color: var(--ink-2); }
+  .faint { color: var(--ink-3); }
+
+  header.top { padding-block: 32px 24px; }
+  .back { display: inline-block; color: var(--ink-2); text-decoration: none; margin-bottom: 24px; }
+  .back:hover { color: var(--ink); text-decoration: underline; }
+  .eyebrow { color: var(--ink-3); margin-bottom: 8px; }
+  .lede { max-width: 760px; margin-top: 16px; color: var(--ink-2); }
+
+  /* 演示声明：每页都有，名次页上最醒目 */
+  .demo { display: flex; gap: 12px; align-items: flex-start; max-width: 760px; margin-top: 24px; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--warn); background: var(--surface); }
+  .demo svg { width: 20px; height: 20px; flex: none; fill: var(--warn); margin-top: 2px; }
+  .demo strong { display: block; font-weight: 600; color: var(--ink); }
+  .demo p + p { margin-top: 8px; color: var(--ink-2); }
+
+  /* 页面之间的跳转 */
+  .pages { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; padding: 0; list-style: none; }
+  .pages a { display: inline-block; padding: 4px 12px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); text-decoration: none;
+    background: var(--raised); transition: background-color 300ms var(--ease); }
+  .pages a:hover { background: var(--surface); }
+  .pages a[aria-current="page"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  main { padding-bottom: 96px; }
+  .block { padding-block: 48px; border-top: 1px solid var(--line); }
+  .block > h2 { margin-bottom: 8px; }
+  .block > .sum { max-width: 760px; color: var(--ink-2); }
+  .block > .sum + .sum { margin-top: 8px; }
+  .sub { margin-top: 32px; }
+  .sub > h3 { margin-bottom: 8px; }
+  .prose { max-width: 760px; }
+  .prose p + p { margin-top: 8px; }
+  .prose ul, .prose ol { margin: 8px 0 0; padding-left: 24px; }
+  .prose li + li { margin-top: 4px; }
+
+  /* 名次区间横条 */
+  .ranks { margin-top: 24px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .rank-row { display: grid; grid-template-columns: 176px minmax(0, 1fr) 112px; gap: 16px; align-items: center; padding: 8px 0; }
+  .rank-axis { color: var(--ink-3); padding: 0; }
+  .rank-who a { color: var(--ink); text-decoration: none; }
+  .rank-who a:hover { text-decoration: underline; }
+  .rank-who .faint { display: block; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); height: 24px; }
+  .track .slot { border-left: 1px solid var(--line); }
+  .track .slot:last-child { border-right: 1px solid var(--line); }
+  .track .bar { position: absolute; top: 4px; height: 16px; border-radius: 4px; background: var(--accent); }
+  .axis-labels { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .axis-labels span { text-align: center; }
+  .rank-text { white-space: nowrap; }
+  @media (max-width: 639px) {
+    .rank-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who text" "track track"; gap: 8px 12px; }
+    .rank-who { grid-area: who; } .rank-text { grid-area: text; } .track, .axis-labels { grid-area: track; }
+    .rank-axis .rank-who, .rank-axis .rank-text { display: none; }
+    .rank-who .faint { display: inline; margin-left: 4px; }
+  }
+
+  /* 表格：窄屏时在自己的框里横向滚动，页面本身不溢出 */
+  .scroll { overflow-x: auto; margin-top: 16px; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 20px; background: var(--raised); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; overflow-wrap: normal; }
+  th { font-weight: 600; color: var(--ink-2); background: var(--surface); white-space: nowrap; }
+  td.n, th.n { text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td a { white-space: nowrap; }
+  .legend { margin-top: 8px; color: var(--ink-3); max-width: 760px; }
+
+  /* 分开的对 */
+  .pairs { margin-top: 16px; display: grid; gap: 8px; padding: 0; list-style: none; max-width: 880px; }
+  .pairs li { padding: 12px 16px; border-radius: 12px; background: var(--surface); }
+  .pairs .who { font-weight: 600; }
+  .pairs p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 卡片：主要结论、评级、比较 */
+  .cards { margin-top: 16px; display: grid; gap: 12px; padding: 0; list-style: none; }
+  .card { min-width: 0; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--raised); }
+  .card-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .card-head .title-3 { margin-right: 4px; }
+  .card h4 { margin: 12px 0 4px; color: var(--ink-3); font-size: 12px; line-height: 16px; font-weight: 600; }
+  .card blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--line); color: var(--ink-2); }
+  .card p + p { margin-top: 4px; }
+  .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  @media (max-width: 479px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+  /* 标签：文字用正文颜色，前面的小圆点表示状态 */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+  .tag::before { content: ""; width: 8px; height: 8px; border-radius: 9999px; background: var(--ink-3); }
+  .tag.ok::before { background: var(--ok); }
+  .tag.warn::before { background: var(--warn); }
+  .tag.bad::before { background: var(--bad); }
+  .tag.plain::before { display: none; }
+
+  /* 数字小格 */
+  .stats { margin-top: 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .stat { padding: 16px; border-radius: 12px; border: 1px solid var(--line); }
+  .stat .heading-6 { margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat p + p { margin-top: 4px; color: var(--ink-2); }
+
+  /* 要点池的大表：宽屏是表格，窄屏每条要点一张卡片 */
+  .pool-table { margin-top: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pool-table td:nth-child(n+3):nth-child(-n+6) { white-space: nowrap; }
+  .pool-table td.content { min-width: 320px; }
+  .pool-table td.content p + details { margin-top: 4px; }
+  .pool-table td.who { min-width: 160px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  a.tag { text-decoration: none; transition: background-color 300ms var(--ease); }
+  a.tag:hover { background: var(--surface); }
+  .pool-table tr:target td { background: var(--surface); }
+  @media (max-width: 767px) {
+    .pool-table table, .pool-table tbody, .pool-table tr, .pool-table td { display: block; width: 100%; }
+    .pool-table thead { display: none; }
+    .pool-table tr { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; }
+    .pool-table td { border: 0; padding: 4px 0; min-width: 0 !important; }
+    .pool-table td:not(.pid):not(.content)::before { content: attr(data-label) "："; color: var(--ink-3); }
+    .pool-table td:nth-child(3), .pool-table td:nth-child(4), .pool-table td:nth-child(5), .pool-table td:nth-child(6) { display: inline-block; width: auto; margin-right: 16px; }
+  }
+
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+  details[open] summary { margin-bottom: 4px; }
+
+  .links { display: grid; gap: 8px; margin-top: 16px; padding: 0; list-style: none; max-width: 760px; }
+  .links li { padding-left: 16px; position: relative; }
+  .links li::before { content: ""; position: absolute; left: 0; top: 10px; width: 4px; height: 4px; border-radius: 9999px; background: var(--ink-3); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 32px; color: var(--ink-3); }
+  footer a { color: var(--ink-2); }
+  code { font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* 模拟出题和模拟评审页面另加的样式：原文块、字段表 */
+  .raw { margin: 8px 0 0; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; tab-size: 4;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; line-height: 20px; }
+  code { overflow-wrap: anywhere; }
+  .fields { margin: 16px 0 0; max-width: 880px; border-top: 1px solid var(--line); }
+  .fields > div { display: grid; grid-template-columns: 176px minmax(0, 1fr); gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .fields dt { color: var(--ink-3); }
+  .fields dd { margin: 0; min-width: 0; }
+  .fields dd p + p { margin-top: 4px; }
+  @media (max-width: 639px) { .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .file + .file { margin-top: 32px; }
+  .file-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .card .fields { margin-top: 8px; border-top: 0; }
+  .card .fields > div { padding: 4px 0; border-bottom: 0; }
+  .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+</style>
+</head>
+<body>
+<a class="skip caption-1" href="#main">跳到正文</a>
+<header class="top">
+  <div class="wrap">
+    <a class="back caption-1" href="../index.html">← 回到这道题</a>
+    <p class="eyebrow caption-1">模拟出题 世界最高的山 · 第 7 次调用</p>
+    <h1 class="heading-3">出题 · 深度地图 · 乙 · 第2轮</h1>
+    <p class="body-3 lede">OpenAI（codex），命令行默认模型，只读网页，成功。</p>
+    <nav aria-label="模拟出题和模拟评审"><ul class="pages"><li><a class="caption-1" href="../../../questions.html">题库</a></li><li><a class="caption-1" href="../../../reviews.html">评审记录</a></li></ul></nav>
+  </div>
+</header>
+<main id="main"><div class="wrap">
+<section class="block" id="info" aria-labelledby="info-h">
+  <h2 class="heading-5" id="info-h">这次调用</h2>
+  <p class="body-3 sum">模拟出题 世界最高的山的第 7 次调用，共 11 次。字段的含义见<a href="../../../../../tools/models.md">模型调用层使用说明</a>的调用记录一节。</p>
+  <dl class="fields"><div><dt class="caption-1">任务名</dt><dd class="body-6"><code>出题-深度地图-乙-第2轮</code></dd></div><div><dt class="caption-1">厂商</dt><dd class="body-6">OpenAI（codex）</dd></div><div><dt class="caption-1">指定的模型</dt><dd class="body-6">没有指定，用命令行的默认模型</dd></div><div><dt class="caption-1">命令行报告的模型</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">命令行报告的可用工具</dt><dd class="body-6">没有报告</dd></div><div><dt class="caption-1">工具限定</dt><dd class="body-6">只读网页</dd></div><div><dt class="caption-1">方式</dt><dd class="body-6">真实调用</dd></div><div><dt class="caption-1">状态</dt><dd class="body-6"><span class="tag caption-3 ok">成功</span></dd></div><div><dt class="caption-1">开始时间</dt><dd class="body-6">2026 年 10 月 30 日 20:26:02.754（UTC−07:00）</dd></div><div><dt class="caption-1">结束时间</dt><dd class="body-6">2026 年 10 月 30 日 20:27:02.122（UTC−07:00）</dd></div><div><dt class="caption-1">耗时</dt><dd class="body-6">59.369 秒</dd></div><div><dt class="caption-1">提示词校验值</dt><dd class="body-6"><code>938f60d466eaca579f1462930239a333201ea3493e3e0df57a919ac305f2099a</code>（<code>SHA-256</code>）</dd></div><div><dt class="caption-1">回答校验值</dt><dd class="body-6"><code>92548e8364422fece64c687b76c91a0cc2d3722c75144469b94f8142a689e3f8</code>（<code>SHA-256</code>）</dd></div><div><dt class="caption-1">命令行参数</dt><dd class="body-6"><code>/opt/homebrew/bin/codex exec --json --output-last-message /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpcf0y_72e/last-message.txt --cd /var/folders/dh/7yz_bh4913j6rrmkyyx9ms340000gn/T/tmpcf0y_72e/work --ephemeral --skip-git-repo-check --ignore-user-config --ignore-rules --sandbox read-only -c approval_policy=&quot;never&quot; --disable shell_tool --disable unified_exec -c web_search=&quot;live&quot; -</code></dd></div><div><dt class="caption-1">退出状态</dt><dd class="body-6">0</dd></div><div><dt class="caption-1">调用记录</dt><dd class="body-6"><a href="../../../../../simulation/questions/%E4%B8%96%E7%95%8C%E6%9C%80%E9%AB%98%E7%9A%84%E5%B1%B1/%E8%B0%83%E7%94%A8%E8%AE%B0%E5%BD%95.jsonl">调用记录文件</a>的第 7 行，记录里的序号是 7</dd></div></dl><nav aria-label="前后的调用"><ul class="pages"><li><a class="caption-1" href="6.html">上一次调用</a></li><li><a class="caption-1" href="8.html">下一次调用</a></li><li><a class="caption-1" href="../index.html#calls">全部调用</a></li></ul></nav>
+</section>
+<section class="block" id="prompt-text" aria-labelledby="prompt-text-h">
+  <h2 class="heading-5" id="prompt-text-h">提示词全文</h2>
+  <p class="body-3 sum">共 10949 字，从标准输入交给命令行，一字不改。</p>
+  <details><summary class="caption-2">提示词共 10949 字，点开看全文</summary><pre class="raw" id="prompt">
+下面附《深度研究出题手册》第一至六节的原文（不含模板和常见问题），出题时以它为准。
+
+===== 出题手册原文开始 =====
+一 先弄懂三个词
+调研：为了回答提问者的一个具体问题，用截至某一天已经存在的信息，系统地查找、甄别、分析和整合，得出有理有据的结论。
+结论可以是描述现状、解释原因、预测未来或建议行动。做问卷、做访谈这类收集新一手资料的工作，探索人类还没有答案的科研前沿，以及不查资料、凭记忆作答，都不算这里说的调研。
+深：调研对问题的认识推进到什么程度：从事情的现象、片面和外部联系，推进到事情的本质、全体和内部联系。推进得越远，调研就越深。
+依据毛泽东《实践论》对&quot;认识由浅入深&quot;的刻画。原文说，全体是&quot;事情的历史和全部现状&quot;，本质是&quot;事情的性质及此一事情和其它事情的内部联系&quot;。
+深度研究：以推进到本质、全体和内部联系为目标的调研。由智能体自主完成的，就是智能体的深度研究。
+&quot;深&quot;可以分成四层。把一道题想象成一片湖：智能体一开始只看到水面，往下查得越多，看到的层越深。下图每一层都用后面实例一的题目&quot;中国最大的淡水湖是哪一个&quot;举例。
+水面：一次检索就能看到的
+现象：事情本身的事实和表面特征。例：鄱阳湖是我国最大的淡水湖。
+全体：事情的历史和全部现状，包括容易被忽略的方面、例外和反例。例：鄱阳湖的水面随季节涨落，涨水和枯水时面积相差好几倍。
+内部联系：这件事和别的事之间的因果、制约、依赖。例：湖面的高低，由流进湖里的五条河和长江的水位共同决定。
+本质：事情的性质，包括一个词的名与实。例：&quot;最大&quot;按什么算？和俄罗斯共有的界湖算不算&quot;中国的湖&quot;？
+图 1 四层深度。它们不是要逐格填满的表，而是一把尺子，用来看一份报告推进到了哪里。&quot;各有所长&quot;&quot;技术在不断进步&quot;这类抽象的套话，不算本质。
+看似很浅的题，也能挖深
+&quot;法国的首都是哪里？&quot;一次检索就能答：巴黎。这个例子是本研究的发起人在讨论中提出的：理解深刻的人会用历史的眼光再看一眼。
+- 全体。历史上并非一直如此。1682 至 1789 年，王室和政府在凡尔赛；1871 至 1879 年，议会在凡尔赛开会；1914 年和 1940 年，政府曾撤到波尔多。
+- 本质。&quot;首都&quot;有名与实之分。1940 至 1944 年维希政权时期，巴黎名义上仍是首都，政府却设在维希。
+所以，挖深的空间不全由题目决定，有一部分要靠理解打开。这也是我们可以出&quot;看似简单&quot;的题的原因。
+三个容易弄混的地方
+深不是长：我们试评过六份真实报告。一份四万多字的报告，写对的深层要点反而比一份三万多字的少 6 条。
+深不是难：题目难，是题目的性质；深，是调研做到了哪一步。一道人人看得懂的题，照样能分出深浅。
+深不是用了深度研究模式：同一次试评中，一份不到两千字的普通联网问答，排进了第一档。
+二 一道题分成两半
+一道题由两份材料组成。题目卡交给智能体，深度地图只有评委能看。
+题目卡
+- 提问版：用提问者的口吻，一两句话说清谁在问、为什么问、问什么、截至哪天
+- 裸题版：只有问题本身
+- 两个版本都附统一的交付要求和说明
+交给 智能体；四栏的评委版留给评委
+智能体看不到深度地图
+深度地图
+- 浅答案：只看现象时的答案
+- 挖深之后，结论或建议在哪里改变
+- 要点表：每条要点的层级、重要性和出处，核心要点一条不漏
+只给 评委
+图 2 题目卡和深度地图要分开。
+为什么要分开。如果题面写着&quot;请考虑历史&quot;，我们测到的只是智能体会不会照着做，测不到它能不能自己想到。往哪里挖、挖到什么，只写在深度地图里。
+深度地图是必需的，但它不是标准答案。它是出题人在看到任何报告之前，预先登记下来的三样东西：浅答案、转折点、核心要点。它有三个用处：
+1. 题目的入场券。地图要证明，这道题往深处查，结论会改变。没有合格的地图，题目不能用。
+2. 预先登记层级和重要性。评审时，评委把几份报告的要点和地图上的要点合在一起，逐条判断。地图上已有的要点，地图标的层级和重要性就是默认值；评委组要改，必须依据来源或定义写出理由。地图写在看到报告之前，出题人不知道哪家会写什么，所以这些标注对各家都是中立的。
+3. 说明绝对水平。几份报告都没写到的核心要点，说明&quot;谁都不够深&quot;。只拿报告互相比较，看不出这一点。这一条只用来说明情况，不影响名次。
+它不做两件事。不封顶：智能体写出地图上没有、但正确又切题的深层内容，同样得分。不定对错：每条要点对不对，一律看来源，不看地图。
+三 出题七步
+七步按顺序做。有三处检查不通过，要退回前面重做。
+1. 选话题
+- 选你和评委有能力判断对错的领域。
+- 截至运行当天，相关信息已经公开，查得到。
+- 不需要问卷、访谈这类新的一手资料。
+- 不选科研前沿上还没有答案的问题。
+- 不选和被评智能体自己有关的话题，比如&quot;哪家智能体最好&quot;。否则等于让被评者评自己，评委也容易从内容认出是谁写的。
+一共出两道题，两种题型各出一道：
+- 看似简单型：字面答案人人知道，挖深的空间要靠理解打开。例如实例一，中国最大的淡水湖。
+- 开放时效型：本身开放、涉及面广、信息更新快，考查广度、由表及里和材料的新旧。例如实例二，欧盟《人工智能法》。
+2. 先写浅答案，再往深处查
+先写下只看现象时的答案。然后沿着图 1 的四层往下查：它的历史和全部现状是什么？它和别的事有什么因果？题目里的关键词，指的到底是什么？
+判断标准：挖深会不会改变结论。查到深处以后，给提问者的结论或建议会变，这道题就留有挖深的空间。不会变，就换题。
+例如&quot;100 摄氏度等于多少华氏度&quot;。温标的历史可以讲很多，但答案始终是 212 华氏度。挖得再深，结论也不变，这道题就分不出深浅。
+结论不变：回到第 1 步，换题
+3. 写题目卡
+先写评委版，四项：提问者、用途、问题、截止时间。再写交给智能体的两个版本：
+- 提问版：用提问者的口吻，把四项写成一两句话，内容和评委版一致，不多也不少。真实的用户不会填表，所以不用&quot;【提问者】&quot;这样的标签。
+- 裸题版：只有问题本身，就像用户只打了一句话。
+两个版本后面都原样附上第八节模板里的&quot;交付要求&quot;和&quot;说明&quot;，一字不改。题目文本就是智能体收到的唯一输入，任何人都不能针对某一道题改写。写评委版时注意：
+- 提问者写到具体的人：身份和处境。不必是真人，但要像真的。
+- 用途写他要拿结果做什么决定。
+- 问题用他会说的话来问。
+- 不点名要查的网站、机构或方法，不提示往哪里挖。
+- 不规定篇幅和格式。篇幅不是评分依据。
+- 只用文字，一次给全。
+4. 写深度地图
+写三部分：浅答案；挖深之后结论在哪里改变；要点表。要点表每一行写：
+- 要点：一句话，一条独立的认识；
+- 层级：现象、全体、内部联系、本质，四选一；
+- 重要性：核心或一般，核心指回答这道题不能缺少的认识；
+- 依据：出处网址，以及你有多大把握。
+一定要在看到任何智能体的报告之前写好，并写上日期。我们第一次试评时，深度地图是读过报告之后才写的，这成了那次试评的一个局限。
+写到什么程度为止
+下面五条都做到了，地图才算写完：
+1. 浅答案：写出只看现象时的答案。
+2. 转折点：至少一处，查到内部联系或本质之后，结论或建议改变了；转折点用到的每条要点都有出处。
+3. 四层都查过：现象、全体、内部联系、本质，每层至少一条要点。某一层确实找不到，写明查了什么。
+4. 核心要点写全：回答这道题不能缺少的认识，一条不漏。一般要点不求全，能让评委看出每一层是什么样子就够了。
+5. 两人对过：两位出题人各自独立列出核心要点，再用下面&quot;数鱼的办法&quot;对照，判断写全了没有。
+为什么只要求核心要点写全。地图上写了、却没有一份报告写到的要点，对每一份报告都是零分，不影响名次。地图真正影响名次的，是它预先登记的层级和重要性，其中分量最重的是&quot;核心&quot;。核心要点漏掉了，就只能由评委在看过报告之后再定，那样的判定没有事先登记的好。
+怎样判断写全了：数鱼的办法
+生态学家估计一个湖里有多少条鱼，用&quot;捕获—再捕获&quot;的办法：先捞一网，做上记号放回去；过几天再捞一网，看其中有多少条带记号。第二网里带记号的越多，说明没被捞到过的鱼越少。软件工程里也用同样的办法，根据几位审查员各自找到的缺陷和重合，估计还有多少缺陷没被找到[7]。
+两位出题人各自独立列核心要点，就是各捞一网。甲列了 a 条，乙列了 b 条，两人都列到的有 c 条：
+估计的核心要点总数 ≈ a × b ÷ c
+两人合并后共有 a + b − c 条。合并后的条数和估计总数相差不到 1 条〔默认〕，就算写全了；差得多，两人就针对只有一个人列到的方向，各自再查一轮，然后重新对照。两人一条都没重合（c = 0），说明离写全还很远。
+｜ 甲列的 ｜ 乙列的 ｜ 都列到的 ｜ 估计总数 ｜ 合并后 ｜ 结论
+｜ 4 ｜ 5 ｜ 4 ｜ 4 × 5 ÷ 4 = 5 ｜ 5 ｜ 写全了
+｜ 4 ｜ 4 ｜ 2 ｜ 4 × 4 ÷ 2 = 8 ｜ 6 ｜ 还差约 2 条，继续查
+这个办法有前提：两人对照之前不商量；每条要点被找到的机会差不多。两人都只找到容易找的那几条，估计会偏低；两人都没想到的同一个方向，它估计不出来。所以还要请领域专家审阅，赛后还有覆盖审计。
+还有一条参考：实例一的核心要点是 4 条。核心要点写到十条以上还在增加，多半是题目太宽，应当收窄问题，而不是继续加要点。
+正式比赛对地图还有几道关：两人独立写、按上面的办法对照；请一位领域专家审阅；运行前公布地图的校验值，赛后公开全文；赛后统计评委判为核心、地图上却没有的要点有几条。详见《深度研究比赛规则手册》第四节。
+5. 自查
+对照第七节的清单逐条勾选。
+6. 请另一位同学做泄露检查
+只给他题目卡，不给深度地图，请他回答三个问题：
+- 题面有没有暗示该往哪里挖？
+- 题面有没有直接给出中间答案？
+- 题面有没有点名要查的来源或方法？
+出题人自己往往看不出自己的暗示，所以要换一个人看。记下检查人、日期、发现了什么、怎么改的。
+发现泄露：回到第 3 步，改题目卡
+7. 闭卷对照
+找一个不参赛的模型，而且它和参赛的智能体不是同一家公司的同一系列。关掉联网，把题目卡交给它答。拿它的回答对照深度地图：不查资料就已经答到了大部分核心要点，说明这道题太浅，或者答案早已被模型记住了。
+闭卷对照只能筛掉坏题，不能证明题好。
+闭卷就答中了：回到第 1 步或第 2 步
+四 实例一：中国最大的淡水湖
+这是一道看似简单型的题。题目卡取自《对照报告收集规程》，深度地图是本手册的示范。
+题目卡 第一题 评委版看似简单型
+提问者
+一家少儿出版社的地理科普编辑。
+用途
+要在一本给初中生的地理科普书里，写一句关于&quot;中国最大的淡水湖&quot;的话，要求准确、经得起推敲。
+问题
+中国最大的淡水湖是哪一个？
+截止时间
+只使用截至〔运行当日〕已经公开的信息。
+附
+统一的交付要求和说明，见第八节。
+这张卡写对了什么。没有一个字提到季节、历史或统计口径。提问者和用途让&quot;准确、经得起推敲&quot;有了具体的含义：这句话要印进书里，给初中生看。
+上面是评委版。交给智能体的两个版本如下，后面都附统一的交付要求和说明：
+第一题 提问版交给智能体
+原文
+我是一家少儿出版社的地理科普编辑，正在编一本给初中生看的地理科普书，想在书里写一句关于&quot;中国最大的淡水湖&quot;的话，要准确、经得起推敲。中国最大的淡水湖是哪一个？只使用截至〔运行当日〕已经公开的信息。
+第一题 裸题版交给智能体
+原文
+中国最大的淡水湖是哪一个？
+深度地图（示范）
+浅答案：鄱阳湖。
+挖深之后，结论在哪里改变：答案的名字不变，但书里这句话的写法变了。只写&quot;鄱阳湖，面积多少平方公里&quot;，经不起推敲；要说明湖面随季节涨落，给数字时注明水位或时间，并且清楚&quot;最大&quot;不包括界湖、不包括咸水湖。
+｜ 编号 ｜ 要点 ｜ 层级 ｜ 重要性 ｜ 依据
+｜ L1 ｜ 鄱阳湖通常被称为我国最大的淡水湖，新华社的报道就这样称呼它。 ｜ 现象 ｜ 核心 ｜ [1]
+｜ L2 ｜ 鄱阳湖的水面随季节涨落极大，有&quot;洪水一片，枯水一线&quot;的说法。一篇 1985 年的论文记载：水位 21 米时，水面约 3,960 平方公里；水位 12 米时，只有约 500 平方公里；冬春枯水季节，露出大片湖滩草洲。 ｜ 全体 ｜ 核心 ｜ [2]
+｜ L3 ｜ 近年枯水越来越常见。2022 年 9 月 23 日，星子站水位退到 7.10 米，刷新 1951 年有记录以来的最低值，当时通江水体面积只有 244 平方公里。2025 年截至 12 月 14 日，已有 217 天低于 12 米的枯水线。 ｜ 全体 ｜ 一般 ｜ [3] [1]
+｜ L4 ｜ &quot;最大&quot;要先说清按什么算：哪个水位、哪种口径（水面面积、通江水体面积，还是蓄水量）。3,960、500、244 平方公里，都是有出处的&quot;鄱阳湖面积&quot;。只给一个数字、不说口径，这句话就经不起推敲。 ｜ 本质 ｜ 核心 ｜ [2] [3]
+｜ L5 ｜ 湖面的高低，由入湖河流的来水和长江的水位共同决定。鄱阳湖汇集赣江、修河、抚河、饶河、信江五条河的水，在湖口与长江相通。2022 年的枯水，江西省水文监测中心解释为降雨偏少六成、五河入湖水量偏少近六成，加上长江干流水位偏低。 ｜ 内部联系 ｜ 一般 ｜ [2] [3]
+｜ L6 ｜ &quot;中国的淡水湖&quot;有边界问题。中俄界湖兴凯湖全湖约 4,380 平方公里，比鄱阳湖涨水时还大，但在中国境内的部分只有 1,000 余平方公里。说&quot;最大&quot;，要清楚是否把界湖算进来。 ｜ 本质 ｜ 核心 ｜ [4]
+｜ L7 ｜ &quot;淡水&quot;也有边界。青海湖比鄱阳湖大（2021 年 9 月底水体面积约 4,626 平方公里），但它是咸水湖：含盐度超过每升 1 克的湖叫咸水湖。所以&quot;最大的湖&quot;和&quot;最大的淡水湖&quot;是两个问题。 ｜ 本质 ｜ 一般 ｜ [5]
+｜ L8 ｜ 排名在历史上可能变过。据赵淑清、方精云的研究，洞庭湖水体面积从 20 世纪 30 年代的约 5,075 平方公里，减少到 1998 年的约 2,918 平方公里，主要原因是围湖造田。按这组数字，当年的洞庭湖比今天鄱阳湖涨水时还大；当年谁是第一，还要查同一时期鄱阳湖的数字。 ｜ 全体 ｜ 一般 ｜ [6]，把握：中（只找到转引，原论文待查）
+依据栏的出处，是编写本手册时（2026 年 10 月 30 日）查到的，多数是新闻报道和论文摘要。正式出题时，要尽量追到原始出处，比如水文部门的监测数据和原论文。查不到原始出处的，像 L8 一样标明把握。
+对照&quot;写到什么程度为止&quot;。浅答案有；转折点落在本质层（L4、L6）；四层都有要点；核心要点 4 条（L1、L2、L4、L6）。只差第 5 条：这份示范只有一个人写，没有做两人对照，所以按规则还不算写完。
+挖深会改变结论：两种写法对比
+只看现象
+&quot;中国最大的淡水湖是鄱阳湖，面积 3,960 平方公里。&quot;
+批：这是水位 21 米时的数字。2022 年 9 月枯水时，通江水体只剩 244 平方公里。只给一个数，不说口径，经不起推敲。
+推进到全体和本质
+&quot;鄱阳湖是我国最大的淡水湖。它的湖面随季节涨落，涨水时一片汪洋，枯水时只剩几条水道，人们说它&#x27;洪水一片，枯水一线&#x27;。&quot;
+附给编辑的说明：书里要写面积，就注明是什么水位或哪一年；&quot;最大&quot;不包括中俄界湖兴凯湖；我国最大的湖是青海湖，但它是咸水湖。
+名字没变，给编辑的建议变了。这就是第 2 步要的&quot;挖深会改变结论&quot;。
+五 实例二：欧盟《人工智能法》
+这是一道开放时效型的题。题目卡同样取自《对照报告收集规程》。
+题目卡 第二题 评委版开放时效型
+提问者
+一家中国人工智能创业公司的海外业务负责人。公司约 80 人，准备以开源方式向欧盟市场发布一个通用大模型。
+用途
+决定发布之前要做哪些合规准备，以及要不要调整开源的方式。
+问题
+欧盟《人工智能法》对我们以开源方式发布通用大模型有什么影响？发布之前我们需要做哪些准备？要不要调整开源的方式？
+截止时间
+只使用截至〔运行当日〕已经公开的信息。
+附
+统一的交付要求和说明，见第八节。
+注意&quot;约 80 人&quot;这个细节。它是提问者处境的一部分，不是提示。法规对中小企业有没有特殊安排，题面一个字也没提；能不能从&quot;约 80 人&quot;联想到去查，要看智能体自己。
+第二题 提问版交给智能体
+原文
+我是一家中国人工智能创业公司的海外业务负责人。我们公司约 80 人，准备以开源方式向欧盟市场发布一个通用大模型，发布之前我得决定要做哪些合规准备、要不要调整开源的方式。欧盟《人工智能法》对我们以开源方式发布通用大模型有什么影响？发布之前我们需要做哪些准备？要不要调整开源的方式？只使用截至〔运行当日〕已经公开的信息。
+第二题 裸题版交给智能体
+原文
+欧盟《人工智能法》对以开源方式发布通用大模型有什么影响？
+深度地图要往哪些方向写。下面是出题时整理的方向，还不是成稿：
+- 法规中&quot;开源&quot;一词的边界，以及豁免的条件；
+- &quot;系统性风险&quot;的门槛；
+- 各项义务分阶段生效的时间，以及后来有没有调整；
+- 配套的指南和行为准则；
+- 各方对条款理解上的分歧；
+- 对中小企业的特殊安排；
+- 不确定之处有多大。
+这道题的信息更新很快，地图上每一条的对错都要以截止那天为准。所以它的深度地图，要等运行日期定下来以后，在运行之前写成。
+六 红笔批改：七道不合格的题
+下面每道题都有一处毛病。先自己想一想，再看红笔批语。
+请从历史变迁、季节变化和统计口径三个角度，分析中国最大的淡水湖。
+批：把深度地图写进了题面。这样测到的只是智能体会不会照着做。
+改：删掉三个角度，补上提问者、用途和截止时间。
+鄱阳湖枯水期面积会大幅缩小，那么中国最大的淡水湖还是它吗？
+批：题面给出了中间答案，智能体不用自己查到季节变化。
+改：只问&quot;中国最大的淡水湖是哪一个&quot;。
+各家大语言模型的深度研究功能，哪家做得最好？请做一份综合分析。
+批：没有提问者、用途和截止时间；话题就是被评的产品本身。这是我们 2026 年 3 月真用过的题：事后只能猜提问者和用途，报告写的又是各家自己，去掉产品名也藏不住是谁。
+改：换一个和参赛产品无关的话题。
+请调查我校大一新生每天使用手机的时间。
+批：要做问卷才能回答，属于收集新的一手资料，不在本手册说的调研之内。
+改：改成用已公开资料能回答的问题，例如&quot;截至今天，国内有哪些公开的大学生手机使用调查，结论是否一致&quot;，并补上提问者和用途。
+暗物质到底是什么？
+批：这是科研前沿上还没有答案的问题，评委也无从判断对错。调研不以推进人类知识的前沿为目标。
+改：改成现状调研，例如&quot;一位科普作者要写一篇文章，介绍截至今天科学界对暗物质有哪些主要假说、各有什么证据&quot;。
+100 摄氏度等于多少华氏度？
+批：可讲的东西不少，但挖得再深，答案还是 212 华氏度。挖深不改变结论，就分不出深浅。
+改：换题。
+请写一份不少于一万字的报告，分析中国最大的淡水湖。
+批：篇幅不是评分依据，规定字数只会鼓励注水。试评时，我们故意往一份报告里塞了一段无关的背景，它一分也没有得到。
+改：删掉字数要求，只附统一的交付要求。
+===== 出题手册原文结束 =====
+
+你在模拟出题人乙。你和另一位出题人各自独立写了深度地图，对照以后，按数鱼的办法核心要点还没有写全：合并后的条数是 9 条，估计总数是 10 条，相差不到 1 条才算写全。按手册，两人针对只有一个人列到的方向，各自再查一轮。今天是 2026-10-30。
+
+题目（评委版）：
+【提问者】一家出版社的小学科学教材编辑，正在编写一册小学科学教材。
+【用途】决定教材里关于世界上最高的山的那句话怎么写。这句话要印进教材给小学生看，要求准确、经得起推敲。
+【问题】世界上最高的山是哪一座？
+【截止时间】只使用截至〔运行当日〕已经公开的信息。
+
+你上一轮写的深度地图：
+浅答案：珠穆朗玛峰是世界上最高的山。
+转折点：本地图登记于2026-10-30，仅依据截至该日查到的公开信息。挖深后，教材应把不加限定的“世界上最高的山”改为“世界上海拔最高的山峰是珠穆朗玛峰”。如需数字，可另写“2020年，中国和尼泊尔共同公布其峰顶雪面海拔为8848.86米”。关键变化是明确比较的起算面：海拔、从山脚到山顶的高度、峰顶到地心的距离不是同一个量，换一种量法，第一名会改变。冒纳凯阿山和钦博拉索山可作为编辑核查说明，不必全部塞进教材正文；旧测量数字也不能直接当作珠峰实际升降的证据。
+转折点用到的要点：乙1、乙2、乙3、乙4、乙5、乙6、乙7
+要点（编号 ｜ 要点 ｜ 层级 ｜ 重要性 ｜ 依据 ｜ 把握）：
+乙1 ｜ 按峰顶海拔比较，珠穆朗玛峰是世界最高的山峰。 ｜ 现象 ｜ 核心 ｜ https://oceanservice.noaa.gov/facts/highestpoint.html; https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml ｜ 高
+乙2 ｜ “最高”必须明确比较的量和起算面，峰顶海拔、山体从基部到峰顶的高度及峰顶到地心的距离不能混为一谈。 ｜ 本质 ｜ 核心 ｜ https://oceanservice.noaa.gov/facts/highestpoint.html ｜ 高
+乙3 ｜ 按从海底基部到峰顶的通常量法，冒纳凯阿山高度超过10210米，超过珠峰的海拔数值，说明山体高度与海拔排名可以不同。 ｜ 本质 ｜ 核心 ｜ https://oceanservice.noaa.gov/facts/highestpoint.html ｜ 高
+乙4 ｜ 若比较峰顶到地心的距离，世界第一是厄瓜多尔的钦博拉索山，而不是珠穆朗玛峰。 ｜ 本质 ｜ 核心 ｜ https://oceanservice.noaa.gov/facts/highestpoint.html ｜ 高
+乙5 ｜ 地球自转使赤道附近向外隆起，因此靠近赤道的钦博拉索山虽海拔较低，峰顶仍比珠峰峰顶离地心更远。 ｜ 内部联系 ｜ 一般 ｜ https://oceanservice.noaa.gov/facts/highestpoint.html ｜ 高
+乙6 ｜ 2020年12月8日中尼共同公布的8848.86米，是基于全球高程基准的珠峰峰顶雪面高程，教材采用这一数字应保留其测量对象和公布年份。 ｜ 现象 ｜ 核心 ｜ https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml ｜ 高
+乙7 ｜ 2005年公布的8844.43米是峰顶岩石面高程，与2020年公布的雪面高程口径不同，两数之差不能直接解释为珠峰实际长高的幅度。 ｜ 全体 ｜ 一般 ｜ https://ch.whu.edu.cn/fileWHDXXBXXKXB/journal/article/whdxxbxxkxb/newcreate/whugis20220666.pdf%3B; https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml ｜ 高
+找不到要点的层：（空）
+
+只有甲列到的核心要点：
+- 珠峰的高度数字换过多次：1856年29002英尺（8840米），1954年29028英尺（约8847.7米），1975年8848.13米（后已停用），1999年29035英尺（约8850米），2005年8844.43米，2020年8848.86米；USGS、NOAA至今仍写8848米，吉尼斯写8848.8米，所以只给数字不注来源和年份经不起推敲。未查到现行小学教材原文，无法确认各版本教材用的是哪个数。
+- 8848.86米减8844.43米得到的4.43米不是珠峰长高的量：两个数的测量面不同（2005年测得的冰雪层就有3.50米），起算面也不同（2005年用黄海基准，2020年用全球高程基准）。党亚民说新“身高”不代表“长高”、数据不具可比性；郭春喜认为两次方法可比对，但同样指出不能简单相减。按GPS约每年2毫米算（出自对另一研究的转述），15年只有约3厘米；按USGS给的喜马拉雅整体每年1厘米多算，也只有十几厘米（后两个数是出题人的估算）。
+- 教材用哪个数受法规约束：《测绘成果管理条例》第二十二条规定重要地理信息数据统一审核公布，第二十五条要求教学等活动使用依法公布的数据；测绘部门曾明确把这一规则用于珠峰高程。所以不能任选8850米或网上的数字。条文和该声明把握高；但未查到自然资源部就8848.86米另发的公告，也未查到宣布8844.43米岩石面标准废止的文件，法规怎样适用于2020年数据，把握只有中。
+- 几个常见数字量的不是同一个面：8848.86米是峰顶雪面高程（尼方信函明确写“雪面”，中方信函只写“最新高程”），8844.43米是2005年的岩石面高程（当时冰雪层厚3.50米），8848.13米是1975年的冰面高度。2020年选雪面，是因为它精度更高，也是登山者实际到达的高度；当时称岩面高程“或将待日后发布”，至今检索未见公布。
+
+只有乙列到的核心要点：
+- 若比较峰顶到地心的距离，世界第一是厄瓜多尔的钦博拉索山，而不是珠穆朗玛峰。
+
+请针对这些方向再查一轮：逐条查证，确有出处、确实是回答这道题不能缺少的认识，才列为核心；查的过程中发现别的漏掉的方向，也补上。然后重新写一份完整的深度地图，不是只写改动。
+
+请按出题七步第 4 步写这道题的深度地图：浅答案；挖深之后结论或建议在哪里改变（转折点）；要点表。检索和阅读网页，每条要点附出处网址和把握，尽量用原始出处。按「写到什么程度为止」的前四条写：至少一处转折点落在内部联系或本质层，转折点用到的要点都有出处；四层都查过，找不到要点的层写明查了什么；核心要点一条不漏，一般要点不求全。核心要点写到十条以上还在增加，多半是题目太宽。
+
+只回复一个 JSON 对象，不要写别的文字。格式如下：
+{&quot;浅答案&quot;: &quot;只看现象时的答案&quot;, &quot;转折点&quot;: &quot;挖深之后，结论或建议在哪里改变&quot;, &quot;转折点用到的要点&quot;: [要点的编号], &quot;要点&quot;: [{&quot;编号&quot;: 1, &quot;要点&quot;: &quot;一句话，一条独立的认识&quot;, &quot;层级&quot;: &quot;现象、全体、内部联系、本质之一&quot;, &quot;重要性&quot;: &quot;核心或一般&quot;, &quot;依据&quot;: [&quot;出处网址&quot;], &quot;把握&quot;: &quot;高、中、低之一&quot;}], &quot;找不到要点的层&quot;: &quot;某一层确实找不到要点时，写明是哪一层、查了什么；四层都有就写空字符串&quot;}
+</pre></details>
+</section>
+<section class="block" id="answer-text" aria-labelledby="answer-text-h">
+  <h2 class="heading-5" id="answer-text-h">回答全文</h2>
+  <p class="body-3 sum">共 4126 字，一字不改。</p>
+  <details><summary class="caption-2">回答共 4126 字，点开看全文</summary><pre class="raw" id="answer">
+{
+  &quot;浅答案&quot;: &quot;珠穆朗玛峰是世界上最高的山。&quot;,
+  &quot;转折点&quot;: &quot;本地图登记于2026-10-30，依据截至当日检索到的公开资料。挖深后，教材正文建议写为“世界上海拔最高的山峰是珠穆朗玛峰”，并用小学生能理解的话解释海拔从平均海平面算起。山名没有改变，但“最高”的适用条件改变了：从海底基部量到峰顶，或比较峰顶到地心的距离，会得到不同答案。若需要数字，建议另写“2020年，中国和尼泊尔共同公布珠穆朗玛峰峰顶雪面海拔为8848.86米”，编辑资料保留公布年份、测量对象和来源，并遵守教学使用依法公布的重要地理信息数据的要求。不能把2005年的8844.43米与2020年的8848.86米直接相减，宣称珠峰长高4.43米。历史测高数值的完整年表、各网站数字差异和具体隆起速率属于一般材料，不作为回答本题必须逐项具备的核心认识；本轮也不把1975年的8848.13米直接认定为未经扣雪的雪面高度，不推断2005年岩石面数据已被明令废止。&quot;,
+  &quot;转折点用到的要点&quot;: [1, 2, 3, 4, 6, 7, 8],
+  &quot;要点&quot;: [
+    {
+      &quot;编号&quot;: 1,
+      &quot;要点&quot;: &quot;按峰顶海拔比较，世界最高的山峰是珠穆朗玛峰。&quot;,
+      &quot;层级&quot;: &quot;现象&quot;,
+      &quot;重要性&quot;: &quot;核心&quot;,
+      &quot;依据&quot;: [
+        &quot;https://oceanservice.noaa.gov/facts/highestpoint.html&quot;,
+        &quot;https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 2,
+      &quot;要点&quot;: &quot;“最高”必须明确所比较的量：海拔以平均海平面及其向陆地内部延伸的水准面为起算依据，与从山体基部到峰顶的高度、峰顶到地心的距离不同。&quot;,
+      &quot;层级&quot;: &quot;本质&quot;,
+      &quot;重要性&quot;: &quot;核心&quot;,
+      &quot;依据&quot;: [
+        &quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html&quot;,
+        &quot;https://oceanservice.noaa.gov/facts/highestpoint.html&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 3,
+      &quot;要点&quot;: &quot;按NOAA采用的海底基部至峰顶量法，冒纳凯阿山高度超过10210米，被列为该口径下最高的山，说明海拔最高不等于山体从基部量起最高。&quot;,
+      &quot;层级&quot;: &quot;本质&quot;,
+      &quot;重要性&quot;: &quot;核心&quot;,
+      &quot;依据&quot;: [
+        &quot;https://oceanservice.noaa.gov/facts/highestpoint.html&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 4,
+      &quot;要点&quot;: &quot;若比较峰顶到地心的距离，第一名是厄瓜多尔的钦博拉索山，而非珠穆朗玛峰。&quot;,
+      &quot;层级&quot;: &quot;本质&quot;,
+      &quot;重要性&quot;: &quot;核心&quot;,
+      &quot;依据&quot;: [
+        &quot;https://oceanservice.noaa.gov/facts/highestpoint.html&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 5,
+      &quot;要点&quot;: &quot;地球自转形成的赤道隆起，使靠近赤道的钦博拉索山虽海拔低于珠峰，峰顶却离地心更远。&quot;,
+      &quot;层级&quot;: &quot;内部联系&quot;,
+      &quot;重要性&quot;: &quot;一般&quot;,
+      &quot;依据&quot;: [
+        &quot;https://oceanservice.noaa.gov/facts/highestpoint.html&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 6,
+      &quot;要点&quot;: &quot;2020年12月8日中尼共同宣布的8848.86米是基于全球高程基准的珠峰峰顶雪面高程，教材引用该数字应明确其公布年份和雪面口径。&quot;,
+      &quot;层级&quot;: &quot;现象&quot;,
+      &quot;重要性&quot;: &quot;核心&quot;,
+      &quot;依据&quot;: [
+        &quot;https://www.mod.gov.cn/gfbw/qwfb/4875221.html&quot;,
+        &quot;https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 7,
+      &quot;要点&quot;: &quot;2005年公布的8844.43米是岩石面高程，而2020年的8848.86米是雪面高程且采用不同高程基准，因此直接相减所得4.43米不能解释为珠峰实际长高的幅度。&quot;,
+      &quot;层级&quot;: &quot;本质&quot;,
+      &quot;重要性&quot;: &quot;核心&quot;,
+      &quot;依据&quot;: [
+        &quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;,
+        &quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 8,
+      &quot;要点&quot;: &quot;中国教材采用珠峰高程数字还受重要地理信息数据使用规则约束：《测绘成果管理条例》第二十二条确立统一审核公布制度、第二十五条要求教学使用依法公布的数据，测绘主管部门也曾明确将法定公布要求用于珠峰高程。&quot;,
+      &quot;层级&quot;: &quot;内部联系&quot;,
+      &quot;重要性&quot;: &quot;核心&quot;,
+      &quot;依据&quot;: [
+        &quot;https://xzfg.moj.gov.cn/front/law/detail?LawID=168&quot;,
+        &quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 9,
+      &quot;要点&quot;: &quot;珠峰高程公布值经历过1975年的8848.13米、2005年的8844.43米和2020年的8848.86米等变化，引用历史数字必须区分其年代和测量口径。&quot;,
+      &quot;层级&quot;: &quot;全体&quot;,
+      &quot;重要性&quot;: &quot;一般&quot;,
+      &quot;依据&quot;: [
+        &quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;,
+        &quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 10,
+      &quot;要点&quot;: &quot;1975年的8848.13米已扣除当时测得的0.92米积雪，2005年则测得峰顶冰雪深度3.50米，因此不能仅按数字大小把这些历史成果都当成同一雪面的高度。&quot;,
+      &quot;层级&quot;: &quot;全体&quot;,
+      &quot;重要性&quot;: &quot;一般&quot;,
+      &quot;依据&quot;: [
+        &quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;,
+        &quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 11,
+      &quot;要点&quot;: &quot;珠峰受印度板块与欧亚板块相互作用而发生隆起和位移，真实地壳变化与测量对象、基准及技术变化共同影响历次高程成果，实际升降需要在可比条件下分析。&quot;,
+      &quot;层级&quot;: &quot;内部联系&quot;,
+      &quot;重要性&quot;: &quot;一般&quot;,
+      &quot;依据&quot;: [
+        &quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html&quot;,
+        &quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    },
+    {
+      &quot;编号&quot;: 12,
+      &quot;要点&quot;: &quot;2018年主管部门关于使用8844.43米的声明早于2020年中尼联合公布雪面高程，不能单独用该旧声明否定2020年的成果，也不能据此断言2005年岩石面标准已被明令废止。&quot;,
+      &quot;层级&quot;: &quot;全体&quot;,
+      &quot;重要性&quot;: &quot;一般&quot;,
+      &quot;依据&quot;: [
+        &quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;,
+        &quot;https://www.mod.gov.cn/gfbw/qwfb/4875221.html&quot;
+      ],
+      &quot;把握&quot;: &quot;高&quot;
+    }
+  ],
+  &quot;找不到要点的层&quot;: &quot;&quot;
+}</pre></details>
+</section>
+<section class="block" id="output" aria-labelledby="output-h">
+  <h2 class="heading-5" id="output-h">命令行的原始输出</h2>
+  <p class="body-3 sum">各家命令行的事件流原样保存，供复核。</p>
+  <details><summary class="caption-2">标准输出原文，共 42689 字</summary><pre class="raw" id="raw-output">
+{&quot;type&quot;:&quot;thread.started&quot;,&quot;thread_id&quot;:&quot;01a18ffe-3341-7dc2-b379-7eb8751c0762&quot;}
+{&quot;type&quot;:&quot;turn.started&quot;}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_0&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-86a1a7ee-1f4a-4c3f-8899-ad7afbaa4abc&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_0&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-86a1a7ee-1f4a-4c3f-8899-ad7afbaa4abc&quot;,&quot;query&quot;:&quot;site.gov.cn 珠峰 8848.86 全球高程基准 雪面 2005 3.50 ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;site.gov.cn 珠峰 8848.86 全球高程基准 雪面 2005 3.50&quot;,&quot;site.gov.cn 测绘成果管理条例 第二十五条 教学 重要地理信息数据&quot;,&quot;site.oceanservice.noaa.gov highest point earth Chimborazo Mauna Kea&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;oceanservice.noaa.gov&quot;,&quot;ref_id&quot;:&quot;turn0search0&quot;,&quot;snippet&quot;:&quot;The highest point above Earth’s center is the peak of Ecuador’s Mount Chimborazo, located just one degree south of the Equator where Earth’s bulge is&quot;,&quot;title&quot;:&quot;What is the highest point on Earth as measured from Earth&#x27;s center?&quot;,&quot;url&quot;:&quot;https://oceanservice.noaa.gov/facts/highestpoint.html?ccms_cs=1&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;cdn.oceanservice.noaa.gov&quot;,&quot;ref_id&quot;:&quot;turn0search10&quot;,&quot;snippet&quot;:&quot;HIGHEST MOUNTAIN ON EARTH? ... Mount Chimborazo ... Mauna Kea ... oceanservice.noaa.gov&quot;,&quot;title&quot;:&quot;highestpoint-infographic&quot;,&quot;url&quot;:&quot;https://cdn.oceanservice.noaa.gov/oceanserviceprod/facts/highestpoint-infographic.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.mfa.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn0search11&quot;,&quot;snippet&quot;:&quot;对需要公布的重要地理信息数据，国务院测绘行政主管部门应当提出审核意 ... 第二十五条 ... 在行政管理、新闻传播、对外交流、教学等对社会公众有影响的活动中，需要 ... 违反本条例规定，未汇交测绘成果资料的，依照《中华人民共和 ... （一）未按照测绘成果资料的保管制度管理测绘成果资料，造成测绘成果资料&quot;,&quot;title&quot;:&quot;中华人民共和国测绘成果管理条例&quot;,&quot;url&quot;:&quot;https://www.mfa.gov.cn/wjb_673085/zzjg_673183/bjhysws_674671/bhflfg/ldbjchxgfl/202303/P020230313534884589284.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sciengine.com&quot;,&quot;ref_id&quot;:&quot;turn0search12&quot;,&quot;snippet&quot;:&quot;摘要 2005 年中国对珠穆朗玛峰高程进行了新的测定. ... 2005 珠峰测高的成果: 珠峰峰顶雪面正常高为8846.67 m, 珠峰峰顶雪面正高(海拔高)为8847.93 m, 珠峰峰顶岩面正高为8844.43 m, 珠峰峰顶冰雪层厚度为3.50 m. ... * E-mail: jychen@ihep.ac.cn&quot;,&quot;title&quot;:&quot;科学出版中国科学杂志社&quot;,&quot;url&quot;:&quot;https://www.sciengine.com/cfs/files/pdfs/view/1006-9267/S7wacSYdCgStnfxBu.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;sges.sysu.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn0search1&quot;,&quot;snippet&quot;:&quot;2005年10月9日，经国务院审批，当时的国家测绘局向全世界公布了2005珠峰高程测量成果：珠穆朗玛峰峰顶岩石面海拔高程为8844.43米。同时公布2005珠穆朗玛峰高程测量有关参数：珠穆朗玛峰峰顶岩石面高程测量精度±0.21米;峰顶冰雪深度3.50米。&quot;,&quot;title&quot;:&quot;专业科普：关于珠峰高程测量的知识 | 中山大学遥感科学与技术学院&quot;,&quot;url&quot;:&quot;https://sges.sysu.edu.cn/article/576&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.eco.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn0search2&quot;,&quot;snippet&quot;:&quot;12月8日，中国和尼泊尔两国共同宣布珠穆朗玛峰最新高程——8848.86米。 ... 2005年，中国公布的珠穆朗玛峰峰顶岩石面海拔高程为8844.43米，测量精度为±0.21米；峰顶冰雪深度为3.50米。 ... 值得注意的是，此番中尼两国首次联合构建了珠峰地区全球高程基准，为两国联合发布基于全球高程基准的珠峰新高度奠定了坚实的基础。&quot;,&quot;title&quot;:&quot;地球之巅“新身高”公布 8848.86米如何得来？ - 生态中国网&quot;,&quot;url&quot;:&quot;https://www.eco.gov.cn/news_info/40789.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.csgpc.org&quot;,&quot;ref_id&quot;:&quot;turn0search13&quot;,&quot;snippet&quot;:&quot;2005年中国再次对珠峰高程进行了测量。 ... 最终测得的珠峰岩石面高程为8844.43m，精度±0.21m， 冰雪厚度则为3.50m，是目前为止最可靠的结果。&quot;,&quot;title&quot;:&quot;2020年5月27日11时整&quot;,&quot;url&quot;:&quot;https://www.csgpc.org/uploads/article/1315/1_20200918170916_j4n7x.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.xinhuanet.com&quot;,&quot;ref_id&quot;:&quot;turn0search3&quot;,&quot;snippet&quot;:&quot;２００５年，国家测绘地理信息局在西藏登山队配合下，再次开展了珠峰高程测量，精确测定珠峰峰顶岩石面海拔高程为８８４４．４３米，峰顶冰雪深度为３．５０米。 ... 对此，国家测绘地理信息局相关负责人说，主要原因有三：一是２００５年珠峰高程测量采用了全球卫星定位测量等先进测绘技术手段，显著提高了测量精度；二是首次精确测定了峰顶冰雪层厚度——珠峰峰顶冰雪层厚度会因气候变化而变化，８８４４．４３米是珠峰峰顶&quot;,&quot;title&quot;:&quot;中国放弃了8844.43米珠峰“身高”？国家测绘地理信息局：没有的事！-新华网&quot;,&quot;url&quot;:&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.xinhuanet.com&quot;,&quot;ref_id&quot;:&quot;turn0search4&quot;,&quot;snippet&quot;:&quot;2005年，中国再次开展了珠峰高程测量，精确测定珠峰峰顶岩石面海拔高程为8844.43米，峰顶冰雪深度为3.50米。那次测高，中国登山测量队员采用雷达探测技术测定珠峰峰顶冰雪覆盖层的厚度，提高了测峰顶雪深的精度，同时在峰顶上竖立了用航天材料特制的2.5米高的红色觇标。&quot;,&quot;title&quot;:&quot;测量“地球之巅”-新华网&quot;,&quot;url&quot;:&quot;https://www.xinhuanet.com/politics/2020-06/02/c_1126063692.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;ghzrzyw.beijing.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn0search5&quot;,&quot;snippet&quot;:&quot;第二十条 测绘成果涉及著作权保护和管理的，依照有关法律、行政法规的规定执行。 ... 第二十五条 国务院批准公布的重要地理信息数据，由国务院或者国务院授权的部门以公告形式公布。 在行政管理、新闻传播、对外交流、教学等对社会公众有影响的活动中，需要使用重要地理信息数据的，应当使用依法公布的重要地理信息数据。&quot;,&quot;title&quot;:&quot;中华人民共和国测绘成果管理条例_法规_北京市规划和自然资源委员会&quot;,&quot;url&quot;:&quot;https://ghzrzyw.beijing.gov.cn/zhengwuxinxi/zcfg/fg/202607/t20260722_4777520.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.itpcas.cas.cn&quot;,&quot;ref_id&quot;:&quot;turn0search6&quot;,&quot;snippet&quot;:&quot;地壳板块运动、全球温室效应等因素都会引起珠穆朗玛峰地区环境的变化，喜马拉雅地区一直是国际地学研究的热点地区之一，珠穆朗玛峰高程测量一直为世人瞩目。 ... 2005年中国珠峰高程复测行动体现了以下几个特点：1，总结了历史经验，将经典大地测量与现代卫星大地测量技术相结合；2、珠穆朗玛峰地区大地水准面精化；3、峰顶采用雷达探测技术确定峰顶冰雪层厚度。 ... 中国科学家测定珠峰峰顶雪面的高度为8849&quot;,&quot;title&quot;:&quot;国家测绘局公布珠峰新高程为8844.43米----中国科学院青藏高原研究所&quot;,&quot;url&quot;:&quot;https://www.itpcas.cas.cn/new_zhxw/202007/t20200715_5630551.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;news.sina.cn&quot;,&quot;ref_id&quot;:&quot;turn0search7&quot;,&quot;snippet&quot;:&quot;参数：珠穆朗玛峰峰顶岩石面高程测量精度±0.21米；峰顶冰雪深度3.50米。 ... 《时事报告》：1975年国家测绘局、总参测绘局联合开展珠峰高程测量，精确得到珠峰高度为8848.13米，这一数据一直作为中国对珠峰高度的采用值沿用至今。 ... 陈邦柱：我国今年重测珠峰前，珠穆朗玛峰最近的一次测量在1999年，是由美国国家地理学会使用全球卫星定位系统测定的，他们认为珠峰的海拔高度应该为8850米&quot;,&quot;title&quot;:&quot;国家测绘局长专访：珠峰重测的国家版图意义_手机新浪网&quot;,&quot;url&quot;:&quot;https://news.sina.cn/sa/2005-11-04/detail-ikknscsi8190138.d.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;sos.noaa.gov&quot;,&quot;ref_id&quot;:&quot;turn0search14&quot;,&quot;snippet&quot;:&quot;Because the equator bulges, Chimborazo is further from the Earth’s center point than Everest is, even though Everest is almost 9,000 feet higher above sea&quot;,&quot;title&quot;:&quot;Microsoft Word - See The Seas&quot;,&quot;url&quot;:&quot;https://sos.noaa.gov/media/downloads/live-programs/see_the_seas_dmns/supplements/SeeTheSeas_script.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;xzfg.moj.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn0search8&quot;,&quot;snippet&quot;:&quot;第一条 为了加强对测绘成果的管理，维护国家安全，促进测绘成果的利用，满足经济建设、国防建设和社会发展的需要，根据《中华人民共和国测绘法》，制定本条例。 第二条 测绘成果的汇交、保管、利用和重要地理信息数据的审核与公布，适用本条例。 ... (五)基础地理信息系统的数据、信息等。&quot;,&quot;title&quot;:&quot;国家行政法规库&quot;,&quot;url&quot;:&quot;https://xzfg.moj.gov.cn/front/law/detail?LawID=168&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.gdwlxy.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn0search15&quot;,&quot;snippet&quot;:&quot;- 8848.13米 ... - 2005年：有觇标交会；GPS测量；冰雪测量 ... 航空重力测量、峰顶重力测量、峰顶周边地区重力加密测量等技术手段的使用，将会全面提升珠峰高程测量“起算面”（大地水准面）的精度，进而获得历史最高精度的珠峰高程测量结果。&quot;,&quot;title&quot;:&quot;我国珠峰高程测量技术发展历程&quot;,&quot;url&quot;:&quot;https://www.gdwlxy.edu.cn/UpFiles/article/zmstujz/UpFiles/202409/19/%E7%8F%A0%E5%B3%B0%E6%B5%8B%E9%87%8F-%E4%B8%AD%E5%9B%BD%E6%8A%80%E6%9C%AF%E5%AE%9A%E4%B9%89%E6%96%B0%E9%AB%98%E5%BA%A6.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;zrzyt.xinjiang.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn0search9&quot;,&quot;snippet&quot;:&quot;1975年，我国首次将一个高3.5米的红色金属测量觇标矗立于珠峰之巅；2005年，珠峰测量首次采用卫星大地测量技术和雪深雷达测量技术，首次获得了珠峰岩面高程；2020年，北斗卫星和国产测绘装备担纲主力，我国首次在珠峰地区开展航空重力测量，并将重力测量推到顶峰。 8848.13米、8844.43米、8848.86米——三个数字记录着珠峰的“身高”变化，更镌刻着中国测绘科技半个世纪的跃迁轨迹。 ...&quot;,&quot;title&quot;:&quot;一场50年的科技攀峰——珠峰高程测量见证中国测绘技术跃迁_媒体宣传_新疆维吾尔自治区自然资源厅&quot;,&quot;url&quot;:&quot;https://zrzyt.xinjiang.gov.cn/xjgtzy/mtxc/202505/52a424a0a3c14d4aa1090522bd7f5c9f.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;zh.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn0search16&quot;,&quot;snippet&quot;:&quot;基于全球高程基准，中国和尼泊尔共同宣布珠穆朗玛峰雪面高程最新高度为8848.86公尺。 ... 参数：珠穆朗玛峰峰顶岩石面高程测量精度±0.21公尺；峰顶冰雪深度3.50公尺。 ... * 国家测绘地理信息局：中国从未在任何时候、以任何形式放弃2005年精确测定的8844.43公尺珠穆朗玛峰顶岩石面海拔高程数据. www.mnr.gov.cn.&quot;,&quot;title&quot;:&quot;珠穆朗瑪峰&quot;,&quot;url&quot;:&quot;https://zh.wikipedia.org/wiki/%E7%8F%A0%E7%A9%86%E6%9C%97%E7%91%AA%E5%B3%B0&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn0search17&quot;,&quot;snippet&quot;:&quot;While Everest is Earth&#x27;s highest elevation (green) and Mauna Kea is tallest from its base (orange), Cayambe is farthest from Earth&#x27;s axis (pink) and Chimborazo&quot;,&quot;title&quot;:&quot;Extremes on Earth&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Extremes_on_Earth&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;zh.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn0search18&quot;,&quot;snippet&quot;:&quot;1 | 西藏自治区 | 珠穆朗玛峰 | 8848.86 | 喜马拉雅山脉 | 27°54′N 86°54′E﻿ / ﻿27.9°N 86.9°E | 世界海拔最高的山峰，屹立在青藏高原、中国与尼泊尔边境线上，北侧位于中国西藏定日县境内，南部在尼泊尔境内。山体常年冰雪覆盖，山顶冰雪层厚度为3.50±0.1米，夏季最高温约-19°C。&quot;,&quot;title&quot;:&quot;中华人民共和国各省级行政区最高峰列表&quot;,&quot;url&quot;:&quot;https://zh.wikipedia.org/wiki/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E5%90%84%E7%9C%81%E7%BA%A7%E8%A1%8C%E6%94%BF%E5%8C%BA%E6%9C%80%E9%AB%98%E5%B3%B0%E5%88%97%E8%A1%A8&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn0search19&quot;,&quot;snippet&quot;:&quot;The summit of Chimborazo, the point on the Earth&#x27;s surface that is farthest from the Earth&#x27;s center ... Chimborazo is the highest mountain in Ecuador&quot;,&quot;title&quot;:&quot;Chimborazo&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Chimborazo&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn0search20&quot;,&quot;snippet&quot;:&quot;Although Mount Everest is the point with the highest elevation above sea level on the Earth, it is not the summit that is farthest from&quot;,&quot;title&quot;:&quot;Summits farthest from the Earth&#x27;s center&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Summits_farthest_from_the_Earth%27s_center&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;zh.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn0search21&quot;,&quot;snippet&quot;:&quot;按各国最高点海拔绘制的世界地图 ... 1 | 中國 | 珠穆朗玛峰 | 8,848.86米（29,031.7英尺） | 劃分國界之峰 1 | 尼泊尔 | 珠穆朗玛峰 | 8,848.86米（29,031.7英尺） | 劃分國界之峰，尼方称“萨加玛塔峰” ... 5 | 不丹 |&quot;,&quot;title&quot;:&quot;各国最高点列表&quot;,&quot;url&quot;:&quot;https://zh.wikipedia.org/wiki/%E5%90%84%E5%9B%BD%E6%9C%80%E9%AB%98%E7%82%B9%E5%88%97%E8%A1%A8&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit22&quot;,&quot;snippet&quot;:&quot;It&#x27;s Mauna Kea ... Mount Chimborazo - https://oceanservice.noaa.gov/facts/highestpoint.html#:\\~:text=Mount%20Everest&#x27;s%20peak%20is%20the,on%20Earth%20from%20Earth&#x27;s%20center.&quot;,&quot;title&quot;:&quot;[Request] Earth isn’t a perfect sphere, what is Everest’s elevation relative to a sphere the size of Earth’s average diameter, and are there any places on Earth (probably on or near the equator) that are higher than Everest relative to this perfect sphere?&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/theydidthemath/comments/112exfj&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit23&quot;,&quot;snippet&quot;:&quot;As I said, some count \&quot;tallest\&quot; as distance from center of Earth, therefore Chimborazo, some see it as base of the mountain itself, therefore Mauna&quot;,&quot;title&quot;:&quot;How is it decided whether a mountain is ‘tallest’ or ‘highest’?&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/geography/comments/1jtek5p&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit24&quot;,&quot;snippet&quot;:&quot;Fun fact - the world&#x27;s highest peak, as measured by the distance from the peak to the center of the Earth, is Chimborazo in Ecuador.&quot;,&quot;title&quot;:&quot;TIL that the 100 tallest mountain peaks are all in the Himalayan Mountain System, and the tallest outside Asia, Mt. Aconcagua, is 189th!&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/todayilearned/comments/1w3cgvu/til_that_the_100_tallest_mountain_peaks_are_all/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit25&quot;,&quot;snippet&quot;:&quot;It has a ring of cliffs up to 3 km high at the base, and a slope above that is as steep as any stratovolcano&quot;,&quot;title&quot;:&quot;Do you think Mt. Everest is the highest point Earth has ever seen?&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/geography/comments/1deosty&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit26&quot;,&quot;snippet&quot;:&quot;Highest from it&#x27;s base - Mauna Kea (measured from the sea floor) Furthest from the center of the earth - Mt Chimborazo ... That when&quot;,&quot;title&quot;:&quot;Why No One Can Agree What’s REALLY the Tallest Mountain&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/videos/comments/1fx0nz6&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit27&quot;,&quot;snippet&quot;:&quot;Wouldn&#x27;t the highest point on earth (Everest) be the farthest from the center? ... Volcán Chimborazo is the peak farthest from the center of the&quot;,&quot;title&quot;:&quot;The view on top of Ecuador&#x27;s tallest peak: Volcán Chimborazo. Credits:Jess FIndlay&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/oddlysatisfying/comments/1cwkcxp&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit28&quot;,&quot;snippet&quot;:&quot;Aside from undersea volcanoes such as Mauna Kea, the main claimant for the title of the tallest mountain from \&quot;base to peak\&quot; is Denali. ...&quot;,&quot;title&quot;:&quot;Why Mountains are Measured From Sea Level&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/geography/comments/1weuclh/why_mountains_are_measured_from_sea_level/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit29&quot;,&quot;snippet&quot;:&quot;Non geologist here, but saw arguing over Manua Kea and I can&#x27;t see that claim as anything more than touristic as measuring a mountain from&quot;,&quot;title&quot;:&quot;About Manua Kea being considered the world&#x27;s biggest mountain&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/geology/comments/1w6exzv/about_manua_kea_being_considered_the_worlds/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit30&quot;,&quot;snippet&quot;:&quot;Everest is the highest mountain from sea level. Mauna Kea is the highest from sea bed. Chimborazo is the highest from earth’s center.&quot;,&quot;title&quot;:&quot;Day 14 -The High Points in every country China: Mount Everest (ཇོ་མོ་གླང་མ) 8,848 m (29,029 ft)&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/geography/comments/k0s4hj&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit31&quot;,&quot;snippet&quot;:&quot;While Everest&#x27;s peak is the highest altitude above mean sea level at 29,029 feet Chimborazo&#x27;s peak is the furthest point on Earth from Earth&#x27;s center&quot;,&quot;title&quot;:&quot;Mt. Everest peeking out of the clouds&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/MicrosoftFlightSim/comments/ibq68a&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit32&quot;,&quot;snippet&quot;:&quot;For example, the highest known peak in the solar system is Olympus Mons. If we&#x27;re talking about on Earth however, the *tallest* mountain from base&quot;,&quot;title&quot;:&quot;Free carry if you can answer riddle: which mountain was the tallest before discovering Mount Everest? (Instead of space, use - )&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/EggsIncCoOp/comments/sg3hyw&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn0reddit33&quot;,&quot;snippet&quot;:&quot;* Furthest from earth&#x27;s center: Chimborazo * Tallest Mountain in the World: Mauna Kea ... &gt; Measured from base to peak, Hawaii’s Mauna Kea, which&quot;,&quot;title&quot;:&quot;[Removed]&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/geography/comments/1trrrmm/removed/&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_1&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-a8e59507-8678-4e35-a604-e5c274d1e0f5&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_1&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-a8e59507-8678-4e35-a604-e5c274d1e0f5&quot;,&quot;query&quot;:&quot;site.mnr.gov.cn 8848.86 雪面 全球 高程 基准 2020 ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;site.mnr.gov.cn 8848.86 雪面 全球 高程 基准 2020&quot;,&quot;珠峰 党亚民 郭春喜 不具可比性 2020 8848.86&quot;,&quot;site.usgs.gov Everest 1856 1954 1999 29035&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.mod.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn1search0&quot;,&quot;snippet&quot;:&quot;来源：新华社 责任编辑：李晶 2020-12-08 16:29:56 ... 一年多来，两国团队克服种种困难，扎实开展工作，最终确定了基于全球高程基准的珠穆朗玛峰雪面高程。 ... 珠穆朗玛峰是尼中传统友谊的长久象征，我很高兴同阁下一道，共同宣布珠穆朗玛峰最新雪面高程为8848.86米。&quot;,&quot;title&quot;:&quot;习近平同尼泊尔总统班达里互致信函　共同宣布珠穆朗玛峰高程 - 中华人民共和国国防部&quot;,&quot;url&quot;:&quot;https://www.mod.gov.cn/gfbw/qwfb/4875221.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;m.12371.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn1search1&quot;,&quot;snippet&quot;:&quot;2020珠峰高程测量，我国采用了“综合运用GNSS卫星测量、水准测量、光电测距、雪深雷达测量、航空重力和遥感测量、似大地水准面精化和实景三维建模等多种传统和现代测绘技术，精确测定珠峰高程”的技术路线，并与尼泊尔扎实开展技术合作，最终确定了基于全球高程基准的珠峰雪面高程为8848.86米。&quot;,&quot;title&quot;:&quot;科普| 最新珠峰高度是怎样测出来的&quot;,&quot;url&quot;:&quot;https://m.12371.gov.cn/app/template/displayTemplate/news/newsDetail/50601.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.xinhuanet.com&quot;,&quot;ref_id&quot;:&quot;turn1search2&quot;,&quot;snippet&quot;:&quot;12月8日，中国、尼泊尔两国向全世界正式宣布，珠穆朗玛峰的最新高程为8848.86米。 ... 与我国开展的前两次珠峰高程测量有所不同，此次珠峰高程数据是经过中尼双方联合处理和协商，最终得到的基于全球高程基准的珠峰峰顶雪面海拔高。“ ... 2020年正值中尼建交65周年，也是人类首次从北坡成功登顶珠峰60周年，是我国首次精确测定并公布珠峰高程45周年。&quot;,&quot;title&quot;:&quot;8848.86米 珠峰新高程-新华网&quot;,&quot;url&quot;:&quot;https://www.xinhuanet.com/politics/2020-12/09/c_1126837804.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.xinhuanet.com&quot;,&quot;ref_id&quot;:&quot;turn1search3&quot;,&quot;snippet&quot;:&quot;接下来要精确计算珠峰“底”的位置，科学家基于物理大地测量的理论方法进行数据处理，联合航空重力、地面重力、高分辨率地形和其它数据，结合GNSS和水准测量数据，建立珠峰地区的大地水准面模型，这就相当于把珠峰高程起算面，也就是黄海高程基准面这个“底”精准地确定出来了。 ... 选定了高程基准后，中尼在数据处理阶段，逐项对中间数据和结果进行了细致比对和反复检核，双方数据和结果一致性很好，最终双方技术团队共&quot;,&quot;title&quot;:&quot;最新珠峰高度是怎样测出来的-新华网&quot;,&quot;url&quot;:&quot;https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.hxsbs.com&quot;,&quot;ref_id&quot;:&quot;turn1search12&quot;,&quot;snippet&quot;:&quot;珠峰测量主题插图：左侧为戴“珠峰测量队”头盔的人物侧脸，背景为雪山与云朵，中央标注“8848.86米”，右侧有竖直标尺，表现珠峰高度测量。 ... 接下来要精确计算珠峰“底”的位置，科学家基于物理大地测量的理论方法进行数据处理，联合航空重力、地面重力、高分辨率地形和其它数据，结合GNSS和水准测量数据，建立珠峰地区的大地水准面模型，这就相当于把珠峰高程起算面建成了一个“底”精确地确定出来了。 ..&quot;,&quot;title&quot;:&quot;07B20201218C&quot;,&quot;url&quot;:&quot;https://www.hxsbs.com/szb/att/202012/18/dec21afb-1d69-4926-b401-823d70a091ae.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.thepaper.cn&quot;,&quot;ref_id&quot;:&quot;turn1search4&quot;,&quot;snippet&quot;:&quot;12月8日，我国与尼泊尔共同宣布珠穆朗玛峰的最新高程——8848.86米，世界第一高峰的雪面高程数字就此刷新。 ... 2020年5月27日11时，我国测量登山队员在珠峰峰顶架起红色觇标，珠峰脚下六个交会点的测量队员实测的交会点到峰顶觇标点的斜边距离，即垂直角度，由此可以计算出峰顶觇标点相对交会点的高度差，加上已知交会点的大地高，就得到珠峰雪面大地高。 ... 将这一成果与尼泊尔测量结果进一步融合&quot;,&quot;title&quot;:&quot;解析｜8848.86米的珠峰新高是如何算出来的？_绿政公署_澎湃新闻-The Paper&quot;,&quot;url&quot;:&quot;https://www.thepaper.cn/newsDetail_forward_10297085&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sport.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn1search5&quot;,&quot;snippet&quot;:&quot;据新华社消息，2020年12月8日，国家主席习近平同尼泊尔总统班达里互致信函，共同宣布珠穆朗玛峰最新高程――8848.86米。 ... 5月18日，2020珠峰测量登山队在海拔6500米的前进营地召开攻顶动员会，公布攻顶队员名单。 ... 5月21日，由于海拔7790米的C2营地以上路段雪深超过1米，为保证安全，所有队员下撤至海拔6500米前进营地休整待命。&quot;,&quot;title&quot;:&quot;8848.86米 珠峰新高度诞生！_国家体育总局&quot;,&quot;url&quot;:&quot;https://www.sport.gov.cn/n315/n20067006/c20257594/content.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;sh.people.com.cn&quot;,&quot;ref_id&quot;:&quot;turn1search6&quot;,&quot;snippet&quot;:&quot;2020珠峰高程測量，我國採用了“綜合運用GNSS衛星測量、水准測量、光電測距、雪深雷達測量、航空重力和遙感測量、似大地水准面精化和實景三維建模等多種傳統和現代測繪技術，精確測定珠峰高程”的技術路線，並與尼泊爾扎實開展技術合作，最終確定了基於全球高程基准的珠峰雪面高程為8848.86米。&quot;,&quot;title&quot;:&quot;最新珠峰高度是怎樣測出來的&quot;,&quot;url&quot;:&quot;https://sh.people.com.cn/BIG5/n2/2020/1216/c176739-34477529.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.chinaqw.com&quot;,&quot;ref_id&quot;:&quot;turn1search7&quot;,&quot;snippet&quot;:&quot;2020年12月09日 08:20 来源：新京报 Image: 参与互动参与互动 ... 昨日，中国和尼泊尔联合公布珠峰“新身高”——8848.86米。 ... 测算结果有什么用……新京报记者就与珠峰新“身高”相关的六个焦点问题，采访了负责珠峰高程解算的自然资源部大地测量数据处理中心主任郭春喜、自然资源部中国测绘科学研究院研究员党亚民与副研究员蒋涛，揭秘如何为珠峰测量计算“身高”。&quot;,&quot;url&quot;:&quot;https://www.chinaqw.com/hqhr/2020/12-09/278969.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;sx.people.com.cn&quot;,&quot;ref_id&quot;:&quot;turn1search8&quot;,&quot;snippet&quot;:&quot;1975年，我國測得珠峰海拔高程為8848.13米﹔2005年，我國測得珠峰峰頂岩石面的海拔高程為8844.43米﹔今年我國測量登山隊隊員再次成功登頂珠峰，開展各項測量工作。 ... 自然資源部中國測繪科學研究院研究員黨亞民說，2020珠峰高程測量外業數據來之不易，數據豐富、質量高，專家們在此基礎上開展大量的檢核工作，確保數據質量。 ... 在此基礎上，中方數據處理專家與尼泊爾專家進行數據聯合處理&quot;,&quot;title&quot;:&quot;8848.86米 珠峰新高程&quot;,&quot;url&quot;:&quot;https://sx.people.com.cn/BIG5/n2/2020/1209/c352664-34463402.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;news.sciencenet.cn&quot;,&quot;ref_id&quot;:&quot;turn1search9&quot;,&quot;snippet&quot;:&quot;1975年，测得珠峰高程8848.13米（扣除积雪厚度0.92米）；2005年，测得珠峰高程8844.43米（扣除积雪厚度3.5米）；2020年，我国与尼泊尔大地测量工作者分别进行了珠峰高程测量，经过联合数据处理，测得珠峰雪面高程8848.86米。 ... 在2020年珠峰测量中，我国和尼泊尔两国大地测量工作者经过充分协商，均同意采用全球高程基准面作为这次珠峰测量的高程起算面。 ... 此外，无论&quot;,&quot;title&quot;:&quot;怎样给珠峰量“身高”—新闻—科学网&quot;,&quot;url&quot;:&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.eco.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn1search10&quot;,&quot;snippet&quot;:&quot;2005年，中国公布的珠穆朗玛峰峰顶岩石面海拔高程为8844.43米，测量精度为±0.21米；峰顶冰雪深度为3.50米。 此次公布的8848.86米的海拔，则比上两次都要高。 ... 值得注意的是，此番中尼两国首次联合构建了珠峰地区全球高程基准，为两国联合发布基于全球高程基准的珠峰新高度奠定了坚实的基础。&quot;,&quot;title&quot;:&quot;地球之巅“新身高”公布 8848.86米如何得来？ - 生态中国网&quot;,&quot;url&quot;:&quot;https://www.eco.gov.cn/news_info/40789.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;paper.people.com.cn&quot;,&quot;ref_id&quot;:&quot;turn1search13&quot;,&quot;snippet&quot;:&quot;得到基于我国国家高程基准的珠峰峰顶雪面海拔高。 ... 珠峰最新高程的公布，也带火了地理知识。 ... 年除了8848.86 米的珠峰，我们还去过……》指出，5 月27 日中国登山队登 ... 2020 珠峰高程测量登山队成功登顶世界第一高峰珠穆朗玛 ... 文章指出，从地球的新高度看，此次宣布的8848.86 米，是“基于全球高&quot;,&quot;title&quot;:&quot;一周网事\n责编：刘乐艺\n邮箱：hwbjzb@126.com\n2020年12月11日\n星期五\n05\n0&quot;,&quot;url&quot;:&quot;https://paper.people.com.cn/rmrbhwb/images/2020-12/11/05/rmrbhwb2020121105.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;apm.cas.cn&quot;,&quot;ref_id&quot;:&quot;turn1search11&quot;,&quot;snippet&quot;:&quot;2020年12月8日，国家主席习近平同尼泊尔总统班达里互致信函，共同宣布珠穆朗玛峰最新高程——8848.86米。基于全球高程基准的珠穆朗玛峰雪面高程一经发布，立即引发了人们对珠峰和大地测量学的热情关注。 ... “高度”是通常的说法，或者是口语的叫法，“高度”的专业称谓是“高程”，是指地表点沿铅垂线方向到大地水准面的距离，又称“海拔高” 或“正高”。&quot;,&quot;title&quot;:&quot;为何珠峰新“身高”如此难测？院士带你了解“海拔高度”的这些冷知识--中国科学院精密测量科学与技术创新研究院&quot;,&quot;url&quot;:&quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;epaper.gxrb.com.cn&quot;,&quot;ref_id&quot;:&quot;turn1search14&quot;,&quot;snippet&quot;:&quot;Top-left masthead in large red calligraphy “广西日报”; top-right main headline “习近平同尼泊尔总统班达里互致信函” with subheadline “共同宣布珠穆朗玛峰最新高程为8848.86米”; left-center has newspaper logo and QR code with issue/date bloc&quot;,&quot;title&quot;:&quot;YWYB20201209C&quot;,&quot;url&quot;:&quot;https://epaper.gxrb.com.cn/gxrb2/page/1/2020-12-09/001/94371607467952692.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;epaper.gxrb.com.cn&quot;,&quot;ref_id&quot;:&quot;turn1search15&quot;,&quot;snippet&quot;:&quot;2020 年公布的高程 ... 8848.86 米 ... 建珠峰地区全球高程基准，峰顶大地水准面差距仅相差7.2cm，成 ... 峰顶的GNSS 接收机、北斗接收机、雪 ... 公布的8848.86 米是珠峰科学研究的里程碑。&quot;,&quot;title&quot;:&quot;2020 年12 月9 日&quot;,&quot;url&quot;:&quot;https://epaper.gxrb.com.cn/gxrb2/page/1/2020-12-09/006/44361607475223803.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;lyxy.jju.edu.cn&quot;,&quot;ref_id&quot;:&quot;turn1search16&quot;,&quot;snippet&quot;:&quot;峰高程数据 8848.86m 是包含珠峰峰顶雪面的高度，不是岩石面的高度，雪面高是中尼双方共同认可的结果。 ... 通过中尼两国的共同努力，两个主权国家历史上第一次统一声音，向世界公布了珠峰的高程数据，避免了在珠峰高度上的争议，给全球其他国家的国际合作做出了典范。 ... 播放相关视频资料，如：央视榜样的力量国测一大队事迹的视频报道；2020 年珠峰测高激动人心的登顶时刻的视频资料；珠峰高程测量&quot;,&quot;title&quot;:&quot;峰高程数据 8848.86m 是包含珠峰峰顶雪面的高度，不是岩石面的高度，雪面高是中尼双方共同认可的结果。尤其值得关注的是，本次珠峰高程测量的关键仪器设备都是由中国厂商制造，实现全部国产化，这些仪器设备主要包括峰顶测量设备及长测程测距设备，如峰顶雪深探测雷达、峰顶 GNSS 接收机、峰顶觇标、长测程全站仪、重力仪等。&quot;,&quot;url&quot;:&quot;https://lyxy.jju.edu.cn/__local/8/5E/EB/495238EE6CCDB13550E456E339F_450830DB_11EB46F.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;giwmscdnone.gov.np&quot;,&quot;ref_id&quot;:&quot;turn1search17&quot;,&quot;snippet&quot;:&quot;1856 the Peak was named Mount Everest in the recognition of special contribution of Colonel Sir George Everest, Surveyor General of the then British India&quot;,&quot;title&quot;:&quot;1856 the Peak was named Mount Everest in the recognition of special contribution of Colonel Sir George Everest, Surveyor General of the then British India of Great Triangulation Survey (GTS). A year latter it was changed to Mount Everest. The height was announced 29002 ft. Nearly for 50 years this became the official height.&quot;,&quot;url&quot;:&quot;https://giwmscdnone.gov.np/media/pdf_upload/sd%20journal%202074_wplxcxf.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn1search18&quot;,&quot;snippet&quot;:&quot;Peak XV (measured in feet) was calculated to be exactly 29,000 ft (8,839.2 m) high, but was publicly declared to be 29,002 ft (8,839.8 m)&quot;,&quot;title&quot;:&quot;Mount Everest&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Mount_Everest&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn1search19&quot;,&quot;snippet&quot;:&quot;Overall about 1,383 people summited Everest between 1953 and the end of 2000. ... By 2013, 6,871 summits had been recorded by 4,042 different people.&quot;,&quot;title&quot;:&quot;List of 20th-century summiteers of Mount Everest&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/List_of_20th-century_summiteers_of_Mount_Everest&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn1search20&quot;,&quot;snippet&quot;:&quot;* The second Swiss expedition was led by Albert Eggler [de] and the summit of Everest was reached on May 23, 1956, by four Swiss&quot;,&quot;title&quot;:&quot;List of Mount Everest expeditions&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/List_of_Mount_Everest_expeditions&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;zh.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn1search21&quot;,&quot;snippet&quot;:&quot;* 中国大陸：海拔采用青岛港验潮站的长期观测资料推算出的黄海平均海面作为基准面（零高程面）。 ... * 地球表面海拔最高的地点：聖母峰（8848.86米）&quot;,&quot;title&quot;:&quot;海拔&quot;,&quot;url&quot;:&quot;https://zh.wikipedia.org/wiki/%E6%B5%B7%E6%8B%94&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn1search22&quot;,&quot;snippet&quot;:&quot;The Southeast Ridge followed by the expeditions of the 1950s forms the right hand skyline and the South Summit, marking the last altitude record to&quot;,&quot;title&quot;:&quot;World altitude record (mountaineering)&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/World_altitude_record_%28mountaineering%29&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;de.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn1search23&quot;,&quot;snippet&quot;:&quot;Die Angabe für die Gipfelhöhe des Mount Everest ist seit der ersten Messung im Jahre 1848 mehrfach korrigiert worden. 1856 wurden aus Angaben von sechs&quot;,&quot;title&quot;:&quot;Mount Everest&quot;,&quot;url&quot;:&quot;https://de.wikipedia.org/wiki/Mount_Everest&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn1reddit24&quot;,&quot;snippet&quot;:&quot;&gt; In 1856, mathematician Radhanath Sickdhar found that Everest is the highest mountain in the world while he was working for the Great Trigonometrical Survey,&quot;,&quot;title&quot;:&quot;Mount Everest is two feet taller, China and Nepal announce&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/autotldr/comments/kcu6f3&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.mfa.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn1view0&quot;,&quot;snippet&quot;:&quot;Total lines: 410&quot;,&quot;title&quot;:&quot;重要新闻_中华人民共和国外交部&quot;,&quot;url&quot;:&quot;https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;xzfg.moj.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn1view1&quot;,&quot;snippet&quot;:&quot;Total lines: 175&quot;,&quot;title&quot;:&quot;国家行政法规库&quot;,&quot;url&quot;:&quot;https://xzfg.moj.gov.cn/front/law/detail?LawID=168&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn1view2&quot;,&quot;title&quot;:&quot;Internal Error&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_2&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-ff77917a-ddb7-4715-9923-b883cd32a0bd&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_2&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-ff77917a-ddb7-4715-9923-b883cd32a0bd&quot;,&quot;query&quot;:&quot;https://www.chinaqw.com/hqhr/2020/12-09/278969.shtml&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;open_page&quot;,&quot;url&quot;:&quot;https://www.chinaqw.com/hqhr/2020/12-09/278969.shtml&quot;},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.chinaqw.com&quot;,&quot;ref_id&quot;:&quot;turn2view0&quot;,&quot;snippet&quot;:&quot;Total lines: 174&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/5Min7orydOwEOrQQKJyKp6-TNx2RfvlMKdQ_w10x3EXq0b8pFNiJS8XXes_r9tPtGvWFC6K8MKxlB5DB16Rx_XtfmJSzlXuAgprUiczaCN0&quot;,&quot;title&quot;:&quot;www.chinaqw.com&quot;,&quot;url&quot;:&quot;https://www.chinaqw.com/hqhr/2020/12-09/278969.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;apm.cas.cn&quot;,&quot;ref_id&quot;:&quot;turn2view1&quot;,&quot;snippet&quot;:&quot;Total lines: 208&quot;,&quot;title&quot;:&quot;为何珠峰新“身高”如此难测？院士带你了解“海拔高度”的这些冷知识--中国科学院精密测量科学与技术创新研究院&quot;,&quot;url&quot;:&quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.xinhuanet.com&quot;,&quot;ref_id&quot;:&quot;turn2view2&quot;,&quot;snippet&quot;:&quot;Total lines: 116&quot;,&quot;title&quot;:&quot;中国放弃了8844.43米珠峰“身高”？国家测绘地理信息局：没有的事！-新华网&quot;,&quot;url&quot;:&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;news.sciencenet.cn&quot;,&quot;ref_id&quot;:&quot;turn2view3&quot;,&quot;snippet&quot;:&quot;Total lines: 233&quot;,&quot;title&quot;:&quot;怎样给珠峰量“身高”—新闻—科学网&quot;,&quot;url&quot;:&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;xzfg.moj.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn2view4&quot;,&quot;snippet&quot;:&quot;Total lines: 175&quot;,&quot;title&quot;:&quot;国家行政法规库&quot;,&quot;url&quot;:&quot;https://xzfg.moj.gov.cn/front/law/detail?LawID=168&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.mfa.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn2view5&quot;,&quot;snippet&quot;:&quot;Total lines: 410&quot;,&quot;title&quot;:&quot;重要新闻_中华人民共和国外交部&quot;,&quot;url&quot;:&quot;https://www.mfa.gov.cn/zyxw/202012/t20201208_348872.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;oceanservice.noaa.gov&quot;,&quot;ref_id&quot;:&quot;turn2view6&quot;,&quot;snippet&quot;:&quot;Total lines: 46&quot;,&quot;title&quot;:&quot;What is the highest point on Earth as measured from Earth&#x27;s center?&quot;,&quot;url&quot;:&quot;https://oceanservice.noaa.gov/facts/highestpoint.html&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_3&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-b2443719-0dcc-423c-a7d3-0e97bf011e97&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_3&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-b2443719-0dcc-423c-a7d3-0e97bf011e97&quot;,&quot;query&quot;:&quot;site.mnr.gov.cn 珠峰 教学 依法公布 2018 ...&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;search&quot;,&quot;queries&quot;:[&quot;site.mnr.gov.cn 珠峰 教学 依法公布 2018&quot;,&quot;site.usgs.gov \&quot;Everest\&quot; \&quot;29,035\&quot;&quot;,&quot;site.gov.cn 8848.86 2026 珠峰&quot;]},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;science.nasa.gov&quot;,&quot;ref_id&quot;:&quot;turn3search0&quot;,&quot;snippet&quot;:&quot;Everest, the tallest mountain in the world. ... At 29,035 feet (8,848 m) in altitude, the air is only one-third as thick as the air&quot;,&quot;title&quot;:&quot;Mt. Everest - NASA Science&quot;,&quot;url&quot;:&quot;https://science.nasa.gov/earth/earth-observatory/mt-everest/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;science.nasa.gov&quot;,&quot;ref_id&quot;:&quot;turn3search1&quot;,&quot;snippet&quot;:&quot;This detailed image of Everest, the highest (29,035 feet, 8850 meters) mountain in the world, shows early morning light on the eastern Kangshung Face.&quot;,&quot;title&quot;:&quot;Mount Everest from the International Space Station - NASA Science&quot;,&quot;url&quot;:&quot;https://science.nasa.gov/earth/earth-observatory/mount-everest-from-the-international-space-station-2396/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sport.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn3search2&quot;,&quot;snippet&quot;:&quot;8848.86米！ ... 仿佛又回到了登顶珠峰测量高度的那一天，既感动又兴奋，8848.86米，这是珠峰新高度，是世界新高度，也证明了中国的最新实力！&quot;,&quot;title&quot;:&quot;珠峰最新高程公布 登山人激动这一刻_国家体育总局&quot;,&quot;url&quot;:&quot;https://www.sport.gov.cn/n20001280/n20745751/n20767277/c21302770/content.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;zrzyt.xinjiang.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn3search3&quot;,&quot;snippet&quot;:&quot;8848.13米、8844.43米、8848.86米——三个数字记录着珠峰的“身高”变化，更镌刻着中国测绘科技半个世纪的跃迁轨迹。 ... 1966年~1968年，国家两次组队在珠峰地区建立了高质量的平面坐标和高程控制网，开展三角、水准、天文、重力等测量工作，为此后的珠峰高程测量奠定了坚实基础。 ... 此外，2020珠峰高程测量不仅首次利用航空遥感和激光雷达获取了峰顶高精度三维地形，对珠峰测高进&quot;,&quot;title&quot;:&quot;一场50年的科技攀峰——珠峰高程测量见证中国测绘技术跃迁_媒体宣传_新疆维吾尔自治区自然资源厅&quot;,&quot;url&quot;:&quot;https://zrzyt.xinjiang.gov.cn/xjgtzy/mtxc/202505/52a424a0a3c14d4aa1090522bd7f5c9f.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.aps.org&quot;,&quot;ref_id&quot;:&quot;turn3search4&quot;,&quot;snippet&quot;:&quot;Physicists often dream of making an indelible mark on their field with brilliant, groundbreaking research, but Francis Slakey, the APS associate director of public affairs&quot;,&quot;title&quot;:&quot;Physicist/Mountaineer Summits World&#x27;s Highest Peak&quot;,&quot;url&quot;:&quot;https://www.aps.org/apsnews/2000/08/physicistmountaineer-summits-worlds-highest-peak&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.sciencenews.org&quot;,&quot;ref_id&quot;:&quot;turn3search5&quot;,&quot;snippet&quot;:&quot;Mount Everest looms a little taller now, at least to mapmakers. Climbers and scientists this spring remeasured its peak at 29,035 feet—7 feet higher than&quot;,&quot;title&quot;:&quot;Taking a mountain&#x27;s measure&quot;,&quot;url&quot;:&quot;https://www.sciencenews.org/article/taking-mountains-measure&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.xizang.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn3search6&quot;,&quot;snippet&quot;:&quot;关于珠峰的高度，罗则进行了解释：1975年，首次成功测得的珠穆朗玛峰高度为8848.13米；2005年，第二次测得高度为8844.43米；2020年，第三次测得高度为8848.86米。“ ... 图④：2008年5月8日，中国登山队队员在海拔8844.43米的珠峰峰顶成功点燃了北京奥运“祥云”火炬，完成了奥运史上首次在世界之巅的火炬传递。 ... 图⑥：2017年，西藏自治区登山队队员在珠峰脚下举&quot;,&quot;title&quot;:&quot;登顶珠峰：更高更远永无止境_西藏自治区人民政府&quot;,&quot;url&quot;:&quot;https://www.xizang.gov.cn/xwzx_406/bmkx/202507/t20250731_492889.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;blog.education.nationalgeographic.org&quot;,&quot;ref_id&quot;:&quot;turn3search7&quot;,&quot;snippet&quot;:&quot;* Most surveyors put Mount Everest’s elevation at 8,850 meters (29,029) feet. * A U.S. survey recognized by National Geographic puts the mountain’s elevation at&quot;,&quot;title&quot;:&quot;How Tall is Mount Everest? – National Geographic Education Blog&quot;,&quot;url&quot;:&quot;https://blog.education.nationalgeographic.org/2018/02/06/how-tall-is-mount-everest/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;esrs.jsc.nasa.gov&quot;,&quot;ref_id&quot;:&quot;turn3search8&quot;,&quot;snippet&quot;:&quot;An astronaut aboard the International Space Station shot this oblique photograph of Mount Everest, Earth’s tallest mountain (when measured from sea level). ... Many of&quot;,&quot;title&quot;:&quot;An Astronaut&#x27;s View of the Himalayas&quot;,&quot;url&quot;:&quot;https://esrs.jsc.nasa.gov/Collections/EarthObservatory/articles/AnAstronautsViewoftheHimalayas.htm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.moe.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn3search9&quot;,&quot;snippet&quot;:&quot;信息索引： | 360A16-02-2018-0018-1 | 生成日期： | 2018-07-19 | 发文机构： | 中华人民共和国教育部 ... 为深入贯彻习近平新时代中国特色社会主义思想和党的十九大精神，落实国务院关于全面加强基础科学研究的有关精神，写好教育“奋进之笔”，进一步推动高等学校加强基础研究，实现创新引领，我部研究制定了《高等学校基础研究珠峰计划》，现印发给你们，请结合本地、本单&quot;,&quot;title&quot;:&quot;教育部关于印发《高等学校基础研究珠峰计划》的通知 - 中华人民共和国教育部政府门户网站&quot;,&quot;url&quot;:&quot;https://www.moe.gov.cn/srcsite/A16/moe_784/201808/t20180801_344021.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.cbsnews.com&quot;,&quot;ref_id&quot;:&quot;turn3search10&quot;,&quot;snippet&quot;:&quot;Now, six months later, the answer has been revealed: Mount Everest rises to 29,035 feet, 7 feet higher than the altitude officially recognized for 45&quot;,&quot;title&quot;:&quot;Everest: Higher Climb To Top - CBS News&quot;,&quot;url&quot;:&quot;https://www.cbsnews.com/news/everest-higher-climb-to-top/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;xcoss.henan.gov.cn&quot;,&quot;ref_id&quot;:&quot;turn3search12&quot;,&quot;snippet&quot;:&quot;她带来的《息日》四部曲：天梯5300米、元6200米、涅槃7925米、界碑8848.86米，包含行为艺术、数字影像、大地装置、摄影和绘画等。 ... 站在海拔8848.86米的珠峰之巅，孙宁眺望东方，身后是巍巍昆仑，脚下是华夏热土。&quot;,&quot;title&quot;:&quot;rb08b20250528&quot;,&quot;url&quot;:&quot;https://xcoss.henan.gov.cn/typtfile/20250714/c51ed9d2709f4594ab13c32b87e53da8.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.nasa.gov&quot;,&quot;ref_id&quot;:&quot;turn3search11&quot;,&quot;snippet&quot;:&quot;The perspective is illustrated by the summits of Makalu [left (8,462 meters; 27,765 feet)] and Everest [right (8,850 meters; 29,035 feet)] – at the heights&quot;,&quot;title&quot;:&quot;Mt. Everest from Space - NASA&quot;,&quot;url&quot;:&quot;https://www.nasa.gov/image-article/mt-everest-from-space/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;himalaya.socanth.cam.ac.uk&quot;,&quot;ref_id&quot;:&quot;turn3search13&quot;,&quot;snippet&quot;:&quot;Mount Everest is better known by those ... height has been computed at 29,035 feet ... attempt an approach to the mountain was ... Everest&quot;,&quot;title&quot;:&quot;30876 Britain Nepal 27 COVERS:30876 Britain Nepal 27 COVERS  20/10/11  10:05  Page 2&quot;,&quot;url&quot;:&quot;https://himalaya.socanth.cam.ac.uk/collections/journals/bnsj/pdf/bnsj_27.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;paper.people.com.cn&quot;,&quot;ref_id&quot;:&quot;turn3search14&quot;,&quot;snippet&quot;:&quot;2026 年美加墨世界杯的哨声即将吹 ... 近日，在海拔8848.86 米的珠穆朗玛峰顶峰，中国和尼 ... 化促进中心（极地未来）联合发起的“巅峰之芯”中尼联合科 ... 5 月6 日，科考队进驻珠峰南坡大本&quot;,&quot;title&quot;:&quot;2026 年6 月11 日 星期四 17&quot;,&quot;url&quot;:&quot;https://paper.people.com.cn/rmrb/pc/attachement/202606/11/43405f40-20ef-4de3-be11-0d94bc7be196.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;paper.people.com.cn&quot;,&quot;ref_id&quot;:&quot;turn3search15&quot;,&quot;snippet&quot;:&quot;一张以珠峰为背景的海报上，写着“珠穆朗玛峰最新高程8848.86 米” ... 间，清政府即从北京派人专程进入西藏测绘地图。 ... 年除了8848.86 米的珠峰，我们还去过……》指出，5 月27 日中国登山队登 ... 6 月23 日，北斗三号最后一颗全球组网卫星发&quot;,&quot;title&quot;:&quot;一周网事\n责编：刘乐艺\n邮箱：hwbjzb@126.com\n2020年12月11日\n星期五\n05\n0&quot;,&quot;url&quot;:&quot;https://paper.people.com.cn/rmrbhwb/images/2020-12/11/05/rmrbhwb2020121105.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;media.spokesman.com&quot;,&quot;ref_id&quot;:&quot;turn3search16&quot;,&quot;snippet&quot;:&quot;A number of attempts had been made since the first in 1921 to climb to the summit of Mount Everest, 29,035 feet above sea level.&quot;,&quot;title&quot;:&quot;230523_MountEverest&quot;,&quot;url&quot;:&quot;https://media.spokesman.com/documents/2023/05/230523_MountEverest.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;paper.people.com.cn&quot;,&quot;ref_id&quot;:&quot;turn3search17&quot;,&quot;snippet&quot;:&quot;达到了91%、80% 和86%，也就是说中国粮、 ... 2026 年的‘城超’必定更加精彩！” ... 我国已在5G 时代实现领跑，提前开展6G 原型 ... 珠峰最新最精确的高度——8848.86 米。&quot;,&quot;title&quot;:&quot;2026 年3 月5 日 星期四9&quot;,&quot;url&quot;:&quot;https://paper.people.com.cn/rmrb/pc/attachement/202603/05/136ea681-669a-432f-b8f5-14f2191ca048.pdf&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn3search18&quot;,&quot;snippet&quot;:&quot;Mount Everest (known in Nepali as Sagarmāthā, in Sherpa as Chamolangma, and in Tibetan as Jomolangma/Čhomolangma) is the highest mountain on Earth above sea level.&quot;,&quot;title&quot;:&quot;Mount Everest&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Mount_Everest&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn3search19&quot;,&quot;snippet&quot;:&quot;The Everest climb was in aid of the Wessex Heartbeat charity, and Jones pledged to raise £1 for every vertical foot of Everest, £29,035 in&quot;,&quot;title&quot;:&quot;Rhys Jones (mountaineer)&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Rhys_Jones_%28mountaineer%29&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn3search20&quot;,&quot;snippet&quot;:&quot;In 2018, Nepal announced plans to re-measure the height of Mount Everest, which is typically recognized as being 29,029 feet (8,848 m), although measurements of&quot;,&quot;title&quot;:&quot;Mount Everest in 2018&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Mount_Everest_in_2018&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.reddit.com&quot;,&quot;ref_id&quot;:&quot;turn3reddit21&quot;,&quot;snippet&quot;:&quot;After the horrific season Everest is having, I have begun a deep dive into the lore and tales surrounding the mountain. ... I’ve also recently&quot;,&quot;title&quot;:&quot;29,028 or 29,029?&quot;,&quot;url&quot;:&quot;https://www.reddit.com/r/Everest/comments/bz2hfa&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;time.com&quot;,&quot;ref_id&quot;:&quot;turn3news22&quot;,&quot;snippet&quot;:&quot;Everest has an official height of 29,029 feet. ... National Geographic Society to list the elevation at 29,035 feet. ... Some 290 people have died&quot;,&quot;title&quot;:&quot;Nepalese Climbers Are Remeasuring Mount Everest Following Doubts About Its Height&quot;,&quot;url&quot;:&quot;https://time.com/5566400/nepalese-climbers-remeasuring-everest/&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn3search23&quot;,&quot;snippet&quot;:&quot;Using this metric, Mount Everest is the highest mountain on Earth, at 8,848 metres (29,029 ft).&quot;,&quot;title&quot;:&quot;Mountain&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/Mountain&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;en.wikipedia.org&quot;,&quot;ref_id&quot;:&quot;turn3search24&quot;,&quot;snippet&quot;:&quot;* List of 20th-century summiters of Mount Everest ... * haexpeditions.com Number of Everest Summits per Climber 1953 - December 2023 Data courtesy of The&quot;,&quot;title&quot;:&quot;List of Mount Everest summiteers by frequency&quot;,&quot;url&quot;:&quot;https://en.wikipedia.org/wiki/List_of_Mount_Everest_summiteers_by_frequency&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.chinaqw.com&quot;,&quot;ref_id&quot;:&quot;turn3view0&quot;,&quot;snippet&quot;:&quot;Total lines: 174&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/lA5PKXQ6E5ouPoojpjCTM6fkqvXDDvr19jxDlS0rl2yXKRhrKsTTSgqMrTiPUMunBH5iMtPOLLQqHA1QH6NGCsFXIPpSrL4bEJBdR9jQcN8&quot;,&quot;title&quot;:&quot;www.chinaqw.com&quot;,&quot;url&quot;:&quot;https://www.chinaqw.com/hqhr/2020/12-09/278969.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;apm.cas.cn&quot;,&quot;ref_id&quot;:&quot;turn3view1&quot;,&quot;snippet&quot;:&quot;Total lines: 208&quot;,&quot;title&quot;:&quot;为何珠峰新“身高”如此难测？院士带你了解“海拔高度”的这些冷知识--中国科学院精密测量科学与技术创新研究院&quot;,&quot;url&quot;:&quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;news.sciencenet.cn&quot;,&quot;ref_id&quot;:&quot;turn3view2&quot;,&quot;snippet&quot;:&quot;Total lines: 233&quot;,&quot;title&quot;:&quot;怎样给珠峰量“身高”—新闻—科学网&quot;,&quot;url&quot;:&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn3view3&quot;,&quot;title&quot;:&quot;Internal Error&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;ref_id&quot;:&quot;turn3view4&quot;,&quot;title&quot;:&quot;Internal Error&quot;}]}}
+{&quot;type&quot;:&quot;item.started&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_4&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-c79417ea-72f1-4fc1-86f5-d76149388b81&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;}}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_4&quot;,&quot;type&quot;:&quot;web_search&quot;,&quot;id&quot;:&quot;exec-c79417ea-72f1-4fc1-86f5-d76149388b81&quot;,&quot;query&quot;:&quot;&quot;,&quot;action&quot;:{&quot;type&quot;:&quot;other&quot;},&quot;results&quot;:[{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.chinaqw.com&quot;,&quot;ref_id&quot;:&quot;turn4view0&quot;,&quot;snippet&quot;:&quot;Total lines: 174&quot;,&quot;thumbnail_url&quot;:&quot;https://images.openai.com/static-rsc-1/cCTOdqn9jE_si94crKep_yqM7q37oqRFGABH3MB8uOJxLof7nZWr34w0X1UJc_f2Xn8-JIccxGFexek4g87azq745feXN3YZR4zocZngLAY&quot;,&quot;title&quot;:&quot;www.chinaqw.com&quot;,&quot;url&quot;:&quot;https://www.chinaqw.com/hqhr/2020/12-09/278969.shtml&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;news.sciencenet.cn&quot;,&quot;ref_id&quot;:&quot;turn4view1&quot;,&quot;snippet&quot;:&quot;Total lines: 233&quot;,&quot;title&quot;:&quot;怎样给珠峰量“身高”—新闻—科学网&quot;,&quot;url&quot;:&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;apm.cas.cn&quot;,&quot;ref_id&quot;:&quot;turn4view2&quot;,&quot;snippet&quot;:&quot;Total lines: 208&quot;,&quot;title&quot;:&quot;为何珠峰新“身高”如此难测？院士带你了解“海拔高度”的这些冷知识--中国科学院精密测量科学与技术创新研究院&quot;,&quot;url&quot;:&quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;oceanservice.noaa.gov&quot;,&quot;ref_id&quot;:&quot;turn4view3&quot;,&quot;snippet&quot;:&quot;Total lines: 46&quot;,&quot;title&quot;:&quot;What is the highest point on Earth as measured from Earth&#x27;s center?&quot;,&quot;url&quot;:&quot;https://oceanservice.noaa.gov/facts/highestpoint.html&quot;},{&quot;type&quot;:&quot;text_result&quot;,&quot;domain&quot;:&quot;www.xinhuanet.com&quot;,&quot;ref_id&quot;:&quot;turn4view4&quot;,&quot;snippet&quot;:&quot;Total lines: 116&quot;,&quot;title&quot;:&quot;中国放弃了8844.43米珠峰“身高”？国家测绘地理信息局：没有的事！-新华网&quot;,&quot;url&quot;:&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm&quot;}]}}
+{&quot;type&quot;:&quot;item.completed&quot;,&quot;item&quot;:{&quot;id&quot;:&quot;item_5&quot;,&quot;type&quot;:&quot;agent_message&quot;,&quot;text&quot;:&quot;{\n  \&quot;浅答案\&quot;: \&quot;珠穆朗玛峰是世界上最高的山。\&quot;,\n  \&quot;转折点\&quot;: \&quot;本地图登记于2026-10-30，依据截至当日检索到的公开资料。挖深后，教材正文建议写为“世界上海拔最高的山峰是珠穆朗玛峰”，并用小学生能理解的话解释海拔从平均海平面算起。山名没有改变，但“最高”的适用条件改变了：从海底基部量到峰顶，或比较峰顶到地心的距离，会得到不同答案。若需要数字，建议另写“2020年，中国和尼泊尔共同公布珠穆朗玛峰峰顶雪面海拔为8848.86米”，编辑资料保留公布年份、测量对象和来源，并遵守教学使用依法公布的重要地理信息数据的要求。不能把2005年的8844.43米与2020年的8848.86米直接相减，宣称珠峰长高4.43米。历史测高数值的完整年表、各网站数字差异和具体隆起速率属于一般材料，不作为回答本题必须逐项具备的核心认识；本轮也不把1975年的8848.13米直接认定为未经扣雪的雪面高度，不推断2005年岩石面数据已被明令废止。\&quot;,\n  \&quot;转折点用到的要点\&quot;: [1, 2, 3, 4, 6, 7, 8],\n  \&quot;要点\&quot;: [\n    {\n      \&quot;编号\&quot;: 1,\n      \&quot;要点\&quot;: \&quot;按峰顶海拔比较，世界最高的山峰是珠穆朗玛峰。\&quot;,\n      \&quot;层级\&quot;: \&quot;现象\&quot;,\n      \&quot;重要性\&quot;: \&quot;核心\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://oceanservice.noaa.gov/facts/highestpoint.html\&quot;,\n        \&quot;https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 2,\n      \&quot;要点\&quot;: \&quot;“最高”必须明确所比较的量：海拔以平均海平面及其向陆地内部延伸的水准面为起算依据，与从山体基部到峰顶的高度、峰顶到地心的距离不同。\&quot;,\n      \&quot;层级\&quot;: \&quot;本质\&quot;,\n      \&quot;重要性\&quot;: \&quot;核心\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html\&quot;,\n        \&quot;https://oceanservice.noaa.gov/facts/highestpoint.html\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 3,\n      \&quot;要点\&quot;: \&quot;按NOAA采用的海底基部至峰顶量法，冒纳凯阿山高度超过10210米，被列为该口径下最高的山，说明海拔最高不等于山体从基部量起最高。\&quot;,\n      \&quot;层级\&quot;: \&quot;本质\&quot;,\n      \&quot;重要性\&quot;: \&quot;核心\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://oceanservice.noaa.gov/facts/highestpoint.html\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 4,\n      \&quot;要点\&quot;: \&quot;若比较峰顶到地心的距离，第一名是厄瓜多尔的钦博拉索山，而非珠穆朗玛峰。\&quot;,\n      \&quot;层级\&quot;: \&quot;本质\&quot;,\n      \&quot;重要性\&quot;: \&quot;核心\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://oceanservice.noaa.gov/facts/highestpoint.html\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 5,\n      \&quot;要点\&quot;: \&quot;地球自转形成的赤道隆起，使靠近赤道的钦博拉索山虽海拔低于珠峰，峰顶却离地心更远。\&quot;,\n      \&quot;层级\&quot;: \&quot;内部联系\&quot;,\n      \&quot;重要性\&quot;: \&quot;一般\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://oceanservice.noaa.gov/facts/highestpoint.html\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 6,\n      \&quot;要点\&quot;: \&quot;2020年12月8日中尼共同宣布的8848.86米是基于全球高程基准的珠峰峰顶雪面高程，教材引用该数字应明确其公布年份和雪面口径。\&quot;,\n      \&quot;层级\&quot;: \&quot;现象\&quot;,\n      \&quot;重要性\&quot;: \&quot;核心\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://www.mod.gov.cn/gfbw/qwfb/4875221.html\&quot;,\n        \&quot;https://www.xinhuanet.com/politics/2020-12/16/c_1126866199.htm\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 7,\n      \&quot;要点\&quot;: \&quot;2005年公布的8844.43米是岩石面高程，而2020年的8848.86米是雪面高程且采用不同高程基准，因此直接相减所得4.43米不能解释为珠峰实际长高的幅度。\&quot;,\n      \&quot;层级\&quot;: \&quot;本质\&quot;,\n      \&quot;重要性\&quot;: \&quot;核心\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm\&quot;,\n        \&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 8,\n      \&quot;要点\&quot;: \&quot;中国教材采用珠峰高程数字还受重要地理信息数据使用规则约束：《测绘成果管理条例》第二十二条确立统一审核公布制度、第二十五条要求教学使用依法公布的数据，测绘主管部门也曾明确将法定公布要求用于珠峰高程。\&quot;,\n      \&quot;层级\&quot;: \&quot;内部联系\&quot;,\n      \&quot;重要性\&quot;: \&quot;核心\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://xzfg.moj.gov.cn/front/law/detail?LawID=168\&quot;,\n        \&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 9,\n      \&quot;要点\&quot;: \&quot;珠峰高程公布值经历过1975年的8848.13米、2005年的8844.43米和2020年的8848.86米等变化，引用历史数字必须区分其年代和测量口径。\&quot;,\n      \&quot;层级\&quot;: \&quot;全体\&quot;,\n      \&quot;重要性\&quot;: \&quot;一般\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm\&quot;,\n        \&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 10,\n      \&quot;要点\&quot;: \&quot;1975年的8848.13米已扣除当时测得的0.92米积雪，2005年则测得峰顶冰雪深度3.50米，因此不能仅按数字大小把这些历史成果都当成同一雪面的高度。\&quot;,\n      \&quot;层级\&quot;: \&quot;全体\&quot;,\n      \&quot;重要性\&quot;: \&quot;一般\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm\&quot;,\n        \&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 11,\n      \&quot;要点\&quot;: \&quot;珠峰受印度板块与欧亚板块相互作用而发生隆起和位移，真实地壳变化与测量对象、基准及技术变化共同影响历次高程成果，实际升降需要在可比条件下分析。\&quot;,\n      \&quot;层级\&quot;: \&quot;内部联系\&quot;,\n      \&quot;重要性\&quot;: \&quot;一般\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://apm.cas.cn/ttxw/202012/t20201209_5814029.html\&quot;,\n        \&quot;https://news.sciencenet.cn/htmlnews/2021/1/451739.shtm\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    },\n    {\n      \&quot;编号\&quot;: 12,\n      \&quot;要点\&quot;: \&quot;2018年主管部门关于使用8844.43米的声明早于2020年中尼联合公布雪面高程，不能单独用该旧声明否定2020年的成果，也不能据此断言2005年岩石面标准已被明令废止。\&quot;,\n      \&quot;层级\&quot;: \&quot;全体\&quot;,\n      \&quot;重要性\&quot;: \&quot;一般\&quot;,\n      \&quot;依据\&quot;: [\n        \&quot;https://www.xinhuanet.com/politics/2018-02/10/c_1122399122.htm\&quot;,\n        \&quot;https://www.mod.gov.cn/gfbw/qwfb/4875221.html\&quot;\n      ],\n      \&quot;把握\&quot;: \&quot;高\&quot;\n    }\n  ],\n  \&quot;找不到要点的层\&quot;: \&quot;\&quot;\n}&quot;}}
+{&quot;type&quot;:&quot;turn.completed&quot;,&quot;usage&quot;:{&quot;input_tokens&quot;:256400,&quot;cached_input_tokens&quot;:204800,&quot;cache_write_input_tokens&quot;:0,&quot;output_tokens&quot;:2960,&quot;reasoning_output_tokens&quot;:160}}
+</pre></details>
+</section>
+</div></main>
+<footer><div class="wrap caption-2"><p>本页由 <code>site/build_simulation.py</code> 从模拟出题和模拟评审的输出目录生成，不手工修改。<a href="../../../../index.html">回到资料站</a></p></div></footer>
+</body>
+</html>
