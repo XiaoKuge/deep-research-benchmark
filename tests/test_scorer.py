@@ -70,9 +70,13 @@ class PilotDataTest(unittest.TestCase):
                 actual[number] = value if isinstance(value, bool) else value["通过"]
         self.assertEqual(actual, expected)
 
-    def test_version_1_2_gives_the_same_rank_intervals_as_version_1_1(self):
-        # 试评数据没有有争议的标注；没有报告写到的要点（Q4、Q6，以及只有扰动版本写到的 Q122）不影响名次
-        self.assertEqual(intervals(self.result("1.2")), intervals(committed("1.1")))
+    def test_version_1_2_separates_e_from_a_by_the_five_elements(self):
+        # 试评数据没有有争议的标注；没有报告写到的要点（Q4、Q6，以及只有扰动版本写到的 Q122）不影响名次。
+        # 与第 1.1 版不同的只有一处：只比五个环节，E 在五个环节上都不低于 A，并在两个环节上更高，
+        # 于是 E 排在 A 之前（第 1.1 版把时效算在内，E 的时效低于 A，两份并列第 3 至 4 名）。
+        expected = {**intervals(committed("1.1")), "E": [3, 3], "A": [4, 4]}
+        self.assertEqual(intervals(committed("1.1"))["E"], [3, 4])
+        self.assertEqual(intervals(self.result("1.2")), expected)
 
     def test_committed_version_1_2_result_file_matches_a_fresh_run(self):
         self.assertEqual(committed("1.2"), self.result("1.2"))
@@ -185,6 +189,34 @@ class PairwiseVetoTest(unittest.TestCase):
         for version in ("1.0", "1.1"):
             with self.subTest(version=version):
                 self.assertEqual(self.score(self.FOUR_WITH_THREE_AGAINST, version), self.SEPARATED)
+
+
+class FiveElementsTest(unittest.TestCase):
+    """规则第八节第 3 条、第四阶段方案第七节第 3 条：深度净分分不开时比五个环节的评级，时效不在其中。"""
+
+    # 两份报告写到同样的要点，深度净分相同。一号五个环节都不低于二号，并在"分析"上更高；时效却低于二号。
+    GRADES = {"一号": (2, 1, 1, 2, 1), "二号": (2, 1, 1, 1, 1)}
+    TIMELINESS = {"一号": 0, "二号": 2}
+    POINTS = [{"pid": "L1", "level": "本质", "importance": "核心", "reach": {"一号": "符合", "二号": "符合"}}]
+
+    def score(self, version):
+        with tempfile.TemporaryDirectory() as tmp:
+            mapping, data = write_question(tmp, self.POINTS, self.GRADES, timeliness=self.TIMELINESS)
+            return run_scorer(version, mapping, data)
+
+    def test_version_1_2_compares_only_the_five_elements(self):
+        result = self.score("1.2")
+        self.assertEqual(intervals(result), {"一号": [1, 1], "二号": [2, 2]})
+        self.assertEqual([(p["higher"], p["lower"], p["basis"]) for p in result["separated_pairs"]],
+                         [("一号", "二号", "环节评级")])
+
+    def test_version_1_2_still_reports_timeliness(self):
+        self.assertEqual({r["label"]: r["timeliness"] for r in self.score("1.2")["reports"]}, self.TIMELINESS)
+
+    def test_versions_1_0_and_1_1_still_count_timeliness_in_the_comparison(self):
+        for version in ("1.0", "1.1"):
+            with self.subTest(version=version):
+                self.assertEqual(intervals(self.score(version)), {"一号": [1, 2], "二号": [1, 2]})
 
 
 WALK = os.path.join(ROOT, "tests", "fixtures", "scorer-walkthrough")
