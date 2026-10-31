@@ -389,39 +389,39 @@
  ],
  "substitutions": [
   {
-   "step": "写到核对",
-   "slot": 1,
-   "task": "评审-写到核对：报告 D，评委 1",
-   "planned_vendor": "claude",
-   "vendor": "codex"
+   "步骤": "写到核对",
+   "任务": "评审-写到核对：报告 D，评委 1",
+   "原来的厂商": "claude",
+   "改用的厂商": "codex",
+   "原因": "claude：调用失败：命令行报告出错：You've hit your 5-hour limit · resets 9pm (America/Los_Angeles)"
   },
   {
-   "step": "写到核对",
-   "slot": 1,
-   "task": "评审-写到核对：报告 E，评委 1",
-   "planned_vendor": "claude",
-   "vendor": "codex"
+   "步骤": "写到核对",
+   "任务": "评审-写到核对：报告 E，评委 1",
+   "原来的厂商": "claude",
+   "改用的厂商": "codex",
+   "原因": "claude：在本次运行前面的调用里已经不可用"
   },
   {
-   "step": "写到核对",
-   "slot": 1,
-   "task": "评审-写到核对：报告 F，评委 1",
-   "planned_vendor": "claude",
-   "vendor": "codex"
+   "步骤": "写到核对",
+   "任务": "评审-写到核对：报告 F，评委 1",
+   "原来的厂商": "claude",
+   "改用的厂商": "codex",
+   "原因": "claude：在本次运行前面的调用里已经不可用"
   },
   {
-   "step": "要点判定",
-   "slot": 1,
-   "task": "评审-要点判定：评委 1",
-   "planned_vendor": "claude",
-   "vendor": "codex"
+   "步骤": "要点判定",
+   "任务": "评审-要点判定：评委 1",
+   "原来的厂商": "claude",
+   "改用的厂商": "codex",
+   "原因": "claude：在本次运行前面的调用里已经不可用"
   },
   {
-   "step": "要点判定",
-   "slot": 2,
-   "task": "评审-要点判定：评委 2",
-   "planned_vendor": "claude",
-   "vendor": "codex"
+   "步骤": "要点判定",
+   "任务": "评审-要点判定：评委 2",
+   "原来的厂商": "claude",
+   "改用的厂商": "codex",
+   "原因": "claude：在本次运行前面的调用里已经不可用"
   }
  ],
  "invalid_answers": [],
@@ -465,5 +465,6 @@
   },
   "max_calls": 133,
   "over_limit": false
- }
+ },
+ "too_few_vendors": []
 }

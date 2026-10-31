@@ -38,15 +38,16 @@
 - [试评名次](site/results/index.html)：第五阶段六份报告的名次区间、每份报告的复核页和要点池页，是试评演示，不是对产品的评价。由 `python3 -I site/build_results.py` 从 `research-plan/stage5-pilot/` 生成，不手工修改。
 - [题库](site/simulation/questions.html)和[评审记录](site/simulation/reviews.html)：模拟出的题和每一次模拟评审，每一次模型调用都能点开看原文；正式题公开之前只显示深度地图的校验值。由 `python3 -I site/build_simulation.py` 从 `simulation/` 生成，不手工修改。
 
-**程序**：在 `tools/`，只用 Python 自带的标准库，不需要装别的包；除评委提示词核对程序外，每个程序都有同名的使用说明（`.md`）。
+**程序**：在 `tools/`，只用 Python 自带的标准库，不需要装别的包；除评委提示词核对程序和下面最后三个共用的小程序外，每个程序都有同名的使用说明（`.md`）。
 - [统一运行程序](tools/run_agents.md) `run_agents.py`：运行日按运行计划调用每个参赛智能体（命令行或网络接口），把题目原样交给它，记输入校验值，反问时给统一答复，到时长上限就停，按规则手册附录四写运行记录。
 - [网页存档程序](tools/archive_sources.md) `archive_sources.py`：提取报告里的网址，逐个取回，按校验值保存，写一份清单；单个网址打不开只记原因，不中断，不用任何第三方存档服务。
 - [模型调用层](tools/models.md) `models.py`：统一调用本机已登录的 Claude、Codex、Kimi 和 Google Antigravity 四家命令行，分"只给材料""只读网页"两档工具限定，每次调用写完整记录；有回放方式供测试，有调用次数上限和只估算模式。不读取任何密钥。
 - [模拟出题者](tools/simulate_setter.md) `simulate_setter.py`：还没有真人出题者时，让模型按出题手册七步出一道题，输出题目卡三个版本、深度地图、两人对照、泄露检查、闭卷对照和调用记录。
 - [模拟评审](tools/simulate_review.md) `simulate_review.py`：还没有真人评委时，让几家模型按评审细则评审一组报告，没有一种意见达到三分之二的判定记为有争议，再调用计分程序第 1.2 版。评委提示词模板在 `tools/review_prompts/`。
+- 共用的小程序：`common.py`（校验值、带时区的当前时间、先写临时文件再整份替换的写文件）；`substitutes.py`（模拟出题和模拟评审共用的挑厂商办法和替代记录的格式，用法写在模拟出题者和模拟评审的说明里）；`migrate_substitution_records.py`（一次性的迁移，把已经提交的模拟数据改成统一的替代记录格式，已经跑过）。
 - 评委提示词核对程序 `judge_prompts.py`：`python3 -I tools/judge_prompts.py check` 从会话记录里重新取出第五阶段每次评委运行的提示词，与 `research-plan/stage5-pilot/judges/` 的存档逐字比对；`extract` 重新写出存档。
 
-**测试**：在 `tests/`，用 Python 自带的 `unittest`，在仓库根目录运行 `python3 -I -m unittest discover -s tests -v`。每个文件管一样东西：计分程序 `test_scorer.py`（含第五阶段 8 条验收标准）、规则手册 `test_rules.py`、评委提示词 `test_judge_prompts.py`、名次页 `test_results_pages.py`、四个说明页面 `test_info_pages.py`、技术文档 `test_team_docs.py`、新手包 `test_starter_kit.py`、资料站首页 `test_site_home.py`、运行程序 `test_run_agents.py`、存档程序 `test_archive_sources.py`（只用本地测试服务器）、模型调用层 `test_models.py`、模拟出题者 `test_simulate_setter.py`、模拟评审 `test_simulate_review.py`、题库页和评审记录页 `test_simulation_pages.py`。模型相关的测试一律用回放方式和假的命令行程序，不真的调用模型。
+**测试**：在 `tests/`，用 Python 自带的 `unittest`，在仓库根目录运行 `python3 -I -m unittest discover -s tests -v`。每个文件管一样东西：计分程序 `test_scorer.py`（含第五阶段 8 条验收标准）、规则手册 `test_rules.py`、评委提示词 `test_judge_prompts.py`、名次页 `test_results_pages.py`、四个说明页面 `test_info_pages.py`、技术文档 `test_team_docs.py`、新手包 `test_starter_kit.py`、资料站首页 `test_site_home.py`、运行程序 `test_run_agents.py`、存档程序 `test_archive_sources.py`（只用本地测试服务器）、模型调用层 `test_models.py`、模拟出题者 `test_simulate_setter.py`、模拟评审 `test_simulate_review.py`、题库页和评审记录页 `test_simulation_pages.py`、共用的小程序 `test_common.py` 和 `test_substitutes.py`、替代记录的迁移 `test_migrate_substitution_records.py`。模型相关的测试一律用回放方式和假的命令行程序，不真的调用模型。
 
 **给 Claude 留言**：索引页顶部有总留言框，每篇论文下也有留言区。留言存在 `comments.json`（不进 index.html），状态分「待 Claude 处理 / Claude 已回复 · 等你确认 / 已处理」，Claude 的回复显示在留言下方，页面每 15 秒刷新。Claude 那边在会话里后台运行 `python3 -I serve.py --wait-comments`，一有待处理留言就会被叫醒去处理，处理完回复并重新等待；会话关掉后，下次对 Claude 说"看看索引里的留言"即可。删除、提交、对外发送这类难以撤销的事，Claude 会先回复"等你确认"，你在页面上点「接着说」同意后才执行。
 

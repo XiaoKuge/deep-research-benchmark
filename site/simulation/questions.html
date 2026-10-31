@@ -198,6 +198,8 @@
   .card .fields { margin-top: 8px; border-top: 0; }
   .card .fields > div { padding: 4px 0; border-bottom: 0; }
   .empty { margin-top: 16px; padding: 16px; border-radius: 12px; background: var(--surface); color: var(--ink-2); max-width: 760px; }
+  .alert { margin-top: 32px; padding: 16px; border-radius: 12px; border: 1px solid var(--bad); background: var(--surface); max-width: 880px; }
+  .alert strong { color: var(--bad); }
 </style>
 </head>
 <body>
@@ -219,7 +221,7 @@
 </section>
 <section class="block" id="checksum" aria-labelledby="checksum-h">
   <h2 class="heading-5" id="checksum-h">校验值怎样用</h2>
-  <p class="body-3 sum">深度地图写成之后、任何报告出现之前，先公开它的 <code>SHA-256</code> 校验值。比赛结束公开地图全文时，任何人都能算一遍校验值，核对地图在看到报告之后没有改过。</p><p class="body-3 sum">核对的办法：在题目目录里运行 <code>shasum -a 256 -c 深度地图校验值.txt</code>（Linux 上用 <code>sha256sum -c</code>）。题目目录的格式见<a href="../../tools/simulate_setter.md">模拟出题者使用说明</a>。</p>
+  <p class="body-3 sum">深度地图写成之后、任何报告出现之前，先公开它的校验值。比赛结束公开地图全文时，任何人都能算一遍校验值，核对地图在看到报告之后没有改过。</p><p class="body-3 sum">核对的办法：在题目目录里运行 <code>shasum -a 256 -c 深度地图校验值.txt</code>（Linux 上用 <code>sha256sum -c</code>）。题目目录的格式见<a href="../../tools/simulate_setter.md">模拟出题者使用说明</a>。</p>
   
 </section>
 </div></main>
